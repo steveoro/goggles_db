@@ -1,0 +1,45 @@
+inherit_from: .rubocop_todo.yml
+
+# The behavior of RuboCop can be controlled via the .rubocop.yml
+# configuration file. It makes it possible to enable/disable
+# certain cops (checks) and to alter their behavior if they accept
+# any parameters. The file can be placed either in your home
+# directory or in some project directory.
+#
+# RuboCop will start looking for the configuration file in the directory
+# where the inspected file is and continue its way up to the root directory.
+#
+# See https://docs.rubocop.org/rubocop/configuration
+
+AllCops:
+  NewCops: enable
+  TargetRubyVersion: 2.6.3
+
+# Configuration parameters: Include.
+# Include: **/*.gemspec
+Gemspec/RequiredRubyVersion:
+  Exclude:
+    - 'goggles_db.gemspec'
+
+# Cop supports --auto-correct.
+# Configuration parameters: AutoCorrect, AllowHeredoc, AllowURI, URISchemes, IgnoreCopDirectives, IgnoredPatterns.
+# URISchemes: http, https
+Layout/LineLength:
+  Max: 165
+
+Metrics/BlockLength:
+  Max: 40
+  CountAsOne: ['array', 'heredoc']
+  ExcludedMethods: ['describe', 'context']
+
+Style/Documentation:
+  Exclude:
+    - 'spec/**/*'
+    - 'test/**/*'
+    - 'app/controllers/goggles_db/application_controller.rb'
+    - 'app/helpers/goggles_db/application_helper.rb'
+    - 'app/mailers/goggles_db/application_mailer.rb'
+    - 'app/models/goggles_db/application_record.rb'
+    - 'app/models/goggles_db/user.rb'
+    - 'lib/goggles_db.rb'
+    - 'lib/goggles_db/engine.rb'
