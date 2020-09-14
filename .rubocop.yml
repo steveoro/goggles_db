@@ -27,7 +27,16 @@ Gemspec/RequiredRubyVersion:
 Layout/LineLength:
   Max: 165
 
+Metrics/AbcSize:
+  Exclude:
+    - 'app/validators/goggles_db/validation_error_tools.rb'
+
 Metrics/BlockLength:
+  Max: 35
+  CountAsOne: ['array', 'heredoc']
+  ExcludedMethods: ['describe', 'context']
+
+Metrics/MethodLength:
   Max: 40
   CountAsOne: ['array', 'heredoc']
   ExcludedMethods: ['describe', 'context']
@@ -43,3 +52,7 @@ Style/Documentation:
     - 'app/models/goggles_db/user.rb'
     - 'lib/goggles_db.rb'
     - 'lib/goggles_db/engine.rb'
+
+Style/FrozenStringLiteralComment:
+  Exclude:
+    - 'spec/factories/**/*'

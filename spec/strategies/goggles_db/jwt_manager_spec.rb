@@ -15,14 +15,15 @@ module GogglesDb
       # (Testing the instance methods will automaticall test also the corresponding class implementation)
       subject { JwtManager.new(fixture_key, 1.hour) }
 
+      it 'creates a new instance' do
+        expect(subject).to be_a(JwtManager)
+      end
+
+      # This tests the class methods using an instance, so this is the right context:
       it_behaves_like(
         'responding to a list of class methods',
         %i[encode decode]
       )
-
-      it 'creates a new instance' do
-        expect(subject).to be_a(JwtManager)
-      end
 
       let(:encoded_jwt)     { subject.encode(fixture_payload) }
       let(:decoded_jwt)     { subject.decode(encoded_jwt) }
