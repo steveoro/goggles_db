@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    goggles_db (0.1.0)
+    goggles_db (0.1.1)
       acts-as-taggable-on
       acts_as_votable
       devise
@@ -315,6 +315,7 @@ DEPENDENCIES
   guard-spring
   letter_opener
   mysql2
+  pry
   rspec
   rspec-rails
   rubocop

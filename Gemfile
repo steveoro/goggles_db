@@ -36,6 +36,7 @@ group :development, :test do
   gem 'bullet'
   gem 'ffaker'
   gem 'letter_opener'
+  gem 'pry'
   gem 'rspec'
   gem 'rspec-rails'
 
