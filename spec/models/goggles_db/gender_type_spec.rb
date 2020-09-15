@@ -4,30 +4,18 @@ require 'rails_helper'
 
 module GogglesDb
   RSpec.describe GenderType, type: :model do
-    describe 'self.male' do
-      it 'is an instance of GenderType with a male code ID' do
-        expect(GenderType.male).to be_a(GenderType).and be_valid
-        expect(GenderType.male).to be_male
-      end
-    end
-
-    describe 'self.female' do
-      it 'is an instance of GenderType with a female code ID' do
-        expect(GenderType.female).to be_a(GenderType).and be_valid
-        expect(GenderType.female).to be_female
-      end
-    end
-
-    describe 'self.intermixed' do
-      it 'is an instance of GenderType with a female code ID' do
-        expect(GenderType.intermixed).to be_a(GenderType).and be_valid
-        expect(GenderType.intermixed.id).to eq(GogglesDb::GenderType::INTERMIXED_ID)
+    %w[male female intermixed].each do |word|
+      describe "self.#{word}" do
+        it "is an instance of the same class with a #{word} code ID" do
+          expect(subject.class.send(word)).to be_a(subject.class).and be_valid
+          expect(subject.class.send(word).send("#{word}?")).to be true
+        end
       end
     end
 
     describe 'self.validate_cached_rows' do
       it 'does not raise any errors' do
-        expect { GenderType.validate_cached_rows }.not_to raise_error
+        expect { subject.class.validate_cached_rows }.not_to raise_error
       end
     end
   end

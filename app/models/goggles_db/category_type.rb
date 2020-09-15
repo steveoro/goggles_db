@@ -2,12 +2,12 @@
 
 module GogglesDb
   #
-  # = Season model
+  # = CategoryType model
   #
   #   - version:  7.000
   #   - author:   Steve A.
   #
-  class Season < ApplicationRecord
-    self.table_name = 'seasons'
+  class CategoryType < ApplicationRecord
+    self.table_name = 'category_types'
   end
 end

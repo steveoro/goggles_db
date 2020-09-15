@@ -20,45 +20,29 @@ module GogglesDb
     # DB ID for 'Intermixed/Unspecified' value (both for person or event)
     INTERMIXED_ID = 3
 
-    # Memoized instances:
-    @male = find_by(id: MALE_ID)
-    @female = find_by(id: FEMALE_ID)
-    @intermixed = find_by(id: INTERMIXED_ID)
-
     validates :code, presence: true, uniqueness: { case_sensitive: true, message: :already_exists }
 
-    # Returns the "male" entity row
-    def self.male
-      validate_cached_rows
-      @male
-    end
+    %w[male female intermixed].each do |word|
+      class_eval do
+        # Define a Memoized instance using the finder with the corresponding constant ID value:
+        instance_variable_set("@#{word}", find_by(id: "#{name}::#{word.upcase}_ID".constantize))
 
-    # Returns the "female" entity row
-    def self.female
-      validate_cached_rows
-      @female
-    end
+        # Define an helper class method to get the memoized value row:
+        define_singleton_method(word.to_sym) do
+          validate_cached_rows
+          instance_variable_get("@#{word}")
+        end
+      end
 
-    # Returns the "intermixed" entity row
-    def self.intermixed
-      validate_cached_rows
-      @intermixed
-    end
-
-    # Returns true for a MALE_ID
-    def male?
-      (id == MALE_ID)
-    end
-
-    # Returns true for a FEMALE_ID
-    def female?
-      (id == FEMALE_ID)
+      # Define an helper class method that returns true if the ID corresponds to the word token:
+      # (As in: def male? ; id == MALE_ID ; end )
+      define_method("#{word}?".to_sym) { id == "#{self.class.name}::#{word.upcase}_ID".constantize }
     end
 
     # Checks the existance of all the required value rows; raises an error for any missing row.
     def self.validate_cached_rows
       %w[male female intermixed].each do |word|
-        code_value = "GogglesDb::GenderType::#{word.upcase}_ID".constantize
+        code_value = "#{name}::#{word.upcase}_ID".constantize
         raise "Missing required #{name} row with code #{code_value}" unless instance_variable_get("@#{word}").present?
       end
     end

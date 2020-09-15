@@ -2,7 +2,7 @@ FactoryBot.define do
   trait :common_swimmer_fields do
     first_name                { FFaker::Name.first_name }
     last_name                 { FFaker::Name.last_name }
-    gender_type_id            { [1, 2].sample }
+    gender_type               { GogglesDb::GenderType.send(%w[male female].sample) }
     year_of_birth             { 18.years.ago.year - ((rand * 100) % 60).to_i }
     complete_name             { "#{last_name} #{first_name}" }
     user

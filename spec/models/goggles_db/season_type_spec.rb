@@ -4,6 +4,19 @@ require 'rails_helper'
 
 module GogglesDb
   RSpec.describe SeasonType, type: :model do
-    pending "add some examples to (or delete) #{__FILE__}"
+    %w[mas_fin mas_csi mas_uisp].each do |word|
+      describe "self.#{word}" do
+        it "is an instance of the same class with a #{word} code ID" do
+          expect(subject.class.send(word)).to be_a(subject.class).and be_valid
+          expect(subject.class.send(word).send("#{word}?")).to be true
+        end
+      end
+    end
+
+    describe 'self.validate_cached_rows' do
+      it 'does not raise any errors' do
+        expect { subject.class.validate_cached_rows }.not_to raise_error
+      end
+    end
   end
 end

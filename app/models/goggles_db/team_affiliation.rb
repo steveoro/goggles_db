@@ -2,12 +2,12 @@
 
 module GogglesDb
   #
-  # = Season model
+  # = TeamAffiliation model
   #
   #   - version:  7.000
   #   - author:   Steve A.
   #
-  class Season < ApplicationRecord
-    self.table_name = 'seasons'
+  class TeamAffiliation < ApplicationRecord
+    self.table_name = 'team_affiliations'
   end
 end
