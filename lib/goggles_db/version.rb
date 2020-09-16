@@ -22,7 +22,7 @@ module GogglesDb
     MINOR   = '003'
 
     # Current build version.
-    BUILD   = '20200914'
+    BUILD   = '20200916'
 
     # Full versioning for the current release (Framework + Core).
     FULL    = "#{MAJOR}.#{MINOR}.#{BUILD} (#{CORE} v. #{VERSION})"
@@ -33,5 +33,14 @@ module GogglesDb
     # Current internal DB structure version
     # (this is independent from migrations and framework release)
     DB      = '1.28.00'
+
+    # Pointless UNICODE emojis, just for fun:
+    EMOJI_BUTTERFLY    = 'з== ( ▀ ͜͞ʖ▀) ==ε'
+    EMOJI_FREESTYLE    = 'ᕙ ( ▀ ͜͞ʖ▀) /^'
+    EMOJI_BREASTSTROKE = '( ▀ ͜͞ʖ▀)/^/^'
+    EMOJI_BACKSTROKE   = '٩ (◔^◔) ۶'
+    EMOJI_STRONGMAN    = 'ᕦ(ò_óˇ)ᕤ'
+    EMOJI_TEDDYBEAR    = 'ʕ•ᴥ•ʔ'
+    EMOJI_SHRUG        = '¯\_(ツ)_/¯'
   end
 end
