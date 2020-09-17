@@ -23,5 +23,7 @@ module GogglesDb
     validates :last_name, length: { maximum: 50 }
     validates :first_name, length: { maximum: 50 }
     validates :year_of_birth, presence: true, length: { within: 2..4, allow_nil: false }
+
+    delegate :male?, :female?, :intermixed?, to: :gender_type
   end
 end

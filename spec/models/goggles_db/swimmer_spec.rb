@@ -1,17 +1,29 @@
 # frozen_string_literal: true
 
 require 'rails_helper'
+require 'support/shared_method_existance_examples'
 
 module GogglesDb
   RSpec.describe Swimmer, type: :model do
     context 'when using the factory, the resulting instance' do
       subject { FactoryBot.create(:swimmer) }
 
+      it_behaves_like(
+        'having one or more required associations',
+        %i[gender_type]
+      )
+
+      it_behaves_like(
+        'responding to a list of methods',
+        %i[associated_user user male? female? intermixed?]
+      )
+      #-- ----------------------------------------------------------------------
+      #++
+
       it 'is valid' do
         expect(subject).to be_a(Swimmer).and be_valid
       end
-      it 'is has a valid GenderType' do
-        expect(subject).to respond_to(:gender_type)
+      it 'has a valid GenderType' do
         expect(subject.gender_type).to be_a(GenderType).and be_valid
       end
       it 'is does not have an associated user yet' do

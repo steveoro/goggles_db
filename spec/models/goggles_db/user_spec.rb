@@ -1,11 +1,19 @@
 # frozen_string_literal: true
 
 require 'rails_helper'
+require 'support/shared_method_existance_examples'
 
 module GogglesDb
   RSpec.describe User, type: :model do
     context 'when using the factory, the resulting instance' do
       subject { FactoryBot.create(:user) }
+
+      it_behaves_like(
+        'responding to a list of methods',
+        %i[swimmer]
+      )
+      #-- ----------------------------------------------------------------------
+      #++
 
       it 'is valid' do
         expect(subject).to be_a(User).and be_valid

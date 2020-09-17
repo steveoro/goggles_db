@@ -41,6 +41,12 @@ Metrics/MethodLength:
   CountAsOne: ['array', 'heredoc']
   ExcludedMethods: ['describe', 'context']
 
+Metrics/ModuleLength:
+  Max: 200
+  # If Rubocop whines too much for a spec length, exclude the individual files:
+  # Exclude:
+  #   - 'spec/path_to/specific_spec_file'
+
 Style/Documentation:
   Exclude:
     - 'spec/**/*'

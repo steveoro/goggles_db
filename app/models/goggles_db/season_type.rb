@@ -32,10 +32,28 @@ module GogglesDb
     validates :description, length: { maximum: 100 }
     validates :short_name, length: { maximum: 40 }
 
+    # has_many :seasons
+    # has_many :swimmers,     through: :seasons
+    # has_many :teams,        through: :seasons
+    # has_many :event_types,  through: :seasons # FIXME: This one doesn't work
+
+    # Returns +true+ if this Season type is Master-specific
+    #--
+    # NOTE: this instance method must be defined before the metaprogramming below
+    #++
+    def masters?
+      code.to_s.starts_with?('MAS')
+    end
+    #-- ------------------------------------------------------------------------
+    #++
+
     %w[mas_fin mas_csi mas_uisp ago_fin ago_csi ago_uisp mas_len mas_fina].each do |word|
       class_eval do
+        row = find_by(id: "#{name}::#{word.upcase}_ID".constantize)
         # Define a Memoized instance using the finder with the corresponding constant ID value:
-        instance_variable_set("@#{word}", find_by(id: "#{name}::#{word.upcase}_ID".constantize))
+        instance_variable_set("@#{word}", row)
+        @only_masters ||= []
+        @only_masters << row if row.masters?
 
         # Define an helper class method to get the memoized value row:
         define_singleton_method(word.to_sym) do
@@ -47,6 +65,17 @@ module GogglesDb
       # Define an helper class method that returns true if the ID corresponds to the word token:
       define_method("#{word}?".to_sym) { id == "#{self.class.name}::#{word.upcase}_ID".constantize }
     end
+    #-- ------------------------------------------------------------------------
+    #++
+
+    # Virtual scope: array of memoized Masters-only Season types
+    # rubocop:disable Style/TrivialAccessors
+    def self.only_masters
+      @only_masters
+    end
+    # rubocop:enable Style/TrivialAccessors
+    #-- ------------------------------------------------------------------------
+    #++
 
     # Checks the existance of all the required value rows; raises an error for any missing row.
     def self.validate_cached_rows

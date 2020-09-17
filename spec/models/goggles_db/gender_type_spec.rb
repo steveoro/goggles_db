@@ -6,8 +6,13 @@ module GogglesDb
   RSpec.describe GenderType, type: :model do
     %w[male female intermixed].each do |word|
       describe "self.#{word}" do
-        it "is an instance of the same class with a #{word} code ID" do
+        it 'is has a #code' do
+          expect(subject.class.send(word).code).to be_present
+        end
+        it 'is a valid instance of the same class' do
           expect(subject.class.send(word)).to be_a(subject.class).and be_valid
+        end
+        it "has a corresponding (true, for having the same code) ##{word}? helper method" do
           expect(subject.class.send(word).send("#{word}?")).to be true
         end
       end

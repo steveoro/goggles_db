@@ -26,16 +26,13 @@ module GogglesDb
       class_eval do
         # Define a Memoized instance using the finder with the corresponding constant ID value:
         instance_variable_set("@#{word}", find_by(id: "#{name}::#{word.upcase}_ID".constantize))
-
         # Define an helper class method to get the memoized value row:
         define_singleton_method(word.to_sym) do
           validate_cached_rows
           instance_variable_get("@#{word}")
         end
       end
-
       # Define an helper class method that returns true if the ID corresponds to the word token:
-      # (As in: def manual? ; id == MANUAL_ID ; end )
       define_method("#{word}?".to_sym) { id == "#{self.class.name}::#{word.upcase}_ID".constantize }
     end
 

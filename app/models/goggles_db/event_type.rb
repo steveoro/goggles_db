@@ -25,6 +25,20 @@ module GogglesDb
     validates :style_order, presence: true, length: { within: 1..3, allow_nil: false },
                             numericality: true
 
+    # has_many :meeting_events
+    # has_many :meeting_sessions, through: :meeting_events
+    # has_many :meetings,         through: :meeting_sessions
+    # has_many :seasons,          through: :meetings
+    # has_many :season_types,     through: :seasons
+    #
+    # has_many :events_by_pool_types
+    # has_many :pool_types,       through: :events_by_pool_types
+    #
+    # scope :sort_by_style,       -> { order('style_order') }
+    # scope :for_fin_calculation, -> { where('((length_in_meters % 50) = 0) AND (length_in_meters <= 1500)') }
+    # scope :for_ironmaster,      -> { where('(not is_a_relay and length_in_meters between 50 and 1500)') }
+
+    # TODO: Needs a working full-chain relation with a Meeting to work:
     # scope :for_season_type, ->(season_type) { joins(:season_types).where(['season_types.id = ?', season_type.id]) }
     # scope :for_season,      ->(season_id)   { joins(:seasons).where(['season_id = ?', season_id]) }
 

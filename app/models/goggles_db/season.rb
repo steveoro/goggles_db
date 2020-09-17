@@ -9,5 +9,74 @@ module GogglesDb
   #
   class Season < ApplicationRecord
     self.table_name = 'seasons'
+
+    belongs_to :season_type
+    belongs_to :edition_type
+    belongs_to :timing_type
+    validates_associated :season_type
+    validates_associated :edition_type
+    validates_associated :timing_type
+
+    has_one :federation_type, through: :season_type
+
+    has_many :category_types
+    # has_many :meetings
+    # has_many :goggle_cup_definitions
+    # has_many :badges
+    # has_many :team_affiliations
+    # has_many :meeting_team_scores
+    # has_many :teams,                      through: :team_affiliations
+    # has_many :swimmers,                   through: :badges
+    # has_many :meeting_individual_results, through: :meetings
+    # has_many :computed_season_ranking
+    # has_many :time_standard
+    #
+    # has_many :meeting_sessions, through: :meetings
+    # has_many :meeting_events, through: :meeting_sessions
+
+    validates :header_year, presence: { length: { within: 1..9 }, allow_nil: false }
+    validates :edition,     presence: { length: { within: 1..3 }, allow_nil: false }
+    validates :description, presence: { length: { within: 1..100 }, allow_nil: false }
+    validates :begin_date,  presence: true
+    validates :end_date,    presence: true
+
+    # Sorting scopes:
+    scope :by_begin_date,  ->(dir = 'ASC') { order("seasons.begin_date #{dir}") }
+    scope :by_end_date,    ->(dir = 'ASC') { order("seasons.end_date #{dir}") }
+    # TODO: unused yet
+    # scope :by_season_type, ->(dir) { order("season_types.code #{dir}, seasons.begin_date #{dir}") }
+
+    # Filtering scopes:
+    scope :for_season_type, ->(season_type) { where(season_type_id: season_type.id) }
+    # TODO
+    # scope :has_results,     -> { where('exists(select 1 from meetings where are_results_acquired)') }
+    scope :ongoing,      -> { where('end_date IS NOT NULL AND end_date >= curdate()') }
+    scope :ended,        -> { where('end_date IS NOT NULL AND end_date < curdate()') }
+    scope :ended_before, ->(end_date) { where('end_date IS NOT NULL AND end_date < ?', end_date) }
+
+    def self.in_range(from_date, to_date)
+      where('begin_date IS NOT NULL AND begin_date <= ?', to_date)
+        .where('end_date IS NOT NULL AND end_date >= ?', from_date)
+    end
+    #-- ------------------------------------------------------------------------
+    #++
+
+    # Returns if the season has ended at a specific date; false otherwise.
+    #
+    # == Parameters:
+    # - check_date: the date for the check
+    #
+    def ended?(check_date = Date.today)
+      end_date ? end_date <= check_date : false
+    end
+
+    # Returns if the season has started at a specific date; false otherwise.
+    #
+    # == Parameters:
+    # - check_date: the date for the check
+    #
+    def started?(check_date = Date.today)
+      begin_date ? begin_date <= check_date : false
+    end
   end
 end

@@ -13,15 +13,11 @@ module GogglesDb
   class FederationType < ApplicationRecord
     self.table_name = 'federation_types'
 
-    # DB ID for 'FIN' Federation
+    # Unique IDs used inside the DB, the description will be retrieved using I18n.t
     FIN_ID = 1
-    # DB ID for 'CSI' Federation
     CSI_ID = 2
-    # DB ID for 'UISP' Federation
     UISP_ID = 3
-    # DB ID for 'LEN' Federation
     LEN_ID = 4
-    # DB ID for 'FINA' Federation
     FINA_ID = 5
 
     validates :code, presence: { length: { within: 1..4 }, allow_nil: false },
@@ -34,7 +30,6 @@ module GogglesDb
       class_eval do
         # Define a Memoized instance using the finder with the corresponding constant ID value:
         instance_variable_set("@#{word}", find_by(id: "#{name}::#{word.upcase}_ID".constantize))
-
         # Dynamically define an helper class method for the memoized value row:
         define_singleton_method(word.to_sym) do
           validate_cached_rows

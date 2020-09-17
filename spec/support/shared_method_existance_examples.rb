@@ -26,22 +26,25 @@ shared_examples_for 'responding to a list of methods' do |method_name_array|
   end
 end
 
-shared_examples_for 'having a relation with a list of models' do |attribute_name_array|
-  # [ Insert Quagmire meme here: 'giggidi' :-P ]
-  attribute_name_array.each do |attribute_name|
-    it "responds to :#{attribute_name}" do
-      expect(subject).to respond_to(attribute_name)
+shared_examples_for 'having one or more required & present attributes (invalid if missing)' do |attribute_name_array|
+  attribute_name_array.each do |member_name|
+    it "is has a ##{member_name}" do
+      expect(subject).to respond_to(member_name)
+      expect(subject.send(member_name)).to be_present
     end
-    it "returns an instance of #{attribute_name.to_s.camelize}" do
-      expect(subject.send(attribute_name)).to be_an_instance_of(attribute_name.to_s.camelize.constantize)
+    it "is not valid without ##{member_name}" do
+      subject.send("#{member_name}=", nil)
+      expect(subject).not_to be_valid
     end
   end
 end
 
-shared_examples_for 'belonging to a list of models' do |attribute_name_array|
+shared_examples_for 'having one or more required associations' do |attribute_name_array|
+  it_behaves_like 'responding to a list of methods', attribute_name_array
+
   attribute_name_array.each do |attribute_name|
-    it "it belongs_to :#{attribute_name}" do
-      expect(subject.send(attribute_name.to_sym)).to be_a(attribute_name.to_s.camelize.constantize)
+    it 'returns some kind of GogglesDb::ApplicationRecord' do
+      expect(subject.send(attribute_name)).to be_a_kind_of(GogglesDb::ApplicationRecord)
     end
   end
 end
