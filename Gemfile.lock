@@ -4,12 +4,18 @@ PATH
     goggles_db (0.1.3)
       acts-as-taggable-on
       acts_as_votable
+      carrierwave
+      cities
+      countries
+      country_select
       devise
       devise-i18n
       draper
       haml
       jwt
+      mini_magick
       rails (~> 6, >= 6.0.3.2)
+      tzinfo (~> 1.2, >= 1.2.2)
 
 GEM
   remote: https://rubygems.org/
@@ -90,8 +96,24 @@ GEM
     bullet (6.1.0)
       activesupport (>= 3.0.0)
       uniform_notifier (~> 1.11)
+    carrierwave (2.1.0)
+      activemodel (>= 5.0.0)
+      activesupport (>= 5.0.0)
+      addressable (~> 2.6)
+      image_processing (~> 1.1)
+      mimemagic (>= 0.3.0)
+      mini_mime (>= 0.1.3)
+    cities (0.3.1)
+      multi_json (~> 1.8)
     coderay (1.1.3)
     concurrent-ruby (1.1.7)
+    countries (3.0.1)
+      i18n_data (~> 0.10.0)
+      sixarm_ruby_unaccent (~> 1.1)
+      unicode_utils (~> 1.4)
+    country_select (4.0.0)
+      countries (~> 3.0)
+      sort_alphabetical (~> 1.0)
     crass (1.0.6)
     debug_inspector (0.0.3)
     devise (4.7.2)
@@ -150,6 +172,10 @@ GEM
       tilt
     i18n (1.8.5)
       concurrent-ruby (~> 1.0)
+    i18n_data (0.10.0)
+    image_processing (1.11.0)
+      mini_magick (>= 4.9.5, < 5)
+      ruby-vips (>= 2.0.17, < 3)
     jwt (2.2.2)
     launchy (2.5.0)
       addressable (~> 2.7)
@@ -168,12 +194,14 @@ GEM
       mimemagic (~> 0.3.2)
     method_source (1.0.0)
     mimemagic (0.3.5)
+    mini_magick (4.10.1)
     mini_mime (1.0.2)
     mini_portile2 (2.4.0)
     minitest (5.14.2)
+    multi_json (1.15.0)
     mysql2 (0.5.3)
     nenv (0.3.0)
-    nio4r (2.5.3)
+    nio4r (2.5.4)
     nokogiri (1.10.10)
       mini_portile2 (~> 2.4.0)
     notiffany (0.1.3)
@@ -267,7 +295,12 @@ GEM
     rubocop-rspec (1.43.2)
       rubocop (~> 0.87)
     ruby-progressbar (1.10.1)
+    ruby-vips (2.0.17)
+      ffi (~> 1.9)
     shellany (0.0.1)
+    sixarm_ruby_unaccent (1.2.0)
+    sort_alphabetical (1.1.0)
+      unicode_utils (>= 1.2.2)
     spring (2.1.1)
     spring-commands-rspec (1.0.4)
       spring (>= 0.9.1)
@@ -279,7 +312,7 @@ GEM
     sprockets (4.0.2)
       concurrent-ruby (~> 1.0)
       rack (> 1, < 3)
-    sprockets-rails (3.2.1)
+    sprockets-rails (3.2.2)
       actionpack (>= 4.0)
       activesupport (>= 4.0)
       sprockets (>= 3.0.0)
@@ -290,6 +323,7 @@ GEM
     tzinfo (1.2.7)
       thread_safe (~> 0.1)
     unicode-display_width (1.7.0)
+    unicode_utils (1.4.0)
     uniform_notifier (1.13.0)
     warden (1.2.9)
       rack (>= 2.0.9)

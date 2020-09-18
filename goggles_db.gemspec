@@ -31,12 +31,29 @@ Gem::Specification.new do |spec|
 
   spec.add_dependency 'acts-as-taggable-on'
   spec.add_dependency 'acts_as_votable'
+  spec.add_dependency 'carrierwave' # requires mini_magick for image manipulation
+
+  # Countries & cities lookup:
+  spec.add_dependency 'cities'    # https://github.com/joecorcoran/cities
+  spec.add_dependency 'countries' # https://github.com/hexorx/countries
+  # == Usage examples: ==
+  # > c = ISO3166::Country.new('US')
+  # > Cities.cities_in_country('US').select{ |city| city =~ /miami/ }.count
+  # => 28
+  # > Cities.cities_in_country('US').select{ |city| city =~ /miami/ }["miamiville"]
+  # => #<Cities::City:0x0000000b0efeb0 @data={"city"=>"miamiville", "accentcity"=>"Miamiville", "region"=>"OH", [...]
+  # > c.subdivisions["OH"]
+  #  => #<struct ISO3166::Subdivision name="Ohio", code=nil, unofficial_names="Ohio", geo={"latitude"=> [...]
+  spec.add_dependency 'country_select'
+
   spec.add_dependency 'devise'
   spec.add_dependency 'devise-i18n'
   spec.add_dependency 'draper'
   spec.add_dependency 'haml'
   spec.add_dependency 'jwt'
+  spec.add_dependency 'tzinfo', '~> 1.2', '>= 1.2.2'
 
   spec.add_development_dependency 'factory_bot_rails'
+  spec.add_dependency 'mini_magick'
   spec.add_development_dependency 'mysql2'
 end
