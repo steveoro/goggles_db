@@ -34,6 +34,7 @@ module GogglesDb
         %i[code federation_code description short_name group_name age_begin age_end
            eventable?]
       )
+
       # Presence of fields & requiredness:
       it_behaves_like(
         'having one or more required & present attributes (invalid if missing)',

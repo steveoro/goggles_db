@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 FactoryBot.define do
   factory :season, class: 'GogglesDb::Season' do
     edition { ((rand * 1000) % 1000).to_i } # mediumint(9), using a sequence yields validation errors

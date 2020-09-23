@@ -1,9 +1,8 @@
 FactoryBot.define do
-  factory :team_affiliation, class: 'GogglesDb::TeamAffiliation' do
-    team
-    season
-    name { team.name }
-    random_badge_code
+  factory :city, class: 'GogglesDb::City' do
+    name          { FFaker::Address.city }
+    country       { FFaker::Address.country }
+    country_code  { FFaker::Address.country_code }
 
     before(:create) do |built_instance|
       if built_instance.invalid?

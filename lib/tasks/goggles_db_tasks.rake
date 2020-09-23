@@ -7,7 +7,7 @@ namespace :normalize do
   desc "Normalizes all country codes & names comparing them with the values supplied by the 'coutries' gem"
   task countries: :environment do
     puts "\r\n*** Normalizing Countries for Cities ***"
-    unknown_codes = []
+    unknown_names = []
     updated_countries = 0
 
     GogglesDb::City.select(:country, :country_code).distinct(:country).each do |city_model|
@@ -26,13 +26,16 @@ namespace :normalize do
         $stdout.write("\033[1;33;32mOK\033[0m →  (#{normalized_country.alpha3})\r\n")
         updated_countries += GogglesDb::City.where(country: city_model.country).update_all(
           country_code: normalized_country.alpha3,
-          country: normalized_country.unofficial_names.first,
+          country: normalized_country.unofficial_names.first
         )
       else
         $stdout.write("'#{city_model.country_code}' \033[1;33;31m× UNKNOWN ×\033[0m\r\n")
+        unknown_names << city_model.country
       end
     end
 
-    puts "\r\nTotal row updates: #{updated_countries}\r\nDone."
+    puts "\r\nTotal row updates: #{updated_countries}"
+    $stdout.write("\033[1;33;31mTO BE FIXED:\033[0m\r\n'#{unknown_names.join("\r\n")}'\r\n") unless unknown_names.empty?
+    puts "\r\nDone."
   end
 end

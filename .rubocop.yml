@@ -49,6 +49,7 @@ Metrics/ModuleLength:
 
 Style/Documentation:
   Exclude:
+    - 'db/migrate/**/*'
     - 'spec/**/*'
     - 'test/**/*'
     - 'app/controllers/goggles_db/application_controller.rb'

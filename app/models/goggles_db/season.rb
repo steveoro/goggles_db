@@ -48,11 +48,11 @@ module GogglesDb
 
     # Filtering scopes:
     scope :for_season_type, ->(season_type) { where(season_type_id: season_type.id) }
-    # TODO
-    # scope :has_results,     -> { where('exists(select 1 from meetings where are_results_acquired)') }
     scope :ongoing,      -> { where('end_date IS NOT NULL AND end_date >= curdate()') }
     scope :ended,        -> { where('end_date IS NOT NULL AND end_date < curdate()') }
     scope :ended_before, ->(end_date) { where('end_date IS NOT NULL AND end_date < ?', end_date) }
+    # TODO
+    # scope :has_results,     -> { where('exists(select 1 from meetings where are_results_acquired)') }
 
     def self.in_range(from_date, to_date)
       where('begin_date IS NOT NULL AND begin_date <= ?', to_date)

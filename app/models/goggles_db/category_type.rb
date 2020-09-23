@@ -29,10 +29,10 @@ module GogglesDb
     alias_attribute :undivided?, :is_undivided
 
     # Sorting scopes:
-    scope :by_age,    ->(dir = 'ASC') { order("age_begin #{dir}") }
+    scope :by_age, ->(dir = 'ASC') { order("age_begin #{dir}") }
 
     # Filtering scopes:
-    scope :eventable, -> { where(is_out_of_race: false) }
+    scope :eventable,         -> { where(is_out_of_race: false) }
     scope :only_relays,       -> { where(is_a_relay: true) }
     scope :only_individuals,  -> { where(is_a_relay: false) }
     scope :only_undivided,    -> { where(is_undivided: true) }
