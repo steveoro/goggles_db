@@ -79,5 +79,14 @@ module GogglesDb
     def started?(check_date = Date.today)
       begin_date ? begin_date <= check_date : false
     end
+
+    # Override: includes all 1st-level associations into the typical to_json output.
+    def to_json(options = nil)
+      attributes.merge(
+        'season_type' => season_type.attributes,
+        'edition_type' => edition_type.attributes,
+        'timing_type' => timing_type.attributes
+      ).to_json(options)
+    end
   end
 end

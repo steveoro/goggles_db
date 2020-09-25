@@ -3,6 +3,7 @@
 require 'rails_helper'
 require 'support/shared_method_existance_examples'
 require 'support/shared_filtering_scopes_examples'
+require 'support/shared_to_json_examples'
 
 module GogglesDb
   RSpec.describe Season, type: :model do
@@ -176,5 +177,15 @@ module GogglesDb
     end
     #-- ------------------------------------------------------------------------
     #++
+
+    describe '#to_json' do
+      subject { FactoryBot.create(:season) }
+
+      # Required associations:
+      it_behaves_like(
+        '#to_json when called on a valid model instance with',
+        %w[season_type edition_type timing_type]
+      )
+    end
   end
 end
