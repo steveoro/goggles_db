@@ -49,5 +49,26 @@ module GogglesDb
     # scope :has_results,     -> { where('EXISTS(SELECT 1 from meeting_individual_results where not is_disqualified and team_id = teams.id)') }
     # scope :has_results_min, ->(how_many = 20)
     # { where(['(SELECT count(id) from meeting_individual_results where not is_disqualified and team_id = teams.id) > ?', how_many]) }
+    #-- ------------------------------------------------------------------------
+    #++
+
+    # Instance scope helper for recent badges, given a list of years
+    def recent_badges(year_list = [Time.zone.today.year - 1, Time.zone.today.year])
+      badges.for_years(*year_list)
+    end
+
+    # Instance scope helper for recent team_affiliations, given a list of years
+    def recent_affiliations(year_list = [Time.zone.today.year - 1, Time.zone.today.year])
+      team_affiliations.for_years(*year_list)
+    end
+
+    # Override: includes *most* of its 1st-level associations into the typical to_json output.
+    def to_json(options = nil)
+      attributes.merge(
+        'city' => city&.attributes, # (optional)
+        'badges' => recent_badges.map(&:attributes),
+        'team_affiliations' => recent_affiliations.map(&:attributes)
+      ).to_json(options)
+    end
   end
 end

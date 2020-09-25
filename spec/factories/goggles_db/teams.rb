@@ -14,5 +14,17 @@ FactoryBot.define do
         puts built_instance.inspect
       end
     end
+
+    # This will also create the proper team_affiliations:
+    factory :team_with_badges do
+      after(:create) do |created_instance, _evaluator|
+        # Create 2 badges x 2 affiliations:
+        FactoryBot.create_list(:affiliation_with_badges, 2, team: created_instance)
+        unless created_instance.badges.count >= 4 &&
+               created_instance.team_affiliations.count >= 2
+          raise "#{created_instance.class} is missing the minimum number of children entites!"
+        end
+      end
+    end
   end
 end

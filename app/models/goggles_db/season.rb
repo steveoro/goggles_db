@@ -20,19 +20,20 @@ module GogglesDb
     has_one :federation_type, through: :season_type
 
     has_many :category_types
+    has_many :badges
+    has_many :swimmers, through: :badges
+    has_many :team_affiliations
+    has_many :teams, through: :team_affiliations
+
     # has_many :meetings
-    # has_many :goggle_cup_definitions
-    # has_many :badges
-    # has_many :team_affiliations
-    # has_many :meeting_team_scores
-    # has_many :teams,                      through: :team_affiliations
-    # has_many :swimmers,                   through: :badges
-    # has_many :meeting_individual_results, through: :meetings
-    # has_many :computed_season_ranking
-    # has_many :time_standard
-    #
     # has_many :meeting_sessions, through: :meetings
     # has_many :meeting_events, through: :meeting_sessions
+    # has_many :meeting_individual_results, through: :meetings
+    # has_many :meeting_team_scores
+    #
+    # has_many :computed_season_ranking
+    # has_many :time_standard
+    # has_many :goggle_cup_definitions
 
     validates :header_year, presence: { length: { within: 1..9 }, allow_nil: false }
     validates :edition,     presence: { length: { within: 1..3 }, allow_nil: false }

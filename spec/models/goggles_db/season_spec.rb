@@ -2,6 +2,7 @@
 
 require 'rails_helper'
 require 'support/shared_method_existance_examples'
+require 'support/shared_filtering_scopes_examples'
 
 module GogglesDb
   RSpec.describe Season, type: :model do
@@ -103,16 +104,8 @@ module GogglesDb
     #++
 
     # Scopes & "virtual" scopes:
-    let(:season_type) { SeasonType.only_masters.sample }
-
     describe 'self.for_season_type' do
-      context 'for a SeasonType with existing Seasons,' do
-        let(:result) { subject.class.for_season_type(season_type) }
-        it 'is a list of Seasons' do
-          expect(result).to be_a(ActiveRecord::Relation)
-          expect(result).to all be_a(Season)
-        end
-      end
+      it_behaves_like('filtering scope for_season_type', Season)
     end
 
     describe 'self.ongoing' do

@@ -5,12 +5,12 @@ FactoryBot.define do
 
   factory :badge, class: 'GogglesDb::Badge' do
     random_badge_code
-    category_type
-    season          { category_type.season }
-    number          { FFaker.numerify('#########') }
-    team
     swimmer
-    entry_time_type { GogglesDb::EntryTimeType.send(%w[manual personal gogglecup prec_year last_race].sample) }
+    category_type
+    team_affiliation { FactoryBot.create(:team_affiliation, season: category_type.season) }
+    season           { category_type.season }
+    team             { team_affiliation.team }
+    entry_time_type  { GogglesDb::EntryTimeType.send(%w[manual personal gogglecup prec_year last_race].sample) }
 
     before(:create) do |built_instance|
       if built_instance.invalid?

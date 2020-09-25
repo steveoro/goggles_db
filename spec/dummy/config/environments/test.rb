@@ -48,4 +48,19 @@ Rails.application.configure do
 
   # Raises error for missing translations.
   # config.action_view.raise_on_missing_translations = true
+
+  # ============================================================================
+  # Bullet gem specific configuration:
+  # ============================================================================
+  # (see https://github.com/flyerhzm/bullet)
+  config.after_initialize do
+    Bullet.enable = true
+    Bullet.bullet_logger = true
+    Bullet.raise = true # raise an error if n+1 query occurs
+    Bullet.stacktrace_includes = ['goggles_db']
+
+    # [Steve A., 20181103] Disable checks than do not yield a meaningful stacktrace as of this version:
+    # Detect eager-loaded associations which are not used
+    Bullet.unused_eager_loading_enable = false
+  end
 end

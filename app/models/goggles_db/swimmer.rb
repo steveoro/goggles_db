@@ -25,5 +25,15 @@ module GogglesDb
     validates :year_of_birth, presence: true, length: { within: 2..4, allow_nil: false }
 
     delegate :male?, :female?, :intermixed?, to: :gender_type
+    #-- ------------------------------------------------------------------------
+    #++
+
+    # Override: includes all 1st-level associations into the typical to_json output.
+    def to_json(options = nil)
+      attributes.merge(
+        'associated_user' => associated_user&.attributes,
+        'gender_type' => gender_type.attributes
+      ).to_json(options)
+    end
   end
 end

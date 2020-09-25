@@ -2,6 +2,9 @@
 
 require 'rails_helper'
 require 'support/shared_method_existance_examples'
+require 'support/shared_sorting_scopes_examples'
+require 'support/shared_filtering_scopes_examples'
+require 'support/shared_to_json_examples'
 
 module GogglesDb
   RSpec.describe Badge, type: :model do
@@ -14,19 +17,23 @@ module GogglesDb
 
       it_behaves_like(
         'having one or more required associations',
-        %i[season swimmer team category_type entry_time_type]
+        %i[swimmer team_affiliation season team category_type entry_time_type
+           season_type gender_type]
       )
-      it 'has a valid Season' do
-        expect(subject.season).to be_a(Season).and be_valid
-      end
-      it 'has a valid CategoryType' do
-        expect(subject.category_type).to be_a(CategoryType).and be_valid
-      end
       it 'has a valid Swimmer' do
         expect(subject.swimmer).to be_a(Swimmer).and be_valid
       end
+      it 'has a valid TeamAffiliation' do
+        expect(subject.team_affiliation).to be_a(TeamAffiliation).and be_valid
+      end
+      it 'has a valid Season' do
+        expect(subject.season).to be_a(Season).and be_valid
+      end
       it 'has a valid Team' do
         expect(subject.team).to be_a(Team).and be_valid
+      end
+      it 'has a valid CategoryType' do
+        expect(subject.category_type).to be_a(CategoryType).and be_valid
       end
       it 'has a valid EntryTimeType' do
         expect(subject.entry_time_type).to be_a(EntryTimeType).and be_valid
@@ -34,7 +41,9 @@ module GogglesDb
 
       it_behaves_like(
         'responding to a list of methods',
-        %i[season_type gender_type]
+        %i[header_year
+           season_type gender_type
+           to_json]
       )
 
       # Presence of fields & requiredness:
@@ -48,45 +57,50 @@ module GogglesDb
 
     # Sorting scopes:
     describe 'self.by_season' do
-      let(:result) { subject.class.by_season }
-      it 'is a Badge relation' do
-        expect(result).to be_a(ActiveRecord::Relation)
-        expect(result).to all be_a(Badge)
-      end
-      # Checks just the boundaries with a random middle point in between:
-      it 'is ordered' do
-        expect(result.first.season.begin_date).to be <= result.sample.season.begin_date
-        expect(result.sample.season.begin_date).to be <= result.last.season.begin_date
-      end
+      it_behaves_like('sorting scope by_season', Badge)
     end
-
     describe 'self.by_swimmer' do
-      let(:result) { subject.class.by_swimmer }
-      it 'is a Badge relation' do
-        expect(result).to be_a(ActiveRecord::Relation)
-        expect(result).to all be_a(Badge)
-      end
-      it 'is ordered' do
-        expect(result.first.swimmer.complete_name).to be <= result.sample.swimmer.complete_name
-        expect(result.sample.swimmer.complete_name).to be <= result.last.swimmer.complete_name
-      end
+      it_behaves_like('sorting scope by_swimmer', Badge)
+    end
+    describe 'self.by_category_type' do
+      it_behaves_like('sorting scope by_category_type', Badge)
     end
 
-    describe 'self.by_category_type' do
-      let(:result) { subject.class.by_category_type }
-      it 'is a Badge relation' do
-        expect(result).to be_a(ActiveRecord::Relation)
-        expect(result).to all be_a(Badge)
-      end
-      it 'is ordered' do
-        expect(result.first.category_type.code).to be <= result.sample.category_type.code
-        expect(result.sample.category_type.code).to be <= result.last.category_type.code
-      end
+    # Filtering scopes:
+    describe 'self.for_category_type' do
+      it_behaves_like('filtering scope for_<ANY_ENTITY_NAME>', Badge, 'category_type')
+    end
+    describe 'self.for_gender_type' do
+      it_behaves_like('filtering scope for_gender_type', Badge)
+    end
+    describe 'self.for_season_type' do
+      it_behaves_like('filtering scope for_season_type', Badge)
+    end
+    describe 'self.for_season' do
+      it_behaves_like('filtering scope for_<ANY_ENTITY_NAME>', Badge, 'season')
+    end
+    describe 'self.for_team' do
+      it_behaves_like('filtering scope for_<ANY_ENTITY_NAME>', Badge, 'team')
+    end
+    describe 'self.for_swimmer' do
+      it_behaves_like('filtering scope for_<ANY_ENTITY_NAME>', Badge, 'swimmer')
+    end
+    describe 'self.for_years' do
+      it_behaves_like('filtering scope for_years', Badge)
+    end
+    describe 'self.for_year' do
+      it_behaves_like('filtering scope for_year', Badge)
     end
     #-- ------------------------------------------------------------------------
     #++
 
-    # Filtering scopes:
-    # TODO
+    describe '#to_json' do
+      subject { FactoryBot.create(:badge) }
+
+      it_behaves_like(
+        '#to_json when called on a valid model instance with',
+        %w[swimmer team_affiliation season team category_type entry_time_type]
+      )
+    end
   end
 end

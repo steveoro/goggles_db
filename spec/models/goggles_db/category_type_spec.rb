@@ -2,6 +2,7 @@
 
 require 'rails_helper'
 require 'support/shared_method_existance_examples'
+require 'support/shared_filtering_scopes_examples'
 
 module GogglesDb
   RSpec.describe CategoryType, type: :model do
@@ -102,32 +103,10 @@ module GogglesDb
     end
 
     describe 'self.for_season_type' do
-      context 'given the chosen SeasonType has any categories defined for it,' do
-        let(:chosen_season_type) { SeasonType.only_masters.sample }
-        let(:result) { subject.class.for_season_type(chosen_season_type) }
-        it 'is a relation containing only category types belonging to the specified season type' do
-          expect(result).to be_a(ActiveRecord::Relation)
-          expect(result).to all be_a(CategoryType)
-          expect(result.map(&:season_type).uniq).to all eq(chosen_season_type)
-        end
-      end
+      it_behaves_like('filtering scope for_season_type', CategoryType)
     end
-
     describe 'self.for_season' do
-      context 'given the chosen Season has any categories defined for it,' do
-        let(:chosen_season) do
-          # Find a Season containing Categories for sure, by starting from the Categories themselves:
-          row = CategoryType.includes(:season).joins(:season).select(:season_id).distinct.sample.season
-          expect(row.category_types.count).to be_positive
-          row
-        end
-        let(:result) { subject.class.for_season(chosen_season) }
-        it 'is a relation containing only category types belonging to the specified season' do
-          expect(result).to be_a(ActiveRecord::Relation)
-          expect(result).to all be_a(CategoryType)
-          expect(result.map(&:season_id).uniq).to all eq(chosen_season.id)
-        end
-      end
+      it_behaves_like('filtering scope for_<ANY_ENTITY_NAME>', CategoryType, 'season')
     end
     #-- ------------------------------------------------------------------------
     #++
