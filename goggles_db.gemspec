@@ -27,7 +27,8 @@ Gem::Specification.new do |spec|
 
   spec.files = Dir['{app,config,db,lib}/**/*', 'LICENSE', 'Rakefile', 'README.md']
 
-  spec.add_dependency 'rails', '~> 6', '>= 6.0.3.2'
+  # Base Rails dependancy:
+  spec.add_dependency 'rails', '~> 6', '>= 6.0.3.3'
 
   spec.add_dependency 'acts-as-taggable-on'
   spec.add_dependency 'acts_as_votable'
@@ -37,6 +38,7 @@ Gem::Specification.new do |spec|
   spec.add_dependency 'cities'    # https://github.com/joecorcoran/cities
   spec.add_dependency 'countries' # https://github.com/hexorx/countries
   spec.add_dependency 'country_select'
+
   spec.add_dependency 'devise'
   spec.add_dependency 'devise-i18n'
   spec.add_dependency 'draper'
