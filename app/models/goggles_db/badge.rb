@@ -66,6 +66,7 @@ module GogglesDb
     def to_json(options = nil)
       attributes.merge(
         'swimmer' => swimmer.attributes,
+        'gender_type' => swimmer.gender_type.attributes,
         'team_affiliation' => team_affiliation.attributes,
         'season' => season.attributes,
         'team' => team.attributes,

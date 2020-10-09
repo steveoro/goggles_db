@@ -4,9 +4,13 @@ FactoryBot.define do
     name          { "#{city.name} Swimming Club ASD" }
     editable_name { name }
     address       { FFaker::Address.street_address }
+    zip           { format('%<number>06d', number: (rand * 100_000).to_i) }
     phone_mobile  { FFaker::PhoneNumber.phone_number }
     phone_number  { FFaker::PhoneNumber.phone_number }
     e_mail        { FFaker::Internet.email }
+    contact_name  { FFaker::Name.name }
+    notes         { FFaker::BaconIpsum.phrase }
+    home_page_url { FFaker::Internet.http_url }
 
     before(:create) do |built_instance|
       if built_instance.invalid?

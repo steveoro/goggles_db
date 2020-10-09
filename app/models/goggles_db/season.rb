@@ -85,7 +85,8 @@ module GogglesDb
       attributes.merge(
         'season_type' => season_type.attributes,
         'edition_type' => edition_type.attributes,
-        'timing_type' => timing_type.attributes
+        'timing_type' => timing_type.attributes,
+        'category_types' => category_types.map(&:attributes)
       ).to_json(options)
     end
   end

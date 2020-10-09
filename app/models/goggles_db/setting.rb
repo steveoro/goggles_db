@@ -8,7 +8,7 @@ module GogglesDb
   #   - author:   Steve A.
   #
   class Setting < RailsSettings::Base
-    cache_prefix { 'v1' }
+    cache_prefix { 'v7' }
 
     # Define your fields
     # field :host, type: :string, default: "http://localhost:3000"
