@@ -1,0 +1,50 @@
+version: v1.0
+name: Test Goggles API
+agent:
+  machine:
+    type: e1-standard-2
+    os_image: ubuntu1804
+fail_fast:
+  stop:
+    when: 'true'
+auto_cancel:
+  running:
+    when: 'true'
+blocks:
+  - name: App build
+    task:
+      env_vars:
+        - name: DATABASE_NAME
+          value: goggles_test
+        - name: RAILS_ENV
+          value: test
+        - name: DATABASE_HOST
+          value: 0.0.0.0
+        - name: DATABASE_PORT
+          value: '3606'
+        - name: MYSQL_ROOT_PASSWORD
+          value: semaphoredb
+      jobs:
+        - name: Setup
+          commands:
+            - checkout
+            - sem-service start mysql --username=root --password=semaphoredb
+            - sem-version ruby 2.6.3
+            - sem-version node 10.1
+            - cache restore
+            - cd spec/dummy/db
+            - mkdir dump
+            - cd dump
+            - 'curl -L -o seed.sql.bz2 "https://github.com/steveoro/goggles_admin/raw/master/db/dump/development.sql.bz2"'
+            - bunzip2 -ck seed.sql.bz2 > seed.sql
+            - mysql --user=root --password=semaphoredb --execute="drop database if exists goggles_test;"
+            - mysql --user=root --password=semaphoredb --execute="create database goggles_test;"
+            - mysql --user=root --password=semaphoredb --database=goggles_test --execute="\. spec/dummy/db/dump/seed.sql"
+            - rm spec/dummy/db/dump/seed.sql
+            - cd ../../../..
+            - cp spec/dummy/config/database.semaphore.yml spec/dummy/config/database.yml
+            - mkdir tmp
+            - gem update --system
+            - gem i bundler
+            - bundle install --path vendor/bundle
+            - cache store
