@@ -69,7 +69,7 @@ blocks:
           - sem-service start mysql
           # Password-less access for CI:
           - cp spec/dummy/config/database.semaphore_ci.yml spec/dummy/config/database.yml
-          - bundle exec rake db:setup
+          - bundle exec rake db:create
           - 'curl -L -o seed.sql.bz2 "https://github.com/steveoro/goggles_admin/raw/master/db/dump/development.sql.bz2"'
           - bunzip2 -ck seed.sql.bz2 > seed.sql
           # - mysql --user=root --password=semaphoredb --execute="drop database if exists goggles_test;"
