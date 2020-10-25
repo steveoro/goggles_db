@@ -30,7 +30,7 @@ global_job_config:
       - cache restore
       # Set Ruby version:
       - sem-version ruby 2.6.3
-      - bundle install --jobs 4
+      - bundle install --jobs 2 --path vendor/bundle
       # - bundle install --deployment --jobs 4 --path vendor/bundle
 
 # Blocks are the heart of a pipeline and are executed sequentially.
