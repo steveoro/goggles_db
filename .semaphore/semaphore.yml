@@ -27,7 +27,7 @@ global_job_config:
       - checkout
       # Restore dependencies from cache.
       # Read about caching: https://docs.semaphoreci.com/article/149-caching
-      - cache restore
+      # - cache restore
       # Set Ruby version:
       - sem-version ruby 2.6.3
       - bundle install --deployment --jobs 4 --path vendor/bundle
