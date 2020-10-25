@@ -4,7 +4,7 @@ module GogglesDb
   #
   # = CategoryType model
   #
-  #   - version:  7.000
+  #   - version:  7.010
   #   - author:   Steve A.
   #
   class CategoryType < ApplicationRecord
@@ -29,7 +29,7 @@ module GogglesDb
     alias_attribute :undivided?, :is_undivided
 
     # Sorting scopes:
-    scope :by_age, ->(dir = 'ASC') { order("age_begin #{dir}") }
+    scope :by_age, ->(dir = 'ASC') { order(dir == 'ASC' ? 'age_begin ASC' : 'age_begin DESC') }
 
     # Filtering scopes:
     scope :eventable,         -> { where(is_out_of_race: false) }

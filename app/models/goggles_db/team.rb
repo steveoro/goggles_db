@@ -4,7 +4,7 @@ module GogglesDb
   #
   # = Team model
   #
-  #   - version:  7.000
+  #   - version:  7.010
   #   - author:   Steve A.
   #
   class Team < ApplicationRecord
@@ -40,7 +40,7 @@ module GogglesDb
     validates :home_page_url, length: { maximum: 150 }
 
     # Sorting scopes:
-    scope :by_name, ->(dir = 'ASC') { order("teams.name #{dir}") }
+    scope :by_name, ->(dir = 'ASC') { order(dir == 'ASC' ? 'teams.name ASC' : 'teams.name DESC') }
     # TODO: unused yet
     # scope :by_city, ->(dir = 'ASC') { includes(:city).joins(:city).order("cities.name #{dir}, teams.name #{dir}") }
     # scope :by_user, ->(dir = 'ASC') { order("users.name #{dir}, teams.name #{dir}") }

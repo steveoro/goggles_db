@@ -4,7 +4,7 @@ module GogglesDb
   #
   # = Badge model
   #
-  #   - version:  7.005
+  #   - version:  7.010
   #   - author:   Steve A.
   #
   class Badge < ApplicationRecord
@@ -40,9 +40,9 @@ module GogglesDb
     delegate :header_year, to: :season
 
     # Sorting scopes:
-    scope :by_season,        ->(dir = 'ASC')  { joins(:season).order("seasons.begin_date #{dir}") }
-    scope :by_swimmer,       ->(dir = 'ASC')  { joins(:swimmer).order("swimmers.complete_name #{dir}") }
-    scope :by_category_type, ->(dir = 'ASC')  { joins(:category_type).order("category_types.code #{dir}") }
+    scope :by_season,        ->(dir = 'ASC')  { joins(:season).order(dir == 'ASC' ? 'seasons.begin_date ASC' : 'seasons.begin_date DESC') }
+    scope :by_swimmer,       ->(dir = 'ASC')  { joins(:swimmer).order(dir == 'ASC' ? 'swimmers.complete_name ASC' : 'swimmers.complete_name DESC') }
+    scope :by_category_type, ->(dir = 'ASC')  { joins(:category_type).order(dir == 'ASC' ? 'category_types.code ASC' : 'category_types.code DESC') }
     # TODO: unused yet
     # scope :by_team,          ->(dir = 'ASC')  { joins(:team).order("teams.name #{dir}") }
     # scope :by_user,          ->(dir)  { joins(:user).order("users.name #{dir}") }

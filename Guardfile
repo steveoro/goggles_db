@@ -116,3 +116,10 @@ guard 'spring', bundler: true do
   watch(%r{^spec/(support|factories)/})
   watch(%r{^spec/factory.rb})
 end
+
+guard :brakeman, cmd: 'bunle exec brakeman', run_on_start: true do
+  watch(%r{^app/.+\.(erb|haml|rhtml|rb)$})
+  watch(%r{^config/.+\.rb$})
+  watch(%r{^lib/.+\.rb$})
+  watch('Gemfile')
+end

@@ -4,7 +4,7 @@ module GogglesDb
   #
   # = Season model
   #
-  #   - version:  7.000
+  #   - version:  7.010
   #   - author:   Steve A.
   #
   class Season < ApplicationRecord
@@ -42,8 +42,8 @@ module GogglesDb
     validates :end_date,    presence: true
 
     # Sorting scopes:
-    scope :by_begin_date,  ->(dir = 'ASC') { order("seasons.begin_date #{dir}") }
-    scope :by_end_date,    ->(dir = 'ASC') { order("seasons.end_date #{dir}") }
+    scope :by_begin_date,  ->(dir = 'ASC') { order(dir == 'ASC' ? 'seasons.begin_date ASC' : 'seasons.begin_date DESC') }
+    scope :by_end_date,    ->(dir = 'ASC') { order(dir == 'ASC' ? 'seasons.end_date ASC' : 'seasons.end_date DESC') }
     # TODO: unused yet
     # scope :by_season_type, ->(dir) { order("season_types.code #{dir}, seasons.begin_date #{dir}") }
 
