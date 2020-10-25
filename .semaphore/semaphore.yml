@@ -67,6 +67,8 @@ blocks:
       prologue:
         commands:
           - sem-service start mysql
+          # Password-less access for CI:
+          - cp spec/dummy/config/database.semaphore_ci.yml spec/dummy/config/database.yml
           - bundle exec rake db:setup
           - 'curl -L -o seed.sql.bz2 "https://github.com/steveoro/goggles_admin/raw/master/db/dump/development.sql.bz2"'
           - bunzip2 -ck seed.sql.bz2 > seed.sql
@@ -75,9 +77,6 @@ blocks:
           # - mysql --user=root --password=semaphoredb --database=goggles_test --execute="\. seed.sql"
           - mysql --database=goggles_test --execute="\. seed.sql"
           - rm seed.sql
-          # - cd ../../../..
-          # Password-less access for CI:
-          - cp spec/dummy/config/database.semaphore_ci.yml spec/dummy/config/database.yml
 
       jobs:
       - name: RSpec - models
