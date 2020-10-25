@@ -22,6 +22,7 @@ AllCops:
 Gemspec/RequiredRubyVersion:
   Exclude:
     - 'goggles_db.gemspec'
+    - 'vendor/*'
 
 # Cop supports --auto-correct.
 # Configuration parameters: AutoCorrect, AllowHeredoc, AllowURI, URISchemes, IgnoreCopDirectives, IgnoredPatterns.
