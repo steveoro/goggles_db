@@ -105,7 +105,7 @@ guard :rspec, rspec_options do
   # watch(rails.layouts)       { |m| rspec.spec.call("features/#{m[1]}") }
 end
 
-guard :rubocop, cmd: 'rubocop' do
+guard :rubocop, cmd: 'spring rubocop' do
   watch(/.+\.rb$/)
   watch(%r{(?:.+/)?\.rubocop(?:_todo)?\.yml$}) { |m| File.dirname(m[0]) }
 end
@@ -117,7 +117,7 @@ guard 'spring', bundler: true do
   watch(%r{^spec/factory.rb})
 end
 
-guard :brakeman, cmd: 'bunle exec brakeman', run_on_start: true do
+guard :brakeman, cmd: 'brakeman -n', run_on_start: true do
   watch(%r{^app/.+\.(erb|haml|rhtml|rb)$})
   watch(%r{^config/.+\.rb$})
   watch(%r{^lib/.+\.rb$})
