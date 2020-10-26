@@ -10,25 +10,18 @@ global_job_config:
       - checkout
       - cache restore
       - sem-version ruby 2.6.3
+      - sem-service start mysql
+      - cp spec/dummy/config/database.semaphore_2.yml spec/dummy/config/database.yml
+      - 'curl -L -o spec/dummy/db/dump/test.sql.bz2 "https://github.com/steveoro/goggles_admin/raw/master/db/dump/development.sql.bz2"'
+      - gem i bundler
+      - bundle install
+      - mkdir tmp
+      - cache store
+      - 'RAILS_ENV=test bin/rails app:db:rebuild from=test to=test'
+      - 'RAILS_ENV=test bin/rails db:migrate'
 blocks:
-  - name: Setup
-    dependencies: []
-    task:
-      jobs:
-        - name: Setup + bundle
-          commands:
-            - sem-service start mysql
-            - cp spec/dummy/config/database.semaphore_2.yml spec/dummy/config/database.yml
-            - 'curl -L -o spec/dummy/db/dump/test.sql.bz2 "https://github.com/steveoro/goggles_admin/raw/master/db/dump/development.sql.bz2"'
-            - gem i bundler
-            - bundle install
-            - mkdir tmp
-            - cache store
-            - 'RAILS_ENV=test bin/rails app:db:rebuild from=test to=test'
-            - 'RAILS_ENV=test bin/rails db:migrate'
   - name: Code scanning
-    dependencies:
-      - Setup
+    dependencies: []
     task:
       jobs:
         - name: check style + security
