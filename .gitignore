@@ -15,7 +15,8 @@ spec/dummy/tmp/
 !/storage/.keep
 pkg/
 spec/dummy/storage/
-
+spec/dummy/db/dump/*.sql
+spec/dummy/db/dump/*.bz2
 /public/assets
 
 # Ignore Byebug command history file.
