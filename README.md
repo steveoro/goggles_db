@@ -1,6 +1,9 @@
 # goggles_db
 DB structure and base Rails models for the main Goggles application.
 
+[![Build Status](https://semaphoreci.com/api/v1/steveoro/goggles_db/branches/master/shields_badge.svg)](https://semaphoreci.com/steveoro/goggles_db)
+
+
 ## Usage
 TODO
 
