@@ -10,7 +10,6 @@ global_job_config:
       - checkout
       - cache restore
       - sem-version ruby 2.6.3
-      - bundle install --jobs 2 --path vendor/bundle
 blocks:
   - name: Setup
     dependencies: []
@@ -18,9 +17,8 @@ blocks:
       jobs:
         - name: Setup + bundle
           commands:
-            - sem-version ruby 2.6.3
             - sem-service start mysql
-            - cp spec/dummy/config/database.semaphore_ci.yml spec/dummy/config/database.yml
+            - cp spec/dummy/config/database.semaphore_2.yml spec/dummy/config/database.yml
             - 'curl -L -o spec/dummy/db/dump/test.sql.bz2 "https://github.com/steveoro/goggles_admin/raw/master/db/dump/development.sql.bz2"'
             - gem i bundler
             - bundle install
