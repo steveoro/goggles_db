@@ -39,6 +39,8 @@ Metrics/BlockLength:
   Max: 35
   CountAsOne: ['array', 'heredoc']
   ExcludedMethods: ['describe', 'context']
+  Exclude:
+    - 'lib/tasks/*.rake'
 
 Metrics/MethodLength:
   Max: 40

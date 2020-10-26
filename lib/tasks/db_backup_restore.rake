@@ -124,15 +124,7 @@ namespace :db do
     file_name = File.join(DB_DUMP_DIR, "#{dump_basename}.sql")
     puts "\r\nProcessing #{db_name} => #{file_name} ...\r\n"
 
-    # Begin forced single-transaction:
-    File.open(file_name, 'a+') do |f|
-      f.puts "-- #{file_name}\r\n"
-      f.puts 'SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";'
-      f.puts 'SET AUTOCOMMIT = 0;'
-      f.puts 'START TRANSACTION;'
-      f.puts "\r\n--\r\n"
-    end
-
+    create_sql_transaction_header(file_name)
     # To disable extended inserts, add this option: --skip-extended-insert
     # (The Resulting SQL file will be much longer, though -- but the bzipped
     #  version can result more compressed due to the replicated strings, and it is
@@ -140,16 +132,34 @@ namespace :db do
     cmd = "mysqldump --host=#{db_host} -u #{db_user} --password=\"#{db_pwd}\" --add-drop-table --triggers" \
           " --routines --single-transaction #{db_name} >> #{file_name}"
     sh cmd
+    append_sql_transaction_footer(file_name)
+    puts "\r\nRecovery dump created."
 
-    # End forced single-transaction:
+    compressed_file = "#{file_name}.bz2"
+    FileUtils.rm(compressed_file) if File.exist?(compressed_file)
+    puts 'Compressing as bz2...'
+    sh "bzip2 #{file_name}"
+    puts "\r\nDone.\r\n\r\n"
+  end
+
+  # Creates a new +file_name+ with a single-transaction start, in case the dump
+  # wasn't built with autocommit toggled off.
+  def create_sql_transaction_header(file_name)
+    File.open(file_name, 'w+') do |f|
+      f.puts "-- #{file_name}\r\n"
+      f.puts 'SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";'
+      f.puts 'SET AUTOCOMMIT = 0;'
+      f.puts 'START TRANSACTION;'
+      f.puts "\r\n--\r\n"
+    end
+  end
+
+  # Adds to +file_name+ a commit statement at the end.
+  def append_sql_transaction_footer(file_name)
     File.open(file_name, 'a+') do |f|
       f.puts "\r\n--\r\n"
       f.puts 'COMMIT;'
     end
-    puts "\r\nRecovery dump created. Compressing as bz2..."
-    sh "bzip2 #{file_name}"
-
-    puts "\r\nDone.\r\n\r\n"
   end
   #-- -------------------------------------------------------------------------
   #++
@@ -178,9 +188,7 @@ namespace :db do
     db_host       = rails_config.database_configuration[Rails.env]['host']
     dump_basename = ENV.include?('from') ? ENV['from'] : Rails.env
     output_db     = ENV.include?('to')   ? rails_config.database_configuration[ENV['to']]['database'] : db_name
-    file_ext      = '.sql.bz2'
-
-    rebuild(dump_basename, output_db, db_host, db_user, db_pwd, file_ext)
+    rebuild(dump_basename, output_db, db_host, db_user, db_pwd)
   end
 
   # Performs the actual sequence of operations required by a single db:rebuild
@@ -189,12 +197,12 @@ namespace :db do
   # The source_basename comes from the name of the file dump.
   # Note that the dump takes the name of the Environment configuration section.
   #
-  def rebuild(source_basename, output_db, db_host, db_user, db_pwd, file_ext = '.sql.bz2')
+  def rebuild(source_basename, output_db, db_host, db_user, db_pwd)
     puts "\r\nRebuilding..."
     puts "DB name: #{source_basename} (dump) => #{output_db} (DEST)"
     puts "DB user: #{db_user}"
 
-    file_name = File.join(DB_DUMP_DIR, "#{source_basename}#{file_ext}")
+    file_name = File.join(DB_DUMP_DIR, "#{source_basename}.sql.bz2")
     sql_file_name = File.join('tmp', "#{source_basename}.sql")
 
     puts "\r\nUncompressing dump file '#{file_name}' => '#{sql_file_name}'..."

@@ -17,6 +17,7 @@
 #
 # and, you'll have to watch "config/Guardfile" instead of "Guardfile"
 
+# == Bundler ==
 guard :bundler do
   require 'guard/bundler'
   require 'guard/bundler/verify'
@@ -45,6 +46,29 @@ end
 # zeus: false                          # enables zeus gem.
 # CLI: 'rails server'                  # customizes runner command. Omits all options except `pid_file`!
 
+# == Rubocop ==
+guard :rubocop, cmd: 'spec/dummy/bin/rubocop -f fu' do
+  watch(/.+\.rb$/)
+  watch(/.+\.rake$/)
+  watch(%r{(?:.+/)?\.rubocop(?:_todo)?\.yml$}) { |m| File.dirname(m[0]) }
+end
+
+# == Brakeman ==
+brakeman_options = {
+  cmd: 'spec/dummy/bin/brakeman',
+  run_on_start: true,
+  quiet: true,
+  chatty: true
+}
+guard :brakeman, brakeman_options do
+  watch(%r{^app/.+\.(erb|haml|rhtml|rb)$})
+  watch(%r{^config/.+\.rb$})
+  watch(%r{^lib/.+\.rb$})
+  watch('Gemfile')
+end
+
+# == RSpec ==
+
 # Note: The cmd option is now required due to the increasing number of ways
 #       rspec may be run, below are examples of the most common uses.
 #  * bundler: 'bundle exec rspec'
@@ -53,25 +77,16 @@ end
 #                          installed the spring binstubs per the docs)
 #  * zeus: 'zeus rspec' (requires the server to be started separately)
 #  * 'just' rspec: 'rspec'
-
 rspec_options = {
-  # Without Spring:
-  # cmd: 'bundle exec rspec',
-  # With Spring:
-  cmd: 'spring rspec',
+  cmd: 'spec/dummy/bin/rspec',
   # Exclude performance tests; to make it fail-fast, add option "--fail-fast":
   cmd_additional_args: ' --color --profile 10 -f progress --order rand -t ~type:performance',
-  # (Zeus only) The following option must match the path in engine_plan.rb:
-  results_file: File.join(Dir.pwd, 'tmp', 'guard_rspec_results.txt'),
   all_after_pass: false,
   failed_mode: :focus
 }
-
 guard :rspec, rspec_options do
   require 'guard/rspec/dsl'
   dsl = Guard::RSpec::Dsl.new(self)
-
-  # Feel free to open issues for suggestions and improvements
 
   # RSpec files
   rspec = dsl.rspec
@@ -105,21 +120,11 @@ guard :rspec, rspec_options do
   # watch(rails.layouts)       { |m| rspec.spec.call("features/#{m[1]}") }
 end
 
-guard :rubocop, cmd: 'spring rubocop -f fu' do
-  watch(/.+\.rb$/)
-  watch(%r{(?:.+/)?\.rubocop(?:_todo)?\.yml$}) { |m| File.dirname(m[0]) }
-end
+# == Spring ==
 
 guard 'spring', bundler: true do
   watch('Gemfile.lock')
   watch(%r{^config/})
   watch(%r{^spec/(support|factories)/})
   watch(%r{^spec/factory.rb})
-end
-
-guard :brakeman, cmd: 'brakeman -n', run_on_start: true do
-  watch(%r{^app/.+\.(erb|haml|rhtml|rb)$})
-  watch(%r{^config/.+\.rb$})
-  watch(%r{^lib/.+\.rb$})
-  watch('Gemfile')
 end
