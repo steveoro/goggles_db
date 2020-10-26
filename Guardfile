@@ -105,7 +105,7 @@ guard :rspec, rspec_options do
   # watch(rails.layouts)       { |m| rspec.spec.call("features/#{m[1]}") }
 end
 
-guard :rubocop, cmd: 'spring rubocop' do
+guard :rubocop, cmd: 'spring rubocop -f fu' do
   watch(/.+\.rb$/)
   watch(%r{(?:.+/)?\.rubocop(?:_todo)?\.yml$}) { |m| File.dirname(m[0]) }
 end
