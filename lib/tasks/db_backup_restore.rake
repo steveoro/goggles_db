@@ -50,9 +50,10 @@ end
 
 namespace :db do
   namespace :test do
+    desc 'NO-OP task: not needed for this project (always safe to run, shouldn\'t affect the DB dump)'
     task :prepare do |t|
       # (Rewrite the task to *not* do anything you don't want)
-      puts "This task shouldn't do anything for this Project: we are using DB dumps as base seed and the test DB uses transactional fixtures."
+      puts 'Nothing to prepare, moving on...'
     end
   end
   #-- -------------------------------------------------------------------------
