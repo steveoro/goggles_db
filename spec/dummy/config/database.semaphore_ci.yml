@@ -1,3 +1,4 @@
+# Semaphore 1.0 uses this default config for the ubuntu1804 VM running the MySQL service:
 default: &default
   adapter: mysql2
   encoding: utf8
