@@ -4,13 +4,10 @@ agent:
   machine:
     type: e1-standard-2
     os_image: ubuntu1804
-
 fail_fast:
   stop:
     when: 'true'
-
 global_job_config:
-  # Execute at the start of every job in the pipeline:
   prologue:
     commands:
       - sem-version ruby 2.6.3
@@ -20,7 +17,6 @@ global_job_config:
       - bundle install
       - mkdir -pv tmp
       - cp spec/dummy/config/database.semaphore_2.yml spec/dummy/config/database.yml
-
 blocks:
   - name: Code scanning
     dependencies: []
@@ -28,16 +24,13 @@ blocks:
       jobs:
         - name: check style + security
           commands:
-            # (Coding style  & security checks do not need the DB seed image)
             - bundle exec rubocop
             - bundle exec brakeman -A6q -p spec/dummy
-
   - name: RSpec tests
     dependencies:
       - Code scanning
     prologue:
       commands:
-        # Build the db seed image & check for migrations:
         - 'curl -L -o spec/dummy/db/dump/test.sql.bz2 "https://github.com/steveoro/goggles_admin/raw/master/db/dump/development.sql.bz2"'
         - 'RAILS_ENV=test bin/rails app:db:rebuild from=test to=test'
         - 'RAILS_ENV=test bin/rails db:migrate'
@@ -46,16 +39,9 @@ blocks:
         - name: RSpec - models
           commands:
             - 'bundle exec rspec -t type:model'
-
         - name: RSpec - strategies
           commands:
             - 'bundle exec rspec -t type:strategy'
-
         - name: RSpec - validators
           commands:
             - 'bundle exec rspec -t type:validator'
-
-        # Not currently used:
-        # - name: RSpec - decorators
-        #   commands:
-        #     - 'bundle exec rspec -t type:decorator'
