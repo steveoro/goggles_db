@@ -21,6 +21,7 @@ global_job_config:
 
 blocks:
   - name: Bundle cache
+    dependencies: []
     task:
       jobs:
         - name: Cache bundle
