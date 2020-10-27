@@ -10,14 +10,15 @@ fail_fast:
     when: 'true'
 
 global_job_config:
+  # Execute at the start of every job in the pipeline:
   prologue:
     commands:
       - sem-version ruby 2.6.3
       - sem-service start mysql
       - checkout
-      - gem i bundler
       - mkdir -pv tmp
       - cp spec/dummy/config/database.semaphore_2.yml spec/dummy/config/database.yml
+      - gem i bundler
       - bundle install
 
 blocks:
@@ -43,9 +44,16 @@ blocks:
         - name: RSpec - models
           commands:
             - 'bundle exec rspec -t type:model'
+
         - name: RSpec - strategies
           commands:
             - 'bundle exec rspec -t type:strategy'
+
         - name: RSpec - validators
           commands:
             - 'bundle exec rspec -t type:validator'
+
+        # Not currently used:
+        # - name: RSpec - decorators
+        #   commands:
+        #     - 'bundle exec rspec -t type:decorator'
