@@ -59,8 +59,8 @@ end
 
 # == Brakeman ==
 brakeman_options = {
-  cmd: 'spec/dummy/bin/brakeman',
-  cli: '-A',
+  cmd: 'bundle exec brakeman',
+  cli: '-A -p spec/dummy',
   run_on_start: true,
   quiet: true,
   chatty: true
