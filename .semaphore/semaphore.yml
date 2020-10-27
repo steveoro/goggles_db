@@ -28,7 +28,7 @@ blocks:
           commands:
             - bundle exec rubocop
             - bundle exec brakeman -A6q -p spec/dummy
-  - name: Unit tests
+  - name: RSpec tests
     dependencies:
       - Code scanning
     task:
@@ -42,6 +42,7 @@ blocks:
         - name: RSpec - validators
           commands:
             - 'bundle exec rspec -t type:validator'
-        - name: RSpec - decorators
-          commands:
-            - 'bundle exec rspec -t type:decorator'
+        # Not currently used here:
+        # - name: RSpec - decorators
+        #   commands:
+        #     - 'bundle exec rspec -t type:decorator'
