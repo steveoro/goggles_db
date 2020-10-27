@@ -18,21 +18,13 @@ global_job_config:
       - gem i bundler
       - mkdir -pv tmp
       - cp spec/dummy/config/database.semaphore_2.yml spec/dummy/config/database.yml
+      - cache restore bundle-gems-$(checksum Gemfile.lock)
+      - bundle install --path vendor/bundle
+      - cache store bundle-gems-$(checksum Gemfile.lock) vendor/bundle
 
 blocks:
-  - name: Bundle cache
-    dependencies: []
-    task:
-      jobs:
-        - name: Cache bundle
-          commands:
-            - cache restore bundle-gems-$(checksum Gemfile.lock)
-            - bundle install --deployment --path vendor/bundle
-            - cache store bundle-gems-$(checksum Gemfile.lock) vendor/bundle
-
   - name: Code scanning
-    dependencies:
-      - Bundle cache
+    dependencies: []
     task:
       jobs:
         - name: check style + security
