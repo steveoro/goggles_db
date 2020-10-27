@@ -47,7 +47,11 @@ end
 # CLI: 'rails server'                  # customizes runner command. Omits all options except `pid_file`!
 
 # == Rubocop ==
-guard :rubocop, cmd: 'spec/dummy/bin/rubocop -f fu' do
+rubocop_options = {
+  cmd: 'spec/dummy/bin/rubocop',
+  cli: '-f fu'
+}
+guard :rubocop, rubocop_options do
   watch(/.+\.rb$/)
   watch(/.+\.rake$/)
   watch(%r{(?:.+/)?\.rubocop(?:_todo)?\.yml$}) { |m| File.dirname(m[0]) }
@@ -56,6 +60,7 @@ end
 # == Brakeman ==
 brakeman_options = {
   cmd: 'spec/dummy/bin/brakeman',
+  cli: '-A',
   run_on_start: true,
   quiet: true,
   chatty: true
