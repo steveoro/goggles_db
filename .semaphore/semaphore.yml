@@ -49,8 +49,3 @@ blocks:
         - name: RSpec - validators
           commands:
             - 'bundle exec rspec -t type:validator'
-
-        # Not currently used:
-        # - name: RSpec - decorators
-        #   commands:
-        #     - 'bundle exec rspec -t type:decorator'
