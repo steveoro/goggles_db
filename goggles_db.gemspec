@@ -45,7 +45,6 @@ Gem::Specification.new do |spec|
   spec.add_dependency 'haml'
   spec.add_dependency 'jwt'
   spec.add_dependency 'mini_magick'
-  spec.add_dependency 'rails-settings-cached'
   spec.add_dependency 'tzinfo', '~> 1.2', '>= 1.2.2'
 
   spec.add_development_dependency 'factory_bot_rails'
