@@ -48,9 +48,9 @@ module GogglesDb
     all.joins(:stroke_type).includes(:stroke_type).order(:style_order).each do |row|
       class_eval do
         @only_relays ||= []
-        @only_relays << row if row.relay?
+        @only_relays << row if row&.relay?
         @only_individuals ||= []
-        @only_individuals << row unless row.relay?
+        @only_individuals << row unless row&.relay?
       end
     end
     #-- ------------------------------------------------------------------------
