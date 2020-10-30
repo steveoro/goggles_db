@@ -18,7 +18,7 @@ global_job_config:
       # Force update to newest Bundler version:
       # - which gem
       # - gem i bundler
-      - cache restore bundle-$(checksum Gemfile.lock)
+      - cache restore bundle-1.18.-$(checksum Gemfile.lock)
 
 blocks:
   - name: Bundle cache store
@@ -33,7 +33,7 @@ blocks:
             # - cache clear
             - bundle install
             # - bundle info rake --path
-            - cache store bundle-$(checksum Gemfile.lock) /home/semaphore/.rbenv/versions/2.6.3/lib/ruby/gems
+            - cache store bundle-1.18.$(checksum Gemfile.lock) /home/semaphore/.rbenv/versions/2.6.3/lib/ruby/gems
 
   - name: Code scanning
     task:
