@@ -50,4 +50,5 @@ end
 group :test do
   gem 'codeclimate-test-reporter', require: false
   gem 'codecov', require: false
+  gem 'coveralls', require: false
 end

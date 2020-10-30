@@ -21,9 +21,15 @@ SimpleCov.start 'rails'
 puts 'SimpleCov required and started.'
 
 require 'codecov'
-if ENV['CODECOV_TOKEN'].present?
+unless ENV['CODECOV_TOKEN'].to_s.empty?
   SimpleCov.formatter = SimpleCov::Formatter::Codecov
   puts 'Setting CodeCov as SimpleCov formatter.'
+end
+
+require 'coveralls'
+unless ENV['COVERALLS_REPO_TOKEN'].to_s.empty?
+  Coveralls.wear!
+  puts 'Coveralls started.'
 end
 
 # This file is copied to spec/ when you run 'rails generate rspec:install'
