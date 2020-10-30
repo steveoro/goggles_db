@@ -16,13 +16,13 @@ AllCops:
   TargetRubyVersion: 2.6.3
   Exclude:
     - 'spec/dummy/db/schema.rb'
+    - 'vendor/bundle/*'
 
 # Configuration parameters: Include.
 # Include: **/*.gemspec
 Gemspec/RequiredRubyVersion:
   Exclude:
     - 'goggles_db.gemspec'
-    - 'vendor/*'
 
 # Cop supports --auto-correct.
 # Configuration parameters: AutoCorrect, AllowHeredoc, AllowURI, URISchemes, IgnoreCopDirectives, IgnoredPatterns.
