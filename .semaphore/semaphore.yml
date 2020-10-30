@@ -24,8 +24,9 @@ blocks:
         - name: Bundle with cache store
           commands:
             - sem-version ruby 2.6.3
-            - gem i bundler
-            - bundle install
+            # This shouldn't be required:
+            # - gem i bundler
+            - bundle install --deployment -j 4 --path vendor/bundle
             - cache store
 
   - name: Code scanning
@@ -36,7 +37,7 @@ blocks:
             - sem-version ruby 2.6.3
             # Bundler requires 'install' to run even though cache has been restored.
             # Installation will not actually run and command will finish quickly:
-            - bundle install
+            - bundle install --deployment --path vendor/bundle
             - bundle exec rubocop
             - bundle exec brakeman -A6q -p spec/dummy
 
@@ -46,27 +47,31 @@ blocks:
         commands:
           - sem-version ruby 2.6.3
           - sem-service start mysql
-          - bundle install
+          - bundle install --deployment --path vendor/bundle
           - cp spec/dummy/config/database.semaphore_2.yml spec/dummy/config/database.yml
           - 'curl -L -o spec/dummy/db/dump/test.sql.bz2 "https://github.com/steveoro/goggles_admin/raw/master/db/dump/development.sql.bz2"'
           - 'RAILS_ENV=test bin/rails app:db:rebuild from=test to=test'
           - 'RAILS_ENV=test bin/rails db:migrate'
           - export CODECOV_TOKEN=$CODECOV_TOKEN_GOGGLES_DB
+          - export CODECLIMATE_REPO_TOKEN=$CODECLIMATE_TOKEN_GOGGLES_DB
       jobs:
         - name: RSpec - models
           commands:
             - 'bundle exec rspec -t type:model'
             - bash <(curl -s https://codecov.io/bash) -cF model
+            - bundle exec codeclimate-test-reporter
 
         - name: RSpec - strategies
           commands:
             - 'bundle exec rspec -t type:strategy'
             - bash <(curl -s https://codecov.io/bash) -cF strategy
+            - bundle exec codeclimate-test-reporter
 
         - name: RSpec - validators
           commands:
             - 'bundle exec rspec -t type:validator'
             - bash <(curl -s https://codecov.io/bash) -cF validator
+            - bundle exec codeclimate-test-reporter
 
         # Not currently used:
         # - name: RSpec - decorators

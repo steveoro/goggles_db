@@ -18,6 +18,7 @@ spec/dummy/storage/
 spec/dummy/db/dump/*.sql
 spec/dummy/db/dump/*.bz2
 /public/assets
+/coverage/*
 
 # Ignore Byebug command history file.
 .byebug_history

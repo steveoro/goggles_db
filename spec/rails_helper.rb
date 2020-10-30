@@ -1,5 +1,13 @@
 # frozen_string_literal: true
 
+# [Steve A.] Test coverage reporters:
+# == SimpleCov used by CodeClimate ==
+# (SimpleCov reports on local /coverage folder with static HTML files)
+#
+require 'simplecov'
+SimpleCov.start 'rails'
+puts 'SimpleCov required and started.'
+
 # This file is copied to spec/ when you run 'rails generate rspec:install'
 require 'spec_helper'
 ENV['RAILS_ENV'] ||= 'test'
