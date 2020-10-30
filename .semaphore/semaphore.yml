@@ -24,8 +24,10 @@ blocks:
         - name: Bundle with cache store
           commands:
             - sem-version ruby 2.6.3
-            # This shouldn't be required:
-            # - gem i bundler
+            # Force update to newest Bundler version:
+            - gem i bundler
+            # Don't store cache in between build pipelines:
+            - cache clear
             - bundle install --deployment -j 4 --path vendor/bundle
             - cache store
 
