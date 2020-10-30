@@ -1,12 +1,28 @@
 # frozen_string_literal: true
 
-# [Steve A.] Test coverage reporters:
-# == SimpleCov used by CodeClimate ==
-# (SimpleCov reports on local /coverage folder with static HTML files)
+# == SimpleCov ==
+#
+# [Steve A., 20201030] Test coverage report formatter setup.
+# SimpleCov is used as report formatter by both CodeClimate.com & CodeCov.io.
+# Outputs text data & static HTML files on local /coverage folder.
+#
+# - CodeCov.io: execute after the test suite run:
+#
+#   $> export CODECOV_TOKEN=YOUR_CODECOV_REPO_TOKEN
+#   $> bash <(curl -s https://codecov.io/bash) -cF model
+#
+# - CodeClimate.com: execute after the test suite run:
+#
+#   $> export CODECLIMATE_REPO_TOKEN=YOUR_CODECLIMATE_REPO_TOKEN
+#   $> bundle exec codeclimate-test-reporter
 #
 require 'simplecov'
 SimpleCov.start 'rails'
 puts 'SimpleCov required and started.'
+
+require 'codecov'
+SimpleCov.formatter = SimpleCov::Formatter::Codecov
+puts 'Setting SimpleCov formatter as CodeCov.'
 
 # This file is copied to spec/ when you run 'rails generate rspec:install'
 require 'spec_helper'
