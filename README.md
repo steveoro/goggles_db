@@ -2,8 +2,10 @@
 
 [![Build Status](https://semaphoreci.com/api/v1/steveoro/goggles_db/branches/master/shields_badge.svg)](https://semaphoreci.com/steveoro/goggles_db)
 [![Build Status](https://steveoro.semaphoreci.com/badges/goggles_db/branches/master.svg)](https://steveoro.semaphoreci.com/projects/goggles_db)
+[![Maintainability](https://api.codeclimate.com/v1/badges/ba9e005076a6aa97f788/maintainability)](https://codeclimate.com/github/steveoro/goggles_db/maintainability)
+[![Test Coverage](https://api.codeclimate.com/v1/badges/ba9e005076a6aa97f788/test_coverage)](https://codeclimate.com/github/steveoro/goggles_db/test_coverage)
 
-DB structure and base Rails models for the main Goggles application.
+DB structure and base Rails models for the Goggles Framework applications.
 
 
 ## Requires
@@ -13,26 +15,49 @@ DB structure and base Rails models for the main Goggles application.
 - MySql
 
 
-## Usage
-TODO
+## Wiki & HOW-TOs
+
+Official Framework Wiki, [here](https://github.com/steveoro/goggles_db/wiki) (v. 7+)
+
 
 
 ## Installation
+
 Add this line to your application's Gemfile:
 
 ```ruby
-gem 'goggles_db'
+gem 'goggles_db', git: 'https://github.com/steveoro/goggles_db'
 ```
 
-And then execute:
+The Engine will add a bunch of rake tasks to the application, among which:
+
+- `db:dump` & `db:rebuild` will assume the existence of any SQL dump files you may have or create under the `db/dump` folder;
+- `check_needed_dirs` will be invoked automatically by these tasks to ensure the existence of any other required folder;
+
+WIP :construction:
+
+
+
+## How to run the test suite
+
+For local testing, just keep your Guard friend running in the background, in a dedicated console:
+
 ```bash
-$ bundle
+$> guard
 ```
 
-Or install it yourself as:
+If you want to run the full test suite, just hit enter on the Guard console.
+
+As of Rails 6.0.3, most probably there are some issues with the combined usage of Guard & Spring together with the new memory management modes in Rails during the Brakeman checks. These prevent the `brakeman` plugin for Guard to actually notice changes in the source code: the checks get re-run, but the result doesn't change. Or maybe it's just a combined mis-configuration.
+
+In any case, although the Guard plugin for Brakeman runs correctly at start, it's always better to re-run the `brakeman` checks before pushing the changes to the repository with:
+
 ```bash
-$ gem install goggles_db
+$> bundle exec brakeman -Aq
 ```
+
+_Please, again, commit & push any changes only when the test suite is **green**._
+
 
 
 ## Database setup
@@ -55,27 +80,21 @@ Then, you'll need to use the Factories in spec/factories to create fixtures.
 
 A fully randomized `seed.rb` script is still a work-in-progress. Contributions are welcome.
 
+Assuming we want the `test` environment DB up and running:
 
+- Make sure you have a running MariaDB server & client installation.
 
-## How to run the test suite
-
-Although builds are automatically launched remotely on any `push`, for any branch or pull-request, make sure the test suite is locally green before pushing changes, in order to save build machine time and not clutter the build queue with tiny commits.
-
-For local testing, just keep your Guard friend running in the background, in a dedicated console:
+- Given you have a valid `db/dump/test.sql.bz2` (the dump must be un-namespaced to be copied or renamed from any other environment - as those created by `db:dump` typically are), use the dedicated rake tasks:
 
 ```bash
-$> guard
+$> bin/rails db:rebuild from=test to=test
+$> RAILS_ENV=test bin/rails db:migrate
 ```
 
-As of Rails 6.0.3, most probably there are issues with the combined usage of Guard, Spring together with the new Zeitwerk mode for constant autoloading & reloading during the Brakeman checks: the `brakeman` plugin for Guard doesn't seem to notice actual changes in the source code, even when you fix or create issues (or maybe it's just a combined mis-configuration).
+(It will take some time, depending of the dump size: sit back and relax.)
 
-In any case, although the Guard plugin for Brakeman runs correctly at start, it's always better to re-run the `brakeman` checks before pushing the changes to the repository with:
 
-```bash
-$> bundle exec brakeman -Aq
-```
-
-_Please, commit & push any changes only when the test suite is :green:._
+* * *
 
 
 ## Contributing
