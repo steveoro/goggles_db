@@ -16,7 +16,7 @@ global_job_config:
       - checkout
       - mkdir -pv tmp
       # Use GogglesDb::VERSION as master reference here, or force a minor version change to rebuild the cache:
-      - cache restore bundle-1.19-$(checksum Gemfile.lock)
+      - cache restore bundle-1.19.1-$(checksum Gemfile.lock)
 
 blocks:
   - name: Bundle cache store
@@ -27,11 +27,11 @@ blocks:
             - sem-version ruby 2.6
             # Bundler requires 'install' to run even though cache has been restored.
             # Installation will not actually run and command and will finish quickly if the cache has been hit:
-            - bundle install
+            - bundle install --path vendor/bundle
             # Use this to log the actual bundle destination path for Semaphore 2.0 (currently uses Rbenv):
             # - bundle info rake --path
             # The cache will be updated with the new content just once for all blocks in the pipeline:
-            - cache store bundle-1.19-$(checksum Gemfile.lock) /home/semaphore/.rbenv/versions/2.6.6/lib/ruby/gems/2.6.0/gems
+            - cache store bundle-1.19.1-$(checksum Gemfile.lock) vendor/bundle
 
   - name: Code scanning
     task:
@@ -39,7 +39,7 @@ blocks:
         - name: check style + security
           commands:
             - sem-version ruby 2.6
-            - bundle install
+            - bundle install --path vendor/bundle
             - bundle exec rubocop
             - bundle exec brakeman -A6q -p spec/dummy
 
@@ -49,7 +49,7 @@ blocks:
         commands:
           - sem-version ruby 2.6
           - sem-service start mysql
-          - bundle install
+          - bundle install --path vendor/bundle
           - cp spec/dummy/config/database.semaphore_2.yml spec/dummy/config/database.yml
           - 'curl -L -o spec/dummy/db/dump/test.sql.bz2 "https://github.com/steveoro/goggles_admin/raw/master/db/dump/development.sql.bz2"'
           - 'RAILS_ENV=test bin/rails app:db:rebuild from=test to=test'
