@@ -21,8 +21,10 @@ SimpleCov.start 'rails'
 puts 'SimpleCov required and started.'
 
 require 'codecov'
-SimpleCov.formatter = SimpleCov::Formatter::Codecov
-puts 'Setting SimpleCov formatter as CodeCov.'
+if ENV['CODECOV_TOKEN'].present?
+  SimpleCov.formatter = SimpleCov::Formatter::Codecov
+  puts 'Setting CodeCov as SimpleCov formatter.'
+end
 
 # This file is copied to spec/ when you run 'rails generate rspec:install'
 require 'spec_helper'
