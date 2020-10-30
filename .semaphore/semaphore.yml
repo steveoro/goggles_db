@@ -15,10 +15,7 @@ global_job_config:
     commands:
       - checkout
       - mkdir -pv tmp
-      # Force update to newest Bundler version:
-      # - which gem
-      # - gem i bundler
-      - cache restore bundle-1.18.-$(checksum Gemfile.lock)
+      - cache restore bundle-1.18-$(checksum Gemfile.lock)
 
 blocks:
   - name: Bundle cache store
@@ -27,13 +24,11 @@ blocks:
         - name: Bundle with cache store
           commands:
             - sem-version ruby 2.6.3
-            # Force update to newest Bundler version:
-            # - gem i bundler
-            # Don't store cache in between build pipelines:
-            # - cache clear
+            # Bundler requires 'install' to run even though cache has been restored.
+            # Installation will not actually run and command and will finish quickly if the cache has been hit:
             - bundle install
-            # - bundle info rake --path
-            - cache store bundle-1.18.$(checksum Gemfile.lock) /home/semaphore/.rbenv/versions/2.6.3/lib/ruby/gems
+            # The cache will be updated with the new content just once for all blocks in the pipeline:
+            - cache store bundle-1.18-$(checksum Gemfile.lock) /home/semaphore/.rbenv/versions/2.6.3/lib/ruby/gems
 
   - name: Code scanning
     task:
@@ -41,10 +36,6 @@ blocks:
         - name: check style + security
           commands:
             - sem-version ruby 2.6.3
-            # Force update to newest Bundler version:
-            # - gem i bundler
-            # Bundler requires 'install' to run even though cache has been restored.
-            # Installation will not actually run and command will finish quickly:
             - bundle install
             - bundle exec rubocop
             - bundle exec brakeman -A6q -p spec/dummy
@@ -55,8 +46,6 @@ blocks:
         commands:
           - sem-version ruby 2.6.3
           - sem-service start mysql
-          # Force update to newest Bundler version:
-          # - gem i bundler
           - bundle install
           - cp spec/dummy/config/database.semaphore_2.yml spec/dummy/config/database.yml
           - 'curl -L -o spec/dummy/db/dump/test.sql.bz2 "https://github.com/steveoro/goggles_admin/raw/master/db/dump/development.sql.bz2"'
@@ -87,3 +76,5 @@ blocks:
         # - name: RSpec - decorators
         #   commands:
         #     - 'bundle exec rspec -t type:decorator'
+        #     - bash <(curl -s https://codecov.io/bash) -cF decorator
+        #     - bundle exec codeclimate-test-reporter
