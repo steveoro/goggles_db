@@ -15,7 +15,7 @@ global_job_config:
     commands:
       - checkout
       - mkdir -pv tmp
-      - cache restore
+      - cache restore bundle-$(checksum Gemfile.lock)
 
 blocks:
   - name: Bundle cache store
@@ -27,10 +27,10 @@ blocks:
             # Force update to newest Bundler version:
             - gem i bundler
             # Don't store cache in between build pipelines:
-            - cache clear
+            # - cache clear
             - bundle install
             - bundle info rake --path
-            - cache store
+            - cache store bundle-$(checksum Gemfile.lock) /home/semaphore/.rbenv/versions/2.6.3/lib/ruby/gems
 
   - name: Code scanning
     task:
@@ -38,6 +38,8 @@ blocks:
         - name: check style + security
           commands:
             - sem-version ruby 2.6.3
+            # Force update to newest Bundler version:
+            - gem i bundler
             # Bundler requires 'install' to run even though cache has been restored.
             # Installation will not actually run and command will finish quickly:
             - bundle install
@@ -50,6 +52,8 @@ blocks:
         commands:
           - sem-version ruby 2.6.3
           - sem-service start mysql
+          # Force update to newest Bundler version:
+          - gem i bundler
           - bundle install
           - cp spec/dummy/config/database.semaphore_2.yml spec/dummy/config/database.yml
           - 'curl -L -o spec/dummy/db/dump/test.sql.bz2 "https://github.com/steveoro/goggles_admin/raw/master/db/dump/development.sql.bz2"'
