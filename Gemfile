@@ -47,4 +47,7 @@ group :development, :test do
   gem 'rubocop-rspec'
 end
 
-gem 'codeclimate-test-reporter', group: :test, require: nil
+group :test do
+  gem 'codeclimate-test-reporter', require: false
+  gem 'codecov', require: false
+end
