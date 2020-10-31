@@ -58,7 +58,7 @@ In any case, although the Guard plugin for Brakeman runs correctly at start, it'
 $> bundle exec brakeman -Aq
 ```
 
-_Please, again, commit & push any changes only when the test suite is **green**._
+_Please, again, commit & push any changes only when the test suite is :green_heart:._
 
 
 
