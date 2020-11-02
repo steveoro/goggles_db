@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    goggles_db (0.1.20)
+    goggles_db (0.1.21)
       acts-as-taggable-on
       acts_as_votable
       carrierwave
@@ -11,6 +11,8 @@ PATH
       devise
       devise-i18n
       draper
+      factory_bot_rails
+      ffaker
       haml
       jwt
       mini_magick
@@ -388,7 +390,6 @@ DEPENDENCIES
   codeclimate-test-reporter
   codecov
   coveralls
-  factory_bot_rails
   ffaker
   goggles_db!
   guard
