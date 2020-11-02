@@ -1,43 +1,48 @@
 # frozen_string_literal: true
 
-# == SimpleCov ==
+# == SimpleCov: Test coverage report formatter setup ==
 #
-# [Steve A., 20201030] Test coverage report formatter setup.
+# [Steve A., 20201030]
+# SimpleCov is used as report formatter by the following services:
+# (the result is a static HTML report inside '/coverage')
 #
-# SimpleCov is used as report formatter by both CodeClimate.com & CodeCov.io.
-# Outputs text data & static HTML files on local /coverage folder.
+# - CodeClimate.com:
+#   ENV variable to be set *before* the test runs:
+#     $> export CODECLIMATE_REPO_TOKEN=YOUR_CODECLIMATE_REPO_TOKEN
+#   Then, after the test suite:
+#     $> bundle exec codeclimate-test-reporter
+#   (Works all the time, indipendently from which one of the other 2 is being run)
 #
-# - CodeCov.io: set this *before* the test suite run so that:
+# - CoverAlls:
+#   ENV variable to be set *before* the test runs:
+#     $> export COVERALLS_REPO_TOKEN=YOUR_COVERALLS_REPO_TOKEN
+#   Coveralls.wear! will automatically post the results to the service.
+#   (Works only inside CI; enable either this or CodeCov.io)
 #
-#   $> export CODECOV_TOKEN=YOUR_CODECOV_REPO_TOKEN
+# - CodeCov.io:
+#   ENV variable to be set *before* the test runs:
+#     $> export CODECOV_TOKEN=YOUR_CODECOV_REPO_TOKEN
+#   (Enable either this or CoverAlls: the last one defined & set will run)
+#   Step for manual execution (not needed if ENV is set):
+#     $> bash <(curl -s https://codecov.io/bash) -cF test_subgroupname
 #
-#   Manually, run:
-#
-#   $> bash <(curl -s https://codecov.io/bash) -cF model
-#
-#
-# - CodeClimate.com: set this *before* the test suite run:
-#
-#   $> export CODECLIMATE_REPO_TOKEN=YOUR_CODECLIMATE_REPO_TOKEN
-#
-#   Manually, run:
-#
-#   $> bundle exec codeclimate-test-reporter
+# => Run locally CodeCov.io by setting the ENV variable & just leave CoverAlls
+#    execution to the CI environment.
 #
 require 'simplecov'
 SimpleCov.start 'rails'
 puts 'SimpleCov required and started.'
 
-require 'codecov'
-unless ENV['CODECOV_TOKEN'].to_s.empty?
-  SimpleCov.formatter = SimpleCov::Formatter::Codecov
-  puts 'Setting CodeCov as SimpleCov formatter.'
-end
-
 require 'coveralls'
 unless ENV['COVERALLS_REPO_TOKEN'].to_s.empty?
   Coveralls.wear!
   puts 'Coveralls started.'
+end
+
+require 'codecov'
+unless ENV['CODECOV_TOKEN'].to_s.empty?
+  SimpleCov.formatter = SimpleCov::Formatter::Codecov
+  puts 'Setting CodeCov as SimpleCov formatter.'
 end
 
 # This file is copied to spec/ when you run 'rails generate rspec:install'

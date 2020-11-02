@@ -8,6 +8,9 @@ agent:
 fail_fast:
   stop:
     when: 'true'
+auto_cancel:
+  running:
+    when: 'true'
 
 global_job_config:
   # Connect secrets to all jobs in the pipeline:
@@ -20,8 +23,10 @@ global_job_config:
     commands:
       - checkout
       - mkdir -pv tmp
+      # Make sure we are using Bundler 2.1.4:
+      - gem i bundler
       # Use GogglesDb::VERSION as master reference here, or force a minor version change to rebuild the cache:
-      - cache restore bundle-1.19.1-$(checksum Gemfile.lock)
+      - cache restore bundle-1.20-$(checksum Gemfile.lock)
 
 blocks:
   - name: Bundle cache store
@@ -37,7 +42,7 @@ blocks:
             # Use this to log the actual bundle destination path for Semaphore 2.0 (currently uses Rbenv):
             # - bundle info rake --path
             # The cache will be updated with the new content just once for all blocks in the pipeline:
-            - cache store bundle-1.19.1-$(checksum Gemfile.lock) vendor/bundle
+            - cache store bundle-1.20-$(checksum Gemfile.lock) vendor/bundle
 
   - name: Code scanning
     task:

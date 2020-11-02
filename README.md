@@ -1,4 +1,4 @@
-# goggles_db
+# GogglesDb README
 
 [![Build Status](https://semaphoreci.com/api/v1/steveoro/goggles_db/branches/master/shields_badge.svg)](https://semaphoreci.com/steveoro/goggles_db)
 [![Build Status](https://steveoro.semaphoreci.com/badges/goggles_db/branches/master.svg)](https://steveoro.semaphoreci.com/projects/goggles_db)
@@ -7,7 +7,13 @@
 [![codecov](https://codecov.io/gh/steveoro/goggles_db/branch/master/graph/badge.svg?token=G4E7NVC4T4)](undefined)
 [![Coverage Status](https://coveralls.io/repos/github/steveoro/goggles_db/badge.svg?branch=master)](https://coveralls.io/github/steveoro/goggles_db?branch=master)
 
+
 DB structure and base Rails models for the Goggles Framework applications.
+
+
+## Wiki & HOW-TOs
+
+Official Framework Wiki, [here](https://github.com/steveoro/goggles_db/wiki) (v. 7+)
 
 
 ## Requires
@@ -15,11 +21,6 @@ DB structure and base Rails models for the Goggles Framework applications.
 - Ruby 2.6+
 - Rails 6+
 - MySql
-
-
-## Wiki & HOW-TOs
-
-Official Framework Wiki, [here](https://github.com/steveoro/goggles_db/wiki) (v. 7+)
 
 
 
