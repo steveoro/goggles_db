@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_09_18_172329) do
+ActiveRecord::Schema.define(version: 2020_11_05_094646) do
 
   create_table "achievement_rows", id: :integer, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
     t.integer "lock_version", default: 0
@@ -1132,6 +1132,49 @@ ActiveRecord::Schema.define(version: 2020_09_18_172329) do
     t.index ["code"], name: "index_kick_aux_types_on_code", unique: true
   end
 
+  create_table "lap_types", id: :integer, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
+    t.integer "lock_version", default: 0
+    t.string "code", limit: 6
+    t.integer "length_in_meters", limit: 3
+    t.datetime "created_at"
+    t.datetime "updated_at"
+    t.index ["code"], name: "index_lap_types_on_code", unique: true
+  end
+
+  create_table "laps", id: :integer, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
+    t.integer "lock_version", default: 0
+    t.integer "minutes", limit: 3, default: 0
+    t.integer "seconds", limit: 2, default: 0
+    t.integer "hundreds", limit: 2, default: 0
+    t.integer "meeting_program_id"
+    t.integer "passage_type_id"
+    t.integer "user_id"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+    t.decimal "reaction_time", precision: 5, scale: 2
+    t.integer "stroke_cycles", limit: 3
+    t.integer "not_swam_part_seconds", limit: 2
+    t.integer "not_swam_part_hundreds", limit: 2
+    t.integer "not_swam_kick_number", limit: 2
+    t.integer "breath_number", limit: 3
+    t.integer "position", limit: 3
+    t.integer "minutes_from_start", limit: 3
+    t.integer "seconds_from_start", limit: 2
+    t.integer "hundreds_from_start", limit: 2
+    t.boolean "is_native_from_start", default: false
+    t.integer "meeting_individual_result_id"
+    t.integer "meeting_entry_id"
+    t.integer "swimmer_id"
+    t.integer "team_id"
+    t.index ["meeting_entry_id"], name: "idx_passages_meeting_entry"
+    t.index ["meeting_individual_result_id"], name: "idx_passages_meeting_individual_result"
+    t.index ["meeting_program_id"], name: "passages_x_badges"
+    t.index ["passage_type_id"], name: "fk_passages_passage_types"
+    t.index ["swimmer_id"], name: "idx_passages_swimmer"
+    t.index ["team_id"], name: "idx_passages_team"
+    t.index ["user_id"], name: "idx_passages_user"
+  end
+
   create_table "locker_cabinet_types", id: :integer, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
     t.integer "lock_version", default: 0
     t.string "code", limit: 3
@@ -1514,49 +1557,6 @@ ActiveRecord::Schema.define(version: 2020_09_18_172329) do
     t.index ["user_id"], name: "idx_news_feeds_user"
   end
 
-  create_table "passage_types", id: :integer, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
-    t.integer "lock_version", default: 0
-    t.string "code", limit: 6
-    t.integer "length_in_meters", limit: 3
-    t.datetime "created_at"
-    t.datetime "updated_at"
-    t.index ["code"], name: "index_passage_types_on_code", unique: true
-  end
-
-  create_table "passages", id: :integer, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
-    t.integer "lock_version", default: 0
-    t.integer "minutes", limit: 3, default: 0
-    t.integer "seconds", limit: 2, default: 0
-    t.integer "hundreds", limit: 2, default: 0
-    t.integer "meeting_program_id"
-    t.integer "passage_type_id"
-    t.integer "user_id"
-    t.datetime "created_at"
-    t.datetime "updated_at"
-    t.decimal "reaction_time", precision: 5, scale: 2
-    t.integer "stroke_cycles", limit: 3
-    t.integer "not_swam_part_seconds", limit: 2
-    t.integer "not_swam_part_hundreds", limit: 2
-    t.integer "not_swam_kick_number", limit: 2
-    t.integer "breath_number", limit: 3
-    t.integer "position", limit: 3
-    t.integer "minutes_from_start", limit: 3
-    t.integer "seconds_from_start", limit: 2
-    t.integer "hundreds_from_start", limit: 2
-    t.boolean "is_native_from_start", default: false
-    t.integer "meeting_individual_result_id"
-    t.integer "meeting_entry_id"
-    t.integer "swimmer_id"
-    t.integer "team_id"
-    t.index ["meeting_entry_id"], name: "idx_passages_meeting_entry"
-    t.index ["meeting_individual_result_id"], name: "idx_passages_meeting_individual_result"
-    t.index ["meeting_program_id"], name: "passages_x_badges"
-    t.index ["passage_type_id"], name: "fk_passages_passage_types"
-    t.index ["swimmer_id"], name: "idx_passages_swimmer"
-    t.index ["team_id"], name: "idx_passages_team"
-    t.index ["user_id"], name: "idx_passages_user"
-  end
-
   create_table "pool_types", id: :integer, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
     t.integer "lock_version", default: 0
     t.string "code", limit: 3
@@ -1727,6 +1727,25 @@ ActiveRecord::Schema.define(version: 2020_09_18_172329) do
     t.index ["code"], name: "index_shower_types_on_code", unique: true
   end
 
+  create_table "standard_timings", id: :integer, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
+    t.integer "lock_version", default: 0
+    t.integer "minutes", limit: 3, default: 0
+    t.integer "seconds", limit: 2, default: 0
+    t.integer "hundreds", limit: 2, default: 0
+    t.integer "season_id"
+    t.integer "gender_type_id"
+    t.integer "pool_type_id"
+    t.integer "event_type_id"
+    t.integer "category_type_id"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+    t.index ["category_type_id"], name: "fk_time_standards_category_types"
+    t.index ["event_type_id"], name: "fk_time_standards_event_types"
+    t.index ["gender_type_id"], name: "fk_time_standards_gender_types"
+    t.index ["pool_type_id"], name: "fk_time_standards_pool_types"
+    t.index ["season_id"], name: "fk_time_standards_seasons"
+  end
+
   create_table "stroke_types", id: :integer, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
     t.integer "lock_version", default: 0
     t.string "code", limit: 2
@@ -1884,18 +1903,7 @@ ActiveRecord::Schema.define(version: 2020_09_18_172329) do
     t.index ["user_id"], name: "idx_team_affiliations_user"
   end
 
-  create_table "team_managers", id: :integer, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
-    t.integer "lock_version", default: 0
-    t.datetime "created_at"
-    t.datetime "updated_at"
-    t.integer "team_affiliation_id"
-    t.integer "user_id"
-    t.index ["team_affiliation_id", "user_id"], name: "team_manager_with_affiliation", unique: true
-    t.index ["team_affiliation_id"], name: "index_team_managers_on_team_affiliation_id"
-    t.index ["user_id"], name: "index_team_managers_on_user_id"
-  end
-
-  create_table "team_passage_templates", id: :integer, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
+  create_table "team_lap_templates", id: :integer, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
     t.integer "lock_version", default: 0
     t.integer "part_order", limit: 3, default: 0
     t.boolean "has_subtotal", default: false
@@ -1916,6 +1924,17 @@ ActiveRecord::Schema.define(version: 2020_09_18_172329) do
     t.index ["pool_type_id"], name: "idx_team_passage_templates_pool_type"
     t.index ["team_id"], name: "idx_team_passage_templates_team"
     t.index ["user_id"], name: "idx_team_passage_templates_user"
+  end
+
+  create_table "team_managers", id: :integer, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
+    t.integer "lock_version", default: 0
+    t.datetime "created_at"
+    t.datetime "updated_at"
+    t.integer "team_affiliation_id"
+    t.integer "user_id"
+    t.index ["team_affiliation_id", "user_id"], name: "team_manager_with_affiliation", unique: true
+    t.index ["team_affiliation_id"], name: "index_team_managers_on_team_affiliation_id"
+    t.index ["user_id"], name: "index_team_managers_on_user_id"
   end
 
   create_table "teams", id: :integer, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
@@ -1940,25 +1959,6 @@ ActiveRecord::Schema.define(version: 2020_09_18_172329) do
     t.index ["editable_name"], name: "index_teams_on_editable_name"
     t.index ["name"], name: "index_teams_on_name"
     t.index ["user_id"], name: "idx_teams_user"
-  end
-
-  create_table "time_standards", id: :integer, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
-    t.integer "lock_version", default: 0
-    t.integer "minutes", limit: 3, default: 0
-    t.integer "seconds", limit: 2, default: 0
-    t.integer "hundreds", limit: 2, default: 0
-    t.integer "season_id"
-    t.integer "gender_type_id"
-    t.integer "pool_type_id"
-    t.integer "event_type_id"
-    t.integer "category_type_id"
-    t.datetime "created_at"
-    t.datetime "updated_at"
-    t.index ["category_type_id"], name: "fk_time_standards_category_types"
-    t.index ["event_type_id"], name: "fk_time_standards_event_types"
-    t.index ["gender_type_id"], name: "fk_time_standards_gender_types"
-    t.index ["pool_type_id"], name: "fk_time_standards_pool_types"
-    t.index ["season_id"], name: "fk_time_standards_seasons"
   end
 
   create_table "timing_types", id: :integer, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|

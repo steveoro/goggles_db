@@ -34,6 +34,7 @@ Metrics/AbcSize:
   Max: 21
   Exclude:
     - 'app/validators/goggles_db/validation_error_tools.rb'
+    - 'app/models/goggles_db/badge_payment.rb'
 
 Metrics/BlockLength:
   Max: 35
