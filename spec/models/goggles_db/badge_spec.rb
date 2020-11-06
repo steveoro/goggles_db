@@ -1,8 +1,8 @@
 # frozen_string_literal: true
 
 require 'rails_helper'
-require 'support/shared_method_existance_examples'
 require 'support/shared_sorting_scopes_examples'
+require 'support/shared_method_existance_examples'
 require 'support/shared_filtering_scopes_examples'
 require 'support/shared_to_json_examples'
 
@@ -99,7 +99,7 @@ module GogglesDb
 
       it_behaves_like(
         '#to_json when called on a valid model instance with',
-        %w[swimmer team_affiliation season team category_type entry_time_type]
+        %w[swimmer gender_type team_affiliation season team category_type entry_time_type]
       )
     end
   end

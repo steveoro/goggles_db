@@ -39,3 +39,16 @@ shared_examples_for 'sorting scope by_category_type' do |subject_class|
     expect(result.sample.category_type.code).to be <= result.last.category_type.code
   end
 end
+
+shared_examples_for 'sorting scope by_date' do |subject_class|
+  let(:result) { subject_class.by_date.limit(20) }
+
+  it "is a #{subject_class} relation" do
+    expect(result).to be_a(ActiveRecord::Relation)
+    expect(result).to all be_a(subject_class)
+  end
+  it 'is ordered' do
+    expect(result.first.payment_date).to be <= result.sample.payment_date
+    expect(result.sample.payment_date).to be <= result.last.payment_date
+  end
+end
