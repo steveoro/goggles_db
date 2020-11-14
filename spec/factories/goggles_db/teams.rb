@@ -7,7 +7,7 @@ FactoryBot.define do
     zip           { format('%<number>06d', number: (rand * 100_000).to_i) }
     phone_mobile  { FFaker::PhoneNumber.phone_number }
     phone_number  { FFaker::PhoneNumber.phone_number }
-    e_mail        { FFaker::Internet.email }
+    e_mail        { FFaker::Internet.safe_email }
     contact_name  { FFaker::Name.name }
     notes         { FFaker::BaconIpsum.phrase }
     home_page_url { FFaker::Internet.http_url }

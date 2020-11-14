@@ -25,7 +25,7 @@ module GogglesDb
 
       it_behaves_like(
         'responding to a list of methods',
-        %i[payment_date amount
+        %i[payment_date amount swimmer_complete_name
            to_json]
       )
 
@@ -40,7 +40,7 @@ module GogglesDb
 
     # Sorting scopes:
     describe 'self.by_date' do
-      it_behaves_like('sorting scope by_date', BadgePayment)
+      it_behaves_like('sorting scope by_<ANY_VALUE_NAME>', BadgePayment, 'date', 'payment_date')
     end
 
     # Filtering scopes:

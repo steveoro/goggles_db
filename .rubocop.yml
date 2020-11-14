@@ -31,7 +31,7 @@ Layout/LineLength:
   Max: 165
 
 Metrics/AbcSize:
-  Max: 21
+  Max: 26
   Exclude:
     - 'app/validators/goggles_db/validation_error_tools.rb'
     - 'app/models/goggles_db/badge_payment.rb'

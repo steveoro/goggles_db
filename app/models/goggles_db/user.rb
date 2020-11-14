@@ -15,7 +15,14 @@ module GogglesDb
            :confirmable, :lockable, :trackable,
            :recoverable, :rememberable, :validatable
 
+    belongs_to :swimmer_level_type
+    validates_associated :swimmer_level_type
+
     has_one :swimmer
+    belongs_to :coach_level_type, optional: true
+
+    # FIXME: [Steve, 20141204] We should really rename this table using a passive name, something like "managed_affiliations"
+    has_many :team_managers
 
     validates :name, presence: true, uniqueness: { case_sensitive: true, message: :already_exists }
 

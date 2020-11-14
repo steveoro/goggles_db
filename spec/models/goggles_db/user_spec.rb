@@ -9,8 +9,13 @@ module GogglesDb
       subject { FactoryBot.create(:user) }
 
       it_behaves_like(
+        'having one or more required associations',
+        %i[swimmer_level_type]
+      )
+
+      it_behaves_like(
         'responding to a list of methods',
-        %i[swimmer]
+        %i[swimmer coach_level_type]
       )
       #-- ----------------------------------------------------------------------
       #++

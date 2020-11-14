@@ -34,6 +34,9 @@ module GogglesDb
       it 'has a non-empty string for DB versioning' do
         expect(subject.send(AppParameter::DB_VERSION_FIELDNAME)).to be_present
       end
+      it 'has a non-empty string for full App versioning' do
+        expect(subject.send(AppParameter::FULL_VERSION_FIELDNAME)).to be_present
+      end
       it 'has the maintenance mode flag toggled off' do
         expect(subject.maintenance?).to be false
       end

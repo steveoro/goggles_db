@@ -4,10 +4,10 @@ module GogglesDb
   #
   # = EventType model
   #
-  #   - version:  7.000
+  #   - version:  7.030
   #   - author:   Steve A.
   #
-  class EventType < ApplicationRecord
+  class EventType < ApplicationLookupEntity
     self.table_name = 'event_types'
 
     belongs_to :stroke_type
@@ -22,7 +22,7 @@ module GogglesDb
     validates :phases, length: { maximum: 5 }
     validates :phase_length_in_meters, length: { maximum: 8 }
 
-    validates :style_order, presence: true, length: { within: 1..3, allow_nil: false },
+    validates :style_order, presence: { length: { within: 1..3, allow_nil: false } },
                             numericality: true
 
     # has_many :meeting_events

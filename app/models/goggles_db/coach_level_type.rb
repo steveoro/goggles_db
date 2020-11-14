@@ -4,10 +4,10 @@ module GogglesDb
   #
   # = CoachLevelType model
   #
-  #   - version:  7.000
+  #   - version:  7.030
   #   - author:   Steve A.
   #
-  class CoachLevelType < ApplicationRecord
+  class CoachLevelType < ApplicationLookupEntity
     self.table_name = 'coach_level_types'
 
     # Unique IDs used inside the DB, the description will be retrieved using I18n.t

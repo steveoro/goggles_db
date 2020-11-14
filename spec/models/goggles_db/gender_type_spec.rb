@@ -1,9 +1,20 @@
 # frozen_string_literal: true
 
 require 'rails_helper'
+require 'support/shared_localizable_examples'
 
 module GogglesDb
   RSpec.describe GenderType, type: :model do
+    context 'any pre-seeded instance' do
+      subject { GenderType.all.sample }
+
+      it 'is valid' do
+        expect(subject).to be_valid
+      end
+
+      it_behaves_like('Localizable')
+    end
+
     %w[male female intermixed].each do |word|
       describe "self.#{word}" do
         it 'is has a #code' do

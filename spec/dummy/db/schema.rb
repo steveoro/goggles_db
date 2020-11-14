@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_11_05_094646) do
+ActiveRecord::Schema.define(version: 2020_11_14_190213) do
 
   create_table "achievement_rows", id: :integer, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
     t.integer "lock_version", default: 0
@@ -103,18 +103,6 @@ ActiveRecord::Schema.define(version: 2020_11_05_094646) do
     t.datetime "created_at"
     t.datetime "updated_at"
     t.index ["code"], name: "index_app_parameters_on_code", unique: true
-  end
-
-  create_table "area_types", id: :integer, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
-    t.integer "lock_version", default: 0
-    t.string "code", limit: 10
-    t.string "name"
-    t.integer "region_type_id"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.index ["code"], name: "index_area_types_on_code"
-    t.index ["region_type_id", "code"], name: "index_area_types_region_code"
-    t.index ["region_type_id"], name: "index_area_types_on_region_type_id"
   end
 
   create_table "arm_aux_types", id: :integer, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
@@ -242,12 +230,10 @@ ActiveRecord::Schema.define(version: 2020_11_05_094646) do
     t.string "country_code", limit: 10
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.integer "user_id"
-    t.integer "area_type_id"
-    t.index ["area_type_id"], name: "index_cities_on_area_type_id"
+    t.string "latitude", limit: 50
+    t.string "longitude", limit: 50
+    t.index ["country_code", "area", "name"], name: "index_cities_on_country_code_and_area_and_name", unique: true
     t.index ["name"], name: "index_cities_on_name"
-    t.index ["user_id"], name: "idx_cities_user"
-    t.index ["zip"], name: "index_cities_on_zip"
   end
 
   create_table "coach_level_types", id: :integer, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
@@ -334,6 +320,54 @@ ActiveRecord::Schema.define(version: 2020_11_05_094646) do
     t.index ["name"], name: "index_data_import_cities_on_name"
     t.index ["user_id"], name: "idx_di_cities_user"
     t.index ["zip"], name: "index_data_import_cities_on_zip"
+  end
+
+  create_table "data_import_laps", id: :integer, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
+    t.integer "lock_version", default: 0
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.integer "data_import_session_id"
+    t.integer "conflicting_id", limit: 3, default: 0
+    t.string "import_text", null: false
+    t.decimal "reaction_time", precision: 5, scale: 2
+    t.integer "minutes", limit: 3
+    t.integer "seconds", limit: 2
+    t.integer "hundreds", limit: 2
+    t.integer "stroke_cycles", limit: 3
+    t.integer "not_swam_part_seconds", limit: 2
+    t.integer "not_swam_part_hundreds", limit: 2
+    t.integer "not_swam_kick_number", limit: 2
+    t.integer "breath_number", limit: 3
+    t.integer "position", limit: 3
+    t.integer "minutes_from_start", limit: 3
+    t.integer "seconds_from_start", limit: 2
+    t.integer "hundreds_from_start", limit: 2
+    t.boolean "is_native_from_start", default: false
+    t.integer "length_in_meters"
+    t.integer "data_import_meeting_program_id"
+    t.integer "data_import_meeting_individual_result_id"
+    t.integer "data_import_meeting_entry_id"
+    t.integer "data_import_swimmer_id"
+    t.integer "data_import_team_id"
+    t.integer "meeting_program_id"
+    t.integer "meeting_individual_result_id"
+    t.integer "meeting_entry_id"
+    t.integer "swimmer_id"
+    t.integer "team_id"
+    t.integer "user_id"
+    t.index ["data_import_meeting_entry_id"], name: "idx_di_passages_di_meeting_entry"
+    t.index ["data_import_meeting_individual_result_id"], name: "idx_di_passages_di_meeting_individual_result"
+    t.index ["data_import_meeting_program_id"], name: "idx_di_passages_di_meeting_program"
+    t.index ["data_import_session_id"], name: "idx_di_passages_di_session"
+    t.index ["data_import_swimmer_id"], name: "idx_di_passages_di_swimmer"
+    t.index ["data_import_team_id"], name: "idx_di_passages_di_team"
+    t.index ["length_in_meters"], name: "index_data_import_laps_on_length_in_meters"
+    t.index ["meeting_entry_id"], name: "idx_di_passages_meeting_entry"
+    t.index ["meeting_individual_result_id"], name: "idx_di_passages_meeting_individual_result"
+    t.index ["meeting_program_id"], name: "idx_di_passages_meeting_program"
+    t.index ["swimmer_id"], name: "idx_di_passages_swimmer"
+    t.index ["team_id"], name: "idx_di_passages_team"
+    t.index ["user_id"], name: "idx_di_passages_user"
   end
 
   create_table "data_import_meeting_entries", id: :integer, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
@@ -643,54 +677,6 @@ ActiveRecord::Schema.define(version: 2020_11_05_094646) do
     t.index ["season_id"], name: "idx_di_meetings_season"
     t.index ["timing_type_id"], name: "idx_di_meetings_timing_type"
     t.index ["user_id"], name: "idx_di_meetings_user"
-  end
-
-  create_table "data_import_passages", id: :integer, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
-    t.integer "lock_version", default: 0
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.integer "data_import_session_id"
-    t.integer "conflicting_id", limit: 3, default: 0
-    t.string "import_text", null: false
-    t.decimal "reaction_time", precision: 5, scale: 2
-    t.integer "minutes", limit: 3
-    t.integer "seconds", limit: 2
-    t.integer "hundreds", limit: 2
-    t.integer "stroke_cycles", limit: 3
-    t.integer "not_swam_part_seconds", limit: 2
-    t.integer "not_swam_part_hundreds", limit: 2
-    t.integer "not_swam_kick_number", limit: 2
-    t.integer "breath_number", limit: 3
-    t.integer "position", limit: 3
-    t.integer "minutes_from_start", limit: 3
-    t.integer "seconds_from_start", limit: 2
-    t.integer "hundreds_from_start", limit: 2
-    t.boolean "is_native_from_start", default: false
-    t.integer "passage_type_id"
-    t.integer "data_import_meeting_program_id"
-    t.integer "data_import_meeting_individual_result_id"
-    t.integer "data_import_meeting_entry_id"
-    t.integer "data_import_swimmer_id"
-    t.integer "data_import_team_id"
-    t.integer "meeting_program_id"
-    t.integer "meeting_individual_result_id"
-    t.integer "meeting_entry_id"
-    t.integer "swimmer_id"
-    t.integer "team_id"
-    t.integer "user_id"
-    t.index ["data_import_meeting_entry_id"], name: "idx_di_passages_di_meeting_entry"
-    t.index ["data_import_meeting_individual_result_id"], name: "idx_di_passages_di_meeting_individual_result"
-    t.index ["data_import_meeting_program_id"], name: "idx_di_passages_di_meeting_program"
-    t.index ["data_import_session_id"], name: "idx_di_passages_di_session"
-    t.index ["data_import_swimmer_id"], name: "idx_di_passages_di_swimmer"
-    t.index ["data_import_team_id"], name: "idx_di_passages_di_team"
-    t.index ["meeting_entry_id"], name: "idx_di_passages_meeting_entry"
-    t.index ["meeting_individual_result_id"], name: "idx_di_passages_meeting_individual_result"
-    t.index ["meeting_program_id"], name: "idx_di_passages_meeting_program"
-    t.index ["passage_type_id"], name: "idx_di_passages_passage_type"
-    t.index ["swimmer_id"], name: "idx_di_passages_swimmer"
-    t.index ["team_id"], name: "idx_di_passages_team"
-    t.index ["user_id"], name: "idx_di_passages_user"
   end
 
   create_table "data_import_seasons", id: :integer, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
@@ -1132,22 +1118,13 @@ ActiveRecord::Schema.define(version: 2020_11_05_094646) do
     t.index ["code"], name: "index_kick_aux_types_on_code", unique: true
   end
 
-  create_table "lap_types", id: :integer, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
-    t.integer "lock_version", default: 0
-    t.string "code", limit: 6
-    t.integer "length_in_meters", limit: 3
-    t.datetime "created_at"
-    t.datetime "updated_at"
-    t.index ["code"], name: "index_lap_types_on_code", unique: true
-  end
-
   create_table "laps", id: :integer, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
     t.integer "lock_version", default: 0
     t.integer "minutes", limit: 3, default: 0
     t.integer "seconds", limit: 2, default: 0
     t.integer "hundreds", limit: 2, default: 0
     t.integer "meeting_program_id"
-    t.integer "passage_type_id"
+    t.integer "length_in_meters"
     t.integer "user_id"
     t.datetime "created_at"
     t.datetime "updated_at"
@@ -1166,10 +1143,10 @@ ActiveRecord::Schema.define(version: 2020_11_05_094646) do
     t.integer "meeting_entry_id"
     t.integer "swimmer_id"
     t.integer "team_id"
+    t.index ["length_in_meters"], name: "index_laps_on_length_in_meters"
     t.index ["meeting_entry_id"], name: "idx_passages_meeting_entry"
     t.index ["meeting_individual_result_id"], name: "idx_passages_meeting_individual_result"
     t.index ["meeting_program_id"], name: "passages_x_badges"
-    t.index ["passage_type_id"], name: "fk_passages_passage_types"
     t.index ["swimmer_id"], name: "idx_passages_swimmer"
     t.index ["team_id"], name: "idx_passages_team"
     t.index ["user_id"], name: "idx_passages_user"
@@ -1534,16 +1511,6 @@ ActiveRecord::Schema.define(version: 2020_11_05_094646) do
     t.index ["code"], name: "index_movement_types_on_code", unique: true
   end
 
-  create_table "nation_types", id: :integer, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
-    t.integer "lock_version", default: 0
-    t.string "code", limit: 3
-    t.string "numeric_code", limit: 3
-    t.string "alpha2_code", limit: 2
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.index ["code"], name: "index_nation_types_on_code", unique: true
-  end
-
   create_table "news_feeds", id: :integer, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
     t.string "title", limit: 150
     t.text "body"
@@ -1597,18 +1564,6 @@ ActiveRecord::Schema.define(version: 2020_11_05_094646) do
     t.boolean "is_for_teams", default: false
     t.boolean "is_for_seasons", default: false
     t.index ["code"], name: "index_record_types_on_code", unique: true
-  end
-
-  create_table "region_types", id: :integer, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
-    t.integer "lock_version", default: 0
-    t.string "code", limit: 3
-    t.integer "nation_type_id"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.string "name"
-    t.index ["code"], name: "index_region_types_on_code"
-    t.index ["nation_type_id", "code"], name: "index_region_types_nation_code"
-    t.index ["nation_type_id"], name: "index_region_types_on_nation_type_id"
   end
 
   create_table "score_computation_type_rows", id: :integer, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
@@ -1915,12 +1870,12 @@ ActiveRecord::Schema.define(version: 2020_11_05_094646) do
     t.integer "team_id"
     t.integer "event_type_id"
     t.integer "pool_type_id"
-    t.integer "passage_type_id"
+    t.integer "length_in_meters"
     t.integer "user_id"
     t.datetime "created_at"
     t.datetime "updated_at"
     t.index ["event_type_id"], name: "idx_team_passage_templates_event_type"
-    t.index ["passage_type_id"], name: "idx_team_passage_templates_passage_type"
+    t.index ["length_in_meters"], name: "index_team_lap_templates_on_length_in_meters"
     t.index ["pool_type_id"], name: "idx_team_passage_templates_pool_type"
     t.index ["team_id"], name: "idx_team_passage_templates_team"
     t.index ["user_id"], name: "idx_team_passage_templates_user"
@@ -2204,8 +2159,6 @@ ActiveRecord::Schema.define(version: 2020_11_05_094646) do
     t.index ["voter_id", "voter_type"], name: "index_votes_on_voter_id_and_voter_type"
   end
 
-  add_foreign_key "area_types", "region_types"
-  add_foreign_key "cities", "area_types"
   add_foreign_key "meeting_event_reservations", "badges"
   add_foreign_key "meeting_event_reservations", "meeting_events"
   add_foreign_key "meeting_event_reservations", "meetings"
@@ -2223,7 +2176,6 @@ ActiveRecord::Schema.define(version: 2020_11_05_094646) do
   add_foreign_key "meeting_reservations", "swimmers"
   add_foreign_key "meeting_reservations", "teams"
   add_foreign_key "meeting_reservations", "users"
-  add_foreign_key "region_types", "nation_types"
   add_foreign_key "swimmer_season_scores", "badges"
   add_foreign_key "swimmer_season_scores", "event_types"
   add_foreign_key "swimmer_season_scores", "meeting_individual_results"

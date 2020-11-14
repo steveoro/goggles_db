@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 FactoryBot.define do
   factory :city, class: 'GogglesDb::City' do
     name          { FFaker::Address.city }

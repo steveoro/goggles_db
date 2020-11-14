@@ -4,10 +4,10 @@ module GogglesDb
   #
   # = MedalType model
   #
-  #   - version:  7.000
+  #   - version:  7.030
   #   - author:   Steve A.
   #
-  class MedalType < ApplicationRecord
+  class MedalType < ApplicationLookupEntity
     self.table_name = 'medal_types'
 
     # Unique IDs used inside the DB, the description will be retrieved using I18n.t

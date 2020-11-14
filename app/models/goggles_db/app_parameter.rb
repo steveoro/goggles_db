@@ -4,7 +4,7 @@ module GogglesDb
   #
   # = AppParameter model
   #
-  #   - version:  7.000
+  #   - version:  7.030
   #   - author:   Steve A.
   #
   class AppParameter < ApplicationRecord
@@ -12,6 +12,7 @@ module GogglesDb
 
     VERSIONING_CODE = 1
 
+    FULL_VERSION_FIELDNAME = 'a_name'
     DB_VERSION_FIELDNAME = 'a_string'
     TOGGLE_FIELDNAME     = 'a_bool'
 
