@@ -45,12 +45,14 @@ Gem::Specification.new do |spec|
   spec.add_dependency 'haml'
   spec.add_dependency 'jwt'
   spec.add_dependency 'mini_magick'
+  spec.add_dependency 'simple_command'
   spec.add_dependency 'tzinfo', '~> 1.2', '>= 1.2.2'
 
   # Currently publishing data factories even on production to allow
   # fixture creation even on staging/production environment for testing purposes:
   spec.add_dependency 'factory_bot_rails'
   spec.add_dependency 'ffaker'
+  spec.add_dependency 'fuzzy-string-match'
 
   spec.add_development_dependency 'mysql2'
 end

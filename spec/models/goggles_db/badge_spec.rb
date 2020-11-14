@@ -57,13 +57,13 @@ module GogglesDb
 
     # Sorting scopes:
     describe 'self.by_season' do
-      it_behaves_like('sorting scope by_season', Badge)
+      it_behaves_like('sorting scope by_<ANY_ENTITY_NAME>', Badge, 'season', 'begin_date')
     end
     describe 'self.by_swimmer' do
-      it_behaves_like('sorting scope by_swimmer', Badge)
+      it_behaves_like('sorting scope by_<ANY_ENTITY_NAME>', Badge, 'swimmer', 'complete_name')
     end
     describe 'self.by_category_type' do
-      it_behaves_like('sorting scope by_category_type', Badge)
+      it_behaves_like('sorting scope by_<ANY_ENTITY_NAME>', Badge, 'category_type', 'code')
     end
 
     # Filtering scopes:

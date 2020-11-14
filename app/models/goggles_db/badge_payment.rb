@@ -28,10 +28,12 @@ module GogglesDb
     scope :for_badges,  ->(badges)  { where(badge_id: badges.map(&:id).uniq) }
     scope :for_swimmer, ->(swimmer) { joins(:swimmer).where("swimmers.id = #{swimmer.id}") }
     scope :for_team,    ->(team)    { joins(:team).where("teams.id = #{team.id}") }
+
+    delegate :complete_name, to: :swimmer, prefix: true
     #-- ------------------------------------------------------------------------
     #++
 
-    # Override: includes all 1st-level associations into the typical to_json output.
+    # Override: include all 1st-level associations into the typical to_json output.
     def to_json(options = nil)
       attributes.merge(
         'badge' => badge.attributes,

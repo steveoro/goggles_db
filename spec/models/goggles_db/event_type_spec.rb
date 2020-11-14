@@ -2,6 +2,7 @@
 
 require 'rails_helper'
 require 'support/shared_method_existance_examples'
+require 'support/shared_localizable_examples'
 
 module GogglesDb
   RSpec.describe EventType, type: :model do
@@ -21,13 +22,15 @@ module GogglesDb
         %i[relay?]
       )
 
-      it 'is has a #code' do
+      it_behaves_like('Localizable')
+
+      it 'has a #code' do
         expect(subject.code).to be_present
       end
 
       %w[length_in_meters partecipants phases phase_length_in_meters
          style_order].each do |member|
-        it "is has a positive ##{member}" do
+        it "has a positive ##{member}" do
           expect(subject.send(member)).to be_positive
         end
       end

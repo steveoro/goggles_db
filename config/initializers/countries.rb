@@ -5,5 +5,5 @@ require 'countries'
 # Load only supported locales, when available, to minimize memory footprint in
 # production:
 ISO3166.configure do |config|
-  config.locales = %i[en it de fr es]
+  config.locales = %i[en it]
 end

@@ -1,54 +1,31 @@
 # frozen_string_literal: true
 
-shared_examples_for 'sorting scope by_season' do |subject_class|
-  let(:result) { subject_class.by_season.limit(20) }
+# This applies to scopes like 'by_rank' or 'by_date', where the +value_name+ is
+# a direct sibling of the +subject_class+ instance. (Shallow depth association)
+shared_examples_for 'sorting scope by_<ANY_VALUE_NAME>' do |subject_class, value_name, comparable_method|
+  let(:result) { subject_class.send("by_#{value_name}").limit(20) }
 
   it "is a #{subject_class} relation" do
     expect(result).to be_a(ActiveRecord::Relation)
     expect(result).to all be_a(subject_class)
   end
-  # Checks just the boundaries with a random middle point in between:
   it 'is ordered' do
-    expect(result.first.season.begin_date).to be <= result.sample.season.begin_date
-    expect(result.sample.season.begin_date).to be <= result.last.season.begin_date
+    expect(result.first.send(comparable_method)).to be <= result.sample.send(comparable_method)
+    expect(result.sample.send(comparable_method)).to be <= result.last.send(comparable_method)
   end
 end
 
-shared_examples_for 'sorting scope by_swimmer' do |subject_class|
-  let(:result) { subject_class.by_swimmer.limit(20) }
+# This applies to other scopes scopes like 'by_swimmer' or 'by_season', where
+# the +comparable_method+ is a sibling of the +entity_name+ instance. (1st-level association)
+shared_examples_for 'sorting scope by_<ANY_ENTITY_NAME>' do |subject_class, entity_name, comparable_method|
+  let(:result) { subject_class.send("by_#{entity_name}").limit(20) }
 
   it "is a #{subject_class} relation" do
     expect(result).to be_a(ActiveRecord::Relation)
     expect(result).to all be_a(subject_class)
   end
   it 'is ordered' do
-    expect(result.first.swimmer.complete_name).to be <= result.sample.swimmer.complete_name
-    expect(result.sample.swimmer.complete_name).to be <= result.last.swimmer.complete_name
-  end
-end
-
-shared_examples_for 'sorting scope by_category_type' do |subject_class|
-  let(:result) { subject_class.by_category_type.limit(20) }
-
-  it "is a #{subject_class} relation" do
-    expect(result).to be_a(ActiveRecord::Relation)
-    expect(result).to all be_a(subject_class)
-  end
-  it 'is ordered' do
-    expect(result.first.category_type.code).to be <= result.sample.category_type.code
-    expect(result.sample.category_type.code).to be <= result.last.category_type.code
-  end
-end
-
-shared_examples_for 'sorting scope by_date' do |subject_class|
-  let(:result) { subject_class.by_date.limit(20) }
-
-  it "is a #{subject_class} relation" do
-    expect(result).to be_a(ActiveRecord::Relation)
-    expect(result).to all be_a(subject_class)
-  end
-  it 'is ordered' do
-    expect(result.first.payment_date).to be <= result.sample.payment_date
-    expect(result.sample.payment_date).to be <= result.last.payment_date
+    expect(result.first.send(entity_name).send(comparable_method)).to be <= result.sample.send(entity_name).send(comparable_method)
+    expect(result.sample.send(entity_name).send(comparable_method)).to be <= result.last.send(entity_name).send(comparable_method)
   end
 end

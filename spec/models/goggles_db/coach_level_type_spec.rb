@@ -1,9 +1,20 @@
 # frozen_string_literal: true
 
 require 'rails_helper'
+require 'support/shared_localizable_examples'
 
 module GogglesDb
   RSpec.describe CoachLevelType, type: :model do
+    context 'any pre-seeded instance' do
+      subject { CoachLevelType.all.sample }
+
+      it 'is valid' do
+        expect(subject).to be_valid
+      end
+
+      it_behaves_like('Localizable')
+    end
+
     (CoachLevelType::MIN_LEVEL_ID..CoachLevelType::MAX_LEVEL_ID).each do |level_id|
       describe "self.level_#{level_id}" do
         let(:method_name) { "level_#{level_id}" }

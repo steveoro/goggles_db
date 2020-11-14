@@ -19,7 +19,6 @@ gemspec
 group :development do
   gem 'better_errors'
   gem 'binding_of_caller'
-  gem 'brakeman'
 
   gem 'guard'
   gem 'guard-brakeman'
@@ -35,13 +34,14 @@ group :development do
 end
 
 group :development, :test do
+  gem 'awesome_print' # color output formatter for Ruby objects
+  gem 'brakeman'
   gem 'bullet'
   gem 'ffaker'
   gem 'letter_opener'
   gem 'pry'
   gem 'rspec'
   gem 'rspec-rails'
-
   gem 'rubocop', require: false # For style checking
   gem 'rubocop-rails'
   gem 'rubocop-rspec'

@@ -15,7 +15,12 @@ module GogglesDb
       # Presence of fields & requiredness:
       it_behaves_like(
         'having one or more required & present attributes (invalid if missing)',
-        %i[name country_code country]
+        %i[name country_code]
+      )
+
+      it_behaves_like(
+        'responding to a list of methods',
+        %i[area country latitude longitude]
       )
     end
   end
