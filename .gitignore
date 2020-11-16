@@ -19,6 +19,8 @@ spec/dummy/db/dump/*.sql
 spec/dummy/db/dump/*.bz2
 /public/assets
 /coverage/*
+# Include the anonymized test DB dump to ease pipeline setup:
+!spec/dummy/db/dump/test.sql.bz2
 
 # Ignore Byebug command history file.
 .byebug_history
