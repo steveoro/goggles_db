@@ -9,9 +9,9 @@ module GogglesDb
   #
   # = "Find ISO3166 Cities" command
   #
-  #   - file vers.: 1.07
+  #   - file vers.: 1.08
   #   - author....: Steve A.
-  #   - build.....: 20201114
+  #   - build.....: 20201116
   #
   # === Dependencies:
   #
@@ -109,8 +109,9 @@ module GogglesDb
           @matches << OpenStruct.new(candidate: city, weight: 1.0)
           break
         end
-        # Store other candidates only if they seem to be a match:
-        weight = METRIC.getDistance(key_name.downcase, @city_name.downcase)
+
+        # Store candidates only if they seem to be a match:
+        weight = compute_best_weight(key_name, city)
         @matches << OpenStruct.new(candidate: city, weight: weight) if weight >= MATCH_BIAS
       end
 
@@ -170,6 +171,22 @@ module GogglesDb
       # Output verbose debugging output:
       puts "\r\n\r\n[#{@city_name}]"
       @matches.each_with_index { |obj, index| puts "#{index}. #{obj.candidate.name} (#{obj.weight})" }
+    end
+
+    # Return computed weight between searched name and:
+    # 1. current candidate name, if it's a suitable match
+    # 2. pure stripped-down-to-ASCII key name otherwise
+    #
+    # This works on the assumption that the candidate names may have accented letters or foreign alphabets in it.
+    #
+    def compute_best_weight(current_key_name, current_city)
+      # Check the distance between the searched name the candidate name:
+      weight = METRIC.getDistance(current_city.name.downcase, @city_name.downcase)
+      return weight if weight >= MATCH_BIAS
+
+      # Check also the distance from the pure ASCII key_name in case the first one isn't a match:
+      # (may happen due to many accented names)
+      METRIC.getDistance(current_key_name, @city_name.downcase)
     end
   end
 end
