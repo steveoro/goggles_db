@@ -2,13 +2,12 @@
 
 require 'rails_helper'
 require 'support/shared_method_existance_examples'
+require 'support/shared_sorting_scopes_examples'
 require 'support/shared_to_json_examples'
 
 module GogglesDb
   RSpec.describe Team, type: :model do
-    context 'when using the factory, the resulting instance' do
-      subject { FactoryBot.create(:team) }
-
+    shared_examples_for 'a valid Team instance' do
       it 'is valid' do
         expect(subject).to be_a(Team).and be_valid
       end
@@ -27,22 +26,25 @@ module GogglesDb
            home_page_url]
       )
     end
+
+    context 'any pre-seeded instance' do
+      subject { Team.all.limit(20).sample }
+
+      it_behaves_like('a valid Team instance')
+    end
+
+    context 'when using the factory, the resulting instance' do
+      subject { FactoryBot.create(:team) }
+
+      it_behaves_like('a valid Team instance')
+    end
     #-- ------------------------------------------------------------------------
     #++
 
     # Sorting scopes:
     describe 'self.by_name' do
-      let(:result) { subject.class.by_name }
-      it 'is a Team relation' do
-        expect(result).to be_a(ActiveRecord::Relation)
-        expect(result).to all be_a(Team)
-      end
+      it_behaves_like('sorting scope by_<ANY_VALUE_NAME>', Team, 'name', 'name')
     end
-    #-- ------------------------------------------------------------------------
-    #++
-
-    # Filtering scopes:
-    # TODO
     #-- ------------------------------------------------------------------------
     #++
 

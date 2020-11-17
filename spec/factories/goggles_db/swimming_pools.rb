@@ -13,7 +13,18 @@ FactoryBot.define do
     has_gym_area            { [false, true].sample }
     has_children_area       { [false, true].sample }
     pool_type               { GogglesDb::PoolType.eventable.sample }
-
     city
+
+    # Optional:
+    locker_cabinet_type { GogglesDb::LockerCabinetType.all.sample }
+    shower_type         { GogglesDb::ShowerType.all.sample }
+    hair_dryer_type     { GogglesDb::HairDryerType.all.sample }
+
+    before(:create) do |built_instance|
+      if built_instance.invalid?
+        puts "\r\nFactory def. error => " << GogglesDb::ValidationErrorTools.recursive_error_for(built_instance)
+        puts built_instance.inspect
+      end
+    end
   end
 end
