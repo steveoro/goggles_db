@@ -22,17 +22,18 @@ module GogglesDb
 
     has_one :stroke_type, through: :event_type
 
-    delegate :relay?, to: :event_type
+    delegate :length_in_meters, to: :event_type
+    delegate :relay?,           to: :event_type
 
     # Memoize all values for virtual scopes:
     all.joins(:stroke_type).includes(:stroke_type).order(:style_order).each do |row|
       class_eval do
-        @only_relays ||= []
-        @only_relays << row if row&.relay?
-        @only_individuals ||= []
-        @only_individuals << row unless row&.relay?
-        @eventable ||= []
-        @eventable << row if row&.pool_type&.eventable? && row&.stroke_type&.eventable?
+        @all_relays ||= []
+        @all_relays << row if row&.relay?
+        @all_individuals ||= []
+        @all_individuals << row unless row&.relay?
+        @all_eventable ||= []
+        @all_eventable << row if row&.pool_type&.eventable? && row&.stroke_type&.eventable?
       end
     end
     #-- ------------------------------------------------------------------------
@@ -43,6 +44,8 @@ module GogglesDb
     scope :by_event_type, -> { joins(:event_type, :pool_type).order('event_types.style_order, pool_types.length_in_meters') }
 
     # Filtering scopes:
+    scope :relays,        -> { joins(:event_type).includes(:event_type).where('event_types.is_a_relay' => true) }
+    scope :individuals,   -> { joins(:event_type).includes(:event_type).where('event_types.is_a_relay' => false) }
     scope :for_pool_type, ->(pool_type) { joins(:pool_type).where(['pool_types.id = ?', pool_type.id]) }
     scope :event_length_between, lambda { |min_length, max_length|
       joins(:event_type)
@@ -54,16 +57,16 @@ module GogglesDb
 
     # Virtual scopes:
     # rubocop:disable Style/TrivialAccessors
-    def self.eventable
-      @eventable
+    def self.all_eventable
+      @all_eventable
     end
 
-    def self.only_relays
-      @only_relays
+    def self.all_relays
+      @all_relays
     end
 
-    def self.only_individuals
-      @only_individuals
+    def self.all_individuals
+      @all_individuals
     end
     # rubocop:enable Style/TrivialAccessors
     #-- ------------------------------------------------------------------------

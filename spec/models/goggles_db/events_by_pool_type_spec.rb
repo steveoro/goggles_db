@@ -8,7 +8,7 @@ require 'support/shared_to_json_examples'
 
 module GogglesDb
   RSpec.describe EventsByPoolType, type: :model do
-    let(:full_cached_table) { EventsByPoolType.only_individuals + EventsByPoolType.only_relays }
+    let(:full_cached_table) { EventsByPoolType.all_individuals + EventsByPoolType.all_relays }
     context 'any pre-seeded instance' do
       subject { full_cached_table.sample }
 
@@ -22,19 +22,19 @@ module GogglesDb
       )
       it_behaves_like(
         'responding to a list of methods',
-        %i[relay? eventable? to_json]
+        %i[length_in_meters relay? eventable? to_json]
       )
 
       describe '#eventable?' do
         context 'for an Event/Pool type combination valid for a MeetingEvent,' do
           it 'returns true' do
-            eventable_row = EventsByPoolType.eventable.sample
+            eventable_row = EventsByPoolType.all_eventable.sample
             expect(eventable_row).to be_eventable
           end
         end
         context 'for an Event/Pool type combination not valid for any MeetingEvent,' do
           it 'returns false ' do
-            uneventable_row = (full_cached_table - EventsByPoolType.eventable).sample
+            uneventable_row = (full_cached_table - EventsByPoolType.all_eventable).sample
             expect(uneventable_row.nil? || !uneventable_row&.eventable?).to be true
           end
         end
@@ -63,7 +63,18 @@ module GogglesDb
     describe 'self.for_pool_type' do
       it_behaves_like('filtering scope for_<ANY_ENTITY_NAME>', EventsByPoolType, 'pool_type')
     end
-
+    describe 'self.relays' do
+      let(:result) { subject.class.relays }
+      it 'contains only relay events' do
+        expect(result.relays).to all(be_relay)
+      end
+    end
+    describe 'self.individuals' do
+      let(:result) { subject.class.individuals }
+      it 'contains only individual events' do
+        expect(result.individuals.map(&:relay?)).to all(be false)
+      end
+    end
     describe 'self.event_length_between' do
       context 'when given a valid range of lengths,' do
         let(:result) { subject.class.event_length_between(50, 100) }
@@ -71,6 +82,12 @@ module GogglesDb
           expect(result).to be_a(ActiveRecord::Relation)
           expect(result).not_to be_empty
           expect(result).to all be_an(EventsByPoolType)
+        end
+        describe 'the result set' do
+          it 'contains only events mapped into the specified length range' do
+            list_of_lengths = result.map(&:length_in_meters).uniq
+            expect(list_of_lengths).to all(be_between(50, 100))
+          end
         end
       end
       context 'when given an invalid range of lengths,' do
@@ -82,24 +99,23 @@ module GogglesDb
       end
     end
 
-    describe 'self.eventable' do
-      let(:result) { subject.class.eventable }
+    # Virtual scopes:
+    describe 'self.all_eventable' do
+      let(:result) { subject.class.all_eventable }
       it 'is an array of eventable EventsByPoolType' do
         expect(result).to be_an(Array)
         expect(result).to all(be_eventable)
       end
     end
-
-    describe 'self.only_relays' do
-      let(:result) { subject.class.only_relays }
+    describe 'self.all_relays' do
+      let(:result) { subject.class.all_relays }
       it 'is an array of relay-only EventsByPoolType' do
         expect(result).to be_an(Array)
         expect(result).to all(be_relay)
       end
     end
-
-    describe 'self.only_individuals' do
-      let(:result) { subject.class.only_individuals }
+    describe 'self.all_individuals' do
+      let(:result) { subject.class.all_individuals }
       it 'is an array of individual-only EventsByPoolType' do
         expect(result).to be_an(Array)
         result.each do |row|

@@ -37,7 +37,7 @@ module GogglesDb
     end
 
     # "Virtual" scope. Returns an Array of all eventable row types.
-    def self.eventable
+    def self.all_eventable
       EVENTABLE_NAMES.map { |word| instance_variable_get("@#{word}") }
     end
     #-- ------------------------------------------------------------------------

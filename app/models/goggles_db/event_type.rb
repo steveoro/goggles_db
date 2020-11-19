@@ -47,24 +47,31 @@ module GogglesDb
     # Memoize all values for virtual scopes:
     all.joins(:stroke_type).includes(:stroke_type).order(:style_order).each do |row|
       class_eval do
-        @only_relays ||= []
-        @only_relays << row if row&.relay?
-        @only_individuals ||= []
-        @only_individuals << row unless row&.relay?
+        @all_eventable ||= []
+        @all_eventable << row if row&.stroke_type&.eventable?
+        @all_relays ||= []
+        @all_relays << row if row&.relay?
+        @all_individuals ||= []
+        @all_individuals << row unless row&.relay?
       end
     end
     #-- ------------------------------------------------------------------------
     #++
 
-    # Virtual scope: array of memoized relay-only types of event, sorted in style order
+    # "Virtual" scope. Returns an Array of all eventable row types (depends on stroke type), sorted in style order
     # rubocop:disable Style/TrivialAccessors
-    def self.only_relays
-      @only_relays
+    def self.all_eventable
+      @all_eventable
+    end
+
+    # Virtual scope: array of memoized relay-only types of event, sorted in style order
+    def self.all_relays
+      @all_relays
     end
 
     # Virtual scope: array of memoized individual-only types of event, sorted in style order
-    def self.only_individuals
-      @only_individuals
+    def self.all_individuals
+      @all_individuals
     end
     # rubocop:enable Style/TrivialAccessors
     #-- ------------------------------------------------------------------------

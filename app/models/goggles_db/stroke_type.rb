@@ -57,7 +57,7 @@ module GogglesDb
     #
     # Although the result is not a relation, the memoized version doesn't need to issue a query.
     #++
-    def self.eventable
+    def self.all_eventable
       EVENTABLE_NAMES.map { |word| instance_variable_get("@#{word}") }
     end
     #-- ------------------------------------------------------------------------

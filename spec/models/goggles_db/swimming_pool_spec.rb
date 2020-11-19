@@ -34,13 +34,11 @@ module GogglesDb
 
     context 'any pre-seeded instance' do
       subject { SwimmingPool.all.sample }
-
       it_behaves_like('a valid SwimmingPool instance')
     end
 
     context 'when using the factory, the resulting instance' do
       subject { FactoryBot.create(:swimming_pool) }
-
       it_behaves_like('a valid SwimmingPool instance')
     end
     #-- ------------------------------------------------------------------------
@@ -70,7 +68,9 @@ module GogglesDb
       # Optional associations:
       context 'when the entity contains other optional associations,' do
         let(:json_hash) do
-          expect(subject.city).to be_a(City).and be_valid
+          expect(subject.shower_type).to be_a(ShowerType).and be_valid
+          expect(subject.hair_dryer_type).to be_a(HairDryerType).and be_valid
+          expect(subject.locker_cabinet_type).to be_a(LockerCabinetType).and be_valid
           JSON.parse(subject.to_json)
         end
 

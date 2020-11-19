@@ -14,7 +14,7 @@ module GogglesDb
 
       it_behaves_like(
         'having one or more required associations',
-        %i[season edition_type timing_type]
+        %i[season season_type federation_type edition_type timing_type]
       )
 
       # Presence of fields & requiredness:
@@ -25,7 +25,8 @@ module GogglesDb
 
       it_behaves_like(
         'responding to a list of methods',
-        %i[reference_phone reference_e_mail reference_name configuration_file
+        %i[meeting_sessions swimming_pools pool_types event_types
+           reference_phone reference_e_mail reference_name configuration_file
            max_individual_events max_individual_events_per_session
            warm_up_pool? allows_under_25? invitation? startlist? off_season? confirmed? cancelled?
            tweeted? posted?
@@ -36,13 +37,11 @@ module GogglesDb
 
     context 'any pre-seeded instance' do
       subject { Meeting.all.limit(20).sample }
-
       it_behaves_like('a valid Meeting instance')
     end
 
     context 'when using the factory, the resulting instance' do
       subject { FactoryBot.create(:meeting) }
-
       it_behaves_like('a valid Meeting instance')
     end
     #-- ------------------------------------------------------------------------
