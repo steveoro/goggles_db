@@ -3,7 +3,7 @@ FactoryBot.define do
     edition { ((rand * 1000) % 1000).to_i } # mediumint(9), using a sequence yields validation errors
 
     sequence(:description) { |n| "Fake Season #{n}/#{edition}" }
-    season_type            { GogglesDb::SeasonType.only_masters.sample }
+    season_type            { GogglesDb::SeasonType.all_masters.sample }
     edition_type           { GogglesDb::EditionType.send(%w[ordinal roman none yearly seasonal].sample) }
     timing_type            { GogglesDb::TimingType.send(%w[manual semiauto automatic].sample) }
 

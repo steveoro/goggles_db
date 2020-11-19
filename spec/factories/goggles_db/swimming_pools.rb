@@ -12,7 +12,7 @@ FactoryBot.define do
     has_restaurant_service  { [false, true].sample }
     has_gym_area            { [false, true].sample }
     has_children_area       { [false, true].sample }
-    pool_type               { GogglesDb::PoolType.eventable.sample }
+    pool_type               { GogglesDb::PoolType.all_eventable.sample }
     city
 
     # Optional:

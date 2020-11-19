@@ -33,8 +33,8 @@ module GogglesDb
 
     # Filtering scopes:
     scope :eventable,         -> { where(is_out_of_race: false) }
-    scope :only_relays,       -> { where(is_a_relay: true) }
-    scope :only_individuals,  -> { where(is_a_relay: false) }
+    scope :relays,            -> { where(is_a_relay: true) }
+    scope :individuals,       -> { where(is_a_relay: false) }
     scope :only_undivided,    -> { where(is_undivided: true) }
     scope :only_gender_split, -> { where(is_undivided: false) }
     scope :for_season_type,   ->(season_type) { includes(:season_type).joins(:season_type).where(['season_types.id = ?', season_type.id]) }

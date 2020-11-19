@@ -28,7 +28,7 @@ module GogglesDb
       it_behaves_like(
         'having a list of scopes with no parameters',
         %i[by_age eventable
-           only_relays only_individuals only_undivided only_gender_split]
+           relays individuals only_undivided only_gender_split]
       )
       it_behaves_like(
         'responding to a list of methods',
@@ -57,7 +57,7 @@ module GogglesDb
     #-- ------------------------------------------------------------------------
     #++
 
-    # Scopes:
+    # Filtering scopes:
     describe 'self.eventable' do
       let(:result) { subject.class.eventable }
       it 'is a relation containing only non-out-of-race (eventable) category types' do
@@ -65,17 +65,15 @@ module GogglesDb
         expect(result).to all(be_eventable)
       end
     end
-
-    describe 'self.only_relays' do
-      let(:result) { subject.class.only_relays }
+    describe 'self.relays' do
+      let(:result) { subject.class.relays }
       it 'is a relation containing only relay category types' do
         expect(result).to be_a(ActiveRecord::Relation)
         expect(result).to all(be_relay)
       end
     end
-
-    describe 'self.only_individuals' do
-      let(:result) { subject.class.only_individuals }
+    describe 'self.individuals' do
+      let(:result) { subject.class.individuals }
       it 'is a relation containing only category types for individual events' do
         expect(result).to be_a(ActiveRecord::Relation)
         result.each do |row|
@@ -83,7 +81,6 @@ module GogglesDb
         end
       end
     end
-
     describe 'self.only_undivided' do
       let(:result) { subject.class.only_undivided }
       it 'is a relation containing only category types not divided by gender' do
@@ -91,7 +88,6 @@ module GogglesDb
         expect(result).to all(be_undivided)
       end
     end
-
     describe 'self.only_gender_split' do
       let(:result) { subject.class.only_gender_split }
       it 'is a relation containing only category types which are gender-split in each event' do

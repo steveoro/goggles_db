@@ -39,10 +39,10 @@ module GogglesDb
     #++
 
     # Scopes & virtual scopes:
-    describe 'self.only_masters' do
+    describe 'self.all_masters' do
       it 'is an array of Masters-only Season types' do
-        expect(subject.class.only_masters).to be_an(Array)
-        expect(subject.class.only_masters).to all(be_masters)
+        expect(subject.class.all_masters).to be_an(Array)
+        expect(subject.class.all_masters).to all(be_masters)
       end
     end
     #-- ------------------------------------------------------------------------

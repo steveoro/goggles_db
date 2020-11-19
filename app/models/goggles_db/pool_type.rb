@@ -7,7 +7,7 @@ module GogglesDb
   # This entity is assumed to be pre-seeded on the database.
   # Due to the low number of entity values, all rows have been Memoized.
   #
-  #   - version:  7.030
+  #   - version:  7.034
   #   - author:   Steve A.
   #
   class PoolType < ApplicationLookupEntity
@@ -29,8 +29,8 @@ module GogglesDb
     validates :length_in_meters, presence: { length: { within: 1..3, allow_nil: false } },
                                  numericality: true
 
-    # has_many :events_by_pool_types
-    # has_many :event_types, through: :events_by_pool_types
+    has_many :events_by_pool_types
+    has_many :event_types, through: :events_by_pool_types
     #-- ------------------------------------------------------------------------
     #++
 
@@ -49,7 +49,7 @@ module GogglesDb
     end
 
     # "Virtual" scope. Returns an Array of all "eventable" row types (suitable for Meetings).
-    def self.eventable
+    def self.all_eventable
       EVENTABLE_NAMES.map { |word| instance_variable_get("@#{word}") }
     end
     #-- ------------------------------------------------------------------------

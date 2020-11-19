@@ -63,7 +63,7 @@ module GogglesDb
     # acts_as_taggable_on :tags_by_users
     # acts_as_taggable_on :tags_by_teams
 
-    delegate :name, to: :city, prefix: true, allow_nil: true
+    delegate :name, to: :city, prefix: true, allow_nil: false
     #-- ------------------------------------------------------------------------
     #++
 

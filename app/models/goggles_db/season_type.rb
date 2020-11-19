@@ -52,8 +52,8 @@ module GogglesDb
         row = find_by(id: "#{name}::#{word.upcase}_ID".constantize)
         # Define a Memoized instance using the finder with the corresponding constant ID value:
         instance_variable_set("@#{word}", row)
-        @only_masters ||= []
-        @only_masters << row if row&.masters?
+        @all_masters ||= []
+        @all_masters << row if row&.masters?
 
         # Define an helper class method to get the memoized value row:
         define_singleton_method(word.to_sym) do
@@ -70,8 +70,8 @@ module GogglesDb
 
     # Virtual scope: array of memoized Masters-only Season types
     # rubocop:disable Style/TrivialAccessors
-    def self.only_masters
-      @only_masters
+    def self.all_masters
+      @all_masters
     end
     # rubocop:enable Style/TrivialAccessors
     #-- ------------------------------------------------------------------------

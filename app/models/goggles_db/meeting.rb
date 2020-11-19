@@ -6,7 +6,7 @@ module GogglesDb
   #
   # = Meeting model
   #
-  #   - version:  7.030
+  #   - version:  7.034
   #   - author:   Steve A.
   #
   class Meeting < ApplicationRecord
@@ -27,7 +27,11 @@ module GogglesDb
     has_one :federation_type, through: :season
 
     # # First-level children: (they "belongs_to" meeting)
-    # has_many :meeting_sessions,           -> { order(:session_order) }, dependent: :delete_all
+    has_many :meeting_sessions, -> { order(:session_order) }, dependent: :delete_all
+    has_many :swimming_pools,   through: :meeting_sessions
+    has_many :pool_types,       through: :meeting_sessions
+    has_many :event_types,      through: :meeting_sessions
+
     # has_many :meeting_team_scores,        dependent: :delete_all
     # has_many :meeting_reservations,       dependent: :delete_all
     # has_many :meeting_event_reservations, dependent: :delete_all
@@ -41,12 +45,8 @@ module GogglesDb
     # has_many :passages,                   through: :meeting_programs
 
     # WIP:
-
-    # has_many :swimming_pools,             through: :meeting_sessions
-    # has_many :pool_types,                 through: :meeting_sessions
     # has_many :swimmers,                   through: :meeting_individual_results
     # has_many :teams,                      through: :meeting_individual_results
-    # has_many :event_types,                through: :meeting_sessions
     # has_many :category_types,             through: :meeting_programs
     # has_many :meeting_relay_swimmers,     through: :meeting_relay_results
 
@@ -100,7 +100,6 @@ module GogglesDb
     # scope :no_results,      -> { where('not are_results_acquired') }
     # scope :not_closed,      -> { where('(not are_results_acquired) and (header_date >= curdate())') }
     # scope :not_cancelled,   -> { where('(not is_cancelled)') }
-
     # scope :for_season_type, ->(season_type) { joins(:season_type).where(['season_types.id = ?', season_type.id]) }
     # scope :for_code,        ->(code)        { where(['code = ?', code]) }
     #-- ------------------------------------------------------------------------

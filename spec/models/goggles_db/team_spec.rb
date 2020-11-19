@@ -29,13 +29,11 @@ module GogglesDb
 
     context 'any pre-seeded instance' do
       subject { Team.all.limit(20).sample }
-
       it_behaves_like('a valid Team instance')
     end
 
     context 'when using the factory, the resulting instance' do
       subject { FactoryBot.create(:team) }
-
       it_behaves_like('a valid Team instance')
     end
     #-- ------------------------------------------------------------------------

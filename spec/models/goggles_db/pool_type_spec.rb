@@ -12,6 +12,11 @@ module GogglesDb
         expect(subject).to be_valid
       end
 
+      it_behaves_like(
+        'responding to a list of methods',
+        %i[events_by_pool_types event_types]
+      )
+
       it_behaves_like('Localizable')
     end
 
@@ -22,6 +27,9 @@ module GogglesDb
         end
         it 'is has a #code' do
           expect(subject.class.send(word).code).to be_present
+        end
+        it 'is has a #length_in_meters' do
+          expect(subject.class.send(word).length_in_meters).to be_present.and be_positive
         end
         it 'is a valid instance of the same class' do
           expect(subject.class.send(word)).to be_a(subject.class).and be_valid
@@ -39,9 +47,9 @@ module GogglesDb
     end
 
     # Scopes & "virtual" scopes:
-    describe 'self.eventable' do
+    describe 'self.all_eventable' do
       it 'contains only eventable stroke types' do
-        expect(subject.class.eventable).to all(be_eventable)
+        expect(subject.class.all_eventable).to all(be_eventable)
       end
     end
   end
