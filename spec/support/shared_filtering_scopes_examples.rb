@@ -15,7 +15,7 @@ end
 
 shared_examples_for 'filtering scope for_season_type' do |subject_class|
   context "given the chosen SeasonType has any #{subject_class.to_s.pluralize} associated to it," do
-    let(:chosen_filter) { GogglesDb::SeasonType.only_masters.sample }
+    let(:chosen_filter) { GogglesDb::SeasonType.all_masters.sample }
     let(:result) { subject_class.for_season_type(chosen_filter).limit(10) }
 
     it "is a relation containing only #{subject_class.to_s.pluralize} belonging to the specified SeasonType" do

@@ -1,17 +1,15 @@
 # frozen_string_literal: true
 
-shared_examples_for '#to_json when called on a valid model instance with' do |required_associations|
+shared_examples_for '#to_json when called on a valid instance' do |required_associations|
   it 'is a String' do
     expect(subject.to_json).to be_a(String).and be_present
   end
-
   it 'can be parsed without errors' do
     expect { JSON.parse(subject.to_json) }.not_to raise_error
   end
 
-  context 'regarding the 1st-level required associations,' do
+  describe 'the 1st-level required association' do
     let(:json_hash) { JSON.parse(subject.to_json) }
-
     required_associations.each do |association_name|
       it "contains the JSON details of its #{association_name}" do
         expect(json_hash[association_name]).to be_an(Hash).and be_present
@@ -21,13 +19,62 @@ shared_examples_for '#to_json when called on a valid model instance with' do |re
   end
 end
 
+# For model associations that have lots of fields, we may resort to output just a few.
+# Assumes the "synthetized association" uses a public method that has a name like '<ENTITY_attributes>'
+# (as is 'meeting' => 'meeting_attributes') to obtain the Hash of fields that we'll actually use as result.
+shared_examples_for '#to_json when called on a valid instance with a synthetized association' do |synth_associations|
+  it 'is a String' do
+    expect(subject.to_json).to be_a(String).and be_present
+  end
+  it 'can be parsed without errors' do
+    expect { JSON.parse(subject.to_json) }.not_to raise_error
+  end
+
+  describe 'the required but synthetized association' do
+    let(:json_hash) { JSON.parse(subject.to_json) }
+    synth_associations.each do |association_name|
+      it "contains the JSON details of its #{association_name}" do
+        expect(json_hash[association_name]).to be_an(Hash).and be_present
+        expect(json_hash[association_name]).to eq(JSON.parse(subject.send("#{association_name}_attributes".to_sym).to_json))
+      end
+    end
+  end
+end
+
+shared_examples_for '#to_json when called with unset optional associations' do |optional_associations|
+  it 'is a String' do
+    expect(subject.to_json).to be_a(String).and be_present
+  end
+  it 'can be parsed without errors' do
+    expect { JSON.parse(subject.to_json) }.not_to raise_error
+  end
+
+  describe 'the optional association' do
+    let(:json_hash) { JSON.parse(subject.to_json) }
+    optional_associations.each do |association_name|
+      it "contains just the key of the JSON details of its #{association_name}" do
+        expect(json_hash[association_name]).to be nil
+      end
+    end
+  end
+end
+
 shared_examples_for '#to_json when the entity contains other optional associations with' do |optional_associations|
-  optional_associations.each do |association_name|
-    it "contains the JSON details of its #{association_name}" do
-      expect(json_hash[association_name]).to be_an(Hash).and be_present
-      expect(json_hash[association_name]).to eq(
-        JSON.parse(subject.send(association_name.to_sym).attributes.to_json)
-      )
+  it 'is a String' do
+    expect(subject.to_json).to be_a(String).and be_present
+  end
+  it 'can be parsed without errors' do
+    expect { JSON.parse(subject.to_json) }.not_to raise_error
+  end
+
+  describe 'the optional association' do
+    optional_associations.each do |association_name|
+      it "contains the JSON details of its #{association_name}" do
+        expect(json_hash[association_name]).to be_an(Hash).and be_present
+        expect(json_hash[association_name]).to eq(
+          JSON.parse(subject.send(association_name.to_sym).attributes.to_json)
+        )
+      end
     end
   end
 end

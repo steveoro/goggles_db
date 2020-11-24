@@ -5,7 +5,7 @@ require 'benchmark'
 
 module GogglesDb
   RSpec.describe EventsByPoolType, type: :performance do
-    describe 'self.eventable (in its current memoized version),' do
+    describe 'self.all_eventable (in its current memoized version),' do
       context 'when compared against the old query version,' do
         it 'is faster' do |example|
           timing1 = Benchmark.measure do
@@ -13,7 +13,7 @@ module GogglesDb
                             .where('pool_types.is_suitable_for_meetings': true)
                             .where('stroke_types.is_eventable': true)
           end
-          timing2 = Benchmark.measure { EventsByPoolType.eventable }
+          timing2 = Benchmark.measure { EventsByPoolType.all_eventable }
           expect(timing2.total).to be < timing1.total
 
           example.reporter.message("\r\n\t- Benchmark for self.eventable:")

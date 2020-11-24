@@ -16,7 +16,7 @@ module GogglesDb
 
       it_behaves_like(
         'responding to a list of methods',
-        %i[associated_user user male? female? intermixed?]
+        %i[associated_user male? female? intermixed?]
       )
       #-- ----------------------------------------------------------------------
       #++
@@ -48,12 +48,16 @@ module GogglesDb
 
       # Required associations:
       it_behaves_like(
-        '#to_json when called on a valid model instance with',
+        '#to_json when called on a valid instance',
         %w[gender_type]
+      )
+      it_behaves_like(
+        '#to_json when called with unset optional associations',
+        %w[associated_user]
       )
 
       # Optional associations:
-      context 'when the entity contains other optional associations,' do
+      context 'when the entity contains other optional associations' do
         let(:fixture_user) { FactoryBot.create(:user) }
         subject            { FactoryBot.create(:swimmer, associated_user: fixture_user) }
 

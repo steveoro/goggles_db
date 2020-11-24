@@ -75,13 +75,13 @@ module GogglesDb
 
     describe '#eventable?' do
       context 'for an in-race event,' do
-        subject { FactoryBot.create(:meeting_event, is_out_of_race: false) }
+        subject { FactoryBot.create(:meeting_event, out_of_race: false) }
         it 'returns true' do
           expect(subject.eventable?).to be true
         end
       end
       context 'for an out-of-race event,' do
-        subject { FactoryBot.create(:meeting_event, is_out_of_race: true) }
+        subject { FactoryBot.create(:meeting_event, out_of_race: true) }
         it 'returns false' do
           expect(subject.eventable?).to be false
         end
@@ -91,7 +91,7 @@ module GogglesDb
     describe '#to_json' do
       # Required associations:
       it_behaves_like(
-        '#to_json when called on a valid model instance with',
+        '#to_json when called on a valid instance',
         %w[meeting_session event_type stroke_type heat_type season season_type]
       )
     end

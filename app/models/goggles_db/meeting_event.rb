@@ -32,29 +32,20 @@ module GogglesDb
     has_one :season_type,  through: :meeting_session
     has_one :stroke_type,  through: :event_type
 
-    # has_many :meeting_programs, dependent: :delete_all
-    # has_many :meeting_entries,            through: :meeting_programs
-    # has_many :meeting_individual_results, through: :meeting_programs
+    has_many :meeting_programs, dependent: :delete_all
+    has_many :meeting_individual_results, through: :meeting_programs
     # has_many :meeting_relay_results,      through: :meeting_programs
-    # has_many :category_types,             through: :meeting_programs
+    has_many :category_types,             through: :meeting_programs
+
+    # has_many :meeting_entries,            through: :meeting_programs
 
     # has_many :meeting_event_reservations, dependent: :delete_all
     # has_many :meeting_relay_reservations, dependent: :delete_all
 
     validates :event_order, presence: { length: { within: 1..3, allow_nil: false } }
 
-    alias_attribute :autofilled?, :is_autofilled
-    alias_attribute :out_of_race?, :is_out_of_race
-    alias_attribute :split_gender_start_list?,   :has_separate_gender_start_list
-    alias_attribute :split_category_start_list?, :has_separate_category_start_list
-
     delegate :scheduled_date, to: :meeting_session, prefix: false, allow_nil: false
     delegate :relay?,         to: :event_type, prefix: false, allow_nil: false
-
-    # For Rails 4+, move required/permitted check to the controller using the model
-    #  attr_accessible :event_order, :begin_time, :is_out_of_race, :is_autofilled, :notes,
-    #                  :meeting_session_id, :event_type_id, :heat_type_id, :has_separate_gender_start_list,
-    #                  :has_separate_category_start_list, :user_id
 
     # Sorting scopes:
     scope :by_order, ->(dir = 'ASC') { order(dir == 'ASC' ? 'event_order ASC' : 'event_order DESC') }

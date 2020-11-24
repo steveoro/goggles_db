@@ -30,11 +30,9 @@ module GogglesDb
     validates :scheduled_date, presence: true
     validates :description,    presence: { length: { maximum: 100, allow_nil: false } }
 
-    alias_attribute :autofilled?, :is_autofilled
-
     # Sorting scopes:
-    scope :by_order,   ->(dir = 'ASC') { order(dir == 'ASC' ? 'session_order ASC' : 'session_order DESC') }
-    scope :by_date,    ->(dir = 'ASC') { order(dir == 'ASC' ? 'scheduled_date ASC, session_order ASC' : 'scheduled_date DESC, session_order DESC') }
+    scope :by_order, ->(dir = 'ASC') { order(dir == 'ASC' ? 'session_order ASC' : 'session_order DESC') }
+    scope :by_date,  ->(dir = 'ASC') { order(dir == 'ASC' ? 'scheduled_date ASC, session_order ASC' : 'scheduled_date DESC, session_order DESC') }
 
     def self.by_meeting(dir = 'ASC')
       sorting_order = if dir == 'ASC'

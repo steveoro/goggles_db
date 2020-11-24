@@ -183,7 +183,7 @@ module GogglesDb
 
       # Required associations:
       it_behaves_like(
-        '#to_json when called on a valid model instance with',
+        '#to_json when called on a valid instance',
         %w[season_type edition_type timing_type]
       )
     end

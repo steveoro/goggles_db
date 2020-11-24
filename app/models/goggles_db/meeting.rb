@@ -74,27 +74,13 @@ module GogglesDb
     validates :max_individual_events, length: { maximum: 2 }
     validates :max_individual_events_per_session, length: { maximum: 1 }
 
-    alias_attribute :warm_up_pool?,     :has_warm_up_pool
-    alias_attribute :allows_under_25?,  :is_under_25_admitted
-    alias_attribute :invitation?,       :has_invitation
-    alias_attribute :startlist?,        :has_start_list
-    alias_attribute :off_season?,       :is_out_of_season
-    alias_attribute :confirmed?,        :is_confirmed
-    alias_attribute :cancelled?,        :is_cancelled
-    alias_attribute :tweeted?,          :is_tweeted     # Results acquisition tweeted
-    alias_attribute :posted?,           :is_fb_posted   # Results details posted
-
-    alias_attribute :results_acquired?, :are_results_acquired
-    alias_attribute :autofilled?,       :is_autofilled
-    alias_attribute :read_only?,        :do_not_update
-    alias_attribute :pb_acquired?,      :is_pb_scanned  # "Personal Best" timings already acquired?
-
     # Sorting scopes:
     scope :by_date,   ->(dir = 'ASC')  { order(dir == 'ASC' ? 'header_date ASC' : 'header_date DESC') }
     scope :by_season, ->(dir = 'ASC')  { joins(:season).order(dir == 'ASC' ? 'seasons.begin_date ASC' : 'seasons.begin_date DESC') }
 
     # Filtering scopes:
-    # scope :only_invitation, -> { where('has_invitation and not are_results_acquired') }
+    # TODO: CLEAR UNUSED
+    # scope :only_invitation, -> { where('has_invitation and not are_results_acquired') } # invitation = manifest
     # scope :only_start_list, -> { where('has_start_list and not are_results_acquired') }
     # scope :results,         -> { where('are_results_acquired') }
     # scope :no_results,      -> { where('not are_results_acquired') }

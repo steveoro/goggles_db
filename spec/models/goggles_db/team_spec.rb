@@ -75,15 +75,22 @@ module GogglesDb
     #++
 
     describe '#to_json' do
-      subject { FactoryBot.create(:team) }
+      # Test a minimalistic instance first:
+      subject { FactoryBot.create(:team, city: nil) }
 
       # Required associations:
       it_behaves_like(
-        '#to_json when called on a valid model instance with',
+        '#to_json when called on a valid instance',
         []
       )
+      it_behaves_like(
+        '#to_json when called with unset optional associations',
+        %w[city]
+      )
+
       # Optional associations:
       context 'when the entity contains other optional associations,' do
+        subject { FactoryBot.create(:team) }
         let(:json_hash) do
           expect(subject.city).to be_a(City).and be_valid
           JSON.parse(subject.to_json)
@@ -94,6 +101,7 @@ module GogglesDb
           %w[city]
         )
       end
+
       # Collection associations:
       context 'when the entity contains collection associations,' do
         subject         { team_with_badges }

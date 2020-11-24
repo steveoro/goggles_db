@@ -46,6 +46,14 @@ module GogglesDb
     # Filtering scopes:
     scope :relays,        -> { joins(:event_type).includes(:event_type).where('event_types.is_a_relay' => true) }
     scope :individuals,   -> { joins(:event_type).includes(:event_type).where('event_types.is_a_relay' => false) }
+    scope :eventable, lambda {
+      joins(:stroke_type, :pool_type)
+        .includes(:stroke_type, :pool_type)
+        .where(
+          'stroke_types.is_eventable' => true,
+          'pool_types.is_suitable_for_meetings' => true
+        )
+    }
     scope :for_pool_type, ->(pool_type) { joins(:pool_type).where(['pool_types.id = ?', pool_type.id]) }
     scope :event_length_between, lambda { |min_length, max_length|
       joins(:event_type)

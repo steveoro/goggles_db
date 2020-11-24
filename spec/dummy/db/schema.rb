@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_11_16_111107) do
+ActiveRecord::Schema.define(version: 2020_11_24_125446) do
 
   create_table "achievement_rows", id: :integer, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
     t.integer "lock_version", default: 0
@@ -334,15 +334,15 @@ ActiveRecord::Schema.define(version: 2020_11_16_111107) do
     t.integer "seconds", limit: 2
     t.integer "hundreds", limit: 2
     t.integer "stroke_cycles", limit: 3
-    t.integer "not_swam_part_seconds", limit: 2
-    t.integer "not_swam_part_hundreds", limit: 2
-    t.integer "not_swam_kick_number", limit: 2
-    t.integer "breath_number", limit: 3
+    t.integer "underwater_seconds", limit: 2
+    t.integer "underwater_hundreds", limit: 2
+    t.integer "underwater_kicks", limit: 2
+    t.integer "breath_cycles", limit: 3
     t.integer "position", limit: 3
     t.integer "minutes_from_start", limit: 3
     t.integer "seconds_from_start", limit: 2
     t.integer "hundreds_from_start", limit: 2
-    t.boolean "is_native_from_start", default: false
+    t.boolean "native_from_start", default: false
     t.integer "length_in_meters"
     t.integer "data_import_meeting_program_id"
     t.integer "data_import_meeting_individual_result_id"
@@ -428,9 +428,9 @@ ActiveRecord::Schema.define(version: 2020_11_16_111107) do
     t.string "team_badge_number", limit: 40
     t.integer "year_of_birth", default: 1900
     t.integer "rank", default: 0
-    t.boolean "is_play_off", default: false
-    t.boolean "is_out_of_race", default: false
-    t.boolean "is_disqualified", default: false
+    t.boolean "play_off", default: false
+    t.boolean "out_of_race", default: false
+    t.boolean "disqualified", default: false
     t.decimal "standard_points", precision: 10, scale: 2, default: "0.0"
     t.decimal "meeting_individual_points", precision: 10, scale: 2, default: "0.0"
     t.integer "minutes", limit: 3, default: 0
@@ -482,7 +482,7 @@ ActiveRecord::Schema.define(version: 2020_11_16_111107) do
     t.integer "minutes", limit: 3, default: 0
     t.integer "seconds", limit: 2, default: 0
     t.integer "hundreds", limit: 2, default: 0
-    t.boolean "is_out_of_race", default: false
+    t.boolean "out_of_race", default: false
     t.integer "heat_type_id"
     t.integer "time_standard_id"
     t.index ["data_import_meeting_session_id"], name: "idx_di_meeting_programs_di_meeting_session"
@@ -504,9 +504,9 @@ ActiveRecord::Schema.define(version: 2020_11_16_111107) do
     t.bigint "conflicting_id", default: 0
     t.string "import_text"
     t.integer "rank", default: 0
-    t.boolean "is_play_off", default: false
-    t.boolean "is_out_of_race", default: false
-    t.boolean "is_disqualified", default: false
+    t.boolean "play_off", default: false
+    t.boolean "out_of_race", default: false
+    t.boolean "disqualified", default: false
     t.decimal "standard_points", precision: 10, scale: 2, default: "0.0"
     t.decimal "meeting_points", precision: 10, scale: 2, default: "0.0"
     t.integer "minutes", limit: 3, default: 0
@@ -641,16 +641,16 @@ ActiveRecord::Schema.define(version: 2020_11_16_111107) do
     t.string "import_text"
     t.string "description", limit: 100
     t.date "entry_deadline"
-    t.boolean "has_warm_up_pool", default: false
-    t.boolean "is_under_25_admitted", default: false
+    t.boolean "warm_up_pool", default: false
+    t.boolean "allows_under_25", default: false
     t.string "reference_phone", limit: 40
     t.string "reference_e_mail", limit: 50
     t.string "reference_name", limit: 50
     t.text "notes"
     t.string "tag", limit: 20
-    t.boolean "has_invitation", default: false
-    t.boolean "has_start_list", default: false
-    t.boolean "are_results_acquired", default: false
+    t.boolean "manifest", default: false
+    t.boolean "startlist", default: false
+    t.boolean "results_acquired", default: false
     t.integer "max_individual_events", limit: 1, default: 2
     t.string "configuration_file", limit: 50
     t.integer "edition", limit: 3, default: 0
@@ -661,7 +661,7 @@ ActiveRecord::Schema.define(version: 2020_11_16_111107) do
     t.string "code", limit: 50
     t.string "header_year", limit: 9
     t.integer "max_individual_events_per_session", limit: 2, default: 2
-    t.boolean "is_out_of_season", default: false
+    t.boolean "off_season", default: false
     t.integer "edition_type_id"
     t.integer "timing_type_id"
     t.integer "individual_score_computation_type_id"
@@ -1130,15 +1130,15 @@ ActiveRecord::Schema.define(version: 2020_11_16_111107) do
     t.datetime "updated_at"
     t.decimal "reaction_time", precision: 5, scale: 2
     t.integer "stroke_cycles", limit: 3
-    t.integer "not_swam_part_seconds", limit: 2
-    t.integer "not_swam_part_hundreds", limit: 2
-    t.integer "not_swam_kick_number", limit: 2
-    t.integer "breath_number", limit: 3
+    t.integer "underwater_seconds", limit: 2
+    t.integer "underwater_hundreds", limit: 2
+    t.integer "underwater_kicks", limit: 2
+    t.integer "breath_cycles", limit: 3
     t.integer "position", limit: 3
     t.integer "minutes_from_start", limit: 3
     t.integer "seconds_from_start", limit: 2
     t.integer "hundreds_from_start", limit: 2
-    t.boolean "is_native_from_start", default: false
+    t.boolean "native_from_start", default: false
     t.integer "meeting_individual_result_id"
     t.integer "meeting_entry_id"
     t.integer "swimmer_id"
@@ -1189,7 +1189,7 @@ ActiveRecord::Schema.define(version: 2020_11_16_111107) do
     t.integer "minutes", limit: 3
     t.integer "seconds", limit: 2
     t.integer "hundreds", limit: 2
-    t.boolean "is_no_time", default: false
+    t.boolean "no_time", default: false
     t.index ["badge_id"], name: "idx_meeting_entries_badge"
     t.index ["entry_time_type_id"], name: "idx_meeting_entries_entry_time_type"
     t.index ["meeting_program_id"], name: "idx_meeting_entries_meeting_program"
@@ -1211,7 +1211,7 @@ ActiveRecord::Schema.define(version: 2020_11_16_111107) do
     t.integer "suggested_hundreds", limit: 2
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.boolean "is_doing_this", default: false, null: false
+    t.boolean "accepted", default: false, null: false
     t.index ["badge_id"], name: "index_meeting_event_reservations_on_badge_id"
     t.index ["meeting_event_id"], name: "index_meeting_event_reservations_on_meeting_event_id"
     t.index ["meeting_id"], name: "index_meeting_event_reservations_on_meeting_id"
@@ -1226,15 +1226,15 @@ ActiveRecord::Schema.define(version: 2020_11_16_111107) do
     t.datetime "updated_at"
     t.integer "event_order", limit: 3, default: 0
     t.time "begin_time"
-    t.boolean "is_out_of_race", default: false
-    t.boolean "is_autofilled", default: false
+    t.boolean "out_of_race", default: false
+    t.boolean "autofilled", default: false
     t.text "notes"
     t.integer "meeting_session_id"
     t.integer "event_type_id"
     t.integer "heat_type_id"
     t.integer "user_id"
-    t.boolean "has_separate_gender_start_list", default: true
-    t.boolean "has_separate_category_start_list", default: false
+    t.boolean "split_gender_start_list", default: true
+    t.boolean "split_category_start_list", default: false
     t.index ["event_type_id"], name: "fk_meeting_events_event_types"
     t.index ["heat_type_id"], name: "fk_meeting_events_heat_types"
     t.index ["meeting_session_id"], name: "fk_meeting_events_meeting_sessions"
@@ -1244,9 +1244,9 @@ ActiveRecord::Schema.define(version: 2020_11_16_111107) do
   create_table "meeting_individual_results", id: :integer, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
     t.integer "lock_version", default: 0
     t.integer "rank", default: 0
-    t.boolean "is_play_off", default: false
-    t.boolean "is_out_of_race", default: false
-    t.boolean "is_disqualified", default: false
+    t.boolean "play_off", default: false
+    t.boolean "out_of_race", default: false
+    t.boolean "disqualified", default: false
     t.decimal "standard_points", precision: 10, scale: 2, default: "0.0"
     t.decimal "meeting_individual_points", precision: 10, scale: 2, default: "0.0"
     t.integer "minutes", limit: 3, default: 0
@@ -1264,11 +1264,15 @@ ActiveRecord::Schema.define(version: 2020_11_16_111107) do
     t.decimal "reaction_time", precision: 5, scale: 2, default: "0.0"
     t.decimal "team_points", precision: 10, scale: 2, default: "0.0"
     t.integer "team_affiliation_id"
-    t.boolean "is_personal_best", default: false, null: false
-    t.boolean "is_season_type_best", default: false, null: false
+    t.boolean "personal_best", default: false, null: false
+    t.boolean "season_type_best", default: false, null: false
     t.index ["badge_id"], name: "fk_meeting_individual_results_badges"
     t.index ["disqualification_code_type_id"], name: "idx_mir_disqualification_code_type"
+    t.index ["disqualified"], name: "index_meeting_individual_results_on_disqualified"
     t.index ["meeting_program_id"], name: "fk_meeting_individual_results_meeting_programs"
+    t.index ["out_of_race"], name: "index_meeting_individual_results_on_out_of_race"
+    t.index ["personal_best"], name: "index_meeting_individual_results_on_personal_best"
+    t.index ["season_type_best"], name: "index_meeting_individual_results_on_season_type_best"
     t.index ["swimmer_id"], name: "fk_meeting_individual_results_swimmers"
     t.index ["team_affiliation_id"], name: "fk_meeting_individual_results_team_affiliations"
     t.index ["team_id"], name: "fk_meeting_individual_results_teams"
@@ -1284,8 +1288,8 @@ ActiveRecord::Schema.define(version: 2020_11_16_111107) do
     t.integer "user_id"
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.boolean "is_autofilled", default: false
-    t.boolean "is_out_of_race", default: false
+    t.boolean "autofilled", default: false
+    t.boolean "out_of_race", default: false
     t.time "begin_time"
     t.integer "meeting_event_id"
     t.integer "pool_type_id"
@@ -1307,7 +1311,7 @@ ActiveRecord::Schema.define(version: 2020_11_16_111107) do
     t.integer "badge_id"
     t.integer "meeting_event_id"
     t.string "notes", limit: 50
-    t.boolean "is_doing_this"
+    t.boolean "accepted"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["badge_id"], name: "index_meeting_relay_reservations_on_badge_id"
@@ -1323,9 +1327,9 @@ ActiveRecord::Schema.define(version: 2020_11_16_111107) do
     t.datetime "created_at"
     t.datetime "updated_at"
     t.integer "rank", default: 0
-    t.boolean "is_play_off", default: false
-    t.boolean "is_out_of_race", default: false
-    t.boolean "is_disqualified", default: false
+    t.boolean "play_off", default: false
+    t.boolean "out_of_race", default: false
+    t.boolean "disqualified", default: false
     t.decimal "standard_points", precision: 10, scale: 2, default: "0.0"
     t.decimal "meeting_points", precision: 10, scale: 2, default: "0.0"
     t.integer "minutes", limit: 3, default: 0
@@ -1379,8 +1383,8 @@ ActiveRecord::Schema.define(version: 2020_11_16_111107) do
     t.integer "swimmer_id"
     t.integer "badge_id"
     t.text "notes"
-    t.boolean "is_not_coming"
-    t.boolean "has_confirmed"
+    t.boolean "not_coming"
+    t.boolean "confirmed"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["badge_id"], name: "index_meeting_reservations_on_badge_id"
@@ -1403,7 +1407,7 @@ ActiveRecord::Schema.define(version: 2020_11_16_111107) do
     t.datetime "created_at"
     t.datetime "updated_at"
     t.string "description", limit: 100
-    t.boolean "is_autofilled", default: false
+    t.boolean "autofilled", default: false
     t.integer "day_part_type_id"
     t.index ["day_part_type_id"], name: "fk_meeting_sessions_day_part_types"
     t.index ["meeting_id"], name: "fk_meeting_sessions_meetings"
@@ -1442,15 +1446,15 @@ ActiveRecord::Schema.define(version: 2020_11_16_111107) do
     t.integer "lock_version", default: 0
     t.string "description", limit: 100
     t.date "entry_deadline"
-    t.boolean "has_warm_up_pool", default: false
-    t.boolean "is_under_25_admitted", default: false
+    t.boolean "warm_up_pool", default: false
+    t.boolean "allows_under_25", default: false
     t.string "reference_phone", limit: 40
     t.string "reference_e_mail", limit: 50
     t.string "reference_name", limit: 50
     t.text "notes"
-    t.boolean "has_invitation", default: false
-    t.boolean "has_start_list", default: false
-    t.boolean "are_results_acquired", default: false
+    t.boolean "manifest", default: false
+    t.boolean "startlist", default: false
+    t.boolean "results_acquired", default: false
     t.integer "max_individual_events", limit: 1, default: 2
     t.string "configuration_file"
     t.integer "edition", limit: 3, default: 0
@@ -1458,26 +1462,26 @@ ActiveRecord::Schema.define(version: 2020_11_16_111107) do
     t.integer "user_id"
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.boolean "is_autofilled", default: false
+    t.boolean "autofilled", default: false
     t.date "header_date"
     t.string "code", limit: 50
     t.string "header_year", limit: 9
     t.integer "max_individual_events_per_session", limit: 2, default: 2
-    t.boolean "is_out_of_season", default: false
+    t.boolean "off_season", default: false
     t.integer "edition_type_id"
     t.integer "timing_type_id"
     t.integer "individual_score_computation_type_id"
     t.integer "relay_score_computation_type_id"
     t.integer "team_score_computation_type_id"
     t.integer "meeting_score_computation_type_id"
-    t.text "invitation", size: :medium
-    t.boolean "is_confirmed", default: false, null: false
-    t.boolean "is_tweeted", default: false
-    t.boolean "is_fb_posted", default: false
-    t.boolean "is_cancelled", default: false
-    t.boolean "is_pb_scanned", default: false
+    t.text "manifest_body", size: :medium
+    t.boolean "confirmed", default: false, null: false
+    t.boolean "tweeted", default: false
+    t.boolean "posted", default: false
+    t.boolean "cancelled", default: false
+    t.boolean "pb_acquired", default: false
     t.bigint "organization_team_id"
-    t.boolean "do_not_update", default: false, null: false
+    t.boolean "read_only", default: false, null: false
     t.decimal "meeting_fee", precision: 10, scale: 2
     t.decimal "event_fee", precision: 10, scale: 2
     t.decimal "relay_fee", precision: 10, scale: 2

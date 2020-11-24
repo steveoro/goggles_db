@@ -44,7 +44,7 @@ module GogglesDb
     end
 
     context 'when using valid parameters' do
-      context 'which match a custom country,' do
+      context 'which matches a custom country,' do
         subject { CmdFindIsoCity.call(ISO3166::Country.new('SE'), 'Stockholm') }
 
         it_behaves_like('CmdFindIsoCity successful #call', nil)
@@ -54,7 +54,7 @@ module GogglesDb
         end
       end
 
-      context 'which match a single result (1:1),' do
+      context 'which matches a single result (1:1),' do
         [
           # 1:1 matches: (these are strictly dependent on current BIAS_MATCH value)
           "L`Aquila'", 'Bologna',
@@ -87,7 +87,7 @@ module GogglesDb
         end
       end
 
-      context 'which match multiple results (1:N),' do
+      context 'which matches multiple results (1:N),' do
         [
           # 1:N matches:
           'Cento',

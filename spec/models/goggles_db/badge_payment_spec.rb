@@ -63,7 +63,7 @@ module GogglesDb
       subject { FactoryBot.create(:badge_payment) }
 
       it_behaves_like(
-        '#to_json when called on a valid model instance with',
+        '#to_json when called on a valid instance',
         %w[badge swimmer season team]
       )
     end
