@@ -19,6 +19,8 @@ FactoryBot.define do
     locker_cabinet_type { GogglesDb::LockerCabinetType.all.sample }
     shower_type         { GogglesDb::ShowerType.all.sample }
     hair_dryer_type     { GogglesDb::HairDryerType.all.sample }
+    #-- -----------------------------------------------------------------------
+    #++
 
     before(:create) do |built_instance|
       if built_instance.invalid?

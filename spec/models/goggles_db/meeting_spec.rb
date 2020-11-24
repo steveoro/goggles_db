@@ -28,7 +28,7 @@ module GogglesDb
         %i[meeting_sessions swimming_pools pool_types event_types
            reference_phone reference_e_mail reference_name configuration_file
            max_individual_events max_individual_events_per_session
-           warm_up_pool? allows_under_25? invitation? startlist? off_season? confirmed? cancelled?
+           warm_up_pool? allows_under_25? manifest? startlist? off_season? confirmed? cancelled?
            tweeted? posted?
            results_acquired? autofilled? read_only? pb_acquired?
            to_json]
@@ -92,7 +92,7 @@ module GogglesDb
     describe '#to_json' do
       # Required associations:
       it_behaves_like(
-        '#to_json when called on a valid model instance with',
+        '#to_json when called on a valid instance',
         %w[season edition_type timing_type season_type federation_type]
       )
     end

@@ -42,7 +42,7 @@ module GogglesDb
 
       describe '#to_json' do
         it_behaves_like(
-          '#to_json when called on a valid model instance with',
+          '#to_json when called on a valid instance',
           %w[pool_type event_type stroke_type]
         )
       end
@@ -60,20 +60,26 @@ module GogglesDb
     end
 
     # Filtering scopes:
-    describe 'self.for_pool_type' do
-      it_behaves_like('filtering scope for_<ANY_ENTITY_NAME>', EventsByPoolType, 'pool_type')
-    end
     describe 'self.relays' do
       let(:result) { subject.class.relays }
       it 'contains only relay events' do
-        expect(result.relays).to all(be_relay)
+        expect(result).to all(be_relay)
       end
     end
     describe 'self.individuals' do
       let(:result) { subject.class.individuals }
       it 'contains only individual events' do
-        expect(result.individuals.map(&:relay?)).to all(be false)
+        expect(result.map(&:relay?)).to all(be false)
       end
+    end
+    describe 'self.eventable' do
+      let(:result) { subject.class.eventable }
+      it 'contains only eventable events' do
+        expect(result).to all(be_eventable)
+      end
+    end
+    describe 'self.for_pool_type' do
+      it_behaves_like('filtering scope for_<ANY_ENTITY_NAME>', EventsByPoolType, 'pool_type')
     end
     describe 'self.event_length_between' do
       context 'when given a valid range of lengths,' do

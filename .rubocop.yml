@@ -33,13 +33,14 @@ Layout/LineLength:
 Metrics/AbcSize:
   Max: 26
   Exclude:
+    - 'db/migrate/*'
     - 'app/validators/goggles_db/validation_error_tools.rb'
     - 'app/models/goggles_db/badge_payment.rb'
 
 Metrics/BlockLength:
-  Max: 35
+  Max: 40
   CountAsOne: ['array', 'heredoc']
-  ExcludedMethods: ['describe', 'context']
+  ExcludedMethods: ['describe', 'context', 'define']
   Exclude:
     - 'lib/tasks/*.rake'
 

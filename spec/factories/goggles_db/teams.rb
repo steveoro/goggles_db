@@ -1,7 +1,7 @@
 FactoryBot.define do
   factory :team, class: 'GogglesDb::Team' do
     city
-    name          { "#{city.name} Swimming Club ASD" }
+    name          { "#{city ? city.name : FFaker::Address.city} Swimming Club #{Time.now.year}" }
     editable_name { name }
     address       { FFaker::Address.street_address }
     zip           { format('%<number>06d', number: (rand * 100_000).to_i) }

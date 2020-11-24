@@ -60,13 +60,22 @@ module GogglesDb
     #++
 
     describe '#to_json' do
+      # Test a minimalistic instance first:
+      subject { FactoryBot.create(:swimming_pool, shower_type: nil, hair_dryer_type: nil, locker_cabinet_type: nil) }
+
       # Required associations:
       it_behaves_like(
-        '#to_json when called on a valid model instance with',
+        '#to_json when called on a valid instance',
         %w[city pool_type]
       )
+      it_behaves_like(
+        '#to_json when called with unset optional associations',
+        %w[shower_type hair_dryer_type locker_cabinet_type]
+      )
+
       # Optional associations:
-      context 'when the entity contains other optional associations,' do
+      context 'when the entity contains other optional associations' do
+        subject { FactoryBot.create(:swimming_pool) }
         let(:json_hash) do
           expect(subject.shower_type).to be_a(ShowerType).and be_valid
           expect(subject.hair_dryer_type).to be_a(HairDryerType).and be_valid

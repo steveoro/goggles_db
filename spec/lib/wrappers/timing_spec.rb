@@ -37,7 +37,7 @@ describe Timing, type: :model do
   #++
 
   context '[implemented methods]' do
-    # subject { Timing.new }
+    subject { Timing.new }
 
     it_behaves_like(
       'responding to a list of methods',

@@ -55,7 +55,7 @@ module GogglesDb
       it_behaves_like('sorting scope by_<ANY_VALUE_NAME>', MeetingSession, 'order', 'session_order')
     end
     describe 'self.by_date' do
-      it_behaves_like('sorting scope by_<ANY_VALUE_NAME>', MeetingSession, 'order', 'scheduled_date')
+      it_behaves_like('sorting scope by_<ANY_VALUE_NAME>', MeetingSession, 'date', 'scheduled_date')
     end
     describe 'self.by_meeting' do
       it_behaves_like('sorting scope by_<ANY_ENTITY_NAME>', MeetingSession, 'meeting', 'description')
@@ -64,14 +64,22 @@ module GogglesDb
     #++
 
     describe '#to_json' do
+      # Test a minimalistic instance first:
+      subject { FactoryBot.create(:meeting_session, swimming_pool: nil, day_part_type: nil) }
+
       # Required associations:
       it_behaves_like(
-        '#to_json when called on a valid model instance with',
+        '#to_json when called on a valid instance',
         %w[meeting season season_type]
+      )
+      it_behaves_like(
+        '#to_json when called with unset optional associations',
+        %w[swimming_pool pool_type day_part_type]
       )
 
       # Optional associations:
-      context 'when the entity contains other optional associations,' do
+      context 'when the entity contains other optional associations' do
+        subject { FactoryBot.create(:meeting_session) }
         let(:json_hash) do
           expect(subject.swimming_pool).to be_a(SwimmingPool).and be_valid
           expect(subject.pool_type).to be_a(PoolType).and be_valid
