@@ -31,21 +31,13 @@ module GogglesDb
     validates :lanes_number,  presence: { length: { within: 1..2, allow_nil: false } },
                               numericality: true
 
-    validates :has_multiple_pools,      inclusion: { in: [true, false] }
-    validates :has_open_area,           inclusion: { in: [true, false] }
-    validates :has_bar,                 inclusion: { in: [true, false] }
-    validates :has_restaurant_service,  inclusion: { in: [true, false] }
-    validates :has_gym_area,            inclusion: { in: [true, false] }
-    validates :has_children_area,       inclusion: { in: [true, false] }
-    validates :do_not_update,           inclusion: { in: [true, false] }
-
-    alias_attribute :multiple_pools?,   :has_multiple_pools
-    alias_attribute :garden?,           :has_open_area
-    alias_attribute :bar?,              :has_bar
-    alias_attribute :restaurant?,       :has_restaurant_service
-    alias_attribute :gym?,              :has_gym_area
-    alias_attribute :child_area?,       :has_children_area
-    alias_attribute :read_only?,        :do_not_update
+    validates :multiple_pools, inclusion: { in: [true, false] }
+    validates :garden,         inclusion: { in: [true, false] }
+    validates :bar,            inclusion: { in: [true, false] }
+    validates :restaurant,     inclusion: { in: [true, false] }
+    validates :gym,            inclusion: { in: [true, false] }
+    validates :child_area,     inclusion: { in: [true, false] }
+    validates :read_only,      inclusion: { in: [true, false] }
 
     # Sorting scopes:
     scope :by_name, ->(dir = :asc) { order(name: dir) }

@@ -9,8 +9,8 @@ FactoryBot.define do
     # The following is just an internal code and has nothing to do with season.federation_type.code:
     # TODO: rename this field as something like "federation_internal_id" (text)
     federation_code   { (rand * 100).to_i.to_s }
-    is_a_relay        { false }
-    is_out_of_race    { false }
+    relay             { false }
+    out_of_race       { false }
 
     before(:create) do |built_instance|
       if built_instance.invalid?

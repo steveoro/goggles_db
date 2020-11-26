@@ -78,8 +78,8 @@ module GogglesDb
 
     # Filtering scopes:
     # TODO: CLEAR UNUSED
-    # scope :only_invitation, -> { where('has_invitation and not are_results_acquired') } # invitation = manifest
-    # scope :only_start_list, -> { where('has_start_list and not are_results_acquired') }
+    # scope :only_invitation, -> { where('invitation and not results_acquired') } # invitation = manifest
+    # scope :only_start_list, -> { where('startlist and not results_acquired') }
     # scope :results,         -> { where('are_results_acquired') }
     # scope :no_results,      -> { where('not are_results_acquired') }
     # scope :not_closed,      -> { where('(not are_results_acquired) and (header_date >= curdate())') }

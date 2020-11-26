@@ -33,7 +33,7 @@ module GogglesDb
       it_behaves_like(
         'responding to a list of methods',
         %i[code federation_code description short_name group_name age_begin age_end
-           eventable?]
+           eventable? relay? out_of_race? undivided?]
       )
 
       # Presence of fields & requiredness:

@@ -7,7 +7,7 @@ module GogglesDb
   # This entity is assumed to be pre-seeded on the database.
   # Due to the low number of entity values, all rows have been Memoized.
   #
-  #   - version:  7.034
+  #   - version:  7.035
   #   - author:   Steve A.
   #
   class PoolType < ApplicationLookupEntity
@@ -20,8 +20,6 @@ module GogglesDb
 
     # Commodity list of constants that are expected to be "eventable":
     EVENTABLE_NAMES = %w[mt_25 mt_50].freeze
-
-    alias_attribute :eventable?, :is_suitable_for_meetings
 
     validates :code, presence: { length: { within: 1..3, allow_nil: false } },
                      uniqueness: { case_sensitive: true, message: :already_exists }

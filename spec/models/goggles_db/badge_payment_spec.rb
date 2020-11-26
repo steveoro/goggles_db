@@ -26,6 +26,7 @@ module GogglesDb
       it_behaves_like(
         'responding to a list of methods',
         %i[payment_date amount swimmer_complete_name
+           manual?
            to_json]
       )
 

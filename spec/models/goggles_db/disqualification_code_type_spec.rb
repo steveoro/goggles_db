@@ -15,7 +15,7 @@ module GogglesDb
 
       it_behaves_like(
         'responding to a list of methods',
-        %i[stroke_type false_start? retired?]
+        %i[stroke_type false_start? retired? relay?]
       )
 
       it_behaves_like('Localizable')
