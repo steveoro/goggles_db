@@ -4,7 +4,7 @@ module GogglesDb
   #
   # = MeetingSession model
   #
-  #   - version:  7.034
+  #   - version:  7.035
   #   - author:   Steve A.
   #
   class MeetingSession < ApplicationRecord
@@ -31,16 +31,11 @@ module GogglesDb
     validates :description,    presence: { length: { maximum: 100, allow_nil: false } }
 
     # Sorting scopes:
-    scope :by_order, ->(dir = 'ASC') { order(dir == 'ASC' ? 'session_order ASC' : 'session_order DESC') }
-    scope :by_date,  ->(dir = 'ASC') { order(dir == 'ASC' ? 'scheduled_date ASC, session_order ASC' : 'scheduled_date DESC, session_order DESC') }
+    scope :by_order, ->(dir = :asc) { order(session_order: dir) }
+    scope :by_date,  ->(dir = :asc) { order(scheduled_date: dir, session_order: dir) }
 
-    def self.by_meeting(dir = 'ASC')
-      sorting_order = if dir == 'ASC'
-                        'meetings.description ASC, session_order ASC'
-                      else
-                        'meetings.description DESC, session_order DESC'
-                      end
-      includes(:pool_type).joins(:meeting).order(sorting_order)
+    def self.by_meeting(dir = :asc)
+      includes(:pool_type).joins(:meeting).order('meetings.description': dir, session_order: dir)
     end
     #-- ------------------------------------------------------------------------
     #++

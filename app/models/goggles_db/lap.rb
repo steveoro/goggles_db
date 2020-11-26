@@ -6,7 +6,7 @@ module GogglesDb
   #
   # = Lap model
   #
-  #   - version:  7.034
+  #   - version:  7.035
   #   - author:   Steve A.
   #
   class Lap < ApplicationRecord
@@ -48,7 +48,7 @@ module GogglesDb
     scope :by_distance, -> { order(:length_in_meters) }
 
     # Filtering scopes:
-    # scope :for_event_type, ->(event_type) { joins(:event_type).where(['event_types.id = ?', event_type.id]) }
+    # scope :for_event_type, ->(event_type) { joins(:event_type).where('event_types.id': event_type.id) }
     #-- ------------------------------------------------------------------------
     #++
 

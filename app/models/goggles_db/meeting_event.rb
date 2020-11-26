@@ -4,7 +4,7 @@ module GogglesDb
   #
   # = MeetingEvent model
   #
-  #   - version:  7.034
+  #   - version:  7.035
   #   - author:   Steve A.
   #
   class MeetingEvent < ApplicationRecord
@@ -34,10 +34,9 @@ module GogglesDb
 
     has_many :meeting_programs, dependent: :delete_all
     has_many :meeting_individual_results, through: :meeting_programs
-    # has_many :meeting_relay_results,      through: :meeting_programs
+    has_many :meeting_relay_results,      through: :meeting_programs
+    has_many :meeting_entries,            through: :meeting_programs
     has_many :category_types,             through: :meeting_programs
-
-    # has_many :meeting_entries,            through: :meeting_programs
 
     # has_many :meeting_event_reservations, dependent: :delete_all
     # has_many :meeting_relay_reservations, dependent: :delete_all
@@ -48,11 +47,11 @@ module GogglesDb
     delegate :relay?,         to: :event_type, prefix: false, allow_nil: false
 
     # Sorting scopes:
-    scope :by_order, ->(dir = 'ASC') { order(dir == 'ASC' ? 'event_order ASC' : 'event_order DESC') }
+    scope :by_order, ->(dir = :asc) { order(event_order: dir) }
 
     # Filtering scopes:
-    scope :relays,      -> { joins(:event_type).includes(:event_type).where('event_types.is_a_relay' => true) }
-    scope :individuals, -> { joins(:event_type).includes(:event_type).where('event_types.is_a_relay' => false) }
+    scope :relays,      -> { joins(:event_type).includes(:event_type).where('event_types.is_a_relay': true) }
+    scope :individuals, -> { joins(:event_type).includes(:event_type).where('event_types.is_a_relay': false) }
     #-- ------------------------------------------------------------------------
     #++
 

@@ -4,6 +4,7 @@ require 'rails_helper'
 require 'support/shared_method_existance_examples'
 require 'support/shared_sorting_scopes_examples'
 require 'support/shared_filtering_scopes_examples'
+require 'support/shared_timing_examples'
 require 'support/shared_to_json_examples'
 
 module GogglesDb
@@ -15,7 +16,7 @@ module GogglesDb
 
       it_behaves_like(
         'having one or more required associations',
-        %i[meeting_program meeting_event meeting_session meeting season season_type
+        %i[season season_type meeting meeting_session meeting_event meeting_program
            pool_type event_type category_type gender_type federation_type stroke_type]
       )
 
@@ -45,6 +46,7 @@ module GogglesDb
     #++
 
     # Sorting scopes:
+    # TODO
     # describe 'self.by_event_type' do
     #   it_behaves_like('sorting scope by_<ANY_ENTITY_NAME>', MeetingIndividualResult, 'event_type', 'code')
     # end
@@ -84,14 +86,14 @@ module GogglesDb
     #++
 
     describe '#valid_for_ranking?' do
-      context 'for a MIR concurring in-race and not disqualified' do
+      context 'for any MIR concurring in-race and not disqualified' do
         let(:mir_fixture) { FactoryBot.build(:meeting_individual_result, out_of_race: false, disqualified: false) }
         subject { mir_fixture.valid_for_ranking? }
         it 'is true' do
           expect(subject).to be true
         end
       end
-      context 'for a MIR either off-race or disqualified' do
+      context 'for any MIR either off-race or disqualified' do
         let(:mir_fixture) { FactoryBot.build(:meeting_individual_result, out_of_race: true, disqualified: [false, true].sample) }
         subject { mir_fixture.valid_for_ranking? }
         it 'is false' do
@@ -100,20 +102,11 @@ module GogglesDb
       end
     end
 
-    describe 'to_timing' do
-      let(:mir_fixture) { FactoryBot.build(:meeting_individual_result) }
-      subject { mir_fixture.to_timing }
+    describe '#to_timing' do
+      let(:fixture_row) { FactoryBot.build(:meeting_individual_result) }
+      subject { fixture_row.to_timing }
 
-      it 'is a Timing instance' do
-        expect(subject).to be_a(Timing)
-      end
-      it 'contains the same timing data than the original fixture' do
-        expect(subject.hundreds).to eq(mir_fixture.hundreds)
-        expect(subject.seconds).to eq(mir_fixture.seconds)
-        expect(subject.minutes).to eq(mir_fixture.minutes % 60)
-        expect(subject.hours).to eq(60 * (mir_fixture.minutes / 60))
-        # (Don't care about days)
-      end
+      it_behaves_like('#to_timing valid result')
     end
 
     describe '#to_json' do
@@ -122,7 +115,7 @@ module GogglesDb
       # Required associations:
       it_behaves_like(
         '#to_json when called on a valid instance',
-        %w[meeting_program category_type gender_type event_type stroke_type pool_type meeting_event]
+        %w[meeting_program pool_type event_type category_type gender_type stroke_type]
       )
       it_behaves_like(
         '#to_json when called on a valid instance with a synthetized association',

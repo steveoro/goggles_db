@@ -3,8 +3,6 @@
 require 'rails_helper'
 require 'support/shared_method_existance_examples'
 
-require 'extensions/roman_numeral'
-
 describe 'Roman numeral extension for Integer', type: :model do
   context 'given a valid Integer' do
     subject { (rand * 1000).to_i }

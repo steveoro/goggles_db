@@ -4,7 +4,7 @@ module GogglesDb
   #
   # = EventType model
   #
-  #   - version:  7.030
+  #   - version:  7.035
   #   - author:   Steve A.
   #
   class EventType < ApplicationLookupEntity
@@ -25,6 +25,7 @@ module GogglesDb
     validates :style_order, presence: { length: { within: 1..3, allow_nil: false } },
                             numericality: true
 
+    # TODO: remove unneeded
     # has_many :meeting_events
     # has_many :meeting_sessions, through: :meeting_events
     # has_many :meetings,         through: :meeting_sessions
@@ -39,8 +40,8 @@ module GogglesDb
     # scope :for_ironmaster,      -> { where('(not is_a_relay and length_in_meters between 50 and 1500)') }
 
     # TODO: Needs a working full-chain relation with a Meeting to work:
-    # scope :for_season_type, ->(season_type) { joins(:season_types).where(['season_types.id = ?', season_type.id]) }
-    # scope :for_season,      ->(season_id)   { joins(:seasons).where(['season_id = ?', season_id]) }
+    # scope :for_season_type, ->(season_type) { joins(:season_types).where('season_types.id': season_type.id) }
+    # scope :for_season,      ->(season_id)   { joins(:seasons).where('season_id': season_id) }
 
     alias_attribute :relay?, :is_a_relay
 

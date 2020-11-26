@@ -6,7 +6,7 @@ module GogglesDb
   #
   # = MeetingIndividualResult model
   #
-  #   - version:  7.034
+  #   - version:  7.035
   #   - author:   Steve A.
   #
   class MeetingIndividualResult < ApplicationRecord
@@ -15,11 +15,11 @@ module GogglesDb
     belongs_to :meeting_program
     validates_associated :meeting_program
 
-    has_one :meeting_event,   through: :meeting_program
-    has_one :meeting_session, through: :meeting_program
-    has_one :meeting,         through: :meeting_program
     has_one :season,          through: :meeting_program
     has_one :season_type,     through: :season
+    has_one :meeting_session, through: :meeting_program
+    has_one :meeting,         through: :meeting_program
+    has_one :meeting_event,   through: :meeting_program
 
     has_one :pool_type,       through: :meeting_program
     has_one :event_type,      through: :meeting_event
@@ -48,33 +48,33 @@ module GogglesDb
 
     # Sorting scopes:
     # TODO: CLEAR UNUSED
-    # scope :sort_by_meeting, ->(dir){ order("meeting_programs.meeting_session_id #{dir}, swimmers.last_name #{dir}, swimmers.first_name #{dir}") }
-    # scope :sort_by_swimmer, ->(dir = 'ASC') { joins(:swimmer).order("swimmers.complete_name #{dir}, meeting_individual_results.rank #{dir}") }
-    # scope :sort_by_team,    ->(dir = 'ASC') { joins(:team, :swimmer).order("teams.name #{dir}, swimmers.complete_name #{dir}") }
-    # scope :sort_by_badge,   ->(dir = 'ASC') { joins(:badge).order("badges.number #{dir}") }
-    # scope :sort_by_timing,  ->(dir = 'ASC')
+    # scope :by_meeting, ->(dir){ order("meeting_programs.meeting_session_id #{dir}, swimmers.last_name #{dir}, swimmers.first_name #{dir}") }
+    # scope :by_swimmer, ->(dir = :asc) { joins(:swimmer).order("swimmers.complete_name #{dir}, meeting_individual_results.rank #{dir}") }
+    # scope :by_team,    ->(dir = :asc) { joins(:team, :swimmer).order("teams.name #{dir}, swimmers.complete_name #{dir}") }
+    # scope :by_badge,   ->(dir = :asc) { joins(:badge).order("badges.number #{dir}") }
+    # scope :by_timing,  ->(dir = :asc)
     #      { order(disqualified: :asc, minutes: dir.to_s.downcase.to_sym,
     #        seconds: dir.to_s.downcase.to_sym, hundreds: dir.to_s.downcase.to_sym) }
-    # scope :sort_by_rank,    ->(dir = 'ASC') { order(disqualified: :asc, rank: dir.to_s.downcase.to_sym) }
-    # scope :sort_by_date,    ->(dir = 'ASC') { joins(:meeting_session).order("meeting_sessions.scheduled_date #{dir}") }
-    # scope :sort_by_goggle_cup,      ->(dir = 'DESC') { order(goggle_cup_points: dir.to_s.downcase.to_sym) }
-    # scope :sort_by_standard_points, ->(dir = 'DESC') { order(standard_points: dir.to_s.downcase.to_sym) }
+    # scope :by_rank,    ->(dir = :asc) { order(disqualified: :asc, rank: dir.to_s.downcase.to_sym) }
+    # scope :by_date,    ->(dir = :asc) { joins(:meeting_session).order("meeting_sessions.scheduled_date #{dir}") }
+    # scope :by_goggle_cup,      ->(dir = 'DESC') { order(goggle_cup_points: dir.to_s.downcase.to_sym) }
+    # scope :by_standard_points, ->(dir = 'DESC') { order(standard_points: dir.to_s.downcase.to_sym) }
 
-    # scope :sort_by_pool_and_event,
-    #       ->(dir = 'ASC') { joins(:event_type, :pool_type).order("pool_types.length_in_meters #{dir}, event_types.style_order #{dir}") }
-    # scope :sort_by_gender_and_category,
-    #       ->(dir = 'ASC') { joins(:gender_type, :category_type).order("gender_types.code #{dir}, category_types.code #{dir}") }
-    # scope :sort_by_updated_at,          ->(dir = 'ASC') { order("updated_at #{dir}") }
+    # scope :by_pool_and_event,
+    #       ->(dir = :asc) { joins(:event_type, :pool_type).order("pool_types.length_in_meters #{dir}, event_types.style_order #{dir}") }
+    # scope :by_gender_and_category,
+    #       ->(dir = :asc) { joins(:gender_type, :category_type).order("gender_types.code #{dir}, category_types.code #{dir}") }
+    # scope :by_updated_at,          ->(dir = :asc) { order(updated_at: dir) }
 
-    # scope :sort_by_event_order,         lambda { |_dir = 'ASC'|
+    # scope :by_event_order,         lambda { |dir = :asc|
     #   joins(:meeting_program, :meeting_event, :meeting_session)
     #     .includes(:meeting_event, :meeting_session)
-    #     .order('meeting_sessions.session_order #{dir.to_s}', 'meeting_events.event_order #{dir.to_s}')
+    #     .order('meeting_sessions.session_order': dir, 'meeting_events.event_order' :dir)
     # }
-    # scope :sort_by_event_and_timing, lambda { |_dir = 'ASC'|
+    # scope :event_and_timing, lambda { |dir = :asc|
     #   joins(:meeting_program, :meeting_event, :meeting_session)
     #     .includes(:meeting_event, :meeting_session)
-    #     .order('meeting_sessions.session_order #{dir.to_s}', 'meeting_events.event_order #{dir.to_s}', :disqualified, :minutes, :seconds, :hundreds)
+    #     .order('meeting_sessions.session_order': dir, 'meeting_events.event_order' :dir, :disqualified, :minutes, :seconds, :hundreds)
     # }
 
     # Filtering scopes:
@@ -82,7 +82,7 @@ module GogglesDb
     scope :qualifications,    -> { where(disqualified: false) }
     scope :disqualifications, -> { where(disqualified: true) }
     scope :personal_bests,    -> { where(personal_best: true) }
-    scope :for_gender_type,   ->(gender_type) { joins(:gender_type).where(['gender_types.id = ?', gender_type.id]) }
+    scope :for_gender_type,   ->(gender_type) { joins(:gender_type).where('gender_types.id': gender_type.id) }
     # TODO: CLEAR UNUSED
     # scope :with_rank,         ->(rank_filter) { where(rank: rank_filter) }
     # scope :with_score,        ->(score_sym = 'standard_points') { where("#{score_sym} > 0") }
@@ -165,15 +165,14 @@ module GogglesDb
     # Override: includes most relevant data for its 1st-level associations
     def to_json(options = nil)
       attributes.merge(
-        'meeting_program' => meeting_program.attributes,
-        'category_type' => category_type.attributes,
-        'gender_type' => gender_type.attributes,
-        'event_type' => event_type.attributes,
-        'stroke_type' => stroke_type.attributes,
-        'pool_type' => pool_type.attributes,
         'meeting' => meeting_attributes,
         'meeting_session' => meeting_session_attributes,
-        'meeting_event' => meeting_event.attributes,
+        'meeting_program' => meeting_program.attributes,
+        'pool_type' => pool_type.attributes,
+        'event_type' => event_type.attributes,
+        'category_type' => category_type.attributes,
+        'gender_type' => gender_type.attributes,
+        'stroke_type' => stroke_type.attributes,
         'laps' => laps&.map(&:attributes) # (Optional)
       ).to_json(options)
     end

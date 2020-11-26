@@ -6,7 +6,7 @@ module GogglesDb
   #
   # This entity is assumed to be pre-seeded on the database.
   #
-  #   - version:  7.030
+  #   - version:  7.035
   #   - authors:  Steve A.
   #
   class EventsByPoolType < ApplicationRecord
@@ -40,21 +40,21 @@ module GogglesDb
     #++
 
     # Sorting scopes:
-    scope :by_pool_type,  -> { joins(:event_type, :pool_type).order('pool_types.length_in_meters, event_types.style_order') }
-    scope :by_event_type, -> { joins(:event_type, :pool_type).order('event_types.style_order, pool_types.length_in_meters') }
+    scope :by_pool_type,  -> { includes(:event_type, :pool_type).joins(:event_type, :pool_type).order('pool_types.length_in_meters, event_types.style_order') }
+    scope :by_event_type, -> { includes(:event_type, :pool_type).joins(:event_type, :pool_type).order('event_types.style_order, pool_types.length_in_meters') }
 
     # Filtering scopes:
-    scope :relays,        -> { joins(:event_type).includes(:event_type).where('event_types.is_a_relay' => true) }
-    scope :individuals,   -> { joins(:event_type).includes(:event_type).where('event_types.is_a_relay' => false) }
+    scope :relays,        -> { includes(:event_type).joins(:event_type).where('event_types.is_a_relay': true) }
+    scope :individuals,   -> { includes(:event_type).joins(:event_type).where('event_types.is_a_relay': false) }
     scope :eventable, lambda {
       joins(:stroke_type, :pool_type)
         .includes(:stroke_type, :pool_type)
         .where(
-          'stroke_types.is_eventable' => true,
-          'pool_types.is_suitable_for_meetings' => true
+          'stroke_types.is_eventable': true,
+          'pool_types.is_suitable_for_meetings': true
         )
     }
-    scope :for_pool_type, ->(pool_type) { joins(:pool_type).where(['pool_types.id = ?', pool_type.id]) }
+    scope :for_pool_type, ->(pool_type) { joins(:pool_type).where('pool_types.id': pool_type.id) }
     scope :event_length_between, lambda { |min_length, max_length|
       joins(:event_type)
         .where(

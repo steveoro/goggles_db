@@ -26,6 +26,8 @@ module GogglesDb
       it_behaves_like(
         'responding to a list of methods',
         %i[meeting_sessions swimming_pools pool_types event_types
+           meeting_team_scores
+           meeting_events meeting_programs meeting_entries meeting_individual_results meeting_relay_results
            reference_phone reference_e_mail reference_name configuration_file
            max_individual_events max_individual_events_per_session
            warm_up_pool? allows_under_25? manifest? startlist? off_season? confirmed? cancelled?

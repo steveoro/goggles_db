@@ -14,8 +14,8 @@ module GogglesDb
 
       it_behaves_like(
         'having one or more required associations',
-        %i[meeting_event category_type gender_type meeting_session event_type event_type
-           meeting season season_type]
+        %i[meeting meeting_session meeting_event
+           pool_type event_type category_type gender_type stroke_type]
       )
 
       # Presence of fields & requiredness:
@@ -26,7 +26,10 @@ module GogglesDb
 
       it_behaves_like(
         'responding to a list of methods',
-        %i[begin_time autofilled? out_of_race?
+        %i[time_standard meeting_individual_results meeting_relay_results meeting_relay_swimmers
+           meeting_entries laps
+           relay? scheduled_date
+           begin_time autofilled? out_of_race?
            to_json]
       )
     end
@@ -73,7 +76,7 @@ module GogglesDb
       # Required associations:
       it_behaves_like(
         '#to_json when called on a valid instance',
-        %w[meeting_event category_type gender_type event_type stroke_type pool_type]
+        %w[meeting_event pool_type event_type category_type gender_type stroke_type]
       )
     end
   end

@@ -8,7 +8,7 @@ require 'acts-as-taggable-on'
 require 'acts_as_votable'
 require 'factory_bot_rails'
 
-require 'extensions/roman_numeral'
+require 'extensions/integer'
 
 module GogglesDb
   class Engine < ::Rails::Engine

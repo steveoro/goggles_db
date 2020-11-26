@@ -4,7 +4,7 @@ module GogglesDb
   #
   # = SwimmingPool model
   #
-  #   - version:  7.030
+  #   - version:  7.035
   #   - author:   Steve A.
   #
   class SwimmingPool < ApplicationRecord
@@ -48,16 +48,11 @@ module GogglesDb
     alias_attribute :read_only?,        :do_not_update
 
     # Sorting scopes:
-    scope :by_name,      ->(dir = 'ASC') { order(dir == 'ASC' ? 'name ASC' : 'name DESC') }
-    scope :by_city,      ->(dir = 'ASC') { includes(:city).joins(:city).order(dir == 'ASC' ? 'cities.name ASC' : 'cities.name DESC') }
+    scope :by_name, ->(dir = :asc) { order(name: dir) }
+    scope :by_city, ->(dir = :asc) { includes(:city).joins(:city).order('cities.name': dir) }
 
-    def self.by_pool_type(dir = 'ASC')
-      sorting_order = if dir == 'ASC'
-                        'pool_types.code ASC, swimming_pools.name ASC'
-                      else
-                        'pool_types.code DESC, swimming_pools.name DESC'
-                      end
-      includes(:pool_type).joins(:pool_type).order(sorting_order)
+    def self.by_pool_type(dir = :asc)
+      includes(:pool_type).joins(:pool_type).order('pool_types.code': dir, 'swimming_pools.name': dir)
     end
 
     # acts_as_taggable_on :tags_by_users

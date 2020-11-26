@@ -2,21 +2,22 @@
 
 FactoryBot.define do
   factory :meeting_event, class: 'GogglesDb::MeetingEvent' do
-    meeting_session
-    sequence(:event_order) { |n| n }
-    heat_type { GogglesDb::HeatType.all.sample }
+    sequence(:event_order)
+
+    meeting_session { create(:meeting_session) }
+    heat_type       { GogglesDb::HeatType.all.sample }
     event_type do
-      GogglesDb::EventsByPoolType.for_pool_type(meeting_session.pool_type)
-                                 .eventable
-                                 .event_length_between(50, 1500)
+      GogglesDb::EventsByPoolType.eventable
+                                 .for_pool_type(meeting_session.pool_type)
+                                 .event_length_between(50, 800)
                                  .sample
                                  .event_type
     end
 
     factory :meeting_event_individual do
       event_type do
-        GogglesDb::EventsByPoolType.for_pool_type(meeting_session.pool_type)
-                                   .eventable.individuals
+        GogglesDb::EventsByPoolType.eventable.individuals
+                                   .for_pool_type(meeting_session.pool_type)
                                    .event_length_between(50, 1500)
                                    .sample
                                    .event_type
@@ -25,9 +26,9 @@ FactoryBot.define do
 
     factory :meeting_event_relay do
       event_type do
-        GogglesDb::EventsByPoolType.for_pool_type(meeting_session.pool_type)
-                                   .eventable.relays
-                                   .event_length_between(50, 1500)
+        GogglesDb::EventsByPoolType.eventable.relays
+                                   .for_pool_type(meeting_session.pool_type)
+                                   .event_length_between(50, 800)
                                    .sample
                                    .event_type
       end
