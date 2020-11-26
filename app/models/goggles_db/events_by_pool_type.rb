@@ -44,15 +44,12 @@ module GogglesDb
     scope :by_event_type, -> { includes(:event_type, :pool_type).joins(:event_type, :pool_type).order('event_types.style_order, pool_types.length_in_meters') }
 
     # Filtering scopes:
-    scope :relays,        -> { includes(:event_type).joins(:event_type).where('event_types.is_a_relay': true) }
-    scope :individuals,   -> { includes(:event_type).joins(:event_type).where('event_types.is_a_relay': false) }
+    scope :relays,        -> { includes(:event_type).joins(:event_type).where('event_types.relay': true) }
+    scope :individuals,   -> { includes(:event_type).joins(:event_type).where('event_types.relay': false) }
     scope :eventable, lambda {
       joins(:stroke_type, :pool_type)
         .includes(:stroke_type, :pool_type)
-        .where(
-          'stroke_types.is_eventable': true,
-          'pool_types.is_suitable_for_meetings': true
-        )
+        .where('stroke_types.eventable': true, 'pool_types.eventable': true)
     }
     scope :for_pool_type, ->(pool_type) { joins(:pool_type).where('pool_types.id': pool_type.id) }
     scope :event_length_between, lambda { |min_length, max_length|

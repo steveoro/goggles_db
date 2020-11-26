@@ -4,7 +4,7 @@ module GogglesDb
   #
   # = Swimmer model
   #
-  #   - version:  7.034
+  #   - version:  7.035
   #   - author:   Steve A.
   #
   class Swimmer < ApplicationRecord
@@ -23,8 +23,6 @@ module GogglesDb
     validates :year_of_birth, presence: { length: { within: 2..4, allow_nil: false } }, numericality: true
 
     delegate :male?, :female?, :intermixed?, to: :gender_type
-
-    alias_attribute :year_guessed?, :is_year_guessed
     #-- ------------------------------------------------------------------------
     #++
 

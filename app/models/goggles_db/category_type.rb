@@ -25,18 +25,15 @@ module GogglesDb
     validates :age_begin,       length: { maximum: 3 }
     validates :age_end,         length: { maximum: 3 }
 
-    alias_attribute :relay?, :is_a_relay
-    alias_attribute :undivided?, :is_undivided
-
     # Sorting scopes:
     scope :by_age, ->(dir = :asc) { order(age_begin: dir) }
 
     # Filtering scopes:
-    scope :eventable,         -> { where(is_out_of_race: false) }
-    scope :relays,            -> { where(is_a_relay: true) }
-    scope :individuals,       -> { where(is_a_relay: false) }
-    scope :only_undivided,    -> { where(is_undivided: true) }
-    scope :only_gender_split, -> { where(is_undivided: false) }
+    scope :eventable,         -> { where(out_of_race: false) }
+    scope :relays,            -> { where(relay: true) }
+    scope :individuals,       -> { where(relay: false) }
+    scope :only_undivided,    -> { where(undivided: true) }
+    scope :only_gender_split, -> { where(undivided: false) }
     scope :for_season_type,   ->(season_type) { includes(:season_type).joins(:season_type).where('season_types.id': season_type.id) }
     scope :for_season,        ->(season)      { includes(:season).joins(:season).where('season_id': season.id) }
     #-- ------------------------------------------------------------------------
@@ -44,7 +41,7 @@ module GogglesDb
 
     # Returns +true+ if this category type will count for the overall rankings in an event
     def eventable?
-      !is_out_of_race
+      !out_of_race
     end
   end
 end

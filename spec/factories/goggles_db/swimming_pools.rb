@@ -2,17 +2,17 @@
 
 FactoryBot.define do
   factory :swimming_pool, class: 'GogglesDb::SwimmingPool' do
-    name                    { "#{FFaker::Address.street_name} pool" }
-    nick_name               { FFaker::Address.street_name.downcase.gsub(' ', '') }
-    address                 { FFaker::Address.street_address }
-    lanes_number            { [6, 8, 10].sample }
-    has_multiple_pools      { [false, true].sample }
-    has_open_area           { [false, true].sample }
-    has_bar                 { [false, true].sample }
-    has_restaurant_service  { [false, true].sample }
-    has_gym_area            { [false, true].sample }
-    has_children_area       { [false, true].sample }
-    pool_type               { GogglesDb::PoolType.all_eventable.sample }
+    name           { "#{FFaker::Address.street_name} pool" }
+    nick_name      { FFaker::Address.street_name.downcase.gsub(' ', '') }
+    address        { FFaker::Address.street_address }
+    lanes_number   { [6, 8, 10].sample }
+    multiple_pools { [false, true].sample }
+    garden         { [false, true].sample }
+    bar            { [false, true].sample }
+    restaurant     { [false, true].sample }
+    gym            { [false, true].sample }
+    child_area     { [false, true].sample }
+    pool_type      { GogglesDb::PoolType.all_eventable.sample }
     city
 
     # Optional:

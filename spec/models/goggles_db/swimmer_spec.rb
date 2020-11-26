@@ -16,7 +16,7 @@ module GogglesDb
 
       it_behaves_like(
         'responding to a list of methods',
-        %i[associated_user male? female? intermixed?]
+        %i[associated_user male? female? intermixed? year_guessed?]
       )
       #-- ----------------------------------------------------------------------
       #++

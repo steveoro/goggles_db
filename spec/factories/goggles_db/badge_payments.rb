@@ -6,7 +6,7 @@ FactoryBot.define do
 
     payment_date { Time.zone.today }
     amount       { 12.00 }
-    is_manual    { false }
+    manual       { false }
 
     sequence(:notes) { |n| "Badge payment n.#{n}" }
   end

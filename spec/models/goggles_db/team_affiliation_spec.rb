@@ -28,7 +28,7 @@ module GogglesDb
       it_behaves_like(
         'responding to a list of methods',
         %i[season_type badges
-           recent_badges
+           recent_badges autofilled?
            number header_year]
       )
 

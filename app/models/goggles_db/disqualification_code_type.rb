@@ -6,7 +6,7 @@ module GogglesDb
   #
   # This entity is assumed to be pre-seeded on the database.
   #
-  #   - version:  7.030
+  #   - version:  7.035
   #   - authors:  Steve A.
   #
   class DisqualificationCodeType < ApplicationLookupEntity

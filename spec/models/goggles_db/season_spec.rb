@@ -37,7 +37,7 @@ module GogglesDb
       )
       it_behaves_like(
         'responding to a list of methods',
-        %i[category_types ended? started?]
+        %i[category_types ended? started? individual_rank?]
       )
       # Presence of fields & requiredness:
       it_behaves_like(

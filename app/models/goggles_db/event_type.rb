@@ -31,7 +31,6 @@ module GogglesDb
     # has_many :meetings,         through: :meeting_sessions
     # has_many :seasons,          through: :meetings
     # has_many :season_types,     through: :seasons
-    #
     # has_many :events_by_pool_types
     # has_many :pool_types,       through: :events_by_pool_types
     #
@@ -42,8 +41,6 @@ module GogglesDb
     # TODO: Needs a working full-chain relation with a Meeting to work:
     # scope :for_season_type, ->(season_type) { joins(:season_types).where('season_types.id': season_type.id) }
     # scope :for_season,      ->(season_id)   { joins(:seasons).where('season_id': season_id) }
-
-    alias_attribute :relay?, :is_a_relay
 
     # Memoize all values for virtual scopes:
     all.joins(:stroke_type).includes(:stroke_type).order(:style_order).each do |row|

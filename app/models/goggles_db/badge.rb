@@ -10,7 +10,6 @@ module GogglesDb
   class Badge < ApplicationRecord
     self.table_name = 'badges'
 
-    # belongs_to :user # [Steve, 20120212] Do not validate associated user!
     belongs_to :swimmer
     belongs_to :team_affiliation
     belongs_to :season

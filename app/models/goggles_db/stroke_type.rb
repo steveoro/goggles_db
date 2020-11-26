@@ -28,8 +28,6 @@ module GogglesDb
     # Commodity list of methods & constants that are expected to be "eventable":
     EVENTABLE_NAMES = %w[freestyle butterfly backstroke breaststroke intermixed rel_intermixed].freeze
 
-    alias_attribute :eventable?, :is_eventable
-
     validates :code, presence: { length: { within: 1..2 }, allow_nil: false },
                      uniqueness: { case_sensitive: true, message: :already_exists }
 

@@ -55,8 +55,8 @@ module GogglesDb
     end
 
     # Filtering scopes:
-    scope :relays,      -> { joins(:event_type).includes(:event_type).where('event_types.is_a_relay': true) }
-    scope :individuals, -> { joins(:event_type).includes(:event_type).where('event_types.is_a_relay': false) }
+    scope :relays,      -> { joins(:event_type).includes(:event_type).where('event_types.relay': true) }
+    scope :individuals, -> { joins(:event_type).includes(:event_type).where('event_types.relay': false) }
     #-- ------------------------------------------------------------------------
     #++
 

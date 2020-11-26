@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_11_24_125446) do
+ActiveRecord::Schema.define(version: 2020_11_26_180504) do
 
   create_table "achievement_rows", id: :integer, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
     t.integer "lock_version", default: 0
@@ -105,24 +105,36 @@ ActiveRecord::Schema.define(version: 2020_11_24_125446) do
     t.index ["code"], name: "index_app_parameters_on_code", unique: true
   end
 
-  create_table "arm_aux_types", id: :integer, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
+  create_table "aux_arms_types", id: :integer, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
     t.integer "lock_version", default: 0
     t.datetime "created_at"
     t.datetime "updated_at"
     t.string "code", limit: 5
-    t.index ["code"], name: "index_arm_aux_types_on_code", unique: true
+    t.index ["code"], name: "index_aux_arms_types_on_code", unique: true
   end
 
-  create_table "articles", id: :integer, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
+  create_table "aux_body_types", id: :integer, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
     t.integer "lock_version", default: 0
-    t.string "title", limit: 80
-    t.text "body"
-    t.boolean "is_sticky", default: false
-    t.integer "user_id"
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.index ["title"], name: "index_articles_on_title"
-    t.index ["user_id"], name: "idx_articles_user"
+    t.string "code", limit: 5
+    t.index ["code"], name: "index_aux_body_types_on_code", unique: true
+  end
+
+  create_table "aux_breath_types", id: :integer, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
+    t.integer "lock_version", default: 0
+    t.datetime "created_at"
+    t.datetime "updated_at"
+    t.string "code", limit: 5
+    t.index ["code"], name: "index_aux_breath_types_on_code", unique: true
+  end
+
+  create_table "aux_kicks_types", id: :integer, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
+    t.integer "lock_version", default: 0
+    t.datetime "created_at"
+    t.datetime "updated_at"
+    t.string "code", limit: 5
+    t.index ["code"], name: "index_aux_kicks_types_on_code", unique: true
   end
 
   create_table "badge_payments", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
@@ -130,7 +142,7 @@ ActiveRecord::Schema.define(version: 2020_11_24_125446) do
     t.decimal "amount", precision: 10, scale: 2
     t.date "payment_date"
     t.text "notes"
-    t.boolean "is_manual"
+    t.boolean "manual"
     t.bigint "badge_id"
     t.bigint "user_id"
     t.datetime "created_at", null: false
@@ -152,10 +164,10 @@ ActiveRecord::Schema.define(version: 2020_11_24_125446) do
     t.integer "entry_time_type_id"
     t.integer "team_affiliation_id"
     t.integer "final_rank"
-    t.boolean "is_out_of_goggle_cup", default: false
-    t.boolean "has_to_pay_fees", default: false, null: false
-    t.boolean "has_to_pay_badge", default: false, null: false
-    t.boolean "has_to_pay_relays", default: false, null: false
+    t.boolean "off_gogglecup", default: false
+    t.boolean "fees_due", default: false, null: false
+    t.boolean "badge_due", default: false, null: false
+    t.boolean "relays_due", default: false, null: false
     t.index ["category_type_id"], name: "fk_badges_category_types"
     t.index ["entry_time_type_id"], name: "fk_badges_entry_time_types"
     t.index ["number"], name: "index_badges_on_number"
@@ -171,10 +183,10 @@ ActiveRecord::Schema.define(version: 2020_11_24_125446) do
     t.datetime "created_at"
     t.datetime "updated_at"
     t.string "code", limit: 6
-    t.boolean "is_arm_aux_allowed", default: false
-    t.boolean "is_kick_aux_allowed", default: false
-    t.boolean "is_body_aux_allowed", default: false
-    t.boolean "is_breath_aux_allowed", default: false
+    t.boolean "aux_arms_ok", default: false
+    t.boolean "aux_kicks_ok", default: false
+    t.boolean "aux_body_ok", default: false
+    t.boolean "aux_breath_ok", default: false
     t.integer "movement_type_id"
     t.integer "stroke_type_id"
     t.integer "movement_scope_type_id"
@@ -186,22 +198,6 @@ ActiveRecord::Schema.define(version: 2020_11_24_125446) do
     t.index ["user_id"], name: "idx_base_movements_user"
   end
 
-  create_table "body_aux_types", id: :integer, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
-    t.integer "lock_version", default: 0
-    t.datetime "created_at"
-    t.datetime "updated_at"
-    t.string "code", limit: 5
-    t.index ["code"], name: "index_body_aux_types_on_code", unique: true
-  end
-
-  create_table "breath_aux_types", id: :integer, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
-    t.integer "lock_version", default: 0
-    t.datetime "created_at"
-    t.datetime "updated_at"
-    t.string "code", limit: 5
-    t.index ["code"], name: "index_breath_aux_types_on_code", unique: true
-  end
-
   create_table "category_types", id: :integer, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
     t.integer "lock_version", default: 0
     t.string "code", limit: 7
@@ -211,14 +207,14 @@ ActiveRecord::Schema.define(version: 2020_11_24_125446) do
     t.string "group_name", limit: 50
     t.integer "age_begin", limit: 3
     t.integer "age_end", limit: 3
-    t.boolean "is_a_relay", default: false
+    t.boolean "relay", default: false
     t.datetime "created_at"
     t.datetime "updated_at"
     t.integer "season_id"
-    t.boolean "is_out_of_race", default: false
-    t.boolean "is_undivided", default: false, null: false
-    t.index ["federation_code", "is_a_relay"], name: "federation_code"
-    t.index ["season_id", "is_a_relay", "code"], name: "season_and_code", unique: true
+    t.boolean "out_of_race", default: false
+    t.boolean "undivided", default: false, null: false
+    t.index ["federation_code", "relay"], name: "federation_code"
+    t.index ["season_id", "relay", "code"], name: "season_and_code", unique: true
   end
 
   create_table "cities", id: :integer, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
@@ -855,10 +851,10 @@ ActiveRecord::Schema.define(version: 2020_11_24_125446) do
     t.datetime "created_at"
     t.datetime "updated_at"
     t.string "code", limit: 4
-    t.boolean "is_a_relay", default: false
+    t.boolean "relay", default: false
     t.integer "stroke_type_id"
-    t.index ["is_a_relay", "code"], name: "code", unique: true
-    t.index ["is_a_relay"], name: "index_disqualification_code_types_on_is_a_relay"
+    t.index ["relay", "code"], name: "code", unique: true
+    t.index ["relay"], name: "index_disqualification_code_types_on_relay"
     t.index ["stroke_type_id"], name: "idx_disqualification_code_types_stroke_type"
   end
 
@@ -882,17 +878,17 @@ ActiveRecord::Schema.define(version: 2020_11_24_125446) do
     t.integer "lock_version", default: 0
     t.string "code", limit: 10
     t.bigint "length_in_meters"
-    t.boolean "is_a_relay", default: false
+    t.boolean "relay", default: false
     t.integer "stroke_type_id"
     t.datetime "created_at"
     t.datetime "updated_at"
     t.integer "style_order", limit: 2, default: 0
-    t.boolean "is_mixed_gender", default: false
+    t.boolean "mixed_gender", default: false
     t.integer "partecipants", limit: 2, default: 4
     t.integer "phases", limit: 2, default: 4
     t.integer "phase_length_in_meters", limit: 3, default: 50
-    t.index ["is_a_relay", "code"], name: "code", unique: true
-    t.index ["is_a_relay"], name: "index_event_types_on_is_a_relay"
+    t.index ["relay", "code"], name: "code", unique: true
+    t.index ["relay"], name: "index_event_types_on_relay"
     t.index ["stroke_type_id"], name: "fk_event_types_stroke_types"
     t.index ["style_order"], name: "index_event_types_on_style_order"
   end
@@ -927,7 +923,7 @@ ActiveRecord::Schema.define(version: 2020_11_24_125446) do
     t.integer "base_movement_id"
     t.integer "training_mode_type_id"
     t.integer "execution_note_type_id"
-    t.integer "distance", default: 0
+    t.integer "length_in_meters", default: 0
     t.index ["base_movement_id"], name: "fk_exercise_rows_base_movements"
     t.index ["execution_note_type_id"], name: "fk_exercise_rows_execution_note_types"
     t.index ["exercise_id", "part_order"], name: "idx_exercise_rows_part_order"
@@ -1045,17 +1041,17 @@ ActiveRecord::Schema.define(version: 2020_11_24_125446) do
     t.datetime "updated_at"
     t.integer "user_id"
     t.integer "max_performance", limit: 2, default: 5
-    t.boolean "is_limited_to_season_types_defined", default: false, null: false
+    t.boolean "limited_to_existing_season_types", default: false, null: false
     t.date "end_date"
     t.integer "age_for_negative_modifier", default: 20
     t.decimal "negative_modifier", precision: 10, scale: 2, default: "-10.0"
     t.integer "age_for_positive_modifier", default: 60
     t.decimal "positive_modifier", precision: 10, scale: 2, default: "5.0"
-    t.boolean "has_to_create_standards", default: true
-    t.boolean "has_to_update_standards", default: false
+    t.boolean "create_standards", default: true
+    t.boolean "update_standards", default: false
     t.text "pre_calculation_sql"
     t.text "post_calculation_sql"
-    t.boolean "is_team_limited", default: true
+    t.boolean "team_constrained", default: true
     t.integer "career_step", default: 100
     t.decimal "career_bonus", precision: 10, scale: 2, default: "0.0"
     t.index ["season_year"], name: "idx_season_year"
@@ -1076,7 +1072,7 @@ ActiveRecord::Schema.define(version: 2020_11_24_125446) do
     t.string "code", limit: 10
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.boolean "is_default_value", default: false
+    t.boolean "default", default: false
     t.index ["code"], name: "idx_heat_types_code", unique: true
   end
 
@@ -1091,7 +1087,7 @@ ActiveRecord::Schema.define(version: 2020_11_24_125446) do
     t.integer "minutes", limit: 3, default: 0
     t.integer "seconds", limit: 2, default: 0
     t.integer "hundreds", limit: 2, default: 0
-    t.boolean "is_team_record", default: false
+    t.boolean "team_record", default: false
     t.integer "swimmer_id"
     t.integer "team_id"
     t.integer "season_id"
@@ -1108,14 +1104,6 @@ ActiveRecord::Schema.define(version: 2020_11_24_125446) do
     t.index ["season_id"], name: "idx_individual_records_season"
     t.index ["swimmer_id"], name: "idx_individual_records_swimmer"
     t.index ["team_id"], name: "idx_individual_records_team"
-  end
-
-  create_table "kick_aux_types", id: :integer, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
-    t.integer "lock_version", default: 0
-    t.datetime "created_at"
-    t.datetime "updated_at"
-    t.string "code", limit: 5
-    t.index ["code"], name: "index_kick_aux_types_on_code", unique: true
   end
 
   create_table "laps", id: :integer, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
@@ -1515,27 +1503,26 @@ ActiveRecord::Schema.define(version: 2020_11_24_125446) do
     t.index ["code"], name: "index_movement_types_on_code", unique: true
   end
 
-  create_table "news_feeds", id: :integer, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
-    t.string "title", limit: 150
-    t.text "body"
-    t.boolean "is_read", default: false
-    t.boolean "is_friend_activity", default: false
-    t.boolean "is_achievement", default: false
-    t.integer "user_id"
-    t.integer "friend_id"
-    t.datetime "created_at"
-    t.datetime "updated_at"
-    t.index ["user_id"], name: "idx_news_feeds_user"
-  end
-
   create_table "pool_types", id: :integer, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
     t.integer "lock_version", default: 0
     t.string "code", limit: 3
     t.integer "length_in_meters", limit: 3
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.boolean "is_suitable_for_meetings", default: true
+    t.boolean "eventable", default: true
     t.index ["code"], name: "index_pool_types_on_code", unique: true
+  end
+
+  create_table "posts", id: :integer, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
+    t.integer "lock_version", default: 0
+    t.string "title", limit: 80
+    t.text "body"
+    t.boolean "pinned", default: false
+    t.integer "user_id"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+    t.index ["title"], name: "index_posts_on_title"
+    t.index ["user_id"], name: "idx_articles_user"
   end
 
   create_table "presence_types", id: :integer, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
@@ -1564,9 +1551,9 @@ ActiveRecord::Schema.define(version: 2020_11_24_125446) do
     t.string "code", limit: 3
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.boolean "is_for_swimmers", default: false
-    t.boolean "is_for_teams", default: false
-    t.boolean "is_for_seasons", default: false
+    t.boolean "swimmer", default: false
+    t.boolean "team", default: false
+    t.boolean "season", default: false
     t.index ["code"], name: "index_record_types_on_code", unique: true
   end
 
@@ -1653,7 +1640,7 @@ ActiveRecord::Schema.define(version: 2020_11_24_125446) do
     t.integer "edition_type_id"
     t.integer "timing_type_id"
     t.text "rules", size: :medium
-    t.boolean "has_individual_rank", default: true
+    t.boolean "individual_rank", default: true
     t.decimal "badge_fee", precision: 10, scale: 2
     t.index ["begin_date"], name: "index_seasons_on_begin_date"
     t.index ["edition_type_id"], name: "fk_seasons_edition_types"
@@ -1686,6 +1673,19 @@ ActiveRecord::Schema.define(version: 2020_11_24_125446) do
     t.index ["code"], name: "index_shower_types_on_code", unique: true
   end
 
+  create_table "social_news", id: :integer, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
+    t.string "title", limit: 150
+    t.text "body"
+    t.boolean "old", default: false
+    t.boolean "friend_activity", default: false
+    t.boolean "achievement", default: false
+    t.integer "user_id"
+    t.integer "friend_id"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+    t.index ["user_id"], name: "idx_news_feeds_user"
+  end
+
   create_table "standard_timings", id: :integer, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
     t.integer "lock_version", default: 0
     t.integer "minutes", limit: 3, default: 0
@@ -1710,9 +1710,9 @@ ActiveRecord::Schema.define(version: 2020_11_24_125446) do
     t.string "code", limit: 2
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.boolean "is_eventable", default: false
+    t.boolean "eventable", default: false
     t.index ["code"], name: "index_stroke_types_on_code", unique: true
-    t.index ["is_eventable"], name: "idx_is_eventable"
+    t.index ["eventable"], name: "idx_is_eventable"
   end
 
   create_table "swimmer_level_types", id: :integer, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
@@ -1758,7 +1758,7 @@ ActiveRecord::Schema.define(version: 2020_11_24_125446) do
     t.datetime "created_at"
     t.datetime "updated_at"
     t.string "complete_name", limit: 100
-    t.boolean "is_year_guessed", default: false
+    t.boolean "year_guessed", default: false
     t.index ["associated_user_id"], name: "index_swimmers_on_associated_user_id"
     t.index ["complete_name", "year_of_birth"], name: "name_and_year", unique: true
     t.index ["complete_name"], name: "index_swimmers_on_complete_name"
@@ -1793,12 +1793,12 @@ ActiveRecord::Schema.define(version: 2020_11_24_125446) do
     t.string "contact_name", limit: 100
     t.string "maps_uri"
     t.integer "lanes_number", limit: 2, default: 8
-    t.boolean "has_multiple_pools", default: false
-    t.boolean "has_open_area", default: false
-    t.boolean "has_bar", default: false
-    t.boolean "has_restaurant_service", default: false
-    t.boolean "has_gym_area", default: false
-    t.boolean "has_children_area", default: false
+    t.boolean "multiple_pools", default: false
+    t.boolean "garden", default: false
+    t.boolean "bar", default: false
+    t.boolean "restaurant", default: false
+    t.boolean "gym", default: false
+    t.boolean "child_area", default: false
     t.text "notes"
     t.integer "city_id"
     t.integer "pool_type_id"
@@ -1808,7 +1808,7 @@ ActiveRecord::Schema.define(version: 2020_11_24_125446) do
     t.integer "user_id"
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.boolean "do_not_update", default: false, null: false
+    t.boolean "read_only", default: false, null: false
     t.index ["city_id"], name: "fk_swimming_pools_cities"
     t.index ["hair_dryer_type_id"], name: "fk_swimming_pools_hair_dryer_types"
     t.index ["locker_cabinet_type_id"], name: "fk_swimming_pools_locker_cabinet_types"
@@ -1848,13 +1848,13 @@ ActiveRecord::Schema.define(version: 2020_11_24_125446) do
     t.integer "lock_version", default: 0
     t.string "number", limit: 20
     t.string "name", limit: 100
-    t.boolean "must_calculate_goggle_cup", default: false
+    t.boolean "compute_gogglecup", default: false
     t.integer "team_id"
     t.integer "season_id"
     t.integer "user_id"
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.boolean "is_autofilled", default: false
+    t.boolean "autofilled", default: false
     t.index ["name"], name: "index_team_affiliations_on_name"
     t.index ["number"], name: "index_team_affiliations_on_number"
     t.index ["season_id", "team_id"], name: "uk_team_affiliations_seasons_teams", unique: true
@@ -1865,12 +1865,12 @@ ActiveRecord::Schema.define(version: 2020_11_24_125446) do
   create_table "team_lap_templates", id: :integer, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
     t.integer "lock_version", default: 0
     t.integer "part_order", limit: 3, default: 0
-    t.boolean "has_subtotal", default: false
-    t.boolean "has_cycle_count", default: false
-    t.boolean "has_breath_count", default: false
-    t.boolean "has_non_swam_part", default: false
-    t.boolean "has_non_swam_kick_count", default: false
-    t.boolean "has_passage_position", default: false
+    t.boolean "subtotal", default: false
+    t.boolean "cycle_count", default: false
+    t.boolean "breath_count", default: false
+    t.boolean "underwater_part", default: false
+    t.boolean "underwater_kicks", default: false
+    t.boolean "lap_position", default: false
     t.integer "team_id"
     t.integer "event_type_id"
     t.integer "pool_type_id"
@@ -1952,16 +1952,16 @@ ActiveRecord::Schema.define(version: 2020_11_24_125446) do
     t.integer "group_times", limit: 3, default: 0
     t.integer "group_start_and_rest", default: 0
     t.integer "group_pause", default: 0
-    t.integer "arm_aux_type_id"
-    t.integer "kick_aux_type_id"
-    t.integer "body_aux_type_id"
-    t.integer "breath_aux_type_id"
-    t.index ["arm_aux_type_id"], name: "fk_training_rows_arm_aux_types"
-    t.index ["body_aux_type_id"], name: "fk_training_rows_body_aux_types"
-    t.index ["breath_aux_type_id"], name: "fk_training_rows_breath_aux_types"
+    t.integer "aux_arms_type_id"
+    t.integer "aux_kicks_type_id"
+    t.integer "aux_body_type_id"
+    t.integer "aux_breath_type_id"
+    t.index ["aux_arms_type_id"], name: "fk_training_rows_arm_aux_types"
+    t.index ["aux_body_type_id"], name: "fk_training_rows_body_aux_types"
+    t.index ["aux_breath_type_id"], name: "fk_training_rows_breath_aux_types"
+    t.index ["aux_kicks_type_id"], name: "fk_training_rows_kick_aux_types"
     t.index ["exercise_id"], name: "fk_training_exercises"
     t.index ["group_id", "part_order"], name: "index_training_rows_on_group_id_and_part_order"
-    t.index ["kick_aux_type_id"], name: "fk_training_rows_kick_aux_types"
     t.index ["training_id", "part_order"], name: "idx_training_rows_part_order"
     t.index ["training_step_type_id"], name: "fk_training_rows_training_step_types"
   end
@@ -2003,7 +2003,7 @@ ActiveRecord::Schema.define(version: 2020_11_24_125446) do
     t.decimal "standard_points", precision: 10, scale: 2, default: "0.0"
     t.decimal "meeting_points", precision: 10, scale: 2, default: "0.0"
     t.bigint "rank", default: 0
-    t.boolean "is_disqualified", default: false
+    t.boolean "disqualified", default: false
     t.integer "minutes", limit: 3, default: 0
     t.integer "seconds", limit: 2, default: 0
     t.integer "hundreds", limit: 2, default: 0
@@ -2055,16 +2055,16 @@ ActiveRecord::Schema.define(version: 2020_11_24_125446) do
     t.integer "user_training_id"
     t.integer "exercise_id"
     t.integer "training_step_type_id"
-    t.integer "arm_aux_type_id"
-    t.integer "kick_aux_type_id"
-    t.integer "body_aux_type_id"
-    t.integer "breath_aux_type_id"
-    t.index ["arm_aux_type_id"], name: "idx_user_training_rows_arm_aux_type"
-    t.index ["body_aux_type_id"], name: "idx_user_training_rows_body_aux_type"
-    t.index ["breath_aux_type_id"], name: "idx_user_training_rows_breath_aux_type"
+    t.integer "aux_arms_type_id"
+    t.integer "aux_kicks_type_id"
+    t.integer "aux_body_type_id"
+    t.integer "aux_breath_type_id"
+    t.index ["aux_arms_type_id"], name: "idx_user_training_rows_arm_aux_type"
+    t.index ["aux_body_type_id"], name: "idx_user_training_rows_body_aux_type"
+    t.index ["aux_breath_type_id"], name: "idx_user_training_rows_breath_aux_type"
+    t.index ["aux_kicks_type_id"], name: "idx_user_training_rows_kick_aux_type"
     t.index ["exercise_id"], name: "idx_user_training_rows_exercise"
     t.index ["group_id", "part_order"], name: "index_user_training_rows_on_group_id_and_part_order"
-    t.index ["kick_aux_type_id"], name: "idx_user_training_rows_kick_aux_type"
     t.index ["training_step_type_id"], name: "idx_user_training_rows_training_step_type"
     t.index ["user_training_id", "part_order"], name: "idx_user_training_rows_part_order"
   end

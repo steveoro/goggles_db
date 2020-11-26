@@ -66,22 +66,6 @@ module GogglesDb
         end
       end
     end
-
-    # TODO: Needs a working full-chain relation with a Meeting to work:
-    describe 'self.for_season_type' do
-      # context 'for a SeasonType with existing Seasons,' do
-      #   let(:season_type) { SeasonType.all_masters.sample }
-      #   let(:result) { subject.class.for_season_type(season_type) }
-      #   it 'is a list of EventType' do
-      #     expect(result).to be_a(ActiveRecord::Relation)
-      #     expect(result).to all be_a(EventType)
-      #   end
-      # end
-    end
-
-    describe 'self.for_season' do
-      # TODO
-    end
     #-- ------------------------------------------------------------------------
     #++
   end
