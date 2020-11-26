@@ -4,14 +4,13 @@ module GogglesDb
   #
   # = Team model
   #
-  #   - version:  7.010
+  #   - version:  7.035
   #   - author:   Steve A.
   #
   class Team < ApplicationRecord
     self.table_name = 'teams'
 
     belongs_to :city, optional: true
-    # belongs_to :user # [Steve, 20120212] Do not validate associated user!
 
     has_many :badges
     has_many :swimmers, through: :badges # May used with uniq
@@ -40,15 +39,13 @@ module GogglesDb
     validates :home_page_url, length: { maximum: 150 }
 
     # Sorting scopes:
-    scope :by_name, ->(dir = 'ASC') { order(dir == 'ASC' ? 'teams.name ASC' : 'teams.name DESC') }
-    # TODO: unused yet
-    # scope :by_city, ->(dir = 'ASC') { includes(:city).joins(:city).order("cities.name #{dir}, teams.name #{dir}") }
-    # scope :by_user, ->(dir = 'ASC') { order("users.name #{dir}, teams.name #{dir}") }
+    scope :by_name, ->(dir = :asc) { order(name: dir) }
 
     # Filtering scopes:
-    # scope :has_results,     -> { where('EXISTS(SELECT 1 from meeting_individual_results where not is_disqualified and team_id = teams.id)') }
-    # scope :has_results_min, ->(how_many = 20)
-    # { where(['(SELECT count(id) from meeting_individual_results where not is_disqualified and team_id = teams.id) > ?', how_many]) }
+    # scope :with_results, -> { where('EXISTS(SELECT 1 from meeting_individual_results where not is_disqualified and team_id = teams.id)') }
+    # scope :with_min_results, lambda(how_many = 20) {
+    #   where(['(SELECT count(id) from meeting_individual_results where not is_disqualified and team_id = teams.id) > ?', how_many])
+    # }
     #-- ------------------------------------------------------------------------
     #++
 

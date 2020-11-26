@@ -4,6 +4,7 @@ require 'rails_helper'
 require 'support/shared_method_existance_examples'
 require 'support/shared_sorting_scopes_examples'
 require 'support/shared_filtering_scopes_examples'
+require 'support/shared_timing_examples'
 require 'support/shared_to_json_examples'
 
 module GogglesDb
@@ -48,26 +49,14 @@ module GogglesDb
     describe 'self.by_distance' do
       it_behaves_like('sorting scope by_<ANY_VALUE_NAME>', Lap, 'distance', 'length_in_meters')
     end
-
-    # Filtering scopes:
-    # (none yet)
     #-- ------------------------------------------------------------------------
     #++
 
-    describe 'to_timing' do
-      let(:lap_fixture) { FactoryBot.build(:lap) }
-      subject { lap_fixture.to_timing }
+    describe '#to_timing' do
+      let(:fixture_row) { FactoryBot.build(:lap) }
+      subject { fixture_row.to_timing }
 
-      it 'is a Timing instance' do
-        expect(subject).to be_a(Timing)
-      end
-      it 'contains the same timing data than the original fixture' do
-        expect(subject.hundreds).to eq(lap_fixture.hundreds)
-        expect(subject.seconds).to eq(lap_fixture.seconds)
-        expect(subject.minutes).to eq(lap_fixture.minutes % 60)
-        expect(subject.hours).to eq(60 * (lap_fixture.minutes / 60))
-        # (Don't care about days)
-      end
+      it_behaves_like('#to_timing valid result')
     end
 
     describe '#to_json' do

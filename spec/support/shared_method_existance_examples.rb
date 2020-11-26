@@ -12,7 +12,7 @@ shared_examples_for 'having a list of scopes with no parameters' do |method_name
   it_behaves_like 'responding to a list of class methods', method_name_array
 
   method_name_array.each do |method_name|
-    it 'returns a kind of ActiveRecord::Relation' do
+    it "returns #{method_name.to_s.camelcase}'s ActiveRecord::Relation" do
       expect(subject.class.send(method_name)).to be_a_kind_of(ActiveRecord::Relation)
     end
   end
@@ -43,7 +43,7 @@ shared_examples_for 'having one or more required associations' do |attribute_nam
   it_behaves_like 'responding to a list of methods', attribute_name_array
 
   attribute_name_array.each do |attribute_name|
-    it 'returns some kind of GogglesDb::ApplicationRecord' do
+    it "returns some kind (#{attribute_name.to_s.camelcase}) of GogglesDb::ApplicationRecord" do
       expect(subject.send(attribute_name)).to be_a_kind_of(GogglesDb::ApplicationRecord)
     end
   end

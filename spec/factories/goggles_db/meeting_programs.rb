@@ -1,9 +1,10 @@
 FactoryBot.define do
   factory :meeting_program, class: 'GogglesDb::MeetingProgram' do
-    sequence(:event_order) { |n| n }
-    meeting_event
-    gender_type            { GogglesDb::GenderType.send(%w[male female].sample) }
-    pool_type              { meeting_event.meeting_session.swimming_pool.pool_type }
+    sequence(:event_order)
+
+    meeting_event { create(:meeting_event) }
+    gender_type   { GogglesDb::GenderType.send(%w[male female].sample) }
+    pool_type     { meeting_event.meeting_session.swimming_pool.pool_type }
     # This will yield a coherent category according to the event type, but regardless of season:
     category_type do
       meeting_event.relay? ? GogglesDb::CategoryType.eventable.relays.sample : GogglesDb::CategoryType.eventable.individuals.sample

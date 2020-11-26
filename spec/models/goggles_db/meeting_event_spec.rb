@@ -26,7 +26,8 @@ module GogglesDb
 
       it_behaves_like(
         'responding to a list of methods',
-        %i[begin_time notes autofilled? out_of_race? eventable?
+        %i[meeting_programs meeting_individual_results meeting_relay_results meeting_entries category_types
+           begin_time notes autofilled? out_of_race? eventable?
            split_gender_start_list? split_category_start_list?
            scheduled_date relay?
            to_json]

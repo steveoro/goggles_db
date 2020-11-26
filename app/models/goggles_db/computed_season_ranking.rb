@@ -11,7 +11,7 @@ module GogglesDb
   # any hall-of-fame-alike season history & data even for ongoing Seasons (to be updated
   # after each Meeting results acquisition).
   #
-  #   - version:  7.030
+  #   - version:  7.035
   #   - authors:  Leega, Steve A.
   #
   class ComputedSeasonRanking < ApplicationRecord
@@ -26,7 +26,7 @@ module GogglesDb
     validates :total_points, presence: { numericality: true }
 
     # Sorting scopes:
-    scope :by_rank, ->(dir = 'ASC') { order(dir == 'ASC' ? 'rank ASC' : 'rank DESC') }
+    scope :by_rank, ->(dir = :asc) { order(rank: dir) }
 
     # Filtering scopes:
     scope :for_season, ->(season) { where(season_id: season.id) }

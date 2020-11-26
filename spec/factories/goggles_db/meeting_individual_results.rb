@@ -1,6 +1,6 @@
 FactoryBot.define do
   factory :meeting_individual_result, class: 'GogglesDb::MeetingIndividualResult' do
-    badge
+    badge                     { create(:badge) }
     swimmer                   { badge.swimmer }
     team                      { badge.team }
     team_affiliation          { badge.team_affiliation }
@@ -19,15 +19,6 @@ FactoryBot.define do
     #-- -----------------------------------------------------------------------
     #++
 
-    before(:create) do |built_instance|
-      if built_instance.invalid?
-        puts "\r\nFactory def. error => " << GogglesDb::ValidationErrorTools.recursive_error_for(built_instance)
-        puts built_instance.inspect
-      end
-    end
-    #-- -----------------------------------------------------------------------
-    #++
-
     factory :meeting_individual_result_with_laps do
       after(:create) do |created_instance, _evaluator|
         create_list(
@@ -35,6 +26,15 @@ FactoryBot.define do
           meeting_program: created_instance.meeting_program,
           meeting_individual_result: created_instance
         )
+      end
+    end
+    #-- -----------------------------------------------------------------------
+    #++
+
+    before(:create) do |built_instance|
+      if built_instance.invalid?
+        puts "\r\nFactory def. error => " << GogglesDb::ValidationErrorTools.recursive_error_for(built_instance)
+        puts built_instance.inspect
       end
     end
   end

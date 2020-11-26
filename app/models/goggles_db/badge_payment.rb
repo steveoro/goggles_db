@@ -4,7 +4,7 @@ module GogglesDb
   #
   # = Badge payment model
   #
-  #   - version:  7.030
+  #   - version:  7.035
   #   - authors:  Leega, Steve A.
   #
   class BadgePayment < ApplicationRecord
@@ -21,13 +21,13 @@ module GogglesDb
     validates :amount, presence: { allow_nil: false }
 
     # Sorting scopes:
-    scope :by_date, ->(dir = 'ASC') { order(dir == 'ASC' ? 'badge_payments.payment_date ASC' : 'badge_payments.payment_date DESC') }
+    scope :by_date, ->(dir = :asc) { order('badge_payments.payment_date': dir) }
 
     # Filtering scopes:
     scope :for_badge,   ->(badge)   { where(badge_id: badge.id) }
     scope :for_badges,  ->(badges)  { where(badge_id: badges.map(&:id).uniq) }
-    scope :for_swimmer, ->(swimmer) { joins(:swimmer).where("swimmers.id = #{swimmer.id}") }
-    scope :for_team,    ->(team)    { joins(:team).where("teams.id = #{team.id}") }
+    scope :for_swimmer, ->(swimmer) { joins(:swimmer).where('swimmers.id': swimmer.id) }
+    scope :for_team,    ->(team)    { joins(:team).where('teams.id': team.id) }
 
     delegate :complete_name, to: :swimmer, prefix: true
     #-- ------------------------------------------------------------------------

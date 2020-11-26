@@ -1,12 +1,10 @@
 # frozen_string_literal: true
 
-require 'extensions/roman_numeral'
-
 module GogglesDb
   #
   # = Meeting model
   #
-  #   - version:  7.034
+  #   - version:  7.035
   #   - author:   Steve A.
   #
   class Meeting < ApplicationRecord
@@ -32,19 +30,19 @@ module GogglesDb
     has_many :pool_types,       through: :meeting_sessions
     has_many :event_types,      through: :meeting_sessions
 
-    # has_many :meeting_team_scores,        dependent: :delete_all
+    has_many :meeting_team_scores, dependent: :delete_all
     # has_many :meeting_reservations,       dependent: :delete_all
     # has_many :meeting_event_reservations, dependent: :delete_all
 
-    # # Nth-level children: (through-association with meeting)
-    # has_many :meeting_events,             through: :meeting_sessions
-    # has_many :meeting_programs,           through: :meeting_events
-    # has_many :meeting_entries,            through: :meeting_programs
-    # has_many :meeting_individual_results, through: :meeting_programs
-    # has_many :meeting_relay_results,      through: :meeting_programs
-    # has_many :passages,                   through: :meeting_programs
+    # Nth-level children:
+    has_many :meeting_events,             through: :meeting_sessions
+    has_many :meeting_programs,           through: :meeting_events
+    has_many :meeting_entries,            through: :meeting_programs
+    has_many :meeting_individual_results, through: :meeting_programs
+    has_many :meeting_relay_results,      through: :meeting_programs
 
     # WIP:
+    # has_many :laps,                       through: :meeting_programs
     # has_many :swimmers,                   through: :meeting_individual_results
     # has_many :teams,                      through: :meeting_individual_results
     # has_many :category_types,             through: :meeting_programs
@@ -75,8 +73,8 @@ module GogglesDb
     validates :max_individual_events_per_session, length: { maximum: 1 }
 
     # Sorting scopes:
-    scope :by_date,   ->(dir = 'ASC')  { order(dir == 'ASC' ? 'header_date ASC' : 'header_date DESC') }
-    scope :by_season, ->(dir = 'ASC')  { joins(:season).order(dir == 'ASC' ? 'seasons.begin_date ASC' : 'seasons.begin_date DESC') }
+    scope :by_date,   ->(dir = :asc)  { order(header_date: dir) }
+    scope :by_season, ->(dir = :asc)  { joins(:season).order('seasons.begin_date': dir) }
 
     # Filtering scopes:
     # TODO: CLEAR UNUSED

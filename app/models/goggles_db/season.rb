@@ -4,7 +4,7 @@ module GogglesDb
   #
   # = Season model
   #
-  #   - version:  7.010
+  #   - version:  7.035
   #   - author:   Steve A.
   #
   class Season < ApplicationRecord
@@ -42,15 +42,15 @@ module GogglesDb
     validates :end_date,    presence: true
 
     # Sorting scopes:
-    scope :by_begin_date,  ->(dir = 'ASC') { order(dir == 'ASC' ? 'seasons.begin_date ASC' : 'seasons.begin_date DESC') }
-    scope :by_end_date,    ->(dir = 'ASC') { order(dir == 'ASC' ? 'seasons.end_date ASC' : 'seasons.end_date DESC') }
+    scope :by_begin_date, ->(dir = :asc) { order('seasons.begin_date': dir) }
+    scope :by_end_date,   ->(dir = :asc) { order('seasons.end_date': dir) }
     # TODO: unused yet
     # scope :by_season_type, ->(dir) { order("season_types.code #{dir}, seasons.begin_date #{dir}") }
 
     # Filtering scopes:
     scope :for_season_type, ->(season_type) { where(season_type_id: season_type.id) }
-    scope :ongoing,      -> { where('end_date IS NOT NULL AND end_date >= curdate()') }
-    scope :ended,        -> { where('end_date IS NOT NULL AND end_date < curdate()') }
+    scope :ongoing,      -> { where(Arel.sql('end_date IS NOT NULL AND end_date >= curdate()')) }
+    scope :ended,        -> { where(Arel.sql('end_date IS NOT NULL AND end_date < curdate()')) }
     scope :ended_before, ->(end_date) { where('end_date IS NOT NULL AND end_date < ?', end_date) }
     # TODO
     # scope :has_results,     -> { where('exists(select 1 from meetings where are_results_acquired)') }
