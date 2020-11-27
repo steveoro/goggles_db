@@ -4,7 +4,7 @@ module GogglesDb
   #
   # = User model
   #
-  #   - version:  7.000
+  #   - version:  7.035
   #   - author:   Steve A.
   #
   class User < ApplicationRecord
@@ -15,12 +15,10 @@ module GogglesDb
            :confirmable, :lockable, :trackable,
            :recoverable, :rememberable, :validatable
 
-    belongs_to :swimmer_level_type
-    validates_associated :swimmer_level_type
-
-    has_one :swimmer
+    belongs_to :swimmer_level_type, optional: true
     belongs_to :coach_level_type, optional: true
 
+    has_one :swimmer
     # FIXME: [Steve, 20141204] We should really rename this table using a passive name, something like "managed_affiliations"
     has_many :team_managers
 

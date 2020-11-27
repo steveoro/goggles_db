@@ -1511,9 +1511,9 @@ CREATE TABLE `meeting_event_reservations` (
   `badge_id` int(11) DEFAULT NULL,
   `meeting_event_id` int(11) DEFAULT NULL,
   `user_id` int(11) DEFAULT NULL,
-  `suggested_minutes` mediumint(9) DEFAULT NULL,
-  `suggested_seconds` smallint(6) DEFAULT NULL,
-  `suggested_hundreds` smallint(6) DEFAULT NULL,
+  `minutes` mediumint(9) DEFAULT NULL,
+  `seconds` smallint(6) DEFAULT NULL,
+  `hundreds` smallint(6) DEFAULT NULL,
   `created_at` datetime NOT NULL,
   `updated_at` datetime NOT NULL,
   `accepted` tinyint(1) NOT NULL DEFAULT 0,
@@ -3131,6 +3131,7 @@ INSERT INTO `schema_migrations` (version) VALUES
 ('20201124125446'),
 ('20201126160623'),
 ('20201126172240'),
-('20201126180504');
+('20201126180504'),
+('20201127124922');
 
 
