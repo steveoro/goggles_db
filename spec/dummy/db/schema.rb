@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_11_26_180504) do
+ActiveRecord::Schema.define(version: 2020_11_27_124922) do
 
   create_table "achievement_rows", id: :integer, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
     t.integer "lock_version", default: 0
@@ -1194,9 +1194,9 @@ ActiveRecord::Schema.define(version: 2020_11_26_180504) do
     t.integer "badge_id"
     t.integer "meeting_event_id"
     t.integer "user_id"
-    t.integer "suggested_minutes", limit: 3
-    t.integer "suggested_seconds", limit: 2
-    t.integer "suggested_hundreds", limit: 2
+    t.integer "minutes", limit: 3
+    t.integer "seconds", limit: 2
+    t.integer "hundreds", limit: 2
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.boolean "accepted", default: false, null: false
