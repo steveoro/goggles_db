@@ -4,13 +4,12 @@ module GogglesDb
   #
   # = TeamAffiliation model
   #
-  #   - version:  7.035
+  #   - version:  7.036
   #   - author:   Steve A.
   #
   class TeamAffiliation < ApplicationRecord
     self.table_name = 'team_affiliations'
 
-    # belongs_to :user # [Steve, 20120212] Do not validate associated user!
     belongs_to :team
     belongs_to :season
     validates_associated :team
@@ -18,8 +17,7 @@ module GogglesDb
 
     has_one :season_type, through: :season
     has_many :badges
-    # has_many :meeting_individual_results
-    # has_many :team_managers
+    has_many :managed_affiliations
 
     validates :name, presence: { length: { within: 1..100, allow_nil: false } }
     validates :number, length: { maximum: 20 }
@@ -43,12 +41,18 @@ module GogglesDb
       badges.for_years(*year_list)
     end
 
+    # Returns the array of Team Managers (GogglesDb::User) associated to this affiliation
+    def managers
+      managed_affiliations.map(&:manager)
+    end
+
     # Override: includes *most* of its 1st-level associations into the typical to_json output.
     def to_json(options = nil)
       attributes.merge(
         'team' => team.attributes,
         'season' => season.attributes,
-        'badges' => recent_badges.map(&:attributes)
+        'badges' => recent_badges.map(&:attributes),
+        'managers' => managers
       ).to_json(options)
     end
   end

@@ -1,14 +1,17 @@
 # frozen_string_literal: true
 
+require 'wrappers/timing'
+
 module GogglesDb
   #
   # = MeetingRelayResult model
   #
-  #   - version:  7.035
+  #   - version:  7.036
   #   - author:   Steve A.
   #
   class MeetingRelayResult < ApplicationRecord
     self.table_name = 'meeting_relay_results'
+    include TimingManageable
 
     belongs_to :meeting_program
     belongs_to :team
@@ -67,16 +70,6 @@ module GogglesDb
     def valid_for_ranking?
       !out_of_race? && !disqualified?
     end
-
-    # Returns a new Timing instance initialized with the timing data from this row
-    # (@see lib/wrappers/timing.rb)
-    #
-    def to_timing
-      # MIR doesn't hold an "hour" column due to the typical short time span of the competition:
-      Timing.new(hundreds, seconds, minutes % 60, 60 * (minutes / 60))
-    end
-    #-- ------------------------------------------------------------------------
-    #++
 
     # Returns a commodity Hash wrapping the essential data that summarizes the Meeting
     # associated to this row.

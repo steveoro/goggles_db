@@ -15,7 +15,7 @@ module GogglesDb
 
       it_behaves_like(
         'responding to a list of methods',
-        %i[swimmer coach_level_type]
+        %i[swimmer coach_level_type managed_affiliations]
       )
       #-- ----------------------------------------------------------------------
       #++

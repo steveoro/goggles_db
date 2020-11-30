@@ -2,18 +2,18 @@
 
 #
 # = Timing
-#   - Goggles framework vers.:  7.034
+#   - Goggles framework vers.:  7.036
 #   - author: Steve A.
 #
 #  Utility class to store timing data and to allow simple mathematical operations
 #  between timings (delta, sum, ...).
 #
 # === Members:
-#  - <tt>:hundreds</tt> => Fixnum value for hundreds of a second.
-#  - <tt>:seconds</tt> => Fixnum value for seconds.
-#  - <tt>:minutes</tt> => Fixnum value for minutes.
-#  - <tt>:hours</tt> => Fixnum value for hours.
-#  - <tt>:days</tt> => Fixnum value for days.
+#  - <tt>:hundreds</tt> => Integer value for hundreds of a second.
+#  - <tt>:seconds</tt> => Integer value for seconds.
+#  - <tt>:minutes</tt> => Integer value for minutes.
+#  - <tt>:hours</tt> => Integer value for hours.
+#  - <tt>:days</tt> => Integer value for days.
 #
 class Timing
   include Comparable

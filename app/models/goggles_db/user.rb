@@ -4,7 +4,7 @@ module GogglesDb
   #
   # = User model
   #
-  #   - version:  7.035
+  #   - version:  7.036
   #   - author:   Steve A.
   #
   class User < ApplicationRecord
@@ -19,8 +19,7 @@ module GogglesDb
     belongs_to :coach_level_type, optional: true
 
     has_one :swimmer
-    # FIXME: [Steve, 20141204] We should really rename this table using a passive name, something like "managed_affiliations"
-    has_many :team_managers
+    has_many :managed_affiliations
 
     validates :name, presence: true, uniqueness: { case_sensitive: true, message: :already_exists }
 

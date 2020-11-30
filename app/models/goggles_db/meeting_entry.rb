@@ -1,16 +1,19 @@
 # frozen_string_literal: true
 
+require 'wrappers/timing'
+
 module GogglesDb
   #
   # = MeetingEntry model
   #
-  #   - version:  7.035
+  #   - version:  7.036
   #   - author:   Steve A.
   #
   # Can be used for adding startlist entries for both individual & relay results.
   #
   class MeetingEntry < ApplicationRecord
     self.table_name = 'meeting_entries'
+    include TimingManageable
 
     belongs_to :meeting_program
     belongs_to :team
@@ -66,14 +69,6 @@ module GogglesDb
     scope :for_event_type,    ->(event_type)    { includes(:meeting_event).joins(:meeting_event).where('meeting_events.event_type_id': event_type.id) }
     #-- ------------------------------------------------------------------------
     #++
-
-    # Returns a new Timing instance initialized with the timing data from this row
-    # (@see lib/wrappers/timing.rb)
-    #
-    def to_timing
-      # MIR doesn't hold an "hour" column due to the typical short time span of the competition:
-      Timing.new(hundreds, seconds, minutes % 60, 60 * (minutes / 60))
-    end
 
     # Returns a commodity Hash wrapping the essential data that summarizes the Meeting
     # associated to this row.

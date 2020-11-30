@@ -4,7 +4,7 @@ require 'rails_helper'
 require 'support/shared_method_existance_examples'
 require 'support/shared_sorting_scopes_examples'
 require 'support/shared_filtering_scopes_examples'
-require 'support/shared_timing_examples'
+require 'support/shared_timing_manageable_examples'
 require 'support/shared_to_json_examples'
 
 module GogglesDb
@@ -52,11 +52,9 @@ module GogglesDb
     #-- ------------------------------------------------------------------------
     #++
 
-    describe '#to_timing' do
+    describe 'regarding the timing fields,' do
       let(:fixture_row) { FactoryBot.build(:lap) }
-      subject { fixture_row.to_timing }
-
-      it_behaves_like('#to_timing valid result')
+      it_behaves_like 'TimingManageable'
     end
 
     describe '#to_json' do

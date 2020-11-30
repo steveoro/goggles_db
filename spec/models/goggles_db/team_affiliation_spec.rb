@@ -27,8 +27,8 @@ module GogglesDb
 
       it_behaves_like(
         'responding to a list of methods',
-        %i[season_type badges
-           recent_badges autofilled?
+        %i[season_type badges managed_affiliations
+           recent_badges managers autofilled?
            number header_year]
       )
 
@@ -55,16 +55,35 @@ module GogglesDb
     #++
 
     let(:affiliation_with_badges) { FactoryBot.create(:affiliation_with_badges) }
+    let(:fixture_manager) do
+      manager = FactoryBot.create(:user)
+      FactoryBot.create(:managed_affiliation, team_affiliation: affiliation_with_badges, manager: manager)
+      affiliation_with_badges.reload
+      manager
+    end
 
     describe '#recent_badges' do
       let(:result) { affiliation_with_badges.recent_badges.limit(10) }
 
       it 'is a relation containing only Badges belonging to the last couple of years' do
-        expect(result).to be_a(ActiveRecord::Relation)
+        expect(result).to be_an(ActiveRecord::Relation)
         expect(result).to all be_a(Badge)
         result.map(&:header_year).uniq.each do |header_year|
           expect(header_year).to include((Time.zone.today.year - 1).to_s).or include(Time.zone.today.year.to_s)
         end
+      end
+    end
+
+    describe '#managers' do
+      let(:result) { affiliation_with_badges.managers }
+
+      it 'is a relation containing only Users that are associated to this affiliation as Team managers' do
+        # Force fixture_manager to be created before testing the result:
+        expect(fixture_manager).to be_a(User)
+        expect(result).to be_an(Array)
+        expect(result).not_to be_empty
+        expect(result).to all be_a(User)
+        expect(result.first).to eq(fixture_manager)
       end
     end
     #-- ------------------------------------------------------------------------
@@ -80,12 +99,16 @@ module GogglesDb
       )
       # Collection associations:
       context 'when the entity contains collection associations,' do
-        subject         { affiliation_with_badges }
+        subject do
+          # Force fixture_manager to be created before reaching the subject:
+          expect(fixture_manager).to be_a(User)
+          affiliation_with_badges
+        end
         let(:json_hash) { JSON.parse(subject.to_json) }
 
         it_behaves_like(
           '#to_json when the entity contains collection associations with',
-          %w[badges]
+          %w[badges managers]
         )
       end
     end

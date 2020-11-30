@@ -4,7 +4,7 @@ module GogglesDb
   #
   # = Team model
   #
-  #   - version:  7.035
+  #   - version:  7.036
   #   - author:   Steve A.
   #
   class Team < ApplicationRecord
@@ -18,11 +18,11 @@ module GogglesDb
     has_many :seasons, through: :team_affiliations
     has_many :season_types, through: :team_affiliations
 
+    has_many :managed_affiliations,  through: :team_affiliations
     # has_many :meeting_individual_results
     # has_many :meetings, through: :meeting_individual_results
     # has_many :meeting_relay_results
     # has_many :meeting_team_scores
-    # has_many :team_managers,  through: :team_affiliations
     # has_many :goggle_cups
     # has_many :computed_season_ranking
     # has_many :team_passage_templates
