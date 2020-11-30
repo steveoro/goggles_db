@@ -85,9 +85,9 @@ shared_examples_for '#to_json when the entity contains collection associations w
       it "contains the most recent JSON details of its #{association_name}" do
         expect(json_hash[association_name]).to be_an(Array).and be_present
         expect(json_hash[association_name].count).to be <= subject.send(association_name.to_sym).count
-        # Build a quick list of all the original association IDs and check that all recent associated objects
+        # Build a quick list of all the original association IDs and check that all associated objects
         # are indeed a member in this parent association list:
-        unfiltered_ids = subject.send(association_name.to_sym).pluck(:"#{association_name}.id")
+        unfiltered_ids = subject.send(association_name.to_sym).pluck(:id)
         expect(
           json_hash[association_name].pluck('id').uniq.all? { |id| unfiltered_ids.member?(id) }
         ).to be true

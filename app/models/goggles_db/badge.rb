@@ -4,7 +4,7 @@ module GogglesDb
   #
   # = Badge model
   #
-  #   - version:  7.035
+  #   - version:  7.036
   #   - author:   Steve A.
   #
   class Badge < ApplicationRecord
@@ -33,8 +33,8 @@ module GogglesDb
     # has_many :meeting_individual_results
     # has_many :laps
     # has_many :meetings,      through: :meeting_individual_results
-    # has_many :team_managers, through: :team_affiliation
-    #
+    has_many :managed_affiliations, through: :team_affiliation
+
     validates :number, presence: { length: { within: 1..40 }, allow_nil: false }
 
     delegate :header_year, to: :season

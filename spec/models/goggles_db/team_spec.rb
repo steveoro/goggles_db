@@ -20,7 +20,7 @@ module GogglesDb
 
       it_behaves_like(
         'responding to a list of methods',
-        %i[city badges swimmers team_affiliations seasons season_types
+        %i[city badges swimmers team_affiliations seasons season_types managed_affiliations
            recent_badges recent_affiliations
            address phone_mobile phone_number fax_number e_mail contact_name
            home_page_url]

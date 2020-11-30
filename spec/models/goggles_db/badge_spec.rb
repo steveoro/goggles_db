@@ -41,9 +41,9 @@ module GogglesDb
 
       it_behaves_like(
         'responding to a list of methods',
-        %i[header_year
+        %i[season_type gender_type managed_affiliations
+           header_year
            off_gogglecup? fees_due? badge_due? relays_due?
-           season_type gender_type
            to_json]
       )
 

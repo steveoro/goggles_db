@@ -1451,6 +1451,22 @@ CREATE TABLE `locker_cabinet_types` (
   UNIQUE KEY `index_locker_cabinet_types_on_code` (`code`)
 ) ENGINE=InnoDB AUTO_INCREMENT=9 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
+DROP TABLE IF EXISTS `managed_affiliations`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `managed_affiliations` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `lock_version` int(11) DEFAULT 0,
+  `created_at` datetime DEFAULT NULL,
+  `updated_at` datetime DEFAULT NULL,
+  `team_affiliation_id` int(11) DEFAULT NULL,
+  `user_id` int(11) DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `team_manager_with_affiliation` (`team_affiliation_id`,`user_id`),
+  KEY `index_managed_affiliations_on_team_affiliation_id` (`team_affiliation_id`),
+  KEY `index_managed_affiliations_on_user_id` (`user_id`)
+) ENGINE=InnoDB AUTO_INCREMENT=163 DEFAULT CHARSET=utf8;
+/*!40101 SET character_set_client = @saved_cs_client */;
 DROP TABLE IF EXISTS `medal_types`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
@@ -2427,22 +2443,6 @@ CREATE TABLE `team_lap_templates` (
   KEY `index_team_lap_templates_on_length_in_meters` (`length_in_meters`)
 ) ENGINE=InnoDB AUTO_INCREMENT=209 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
-DROP TABLE IF EXISTS `team_managers`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `team_managers` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
-  `lock_version` int(11) DEFAULT 0,
-  `created_at` datetime DEFAULT NULL,
-  `updated_at` datetime DEFAULT NULL,
-  `team_affiliation_id` int(11) DEFAULT NULL,
-  `user_id` int(11) DEFAULT NULL,
-  PRIMARY KEY (`id`),
-  UNIQUE KEY `team_manager_with_affiliation` (`team_affiliation_id`,`user_id`),
-  KEY `index_team_managers_on_team_affiliation_id` (`team_affiliation_id`),
-  KEY `index_team_managers_on_user_id` (`user_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=163 DEFAULT CHARSET=utf8;
-/*!40101 SET character_set_client = @saved_cs_client */;
 DROP TABLE IF EXISTS `teams`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
@@ -3132,6 +3132,7 @@ INSERT INTO `schema_migrations` (version) VALUES
 ('20201126160623'),
 ('20201126172240'),
 ('20201126180504'),
-('20201127124922');
+('20201127124922'),
+('20201127184636');
 
 

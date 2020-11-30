@@ -1,14 +1,17 @@
 # frozen_string_literal: true
 
+require 'wrappers/timing'
+
 module GogglesDb
   #
   # = MeetingRelaySwimmer model
   #
-  #   - version:  7.035
+  #   - version:  7.036
   #   - author:   Steve A.
   #
   class MeetingRelaySwimmer < ApplicationRecord
     self.table_name = 'meeting_relay_swimmers'
+    include TimingManageable
 
     belongs_to :meeting_relay_result
     belongs_to :swimmer
@@ -38,14 +41,6 @@ module GogglesDb
     # scope :by_stroke_type, ->(dir = :asc) { joins(:stroke_type).order('stroke_types.code': dir) }
     #-- ------------------------------------------------------------------------
     #++
-
-    # Returns a new Timing instance initialized with the timing data from this row
-    # (@see lib/wrappers/timing.rb)
-    #
-    def to_timing
-      # MIR doesn't hold an "hour" column due to the typical short time span of the competition:
-      Timing.new(hundreds, seconds, minutes % 60, 60 * (minutes / 60))
-    end
 
     # Override: includes most relevant data for its 1st-level associations
     def to_json(options = nil)

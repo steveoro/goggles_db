@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_11_27_124922) do
+ActiveRecord::Schema.define(version: 2020_11_27_184636) do
 
   create_table "achievement_rows", id: :integer, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
     t.integer "lock_version", default: 0
@@ -1148,6 +1148,17 @@ ActiveRecord::Schema.define(version: 2020_11_27_124922) do
     t.index ["code"], name: "index_locker_cabinet_types_on_code", unique: true
   end
 
+  create_table "managed_affiliations", id: :integer, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
+    t.integer "lock_version", default: 0
+    t.datetime "created_at"
+    t.datetime "updated_at"
+    t.integer "team_affiliation_id"
+    t.integer "user_id"
+    t.index ["team_affiliation_id", "user_id"], name: "team_manager_with_affiliation", unique: true
+    t.index ["team_affiliation_id"], name: "index_managed_affiliations_on_team_affiliation_id"
+    t.index ["user_id"], name: "index_managed_affiliations_on_user_id"
+  end
+
   create_table "medal_types", id: :integer, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
     t.integer "lock_version", default: 0
     t.string "code", limit: 1
@@ -1883,17 +1894,6 @@ ActiveRecord::Schema.define(version: 2020_11_27_124922) do
     t.index ["pool_type_id"], name: "idx_team_passage_templates_pool_type"
     t.index ["team_id"], name: "idx_team_passage_templates_team"
     t.index ["user_id"], name: "idx_team_passage_templates_user"
-  end
-
-  create_table "team_managers", id: :integer, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
-    t.integer "lock_version", default: 0
-    t.datetime "created_at"
-    t.datetime "updated_at"
-    t.integer "team_affiliation_id"
-    t.integer "user_id"
-    t.index ["team_affiliation_id", "user_id"], name: "team_manager_with_affiliation", unique: true
-    t.index ["team_affiliation_id"], name: "index_team_managers_on_team_affiliation_id"
-    t.index ["user_id"], name: "index_team_managers_on_user_id"
   end
 
   create_table "teams", id: :integer, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|

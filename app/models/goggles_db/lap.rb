@@ -6,11 +6,12 @@ module GogglesDb
   #
   # = Lap model
   #
-  #   - version:  7.035
+  #   - version:  7.036
   #   - author:   Steve A.
   #
   class Lap < ApplicationRecord
     self.table_name = 'laps'
+    include TimingManageable
 
     # [Steve A.] These 3 are actually optional but always "filled by hand":
     belongs_to :meeting_program
@@ -51,14 +52,6 @@ module GogglesDb
     # scope :for_event_type, ->(event_type) { joins(:event_type).where('event_types.id': event_type.id) }
     #-- ------------------------------------------------------------------------
     #++
-
-    # Returns a new Timing instance initialized with the timing data from this row
-    # (@see lib/wrappers/timing.rb)
-    #
-    def to_timing
-      # Lap doesn't hold an "hour" column due to the typical short time span of the competition:
-      Timing.new(hundreds, seconds, minutes % 60, 60 * (minutes / 60))
-    end
 
     # Returns a commodity Hash wrapping the essential data that summarizes the Meeting
     # associated to this row.
