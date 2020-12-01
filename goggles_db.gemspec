@@ -11,10 +11,10 @@ Gem::Specification.new do |spec|
   spec.version     = GogglesDb::VERSION
   spec.authors     = ['steveoro']
   spec.email       = ['steve.alloro@gmail.com']
-  spec.homepage    = 'http://www.master-goggles.org'
+  spec.homepage    = 'https://www.master-goggles.org'
   spec.summary     = 'Goggles DB engine'
   spec.description = 'contains just the models and the DB structure required to run the main Goggles app'
-  spec.license     = 'MIT'
+  spec.license     = 'GPL-3.0-or-later'
 
   # Prevent pushing this gem to RubyGems.org. To allow pushes either set the 'allowed_push_host'
   # to allow pushing to a single host or delete this section to allow pushing to any host.
