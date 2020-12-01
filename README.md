@@ -34,10 +34,9 @@ gem 'goggles_db', git: 'https://github.com/steveoro/goggles_db'
 
 The Engine will add a bunch of rake tasks to the application, among which:
 
-- `db:dump` & `db:rebuild` will assume the existence of any SQL dump files you may have or create under the `db/dump` folder;
-- `check_needed_dirs` will be invoked automatically by these tasks to ensure the existence of any other required folder;
+- `db:dump` & `db:rebuild` will assume the existence of an SQL dump file named after the target environment (format `<ENVIRONMENT_NAME>.sql.bz2`); this gem includes an anonymized `test` dump under the dummy app folder that mounts this namespaced engine, inside the `spec/dummy/db/dump` folder. Check out [Database setup](#database-setup) below.
 
-WIP :construction:
+- `check_needed_dirs` will be invoked internally by these tasks to ensure the existence of any other required folder.
 
 
 
@@ -51,9 +50,9 @@ $> guard
 
 If you want to run the full test suite, just hit enter on the Guard console.
 
-As of Rails 6.0.3, most probably there are some issues with the combined usage of Guard & Spring together with the new memory management modes in Rails during the Brakeman checks. These prevent the `brakeman` plugin for Guard to actually notice changes in the source code: the checks get re-run, but the result doesn't change. Or maybe it's just a combined mis-configuration.
+As of Rails 6.0.3, most probably there are issues with the combined usage of Guard & Spring together with the new memory management modes in Rails during the Brakeman checks. Sometimes class reloading is prevented and the `brakeman` plugin for Guard fails to actually notice changes in the source code. The checks get a re-run but the result doesn't change (if you have actually fixed an issue). It could be just a simple mis-configuration or a peculiar use-case in this namespaced Engine: we'll see how this goes as we'll update to future versions of Rails.
 
-In any case, although the Guard plugin for Brakeman runs correctly at start, it's always better to re-run the `brakeman` checks before pushing the changes to the repository with:
+In any case, although the Guard plugin for Brakeman runs correctly at start, it's always better to re-run a `brakeman` full check before pushing the changes to the repository:
 
 ```bash
 $> bundle exec brakeman -Aq
@@ -65,36 +64,62 @@ _Please, again, commit & push any changes only when the test suite is :green_hea
 
 ## Database setup
 
-You'll need a proper DB for both the test suite and the local development.
+Make sure you have a running MariaDB server & client installation + development packages in order to rebuild the drivers during `bundle install`.
 
-GogglesDb, among others, adds these tasks:
+To speed up the build process, the test suite uses pre-existing anonymized data seeds with **transactional fixtures** and _does not clear the DB before each run_.
 
-- `db:dump`: dumps current Rails environment DB;
-- `db:rebuild`: restores any *.sql.bz2 dump file stored in `db/dump`, provided it is a DB dump without any DB namespaces in it. (No `USE` or `CREATE` database statements)
+For this reason, you'll need a proper DB dump from which restore a suitable DB image before both running the tests or for running a local server during development.
 
-If you don't have a proper test seed dump, either ask Steve A. nicely for one, or build one yourself by force-loading the SQL structure file after resetting the current DB:
+
+### DB management tasks
+
+The tasks added by GogglesDb deal mostly with its DB setup and management. (When called from the project root, in the context of an unmounted Engine, you need to prefix the tasks with `app:`)
+
+- (`app:`)`db:dump`: dumps current Rails environment DB inside the `db/dump` folder. When using the unmounted Engine by itself, the target context of the dumps is the default test-`dummy` app subfolder. The result will be un-namespaced: no database name prefixes on any DDL statements and no `USE` or `CREATE database` SQL statements in it.
+
+- (`app:`)`db:rebuild`: restores any valid `*.sql.bz2` dump file found stored in `db/dump`. Again, provided the dump image is structured as above: without any DB namespaces in it (as those created by `db:dump` typically are).
+
+To rebuild the `test` database before running the suite (using default parameter values given by the current environment) just run:
+
+```bash
+$> RAILS_ENV=test rails app:db:rebuild
+```
+
+
+Also, _any other target DB_ can be prepared for local usage by copying a source dump to another target.
+
+For example, if you need to work with the `development` environment, you can easily use the anonymized `test` image with:
+
+```bash
+$> rails app:db:rebuild from=test to=development
+```
+
+(It will take some time depending of the dump size: sit back and relax...)
+
+
+### From scratch
+
+A brand new DB image can be built by force-loading the SQL structure file after resetting the current DB and then running the factories for each entity you may need:
 
 ```bash
 $> rails db:reset
 $> rails structure:load
 ```
 
-Then, you'll need to use the Factories in spec/factories to create fixtures.
+Then, you'll have to use the Factories (`spec/factories`) to create each individual fixture.
 
-A fully randomized `seed.rb` script is still a work-in-progress. Contributions are welcome.
+To mount the factories from the Rails console:
 
-Assuming we want the `test` environment DB up and running:
-
-- Make sure you have a running MariaDB server & client installation.
-
-- Given you have a valid `db/dump/test.sql.bz2` (the dump must be un-namespaced to be copied or renamed from any other environment - as those created by `db:dump` typically are), use the dedicated rake tasks:
-
-```bash
-$> bin/rails db:rebuild from=test to=test
-$> RAILS_ENV=test bin/rails db:migrate
+```ruby
+ > FactoryBot.definition_file_paths << "#{GogglesDb::Engine.root}/spec/factories"
+ > FactoryBot.reload
 ```
 
-(It will take some time, depending of the dump size: sit back and relax.)
+To create a brand new random user (for example):
+
+```ruby
+ > FactoryBot.create(:user)
+```
 
 
 * * *
@@ -107,4 +132,4 @@ $> RAILS_ENV=test bin/rails db:migrate
 
 
 ## License
-The gem is available as open source under the terms of the [MIT License](https://opensource.org/licenses/MIT).
+The gem is available as open source under the terms of the [LGPL-3.0 License](https://opensource.org/licenses/LGPL-3.0).
