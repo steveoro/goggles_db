@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_11_27_184636) do
+ActiveRecord::Schema.define(version: 2020_12_03_180147) do
 
   create_table "achievement_rows", id: :integer, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
     t.integer "lock_version", default: 0
@@ -45,25 +45,15 @@ ActiveRecord::Schema.define(version: 2020_11_27_184636) do
     t.index ["code"], name: "index_achievements_on_code", unique: true
   end
 
-  create_table "admins", id: :integer, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
-    t.string "email", default: ""
-    t.string "encrypted_password", default: ""
-    t.integer "sign_in_count", default: 0
-    t.datetime "current_sign_in_at"
-    t.datetime "last_sign_in_at"
-    t.string "current_sign_in_ip"
-    t.string "last_sign_in_ip"
-    t.integer "failed_attempts", default: 0
-    t.string "unlock_token"
-    t.datetime "locked_at"
+  create_table "admin_grants", options: "ENGINE=InnoDB DEFAULT CHARSET=latin1", force: :cascade do |t|
     t.integer "lock_version", default: 0
-    t.string "name"
-    t.string "description", limit: 50
-    t.datetime "created_at"
-    t.datetime "updated_at"
-    t.index ["email"], name: "index_admins_on_email", unique: true
-    t.index ["name"], name: "index_admins_on_name", unique: true
-    t.index ["unlock_token"], name: "index_admins_on_unlock_token", unique: true
+    t.string "entity"
+    t.bigint "user_id", null: false
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.index ["entity"], name: "index_admin_grants_on_entity"
+    t.index ["user_id", "entity"], name: "index_admin_grants_on_user_id_and_entity", unique: true
+    t.index ["user_id"], name: "index_admin_grants_on_user_id"
   end
 
   create_table "app_parameters", id: :integer, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|

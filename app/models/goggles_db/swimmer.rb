@@ -4,7 +4,7 @@ module GogglesDb
   #
   # = Swimmer model
   #
-  #   - version:  7.035
+  #   - version:  7.037
   #   - author:   Steve A.
   #
   class Swimmer < ApplicationRecord
@@ -21,6 +21,7 @@ module GogglesDb
     validates :last_name, length: { maximum: 50 }
     validates :first_name, length: { maximum: 50 }
     validates :year_of_birth, presence: { length: { within: 2..4, allow_nil: false } }, numericality: true
+    validates :year_guessed, inclusion: { in: [true, false] }
 
     delegate :male?, :female?, :intermixed?, to: :gender_type
     #-- ------------------------------------------------------------------------
