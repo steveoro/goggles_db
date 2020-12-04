@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    goggles_db (0.1.36)
+    goggles_db (0.1.38)
       acts-as-taggable-on
       acts_as_votable
       carrierwave
@@ -196,7 +196,7 @@ GEM
       guard (~> 2.0)
       guard-compat (~> 1.1)
       spring
-    haml (5.2.0)
+    haml (5.2.1)
       temple (>= 0.8.0)
       tilt
     http-accept (1.7.0)

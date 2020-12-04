@@ -36,8 +36,14 @@ module GogglesDb
         %i[by_begin_date by_end_date ongoing ended]
       )
       it_behaves_like(
+        'responding to a list of class methods',
+        %i[for_season_type ongoing ended ended_before]
+      )
+      it_behaves_like(
         'responding to a list of methods',
-        %i[category_types ended? started? individual_rank?]
+        %i[meetings meeting_team_scores computed_season_rankings standard_timings
+           category_types badges swimmers team_affiliations teams
+           ended? started? individual_rank?]
       )
       # Presence of fields & requiredness:
       it_behaves_like(

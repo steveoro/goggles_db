@@ -28,6 +28,7 @@ module GogglesDb
         %i[meeting_sessions swimming_pools pool_types event_types
            meeting_team_scores
            meeting_events meeting_programs meeting_entries meeting_individual_results meeting_relay_results
+           meeting_reservations meeting_event_reservations meeting_relay_reservations
            reference_phone reference_e_mail reference_name configuration_file
            max_individual_events max_individual_events_per_session
            warm_up_pool? allows_under_25? manifest? startlist? off_season? confirmed? cancelled?
@@ -97,6 +98,21 @@ module GogglesDb
         '#to_json when called on a valid instance',
         %w[season edition_type timing_type season_type federation_type]
       )
+      # Collection associations:
+      context 'when the entity contains collection associations,' do
+        subject do
+          # Use existing data to get a Meeting that already has events:
+          event = GogglesDb::MeetingEvent.limit(200).sample
+          expect(event.meeting_session.meeting).to be_a(Meeting).and be_valid
+          event.meeting_session.meeting
+        end
+        let(:json_hash) { JSON.parse(subject.to_json) }
+
+        it_behaves_like(
+          '#to_json when the entity contains collection associations with',
+          %w[meeting_sessions meeting_events]
+        )
+      end
     end
   end
 end

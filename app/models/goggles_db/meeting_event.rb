@@ -38,8 +38,9 @@ module GogglesDb
     has_many :meeting_entries,            through: :meeting_programs
     has_many :category_types,             through: :meeting_programs
 
-    # has_many :meeting_event_reservations, dependent: :delete_all
-    # has_many :meeting_relay_reservations, dependent: :delete_all
+    has_many :meeting_reservations, dependent: :delete_all
+    has_many :meeting_event_reservations, dependent: :delete_all
+    has_many :meeting_relay_reservations, dependent: :delete_all
 
     validates :event_order, presence: { length: { within: 1..3, allow_nil: false } }
 

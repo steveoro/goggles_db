@@ -4,7 +4,7 @@ module GogglesDb
   #
   # = Meeting model
   #
-  #   - version:  7.035
+  #   - version:  7.038
   #   - author:   Steve A.
   #
   class Meeting < ApplicationRecord
@@ -31,8 +31,9 @@ module GogglesDb
     has_many :event_types,      through: :meeting_sessions
 
     has_many :meeting_team_scores, dependent: :delete_all
-    # has_many :meeting_reservations,       dependent: :delete_all
-    # has_many :meeting_event_reservations, dependent: :delete_all
+    has_many :meeting_reservations,       dependent: :delete_all
+    has_many :meeting_event_reservations, dependent: :delete_all
+    has_many :meeting_relay_reservations, dependent: :delete_all
 
     # Nth-level children:
     has_many :meeting_events,             through: :meeting_sessions
@@ -117,7 +118,7 @@ module GogglesDb
     #-- ------------------------------------------------------------------------
     #++
 
-    # Override: includes the 1st-level associations into the typical to_json output.
+    # Override: includes main associations into the typical to_json output.
     def to_json(options = nil)
       attributes.merge(
         'edition_label' => edition_label,
@@ -125,7 +126,9 @@ module GogglesDb
         'edition_type' => edition_type.attributes,
         'timing_type' => timing_type.attributes,
         'season_type' => season_type.attributes,
-        'federation_type' => federation_type.attributes
+        'federation_type' => federation_type.attributes,
+        'meeting_sessions' => meeting_sessions.map(&:attributes),
+        'meeting_events' => meeting_events.map(&:attributes)
       ).to_json(options)
     end
   end

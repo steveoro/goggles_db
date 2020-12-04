@@ -36,6 +36,10 @@ module GogglesDb
     has_many :managed_affiliations, through: :team_affiliation
 
     validates :number, presence: { length: { within: 1..40 }, allow_nil: false }
+    validates :off_gogglecup, inclusion: { in: [true, false] }
+    validates :fees_due, inclusion: { in: [true, false] }
+    validates :badge_due, inclusion: { in: [true, false] }
+    validates :relays_due, inclusion: { in: [true, false] }
 
     delegate :header_year, to: :season
 

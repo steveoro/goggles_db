@@ -4,7 +4,7 @@ module GogglesDb
   #
   # = Season model
   #
-  #   - version:  7.035
+  #   - version:  7.038
   #   - author:   Steve A.
   #
   class Season < ApplicationRecord
@@ -25,15 +25,16 @@ module GogglesDb
     has_many :team_affiliations
     has_many :teams, through: :team_affiliations
 
-    # has_many :meetings
+    has_many :meetings
+    has_many :meeting_team_scores
+    has_many :computed_season_rankings
+    has_many :standard_timings
+    # has_many :goggle_cup_definitions
+
+    # Not needed right now:
     # has_many :meeting_sessions, through: :meetings
     # has_many :meeting_events, through: :meeting_sessions
     # has_many :meeting_individual_results, through: :meetings
-    # has_many :meeting_team_scores
-    #
-    # has_many :computed_season_ranking
-    # has_many :time_standard
-    # has_many :goggle_cup_definitions
 
     validates :header_year, presence: { length: { within: 1..9 }, allow_nil: false }
     validates :edition,     presence: { length: { within: 1..3 }, allow_nil: false }
