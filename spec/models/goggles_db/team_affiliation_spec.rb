@@ -83,7 +83,7 @@ module GogglesDb
         expect(result).to be_an(Array)
         expect(result).not_to be_empty
         expect(result).to all be_a(User)
-        expect(result.first).to eq(fixture_manager)
+        expect(result).to include(fixture_manager)
       end
     end
     #-- ------------------------------------------------------------------------
