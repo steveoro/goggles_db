@@ -19,7 +19,7 @@ module GogglesDb
 
       it_behaves_like(
         'responding to a list of methods',
-        %i[meeting_events event_types]
+        %i[meeting_events event_types meeting_programs meeting_entries]
       )
 
       # Presence of fields & requiredness:
