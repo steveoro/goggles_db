@@ -4,7 +4,7 @@ module GogglesDb
   #
   # = MeetingSession model
   #
-  #   - version:  7.035
+  #   - version:  7.038
   #   - author:   Steve A.
   #
   class MeetingSession < ApplicationRecord
@@ -22,8 +22,8 @@ module GogglesDb
 
     has_many :meeting_events, -> { order(:event_order) }, dependent: :delete_all
     has_many :event_types,    through: :meeting_events
-    # has_many :meeting_programs,           through: :meeting_events
-    # has_many :meeting_entries,            through: :meeting_events
+    has_many :meeting_programs,           through: :meeting_events
+    has_many :meeting_entries,            through: :meeting_events
     # has_many :meeting_individual_results, through: :meeting_programs
 
     validates :session_order,  presence: { length: { within: 1..2, allow_nil: false } }

@@ -7,6 +7,10 @@ module GogglesDb
   #   - version:  7.035
   #   - author:   Steve A.
   #
+  # Reservations are individual Meeting registrations, associated just to a specific
+  # Meeting and can be added as soon as the Meeting is defined.
+  # (Meeting sessions & events does not need to be there yet)
+  #
   class MeetingReservation < ApplicationRecord
     self.table_name = 'meeting_reservations'
 

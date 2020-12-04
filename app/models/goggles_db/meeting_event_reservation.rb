@@ -7,6 +7,10 @@ module GogglesDb
   #   - version:  7.035
   #   - author:   Steve A.
   #
+  # Event reservations are individual event registrations, added personally by each athlete.
+  # It's responsibility of the Team Manager to actually carry out the registration task with
+  # the home Team organizing the Meeting.
+  #
   class MeetingEventReservation < ApplicationRecord
     self.table_name = 'meeting_event_reservations'
 
