@@ -9,21 +9,15 @@ require 'active_support'
 #   Assumes to be included into an ActiveRecord::Base sibling (it must respond to self.table_name)
 #   and it must have a #code field.
 #
-#   - version:  7.039
+#   - version:  7.040
 #   - author:   Steve A.
 #
 module Localizable
   extend ActiveSupport::Concern
 
-  # This will raise an exception if the includee does not already have defined the required fields:
-  def self.included(model)
-    base_instance = model.new
-    unless base_instance.respond_to?(:code) &&
-           base_instance.respond_to?(:attributes) &&
-           base_instance.class.respond_to?(:table_name)
-      raise ArgumentError, "Includee #{model} must respond to #code, #attributes & self.table_name"
-    end
-  end
+  # [Steve A.] Can't enforce checking respond_to? in includees here, because since ver.7 this
+  # concern is included in a shared abstract class (can't be instantiated).
+  # (For more information, compare implementation difference w/ TimingManageable.)
 
   # Computes a localized shorter description for the value/code associated with this data
   # Supports override for current locale.
