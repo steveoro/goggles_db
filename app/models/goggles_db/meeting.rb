@@ -4,7 +4,7 @@ module GogglesDb
   #
   # = Meeting model
   #
-  #   - version:  7.038
+  #   - version:  7.041
   #   - author:   Steve A.
   #
   class Meeting < ApplicationRecord
@@ -123,8 +123,8 @@ module GogglesDb
       attributes.merge(
         'edition_label' => edition_label,
         'season' => season.attributes,
-        'edition_type' => edition_type.attributes,
-        'timing_type' => timing_type.attributes,
+        'edition_type' => edition_type.lookup_attributes,
+        'timing_type' => timing_type.lookup_attributes,
         'season_type' => season_type.attributes,
         'federation_type' => federation_type.attributes,
         'meeting_sessions' => meeting_sessions.map(&:attributes),

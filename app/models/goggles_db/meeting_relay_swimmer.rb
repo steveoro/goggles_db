@@ -6,7 +6,7 @@ module GogglesDb
   #
   # = MeetingRelaySwimmer model
   #
-  #   - version:  7.036
+  #   - version:  7.041
   #   - author:   Steve A.
   #
   class MeetingRelaySwimmer < ApplicationRecord
@@ -49,8 +49,8 @@ module GogglesDb
         'team' => team.attributes,
         'swimmer' => swimmer.attributes,
         'badge' => badge.attributes,
-        'event_type' => event_type.attributes,
-        'stroke_type' => stroke_type.attributes
+        'event_type' => event_type.lookup_attributes,
+        'stroke_type' => stroke_type.lookup_attributes
       ).to_json(options)
     end
   end

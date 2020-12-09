@@ -4,7 +4,7 @@ module GogglesDb
   #
   # = MeetingEvent model
   #
-  #   - version:  7.035
+  #   - version:  7.041
   #   - author:   Steve A.
   #
   class MeetingEvent < ApplicationRecord
@@ -70,9 +70,9 @@ module GogglesDb
     def to_json(options = nil)
       attributes.merge(
         'meeting_session' => meeting_session.attributes,
-        'event_type' => event_type.attributes,
-        'stroke_type' => stroke_type.attributes,
-        'heat_type' => heat_type.attributes,
+        'event_type' => event_type.lookup_attributes,
+        'stroke_type' => stroke_type.lookup_attributes,
+        'heat_type' => heat_type.lookup_attributes,
         'season' => season.attributes,
         'season_type' => season_type.attributes
       ).to_json(options)

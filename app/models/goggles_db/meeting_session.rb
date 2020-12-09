@@ -4,7 +4,7 @@ module GogglesDb
   #
   # = MeetingSession model
   #
-  #   - version:  7.038
+  #   - version:  7.041
   #   - author:   Steve A.
   #
   class MeetingSession < ApplicationRecord
@@ -48,8 +48,8 @@ module GogglesDb
         'season_type' => season_type.attributes,
         # Optional:
         'swimming_pool' => swimming_pool&.attributes,
-        'pool_type' => pool_type&.attributes,
-        'day_part_type' => day_part_type&.attributes
+        'pool_type' => pool_type&.lookup_attributes,
+        'day_part_type' => day_part_type&.lookup_attributes
       ).to_json(options)
     end
   end

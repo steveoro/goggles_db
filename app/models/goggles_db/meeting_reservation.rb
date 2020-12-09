@@ -4,7 +4,7 @@ module GogglesDb
   #
   # = MeetingReservation model
   #
-  #   - version:  7.035
+  #   - version:  7.041
   #   - author:   Steve A.
   #
   # Reservations are individual Meeting registrations, associated just to a specific

@@ -1,5 +1,18 @@
 # frozen_string_literal: true
 
+# Handles both normal associations and associations with lookup entities
+# (GogglesDb::ApplicationLookupEntity)
+def compare_attributes_between(parsed_json_association_obj, association)
+  # Expect associations with lookup entities to include translated labels in their to_json:
+  if association.respond_to?(:lookup_attributes)
+    expect(parsed_json_association_obj).to eq(JSON.parse(association.lookup_attributes.to_json))
+  else
+    expect(parsed_json_association_obj).to eq(JSON.parse(association.attributes.to_json))
+  end
+end
+#-- ---------------------------------------------------------------------------
+#++
+
 shared_examples_for '#to_json when called on a valid instance' do |required_associations|
   it 'is a String' do
     expect(subject.to_json).to be_a(String).and be_present
@@ -13,7 +26,7 @@ shared_examples_for '#to_json when called on a valid instance' do |required_asso
     required_associations.each do |association_name|
       it "contains the JSON details of its #{association_name}" do
         expect(json_hash[association_name]).to be_an(Hash).and be_present
-        expect(json_hash[association_name]).to eq(JSON.parse(subject.send(association_name.to_sym).attributes.to_json))
+        compare_attributes_between(json_hash[association_name], subject.send(association_name.to_sym))
       end
     end
   end
@@ -71,9 +84,7 @@ shared_examples_for '#to_json when the entity contains other optional associatio
     optional_associations.each do |association_name|
       it "contains the JSON details of its #{association_name}" do
         expect(json_hash[association_name]).to be_an(Hash).and be_present
-        expect(json_hash[association_name]).to eq(
-          JSON.parse(subject.send(association_name.to_sym).attributes.to_json)
-        )
+        compare_attributes_between(json_hash[association_name], subject.send(association_name.to_sym))
       end
     end
   end

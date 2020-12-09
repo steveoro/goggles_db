@@ -6,7 +6,7 @@ module GogglesDb
   #
   # This entity is assumed to be pre-seeded on the database.
   #
-  #   - version:  7.035
+  #   - version:  7.041
   #   - authors:  Steve A.
   #
   class EventsByPoolType < ApplicationRecord
@@ -85,9 +85,9 @@ module GogglesDb
     # Override: includes all 1st-level associations into the typical to_json output.
     def to_json(options = nil)
       attributes.merge(
-        'pool_type' => pool_type.attributes,
-        'event_type' => event_type.attributes,
-        'stroke_type' => stroke_type.attributes
+        'pool_type' => pool_type.lookup_attributes,
+        'event_type' => event_type.lookup_attributes,
+        'stroke_type' => stroke_type.lookup_attributes
       ).to_json(options)
     end
   end

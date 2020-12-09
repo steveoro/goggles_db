@@ -4,7 +4,7 @@ module GogglesDb
   #
   # = SwimmingPool model
   #
-  #   - version:  7.035
+  #   - version:  7.041
   #   - author:   Steve A.
   #
   class SwimmingPool < ApplicationRecord
@@ -58,11 +58,11 @@ module GogglesDb
     def to_json(options = nil)
       attributes.merge(
         'city' => city.attributes,
-        'pool_type' => pool_type.attributes,
+        'pool_type' => pool_type.lookup_attributes,
         # Optional:
-        'shower_type' => shower_type&.attributes,
-        'hair_dryer_type' => hair_dryer_type&.attributes,
-        'locker_cabinet_type' => locker_cabinet_type&.attributes
+        'shower_type' => shower_type&.lookup_attributes,
+        'hair_dryer_type' => hair_dryer_type&.lookup_attributes,
+        'locker_cabinet_type' => locker_cabinet_type&.lookup_attributes
       ).to_json(options)
     end
   end
