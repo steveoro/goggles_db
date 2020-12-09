@@ -16,7 +16,40 @@ shared_examples_for 'Localizable' do
   # Describes the requistes of the including class and the outcome of the module inclusion:
   context 'by including this concern, the sibling:' do
     it_behaves_like('responding to a list of class methods', %i[table_name])
-    it_behaves_like('responding to a list of methods', %i[code label long_label alt_label])
+    # Note:
+    # Adding here 'attributes' to the list of methods to enforce Concern inclusion only
+    # inside siblings of ActiveRecord::Base.
+    #
+    # Even if some of the following examples are stored inside ApplicationLookupEntity, by checking them
+    # here in this shared group, we'll apply the specs to any sibling that behaves_like this.
+    it_behaves_like(
+      'responding to a list of methods',
+      %i[attributes to_json code label long_label alt_label]
+    )
+
+    describe '#to_json' do
+      it 'is a String' do
+        expect(subject.to_json).to be_a(String).and be_present
+      end
+      it 'can be parsed without errors' do
+        expect { JSON.parse(subject.to_json) }.not_to raise_error
+      end
+
+      [nil, :it, :en].each do |locale_sym|
+        let(:result) { JSON.parse(subject.to_json(locale: locale_sym)) }
+        it 'allows overriding the locale as an option returning always an Hash when parsed' do
+          expect(result).to be_an(Hash)
+        end
+        it 'includes the additional localized labels as members' do
+          expect(result).to have_key('label')
+          expect(result).to have_key('long_label')
+          expect(result).to have_key('alt_label')
+          expect(result['label']).to be_a(String).and be_present
+          expect(result['long_label']).to be_a(String).and be_present
+          expect(result['alt_label']).to be_a(String).and be_present
+        end
+      end
+    end
   end
 
   describe '#code' do

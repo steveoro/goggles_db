@@ -7,12 +7,16 @@ require 'support/shared_localizable_examples'
 class DummyLocalizableIncludee
   attr_accessor :code
 
-  def initialize(code)
+  def initialize(code = nil)
     @code = code
   end
 
   def self.table_name
-    'any_subentity_name'
+    'heat_types' # (any valid sibling of ApplicationLookupEntity will do)
+  end
+
+  def attributes
+    { 'code' => @code }
   end
 
   include Localizable

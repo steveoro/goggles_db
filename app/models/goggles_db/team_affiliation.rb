@@ -4,7 +4,7 @@ module GogglesDb
   #
   # = TeamAffiliation model
   #
-  #   - version:  7.036
+  #   - version:  7.039
   #   - author:   Steve A.
   #
   class TeamAffiliation < ApplicationRecord
