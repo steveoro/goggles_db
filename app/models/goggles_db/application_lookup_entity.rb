@@ -7,7 +7,7 @@ module GogglesDb
   # Encapsulates common behavior for in-memory lookup entities.
   # Typical usage: short tables that store data that seldom needs any update.
   #
-  #   - version:  7.030
+  #   - version:  7.039
   #   - author:   Steve A.
   #
   class ApplicationLookupEntity < ApplicationRecord

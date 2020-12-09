@@ -40,7 +40,7 @@ Metrics/AbcSize:
 Metrics/BlockLength:
   Max: 40
   CountAsOne: ['array', 'heredoc']
-  ExcludedMethods: ['describe', 'context', 'define']
+  ExcludedMethods: ['describe', 'context', 'define', 'shared_examples_for']
   Exclude:
     - 'lib/tasks/*.rake'
 

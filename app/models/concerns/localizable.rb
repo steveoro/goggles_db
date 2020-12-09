@@ -9,11 +9,21 @@ require 'active_support'
 #   Assumes to be included into an ActiveRecord::Base sibling (it must respond to self.table_name)
 #   and it must have a #code field.
 #
-#   - version:  7.030
+#   - version:  7.039
 #   - author:   Steve A.
 #
 module Localizable
   extend ActiveSupport::Concern
+
+  # This will raise an exception if the includee does not already have defined the required fields:
+  def self.included(model)
+    base_instance = model.new
+    unless base_instance.respond_to?(:code) &&
+           base_instance.respond_to?(:attributes) &&
+           base_instance.class.respond_to?(:table_name)
+      raise ArgumentError, "Includee #{model} must respond to #code, #attributes & self.table_name"
+    end
+  end
 
   # Computes a localized shorter description for the value/code associated with this data
   # Supports override for current locale.
@@ -33,6 +43,22 @@ module Localizable
   def alt_label(locale_override = I18n.locale)
     # TODO: Add existance check for I18n.t result; when not found, return default i18n_short result.
     I18n.t("alt_label_#{code}".to_sym, scope: [self.class.scope_sym], locale: locale_override)
+  end
+
+  # Override: includes localized description labels as additional attibutes.
+  #
+  # === Options:
+  #
+  # - locale: an valid locale code symbol (:it', :en, :fr, :de, ...) to be used as
+  #           I18n.locale enforce/override
+  #
+  def to_json(options = nil)
+    locale_override = options&.fetch(:locale, nil) || I18n.locale
+    attributes.merge(
+      'label' => label(locale_override),
+      'long_label' => long_label(locale_override),
+      'alt_label' => alt_label(locale_override)
+    ).to_json(options)
   end
   #-- -------------------------------------------------------------------------
   #++
