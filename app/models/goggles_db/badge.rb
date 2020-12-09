@@ -4,7 +4,7 @@ module GogglesDb
   #
   # = Badge model
   #
-  #   - version:  7.036
+  #   - version:  7.041
   #   - author:   Steve A.
   #
   class Badge < ApplicationRecord
@@ -69,12 +69,12 @@ module GogglesDb
     def to_json(options = nil)
       attributes.merge(
         'swimmer' => swimmer.attributes,
-        'gender_type' => swimmer.gender_type.attributes,
+        'gender_type' => swimmer.gender_type.lookup_attributes,
         'team_affiliation' => team_affiliation.attributes,
         'season' => season.attributes,
         'team' => team.attributes,
         'category_type' => category_type.attributes,
-        'entry_time_type' => entry_time_type.attributes
+        'entry_time_type' => entry_time_type.lookup_attributes
       ).to_json(options)
     end
   end

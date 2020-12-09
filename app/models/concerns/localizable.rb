@@ -9,7 +9,7 @@ require 'active_support'
 #   Assumes to be included into an ActiveRecord::Base sibling (it must respond to self.table_name)
 #   and it must have a #code field.
 #
-#   - version:  7.040
+#   - version:  7.041
 #   - author:   Steve A.
 #
 module Localizable
@@ -19,40 +19,35 @@ module Localizable
   # concern is included in a shared abstract class (can't be instantiated).
   # (For more information, compare implementation difference w/ TimingManageable.)
 
-  # Computes a localized shorter description for the value/code associated with this data
-  # Supports override for current locale.
+  # Computes a localized shorter description for the value/code associated with this data.
+  # Supports a locale override code.
   def label(locale_override = I18n.locale)
-    I18n.t("label_#{code}".to_sym, scope: [self.class.scope_sym], locale: locale_override)
+    result = possible_localization('label', locale_override)
+    # For certain lookup entities most localized text is not defined yet and the default
+    # label is expected to be the code itself:
+    return code if result.starts_with?('translation missing:')
+
+    result
   end
 
-  # Computes a localized description for the value/code associated with this data
-  # Supports override for current locale.
+  # Computes a localized description for the value/code associated with this data.
+  # Supports a locale override code.
   def long_label(locale_override = I18n.locale)
-    I18n.t("long_label_#{code}".to_sym, scope: [self.class.scope_sym], locale: locale_override)
+    result = possible_localization('long_label', locale_override)
+    return code if result.starts_with?('translation missing:')
+
+    result
   end
 
   # Computes an alternate localized description for the value/code associated with this data.
-  # Note that this may not always be defined inside the locale files.
-  # Supports override for current locale.
+  # Note that this may not always be defined inside the locale files (defaults to 'label' in that case).
+  # Supports a locale override code.
   def alt_label(locale_override = I18n.locale)
-    # TODO: Add existance check for I18n.t result; when not found, return default i18n_short result.
-    I18n.t("alt_label_#{code}".to_sym, scope: [self.class.scope_sym], locale: locale_override)
-  end
+    result = possible_localization('alt_label', locale_override)
+    # 'alt_label' is optional most of the times; we fall back to the default 'label' result:
+    return label(locale_override) if result.starts_with?('translation missing:')
 
-  # Override: includes localized description labels as additional attibutes.
-  #
-  # === Options:
-  #
-  # - locale: an valid locale code symbol (:it', :en, :fr, :de, ...) to be used as
-  #           I18n.locale enforce/override
-  #
-  def to_json(options = nil)
-    locale_override = options&.fetch(:locale, nil) || I18n.locale
-    attributes.merge(
-      'label' => label(locale_override),
-      'long_label' => long_label(locale_override),
-      'alt_label' => alt_label(locale_override)
-    ).to_json(options)
+    result
   end
   #-- -------------------------------------------------------------------------
   #++
@@ -66,4 +61,11 @@ module Localizable
   end
   #-- -------------------------------------------------------------------------
   #++
+
+  private
+
+  # Search for an I18n translation, given the method name and a possible locale override.
+  def possible_localization(caller_name, locale_override)
+    I18n.t("#{caller_name}_#{code}".to_sym, scope: [self.class.scope_sym], locale: locale_override)
+  end
 end

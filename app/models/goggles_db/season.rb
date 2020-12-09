@@ -4,7 +4,7 @@ module GogglesDb
   #
   # = Season model
   #
-  #   - version:  7.038
+  #   - version:  7.041
   #   - author:   Steve A.
   #
   class Season < ApplicationRecord
@@ -85,8 +85,8 @@ module GogglesDb
     def to_json(options = nil)
       attributes.merge(
         'season_type' => season_type.attributes,
-        'edition_type' => edition_type.attributes,
-        'timing_type' => timing_type.attributes,
+        'edition_type' => edition_type.lookup_attributes,
+        'timing_type' => timing_type.lookup_attributes,
         'category_types' => category_types.map(&:attributes)
       ).to_json(options)
     end

@@ -6,7 +6,7 @@ module GogglesDb
   #
   # = MeetingRelayResult model
   #
-  #   - version:  7.036
+  #   - version:  7.041
   #   - author:   Steve A.
   #
   class MeetingRelayResult < ApplicationRecord
@@ -98,10 +98,10 @@ module GogglesDb
         'meeting' => meeting_attributes,
         'meeting_session' => meeting_session_attributes,
         'meeting_program' => meeting_program.attributes,
-        'pool_type' => pool_type.attributes,
-        'event_type' => event_type.attributes,
+        'pool_type' => pool_type.lookup_attributes,
+        'event_type' => event_type.lookup_attributes,
         'category_type' => category_type.attributes,
-        'gender_type' => gender_type.attributes,
+        'gender_type' => gender_type.lookup_attributes,
         'meeting_relay_swimmers' => meeting_relay_swimmers.map(&:attributes)
       ).to_json(options)
     end

@@ -6,7 +6,7 @@ module GogglesDb
   #
   # = Lap model
   #
-  #   - version:  7.036
+  #   - version:  7.041
   #   - author:   Steve A.
   #
   class Lap < ApplicationRecord
@@ -73,8 +73,8 @@ module GogglesDb
         'team' => team&.attributes,
         'meeting' => meeting_attributes,
         'meeting_individual_result' => meeting_individual_result&.attributes,
-        'event_type' => event_type&.attributes,
-        'pool_type' => pool_type&.attributes
+        'event_type' => event_type&.lookup_attributes,
+        'pool_type' => pool_type&.lookup_attributes
       ).to_json(options)
     end
   end

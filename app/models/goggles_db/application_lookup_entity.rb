@@ -7,7 +7,7 @@ module GogglesDb
   # Encapsulates common behavior for in-memory lookup entities.
   # Typical usage: short tables that store data that seldom needs any update.
   #
-  #   - version:  7.039
+  #   - version:  7.041
   #   - author:   Steve A.
   #
   class ApplicationLookupEntity < ApplicationRecord
@@ -17,5 +17,32 @@ module GogglesDb
 
     validates :code, presence: { length: { within: 1..3 }, allow_nil: false },
                      uniqueness: { case_sensitive: true, message: :already_exists }
+    #-- -----------------------------------------------------------------------
+    #++
+
+    # Returns instance attribute hash with localized display labels.
+    # ('label', 'long_label', 'alt_label')
+    #
+    # === Params:
+    # - locale: a valid locale code or symbol ('it', 'en', ...) to be used as I18n.locale enforce/override
+    #
+    def lookup_attributes(locale = I18n.locale)
+      attributes.merge(
+        'label' => label(locale),
+        'long_label' => long_label(locale),
+        'alt_label' => alt_label(locale)
+      )
+    end
+
+    # Override: includes additional #lookup_attributes.
+    #
+    # === Options:
+    # - locale: a valid locale code or symbol ('it', 'en', ...) to be used as I18n.locale enforce/override
+    #
+    def to_json(options = nil)
+      locale_override = options&.fetch(:locale, nil) || I18n.locale
+      lookup_attributes(locale_override)
+        .to_json(options)
+    end
   end
 end

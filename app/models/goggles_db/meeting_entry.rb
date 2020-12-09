@@ -6,7 +6,7 @@ module GogglesDb
   #
   # = MeetingEntry model
   #
-  #   - version:  7.036
+  #   - version:  7.041
   #   - author:   Steve A.
   #
   # Can be used for adding startlist entries for both individual & relay results.
@@ -100,10 +100,10 @@ module GogglesDb
         'team' => team.attributes,
         'team_affiliation' => team_affiliation.attributes,
         'swimmer' => swimmer&.attributes, # (optional)
-        'pool_type' => pool_type.attributes,
-        'event_type' => event_type.attributes,
+        'pool_type' => pool_type.lookup_attributes,
+        'event_type' => event_type.lookup_attributes,
         'category_type' => category_type.attributes,
-        'gender_type' => gender_type.attributes
+        'gender_type' => gender_type.lookup_attributes
       ).to_json(options)
     end
   end

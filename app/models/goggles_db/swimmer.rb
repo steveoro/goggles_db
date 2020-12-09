@@ -4,7 +4,7 @@ module GogglesDb
   #
   # = Swimmer model
   #
-  #   - version:  7.037
+  #   - version:  7.041
   #   - author:   Steve A.
   #
   class Swimmer < ApplicationRecord
@@ -31,7 +31,7 @@ module GogglesDb
     def to_json(options = nil)
       attributes.merge(
         'associated_user' => associated_user&.attributes,
-        'gender_type' => gender_type.attributes
+        'gender_type' => gender_type.lookup_attributes
       ).to_json(options)
     end
   end
