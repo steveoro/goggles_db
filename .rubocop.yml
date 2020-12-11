@@ -43,6 +43,7 @@ Metrics/BlockLength:
   ExcludedMethods: ['describe', 'context', 'define', 'shared_examples_for']
   Exclude:
     - 'lib/tasks/*.rake'
+    - 'spec/models/goggles_db/city_spec.rb'
 
 Metrics/ClassLength:
   Max: 120

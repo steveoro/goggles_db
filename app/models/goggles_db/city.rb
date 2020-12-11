@@ -4,7 +4,7 @@ module GogglesDb
   #
   # = City model
   #
-  #   - version:  7.042
+  #   - version:  7.044
   #   - author:   Steve A.
   #
   # Check out:
@@ -57,30 +57,11 @@ module GogglesDb
     #-- -----------------------------------------------------------------------
     #++
 
-    # Returns this instance attributes Hash merged with its normalized ISO names
-    def iso_attributes(locale_override = I18n.locale)
-      iso_country, iso_city = to_iso
-      subdivision = iso_subdivision(iso_country)
-      attributes.merge(
-        prepare_iso_attributes(iso_city, iso_country, subdivision, locale_override)
-      )
-    end
-
-    # Override: includes all iso_attributes.
-    # Use :locale as option key (with supported locale value) to override translations.
-    def to_json(options = nil)
-      iso_attributes(options&.fetch(:locale, nil)).to_json(options)
-    end
-    #-- -----------------------------------------------------------------------
-    #++
-
-    private
-
     # Using the current 'area' name column value, searches for the first match of the name
     # inside the ISO subdivision list.
     #
     # === Returns:
-    # The [subdivision_code, subdivision_struct] tuple.
+    # The [subdivision_code, subdivision_struct] tuple, if available; +nil+ otherwise.
     # - 'subdivision_code': alpha2 region/subdivision code
     # - 'subdivision_struct': ISO struct including 'name' & 'geo' fields
     def iso_subdivision(iso_country)
@@ -97,12 +78,12 @@ module GogglesDb
 
     # Returns in FIFO in precendence: 1) ISO City latitude, 2) 'latitude' column value
     def iso_latitude(iso_city)
-      iso_city&.latitude || latitude
+      iso_city&.latitude.to_s || latitude
     end
 
     # Returns in FIFO in precendence: 1) ISO City longitude, 2) 'longitude' column value
     def iso_longitude(iso_city)
-      iso_city&.longitude || longitude
+      iso_city&.longitude.to_s || longitude
     end
 
     # Returns in FIFO in precendence: 1) translated ISO Country name, 2) 'country' column value
@@ -126,6 +107,25 @@ module GogglesDb
     end
     #-- -----------------------------------------------------------------------
     #++
+
+    # Returns this instance attributes Hash merged with its normalized ISO names
+    def iso_attributes(locale_override = I18n.locale)
+      iso_country, iso_city = to_iso
+      subdivision = iso_subdivision(iso_country)
+      attributes.merge(
+        prepare_iso_attributes(iso_city, iso_country, subdivision, locale_override)
+      )
+    end
+
+    # Override: includes all iso_attributes.
+    # Use :locale as option key (with supported locale value) to override translations.
+    def to_json(options = nil)
+      iso_attributes(options&.fetch(:locale, nil)).to_json(options)
+    end
+    #-- -----------------------------------------------------------------------
+    #++
+
+    private
 
     # Returns the additional Hash of standardized attribute names and values
     def prepare_iso_attributes(iso_city, iso_country, subdivision, locale_override)
