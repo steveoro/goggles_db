@@ -45,6 +45,7 @@ module GogglesDb
     end
     #-- ------------------------------------------------------------------------
     #++
+
     # Sorting scopes:
     describe 'self.by_distance' do
       it_behaves_like('sorting scope by_<ANY_VALUE_NAME>', Lap, 'distance', 'length_in_meters')
