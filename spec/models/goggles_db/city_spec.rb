@@ -19,8 +19,10 @@ module GogglesDb
       it_behaves_like(
         'responding to a list of methods',
         %i[
-          area country latitude longitude
-          to_iso iso_attributes to_json
+          area country latitude longitude to_iso
+          iso_name iso_latitude iso_longitude
+          localized_country_name iso_country_code iso_area iso_area_code
+          iso_attributes to_json
         ]
       )
     end
@@ -50,8 +52,6 @@ module GogglesDb
     end
 
     describe '#iso_attributes' do
-      # The first 50 seeded cities have all country code 'IT': this is used for the quick'n'ugly
-      # locale override check below.
       let(:subject_city) { City.all.limit(50).sample }
       subject { subject_city.iso_attributes }
 
@@ -62,10 +62,11 @@ module GogglesDb
         expect(subject.keys).to include('id', 'created_at', 'updated_at', 'name', 'latitude', 'longitude',
                                         'country', 'country_code', 'area', 'area_code', 'zip')
       end
-      # Just a couple of checks to verify supported locales are there:
+      # Just a couple of quick checks to verify supported locales are actually there:
       it 'allows locale override for a chosen country name translation' do
-        en_attributes = subject_city.iso_attributes('en')
-        it_attributes = subject_city.iso_attributes('it')
+        city = GogglesDb::City.where(country_code: 'IT').limit(50).sample
+        en_attributes = city.iso_attributes('en')
+        it_attributes = city.iso_attributes('it')
         expect(it_attributes['country']).to eq('Italia')
         expect(en_attributes['country']).to eq('Italy')
       end
