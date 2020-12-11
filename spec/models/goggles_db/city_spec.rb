@@ -20,8 +20,6 @@ module GogglesDb
         'responding to a list of methods',
         %i[
           area country latitude longitude to_iso
-          iso_name iso_latitude iso_longitude
-          localized_country_name iso_country_code iso_area iso_area_code
           iso_attributes to_json
         ]
       )
