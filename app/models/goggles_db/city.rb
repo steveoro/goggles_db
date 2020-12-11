@@ -54,6 +54,8 @@ module GogglesDb
       city_finder = GogglesDb::CmdFindIsoCity.call(country_finder.result, name)
       [country_finder.result, city_finder.result]
     end
+    #-- -----------------------------------------------------------------------
+    #++
 
     # Returns this instance attributes Hash merged with its normalized ISO names
     def iso_attributes(locale_override = I18n.locale)
@@ -69,6 +71,8 @@ module GogglesDb
     def to_json(options = nil)
       iso_attributes(options&.fetch(:locale, nil)).to_json(options)
     end
+    #-- -----------------------------------------------------------------------
+    #++
 
     private
 
@@ -81,33 +85,55 @@ module GogglesDb
     # - 'subdivision_struct': ISO struct including 'name' & 'geo' fields
     def iso_subdivision(iso_country)
       iso_country&.subdivisions&.find do |_iso_code, iso_struct|
-        iso_struct.name =~ Regexp.new(area.to_s, Regexp::IGNORECASE)
+        # Remove illegal chars from Regexp before checking:
+        iso_struct.name =~ Regexp.new(area.to_s.gsub('?', ''), Regexp::IGNORECASE)
       end
     end
 
-    def translated_country_name(iso_country, locale_override)
+    # Returns in FIFO in precendence: 1) ISO City name, 2) 'name' column value
+    def iso_name(iso_city)
+      iso_city&.name || name
+    end
+
+    # Returns in FIFO in precendence: 1) ISO City latitude, 2) 'latitude' column value
+    def iso_latitude(iso_city)
+      iso_city&.latitude || latitude
+    end
+
+    # Returns in FIFO in precendence: 1) ISO City longitude, 2) 'longitude' column value
+    def iso_longitude(iso_city)
+      iso_city&.longitude || longitude
+    end
+
+    # Returns in FIFO in precendence: 1) translated ISO Country name, 2) 'country' column value
+    def localized_country_name(iso_country, locale_override = I18n.locale)
       iso_country&.translations&.fetch(locale_override.to_s, nil) || country
     end
 
+    # Returns in FIFO in precendence: 1) ISO Country code, 2) 'country_code' column value
     def iso_country_code(iso_country)
       iso_country&.alpha2 || country_code
     end
 
+    # Returns in FIFO in precendence: 1) ISO subdivision name 2) 'area' column value
     def iso_area(subdivision)
       subdivision&.last&.name || area
     end
 
+    # Returns the ISO subdivision alpha-2 code if defined; nil otherwise
     def iso_area_code(subdivision)
       subdivision&.first
     end
+    #-- -----------------------------------------------------------------------
+    #++
 
     # Returns the additional Hash of standardized attribute names and values
     def prepare_iso_attributes(iso_city, iso_country, subdivision, locale_override)
       {
-        'name' => iso_city&.name || name,
-        'latitude' => iso_city&.latitude || latitude,
-        'longitude' => iso_city&.longitude || longitude,
-        'country' => translated_country_name(iso_country, locale_override),
+        'name' => iso_name(iso_city),
+        'latitude' => iso_latitude(iso_city),
+        'longitude' => iso_longitude(iso_city),
+        'country' => localized_country_name(iso_country, locale_override),
         'country_code' => iso_country_code(iso_country),
         'area_code' => iso_area_code(subdivision),
         'area' => iso_area(subdivision)
