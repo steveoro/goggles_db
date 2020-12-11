@@ -103,7 +103,7 @@ namespace :normalize do
   # Returns +true+ if the attribute value differs between the two
   def compare_vs_attribute(iso_attributes, city_model, attr_name)
     result = iso_attributes[attr_name.to_s].to_s != city_model.send(attr_name).to_s
-    $stdout.write("        #{result ? "\033[1;33;31m×\033[0m" : "\033[1;33;32m=\033[0m"} #{attr_name.to_s}: '#{iso_attributes[attr_name.to_s]}'\r\n")
+    $stdout.write("        #{result ? "\033[1;33;31m×\033[0m" : "\033[1;33;32m=\033[0m"} #{attr_name}: '#{iso_attributes[attr_name.to_s]}'\r\n")
     result
   end
 
