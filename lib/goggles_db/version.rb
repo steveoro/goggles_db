@@ -9,7 +9,7 @@
 #   Semantic Versioning implementation.
 module GogglesDb
   # Gem version
-  VERSION = '0.1.44'
+  VERSION = '0.1.45'
 
   module Version
     # Framework Core internal name.
@@ -19,7 +19,7 @@ module GogglesDb
     MAJOR   = '7'
 
     # Minor version.
-    MINOR   = '044'
+    MINOR   = '045'
 
     # Current build version.
     BUILD   = '20201211'
