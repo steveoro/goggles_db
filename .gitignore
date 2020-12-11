@@ -41,6 +41,7 @@ node_modules/
 /config/credentials/*.key
 /config/database.yml
 spec/dummy/config/database.yml
+compute_coverage.sh
 
 # dotenv
 # TODO Comment out this rule if environment variables can be committed
