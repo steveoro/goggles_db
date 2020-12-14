@@ -21,7 +21,7 @@ module GogglesDb
         %i[
           area country latitude longitude to_iso
           iso_subdivision iso_name iso_latitude iso_longitude localized_country_name iso_country_code
-          iso_area iso_area_code
+          iso_region iso_area iso_area_code
           iso_attributes to_json
         ]
       )
@@ -88,6 +88,12 @@ module GogglesDb
           expect(subject).to be_a(String).and be_present
         end
       end
+      describe '#iso_region' do
+        subject { subject_city.iso_region(fixture_iso_city, fixture_iso_country) }
+        it 'is a non-empty String' do
+          expect(subject).to be_a(String).and be_present
+        end
+      end
       describe '#localized_country_name' do
         subject { subject_city.localized_country_name(fixture_iso_country) }
         it 'is a non-empty String' do
@@ -119,7 +125,7 @@ module GogglesDb
     end
 
     describe '#iso_attributes' do
-      let(:subject_city) { City.all.limit(50).sample }
+      let(:subject_city) { GogglesDb::City.where(country_code: 'IT').limit(50).sample }
       subject { subject_city.iso_attributes }
 
       it 'is a non-empty Hash' do
@@ -127,13 +133,12 @@ module GogglesDb
       end
       it 'includes all the legacy customizable City attributes plus the additional ISO attributes' do
         expect(subject.keys).to include('id', 'created_at', 'updated_at', 'name', 'latitude', 'longitude',
-                                        'country', 'country_code', 'area', 'area_code', 'zip')
+                                        'country', 'country_code', 'region', 'area', 'area_code', 'zip')
       end
       # Just a couple of quick checks to verify supported locales are actually there:
       it 'allows locale override for a chosen country name translation' do
-        city = GogglesDb::City.where(country_code: 'IT').limit(50).sample
-        en_attributes = city.iso_attributes('en')
-        it_attributes = city.iso_attributes('it')
+        en_attributes = subject_city.iso_attributes('en')
+        it_attributes = subject_city.iso_attributes('it')
         expect(it_attributes['country']).to eq('Italia')
         expect(en_attributes['country']).to eq('Italy')
       end
