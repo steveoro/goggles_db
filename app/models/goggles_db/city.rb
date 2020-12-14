@@ -86,6 +86,12 @@ module GogglesDb
       iso_city&.longitude.to_s || longitude
     end
 
+    # Returns the ISO Region name
+    def iso_region(iso_city, iso_country)
+      @region_list ||= GogglesDb::IsoRegionList.new(iso_country_code(iso_country))
+      @region_list.fetch(iso_city&.region)
+    end
+
     # Returns in FIFO in precendence: 1) translated ISO Country name, 2) 'country' column value
     def localized_country_name(iso_country, locale_override = I18n.locale)
       iso_country&.translations&.fetch(locale_override.to_s, nil) || country
@@ -135,6 +141,7 @@ module GogglesDb
         'longitude' => iso_longitude(iso_city),
         'country' => localized_country_name(iso_country, locale_override),
         'country_code' => iso_country_code(iso_country),
+        'region' => iso_region(iso_city, iso_country),
         'area_code' => iso_area_code(subdivision),
         'area' => iso_area(subdivision)
       }

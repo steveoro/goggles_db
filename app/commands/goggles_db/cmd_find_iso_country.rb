@@ -7,9 +7,9 @@ module GogglesDb
   #
   # = "Find ISO3166 Country" command
   #
-  #   - file vers.: 1.00
+  #   - file vers.: 1.01
   #   - author....: Steve A.
-  #   - build.....: 20201112
+  #   - build.....: 20201212
   #
   # Uses the countries gem (https://github.com/hexorx/countries) to seek for a matching
   # ISO3166 Country definition, given either (FIFO: whatever matches first in the
@@ -25,7 +25,7 @@ module GogglesDb
   #
   # === ISO3166::Country & usage examples:
   #
-  #   > c = GogglesDb::CountryFinder.call('United States', 'USA')
+  #   > c = GogglesDb::CmdFindIsoCountry.call('United States', 'USA').result
   #    => #<ISO3166::Country:0x000056454c7d34e8 @country_data_or_code="US", [...]
   #
   # (Same result as: ISO3166::Country.new('USA'))
@@ -33,7 +33,7 @@ module GogglesDb
   #   > c.subdivisions["OH"]
   #    => #<struct ISO3166::Subdivision name="Ohio", code=nil, unofficial_names="Ohio", geo={"latitude"=> [...]
   #
-  #   > c = GogglesDb::CountryFinder.call('Italy', 'ITA')
+  #   > c = GogglesDb::CmdFindIsoCountry.call('Italy', 'ITA').result
   #    => #<ISO3166::Country:0x000056454cd33910 @country_data_or_code="IT", [...]
   #
   # (Same result as: ISO3166::Country.new('ITA'))
