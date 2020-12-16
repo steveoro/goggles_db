@@ -29,7 +29,9 @@ module GogglesDb
            minutes seconds hundreds
            swimmer badge entry_time_type
            relay? intermixed? male? female?
-           no_time? to_timing to_json]
+           no_time? to_timing
+           minimal_attributes meeting_attributes meeting_session_attributes
+           to_json]
       )
     end
 

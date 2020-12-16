@@ -20,8 +20,9 @@ module GogglesDb
 
       it_behaves_like(
         'responding to a list of methods',
-        %i[not_coming? confirmed? coming?
-           minimal_attributes
+        %i[meeting_event_reservations meeting_relay_reservations
+           not_coming? confirmed? coming?
+           minimal_attributes meeting_attributes
            to_json]
       )
     end
@@ -78,17 +79,56 @@ module GogglesDb
     end
 
     describe '#to_json' do
-      subject { FactoryBot.create(:meeting_reservation) }
-
       # Required associations:
-      it_behaves_like(
-        '#to_json when called on a valid instance',
-        %w[badge team swimmer user]
-      )
-      it_behaves_like(
-        '#to_json when called on a valid instance with a synthetized association',
-        %w[meeting]
-      )
+      context 'for required associations,' do
+        subject { FactoryBot.create(:meeting_reservation) }
+
+        it_behaves_like(
+          '#to_json when called on a valid instance',
+          %w[badge team swimmer user]
+        )
+        it_behaves_like(
+          '#to_json when called on a valid instance with a synthetized association',
+          %w[meeting]
+        )
+      end
+
+      # Collection associations:
+      context 'for collection associations,' do
+        context 'when the entity has MERes,' do
+          subject do
+            mer = GogglesDb::MeetingEventReservation.limit(100).sample
+            expect(mer.meeting_reservation).to be_a(MeetingReservation).and be_valid
+            mer.meeting_reservation
+          end
+          let(:json_hash) { JSON.parse(subject.to_json) }
+
+          it "doesn't contain the MRRes list" do
+            expect(json_hash['meeting_relay_reservations']).to be nil
+          end
+          it_behaves_like(
+            '#to_json when the entity contains collection associations with',
+            %w[meeting_event_reservations]
+          )
+        end
+
+        context 'when the entity has MRRes,' do
+          subject do
+            mrr = GogglesDb::MeetingRelayResult.limit(100).sample
+            expect(mrr.meeting_reservation).to be_a(MeetingReservation).and be_valid
+            mrr.meeting_reservation
+          end
+          let(:json_hash) { JSON.parse(subject.to_json) }
+
+          it "doesn't contain the MERes list" do
+            expect(json_hash['meeting_event_reservations']).to be nil
+          end
+          it_behaves_like(
+            '#to_json when the entity contains collection associations with',
+            %w[meeting_relay_reservations]
+          )
+        end
+      end
     end
   end
 end

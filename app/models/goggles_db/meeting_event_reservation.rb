@@ -14,6 +14,7 @@ module GogglesDb
   class MeetingEventReservation < ApplicationRecord
     self.table_name = 'meeting_event_reservations'
 
+    belongs_to :meeting_reservation
     belongs_to :meeting
     belongs_to :meeting_event
     belongs_to :badge
@@ -21,6 +22,7 @@ module GogglesDb
     belongs_to :swimmer
     belongs_to :user
 
+    validates_associated :meeting_reservation
     validates_associated :meeting
     validates_associated :meeting_event
     validates_associated :badge

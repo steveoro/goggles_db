@@ -15,7 +15,7 @@ module GogglesDb
       it_behaves_like(
         'having one or more required associations',
         %i[meeting_session event_type heat_type
-           season season_type stroke_type]
+           season meeting season_type stroke_type]
       )
 
       # Presence of fields & requiredness:

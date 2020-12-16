@@ -4,7 +4,7 @@ module GogglesDb
   #
   # = MeetingEvent model
   #
-  #   - version:  7.047
+  #   - version:  7.049
   #   - author:   Steve A.
   #
   class MeetingEvent < ApplicationRecord
@@ -28,9 +28,10 @@ module GogglesDb
     # (Either we remove the meeting_session validation above, or we're happy with avoiding
     #  adding the association helper method.)
 
-    has_one :season,       through: :meeting_session
-    has_one :season_type,  through: :meeting_session
-    has_one :stroke_type,  through: :event_type
+    has_one :season,      through: :meeting_session
+    has_one :meeting,     through: :meeting_session
+    has_one :season_type, through: :meeting_session
+    has_one :stroke_type, through: :event_type
 
     has_many :meeting_programs, dependent: :delete_all
     has_many :meeting_individual_results, through: :meeting_programs

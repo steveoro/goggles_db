@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_12_11_174336) do
+ActiveRecord::Schema.define(version: 2020_12_16_172430) do
 
   create_table "achievement_rows", id: :integer, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
     t.integer "lock_version", default: 0
@@ -1201,9 +1201,12 @@ ActiveRecord::Schema.define(version: 2020_12_11_174336) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.boolean "accepted", default: false, null: false
+    t.bigint "meeting_reservation_id"
     t.index ["badge_id"], name: "index_meeting_event_reservations_on_badge_id"
     t.index ["meeting_event_id"], name: "index_meeting_event_reservations_on_meeting_event_id"
+    t.index ["meeting_id", "badge_id", "team_id", "swimmer_id", "meeting_event_id"], name: "idx_unique_event_reservation", unique: true
     t.index ["meeting_id"], name: "index_meeting_event_reservations_on_meeting_id"
+    t.index ["meeting_reservation_id"], name: "index_meeting_event_reservations_on_meeting_reservation_id"
     t.index ["swimmer_id"], name: "index_meeting_event_reservations_on_swimmer_id"
     t.index ["team_id"], name: "index_meeting_event_reservations_on_team_id"
     t.index ["user_id"], name: "index_meeting_event_reservations_on_user_id"
@@ -1303,9 +1306,12 @@ ActiveRecord::Schema.define(version: 2020_12_11_174336) do
     t.boolean "accepted"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.bigint "meeting_reservation_id"
     t.index ["badge_id"], name: "index_meeting_relay_reservations_on_badge_id"
     t.index ["meeting_event_id"], name: "index_meeting_relay_reservations_on_meeting_event_id"
+    t.index ["meeting_id", "badge_id", "team_id", "swimmer_id", "meeting_event_id"], name: "idx_unique_relay_reservation", unique: true
     t.index ["meeting_id"], name: "index_meeting_relay_reservations_on_meeting_id"
+    t.index ["meeting_reservation_id"], name: "index_meeting_relay_reservations_on_meeting_reservation_id"
     t.index ["swimmer_id"], name: "index_meeting_relay_reservations_on_swimmer_id"
     t.index ["team_id"], name: "index_meeting_relay_reservations_on_team_id"
     t.index ["user_id"], name: "index_meeting_relay_reservations_on_user_id"
