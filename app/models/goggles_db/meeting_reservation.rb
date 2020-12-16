@@ -4,7 +4,7 @@ module GogglesDb
   #
   # = MeetingReservation model
   #
-  #   - version:  7.047
+  #   - version:  7.049
   #   - author:   Steve A.
   #
   # Reservations are individual Meeting registrations, associated just to a specific
@@ -30,9 +30,8 @@ module GogglesDb
     has_one  :season_type,      through: :meeting
     has_many :meeting_sessions, through: :meeting
 
-    # TODO
-    # has_many :meeting_event_reservations, dependent: :delete_all
-    # has_many :meeting_relay_reservations, dependent: :delete_all
+    has_many :meeting_event_reservations, dependent: :delete_all
+    has_many :meeting_relay_reservations, dependent: :delete_all
 
     validates :not_coming, inclusion: { in: [true, false] }
     validates :confirmed, inclusion: { in: [true, false] }
@@ -76,24 +75,19 @@ module GogglesDb
 
     # Override: includes most relevant data for its 1st-level associations
     def to_json(options = nil)
-      attributes.merge(
-        'meeting' => meeting_attributes,
-        'user' => user.minimal_attributes
-      ).merge(
-        minimal_associations
-      ).to_json(options)
+      base = attributes.merge('meeting' => meeting_attributes, 'user' => user.minimal_attributes)
+                       .merge(minimal_associations)
 
-      # TODO: add meeting_event_reservations & meeting_relay_reservations:
-      # if meeting_event_reservations.count.positive?
-      #   base.merge!(
-      #     'meeting_event_reservations' => meeting_event_reservations.map(&:minimal_attributes)
-      #   )
-      # elsif meeting_relay_reservations.count.positive?
-      #   base.merge!(
-      #     'meeting_relay_reservations' => meeting_relay_reservations.map(&:minimal_attributes)
-      #   )
-      # end
-      # base.to_json(options)
+      if meeting_event_reservations.count.positive?
+        base.merge!(
+          'meeting_event_reservations' => meeting_event_reservations.map(&:minimal_attributes)
+        )
+      elsif meeting_relay_reservations.count.positive?
+        base.merge!(
+          'meeting_relay_reservations' => meeting_relay_reservations.map(&:minimal_attributes)
+        )
+      end
+      base.to_json(options)
     end
 
     private

@@ -14,14 +14,16 @@ module GogglesDb
 
       it_behaves_like(
         'having one or more required associations',
-        %i[meeting meeting_event badge team swimmer user
+        %i[meeting_reservation meeting meeting_event badge team swimmer user
            season season_type meeting_session event_type category_type gender_type]
       )
 
       it_behaves_like(
         'responding to a list of methods',
         %i[minutes seconds hundreds
-           accepted? to_json]
+           accepted?
+           meeting_attributes
+           to_json]
       )
     end
 
