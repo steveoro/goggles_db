@@ -30,6 +30,7 @@ module GogglesDb
         %i[reaction_time stroke_cycles breath_cycles position
            minutes_from_start seconds_from_start hundreds_from_start native_from_start
            underwater_kicks underwater_seconds underwater_hundreds
+           meeting_attributes
            to_timing to_json]
       )
     end

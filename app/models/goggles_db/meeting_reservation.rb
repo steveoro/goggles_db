@@ -4,7 +4,7 @@ module GogglesDb
   #
   # = MeetingReservation model
   #
-  #   - version:  7.041
+  #   - version:  7.047
   #   - author:   Steve A.
   #
   # Reservations are individual Meeting registrations, associated just to a specific
@@ -30,6 +30,10 @@ module GogglesDb
     has_one  :season_type,      through: :meeting
     has_many :meeting_sessions, through: :meeting
 
+    # TODO
+    # has_many :meeting_event_reservations, dependent: :delete_all
+    # has_many :meeting_relay_reservations, dependent: :delete_all
+
     validates :not_coming, inclusion: { in: [true, false] }
     validates :confirmed, inclusion: { in: [true, false] }
 
@@ -53,6 +57,12 @@ module GogglesDb
       !not_coming?
     end
 
+    # Override: include the "minimum required" hash of associations.
+    #
+    def minimal_attributes
+      super.merge(minimal_associations)
+    end
+
     # Returns a commodity Hash wrapping the essential data that summarizes the Meeting
     # associated to this row.
     def meeting_attributes
@@ -68,11 +78,33 @@ module GogglesDb
     def to_json(options = nil)
       attributes.merge(
         'meeting' => meeting_attributes,
-        'badge' => badge.attributes,
-        'team' => team.attributes,
-        'swimmer' => swimmer.attributes,
-        'user' => user.attributes
+        'user' => user.minimal_attributes
+      ).merge(
+        minimal_associations
       ).to_json(options)
+
+      # TODO: add meeting_event_reservations & meeting_relay_reservations:
+      # if meeting_event_reservations.count.positive?
+      #   base.merge!(
+      #     'meeting_event_reservations' => meeting_event_reservations.map(&:minimal_attributes)
+      #   )
+      # elsif meeting_relay_reservations.count.positive?
+      #   base.merge!(
+      #     'meeting_relay_reservations' => meeting_relay_reservations.map(&:minimal_attributes)
+      #   )
+      # end
+      # base.to_json(options)
+    end
+
+    private
+
+    # Returns the "minimum required" hash of associations.
+    def minimal_associations
+      {
+        'badge' => badge.minimal_attributes,
+        'team' => team.minimal_attributes,
+        'swimmer' => swimmer.minimal_attributes
+      }
     end
   end
 end

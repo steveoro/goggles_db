@@ -6,7 +6,7 @@ module GogglesDb
   #
   # = MeetingEntry model
   #
-  #   - version:  7.041
+  #   - version:  7.047
   #   - author:   Steve A.
   #
   # Can be used for adding startlist entries for both individual & relay results.
@@ -70,6 +70,12 @@ module GogglesDb
     #-- ------------------------------------------------------------------------
     #++
 
+    # Override: include the "minimum required" hash of associations.
+    #
+    def minimal_attributes
+      super.merge(minimal_associations)
+    end
+
     # Returns a commodity Hash wrapping the essential data that summarizes the Meeting
     # associated to this row.
     def meeting_attributes
@@ -96,15 +102,25 @@ module GogglesDb
       attributes.merge(
         'meeting' => meeting_attributes,
         'meeting_session' => meeting_session_attributes,
-        'meeting_program' => meeting_program.attributes,
-        'team' => team.attributes,
-        'team_affiliation' => team_affiliation.attributes,
-        'swimmer' => swimmer&.attributes, # (optional)
+        'meeting_program' => meeting_program.minimal_attributes
+      ).merge(
+        minimal_associations
+      ).to_json(options)
+    end
+
+    private
+
+    # Returns the "minimum required" hash of associations.
+    def minimal_associations
+      {
+        'team' => team.minimal_attributes,
+        'team_affiliation' => team_affiliation.minimal_attributes,
+        'swimmer' => swimmer&.minimal_attributes, # (optional)
         'pool_type' => pool_type.lookup_attributes,
         'event_type' => event_type.lookup_attributes,
-        'category_type' => category_type.attributes,
+        'category_type' => category_type.minimal_attributes,
         'gender_type' => gender_type.lookup_attributes
-      ).to_json(options)
+      }
     end
   end
 end

@@ -21,6 +21,7 @@ module GogglesDb
       it_behaves_like(
         'responding to a list of methods',
         %i[not_coming? confirmed? coming?
+           minimal_attributes
            to_json]
       )
     end
@@ -60,6 +61,18 @@ module GogglesDb
         subject { fixture_row.coming? }
         it 'is false' do
           expect(subject).to be false
+        end
+      end
+    end
+
+    describe '#minimal_attributes' do
+      subject { GogglesDb::MeetingReservation.limit(200).sample.minimal_attributes }
+      it 'is an Hash' do
+        expect(subject).to be_an(Hash)
+      end
+      %w[badge team swimmer].each do |association_name|
+        it "includes the #{association_name} association key" do
+          expect(subject.keys).to include(association_name)
         end
       end
     end

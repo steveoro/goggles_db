@@ -84,10 +84,10 @@ module GogglesDb
     # Override: includes all 1st-level associations into the typical to_json output.
     def to_json(options = nil)
       attributes.merge(
-        'season_type' => season_type.attributes,
+        'season_type' => season_type.minimal_attributes,
         'edition_type' => edition_type.lookup_attributes,
         'timing_type' => timing_type.lookup_attributes,
-        'category_types' => category_types.map(&:attributes)
+        'category_types' => category_types.map(&:minimal_attributes)
       ).to_json(options)
     end
   end

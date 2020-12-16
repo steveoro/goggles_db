@@ -4,7 +4,7 @@ module GogglesDb
   #
   # = MeetingEvent model
   #
-  #   - version:  7.041
+  #   - version:  7.047
   #   - author:   Steve A.
   #
   class MeetingEvent < ApplicationRecord
@@ -66,16 +66,34 @@ module GogglesDb
       !out_of_race?
     end
 
+    # Override: include the minimum required 1st-level associations.
+    #
+    def minimal_attributes
+      super.merge(minimal_associations)
+    end
+
     # Override: includes *most* of its 1st-level associations into the typical to_json output.
     def to_json(options = nil)
       attributes.merge(
-        'meeting_session' => meeting_session.attributes,
+        'meeting_session' => meeting_session.minimal_attributes
+      ).merge(
+        minimal_associations
+      ).merge(
+        'season' => season.minimal_attributes,
+        'season_type' => season_type.minimal_attributes,
+        'meeting_programs' => meeting_programs.map(&:minimal_attributes)
+      ).to_json(options)
+    end
+
+    private
+
+    # Returns the "minimum required" hash of associations.
+    def minimal_associations
+      {
         'event_type' => event_type.lookup_attributes,
         'stroke_type' => stroke_type.lookup_attributes,
-        'heat_type' => heat_type.lookup_attributes,
-        'season' => season.attributes,
-        'season_type' => season_type.attributes
-      ).to_json(options)
+        'heat_type' => heat_type.lookup_attributes
+      }
     end
   end
 end

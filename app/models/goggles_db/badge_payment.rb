@@ -4,7 +4,7 @@ module GogglesDb
   #
   # = Badge payment model
   #
-  #   - version:  7.035
+  #   - version:  7.047
   #   - authors:  Leega, Steve A.
   #
   class BadgePayment < ApplicationRecord
@@ -36,10 +36,10 @@ module GogglesDb
     # Override: include all 1st-level associations into the typical to_json output.
     def to_json(options = nil)
       attributes.merge(
-        'badge' => badge.attributes,
-        'swimmer' => swimmer.attributes,
-        'season' => season.attributes,
-        'team' => team.attributes
+        'badge' => badge.minimal_attributes,
+        'swimmer' => swimmer.minimal_attributes,
+        'season' => season.minimal_attributes,
+        'team' => team.minimal_attributes
       ).to_json(options)
     end
   end

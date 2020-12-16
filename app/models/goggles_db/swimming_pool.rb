@@ -4,7 +4,7 @@ module GogglesDb
   #
   # = SwimmingPool model
   #
-  #   - version:  7.041
+  #   - version:  7.047
   #   - author:   Steve A.
   #
   class SwimmingPool < ApplicationRecord
@@ -57,7 +57,7 @@ module GogglesDb
     # Override: includes the 1st-level associations into the typical to_json output.
     def to_json(options = nil)
       attributes.merge(
-        'city' => city.attributes,
+        'city' => city.minimal_attributes,
         'pool_type' => pool_type.lookup_attributes,
         # Optional:
         'shower_type' => shower_type&.lookup_attributes,

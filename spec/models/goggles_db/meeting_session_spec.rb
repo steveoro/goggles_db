@@ -32,6 +32,7 @@ module GogglesDb
         'responding to a list of methods',
         %i[swimming_pool day_part_type pool_type
            warm_up_time begin_time notes autofilled?
+           meeting_attributes
            to_json]
       )
     end
@@ -70,11 +71,15 @@ module GogglesDb
       # Required associations:
       it_behaves_like(
         '#to_json when called on a valid instance',
-        %w[meeting season season_type]
+        %w[season season_type]
       )
       it_behaves_like(
         '#to_json when called with unset optional associations',
         %w[swimming_pool pool_type day_part_type]
+      )
+      it_behaves_like(
+        '#to_json when called on a valid instance with a synthetized association',
+        %w[meeting]
       )
 
       # Optional associations:
