@@ -30,6 +30,7 @@ module GogglesDb
            meeting_entries laps
            relay? scheduled_date
            begin_time autofilled? out_of_race?
+           minimal_attributes
            to_json]
       )
     end
@@ -70,14 +71,64 @@ module GogglesDb
     #-- ------------------------------------------------------------------------
     #++
 
-    describe '#to_json' do
-      subject { FactoryBot.create(:meeting_program) }
+    describe '#minimal_attributes' do
+      subject { GogglesDb::MeetingProgram.limit(200).sample.minimal_attributes }
+      it 'is an Hash' do
+        expect(subject).to be_an(Hash)
+      end
+      %w[pool_type event_type category_type gender_type stroke_type].each do |association_name|
+        it "includes the #{association_name} association key" do
+          expect(subject.keys).to include(association_name)
+        end
+      end
+    end
 
+    describe '#to_json' do
       # Required associations:
-      it_behaves_like(
-        '#to_json when called on a valid instance',
-        %w[meeting_event pool_type event_type category_type gender_type stroke_type]
-      )
+      context 'for required associations,' do
+        subject { FactoryBot.create(:meeting_program) }
+        it_behaves_like(
+          '#to_json when called on a valid instance',
+          %w[meeting_event pool_type event_type category_type gender_type stroke_type]
+        )
+      end
+
+      # Collection associations:
+      context 'for collection associations,' do
+        context 'when the entity has MIRs,' do
+          subject do
+            mir = GogglesDb::MeetingIndividualResult.limit(200).sample
+            expect(mir.meeting_program).to be_a(MeetingProgram).and be_valid
+            mir.meeting_program
+          end
+          let(:json_hash) { JSON.parse(subject.to_json) }
+
+          it "doesn't contain the MRR list" do
+            expect(json_hash['meeting_relay_results']).to be nil
+          end
+          it_behaves_like(
+            '#to_json when the entity contains collection associations with',
+            %w[meeting_individual_results]
+          )
+        end
+
+        context 'when the entity has MRRs,' do
+          subject do
+            mrr = GogglesDb::MeetingRelayResult.limit(200).sample
+            expect(mrr.meeting_program).to be_a(MeetingProgram).and be_valid
+            mrr.meeting_program
+          end
+          let(:json_hash) { JSON.parse(subject.to_json) }
+
+          it "doesn't contain the MIR list" do
+            expect(json_hash['meeting_individual_results']).to be nil
+          end
+          it_behaves_like(
+            '#to_json when the entity contains collection associations with',
+            %w[meeting_relay_results]
+          )
+        end
+      end
     end
   end
 end

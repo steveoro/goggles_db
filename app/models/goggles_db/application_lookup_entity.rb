@@ -7,7 +7,7 @@ module GogglesDb
   # Encapsulates common behavior for in-memory lookup entities.
   # Typical usage: short tables that store data that seldom needs any update.
   #
-  #   - version:  7.041
+  #   - version:  7.047
   #   - author:   Steve A.
   #
   class ApplicationLookupEntity < ApplicationRecord
@@ -20,14 +20,14 @@ module GogglesDb
     #-- -----------------------------------------------------------------------
     #++
 
-    # Returns instance attribute hash with localized display labels.
-    # ('label', 'long_label', 'alt_label')
+    # Returns a minimal subset of this instance's attribute hash merged with the localized display
+    # labels ('label', 'long_label', 'alt_label').
     #
     # === Params:
     # - locale: a valid locale code or symbol ('it', 'en', ...) to be used as I18n.locale enforce/override
     #
     def lookup_attributes(locale = I18n.locale)
-      attributes.merge(
+      minimal_attributes.merge(
         'label' => label(locale),
         'long_label' => long_label(locale),
         'alt_label' => alt_label(locale)

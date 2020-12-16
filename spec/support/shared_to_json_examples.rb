@@ -1,13 +1,12 @@
 # frozen_string_literal: true
 
-# Handles both normal associations and associations with lookup entities
-# (GogglesDb::ApplicationLookupEntity)
+# Handles both normal associations and associations with lookup entities (GogglesDb::ApplicationLookupEntity)
 def compare_attributes_between(parsed_json_association_obj, association)
   # Expect associations with lookup entities to include translated labels in their to_json:
   if association.respond_to?(:lookup_attributes)
     expect(parsed_json_association_obj).to eq(JSON.parse(association.lookup_attributes.to_json))
   else
-    expect(parsed_json_association_obj).to eq(JSON.parse(association.attributes.to_json))
+    expect(parsed_json_association_obj).to eq(JSON.parse(association.minimal_attributes.to_json))
   end
 end
 #-- ---------------------------------------------------------------------------

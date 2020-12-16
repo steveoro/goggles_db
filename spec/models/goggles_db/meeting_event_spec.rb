@@ -30,6 +30,7 @@ module GogglesDb
            begin_time notes autofilled? out_of_race? eventable?
            split_gender_start_list? split_category_start_list?
            scheduled_date relay?
+           minimal_attributes
            to_json]
       )
     end
@@ -89,12 +90,38 @@ module GogglesDb
       end
     end
 
+    describe '#minimal_attributes' do
+      subject { GogglesDb::MeetingEvent.limit(200).sample.minimal_attributes }
+      it 'is an Hash' do
+        expect(subject).to be_an(Hash)
+      end
+      %w[event_type stroke_type heat_type].each do |association_name|
+        it "includes the #{association_name} association key" do
+          expect(subject.keys).to include(association_name)
+        end
+      end
+    end
+
     describe '#to_json' do
       # Required associations:
       it_behaves_like(
         '#to_json when called on a valid instance',
         %w[meeting_session event_type stroke_type heat_type season season_type]
       )
+      # Collection associations:
+      context 'when the entity contains collection associations,' do
+        subject do
+          prg = GogglesDb::MeetingProgram.limit(200).sample
+          expect(prg.meeting_event).to be_a(MeetingEvent).and be_valid
+          prg.meeting_event
+        end
+        let(:json_hash) { JSON.parse(subject.to_json) }
+
+        it_behaves_like(
+          '#to_json when the entity contains collection associations with',
+          %w[meeting_programs]
+        )
+      end
     end
   end
 end

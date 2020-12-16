@@ -4,7 +4,7 @@ module GogglesDb
   #
   # = City model
   #
-  #   - version:  7.044
+  #   - version:  7.047
   #   - author:   Steve A.
   #
   # Check out:
@@ -31,20 +31,26 @@ module GogglesDb
     # > iso_country, iso_city = city.to_iso
     #
     # === ISO-Country (main) fields:
+    #
     # - iso_country.alpha2: Country code, 2 characters (upcase)
     # - iso_country.alpha3: Country code, 3 characters (upcase)
+    #
     # - iso_country.translations: Hash of country name translations, keyed by locale code (string)
     # - iso_country.country_code: numeric Country code (as phone prefix, typically)
     # - iso_country.address_format: address format in use
     #   (Example for 'IT': "{{recipient}}\n{{street}}\n{{postalcode}} {{city}} {{region_short}}\n{{country}}")
+    #
     # - iso_country.continent: Continent name
     # - iso_country.unofficial_names: array list of alternative, localized string names
+    #
     # - iso_country.subdivisions['RE'] => sub-struct for region/subdivision ('RE', for example)
     #   returning 'name', 'geo', 'translations', ...
+    #
     # - iso_country.subdivision_names_with_codes: array of arrays, with both name and alpha2-subdivision code:
     #   (Example: [["Agrigento", "AG"], ["Alessandria", "AL"], ["Ancona", "AN"], ...])
     #
     # === ISO-City (main) fields:
+    #
     # - iso_city.name: standardized City name
     # - iso_city.latitude: string latitude coordinate
     # - iso_city.longitude: string longitude coordinate
@@ -118,7 +124,7 @@ module GogglesDb
     def iso_attributes(locale_override = I18n.locale)
       iso_country, iso_city = to_iso
       subdivision = iso_subdivision(iso_country)
-      attributes.merge(
+      minimal_attributes.merge(
         prepare_iso_attributes(iso_city, iso_country, subdivision, locale_override)
       )
     end

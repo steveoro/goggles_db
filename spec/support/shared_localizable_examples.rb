@@ -32,7 +32,7 @@ shared_examples_for 'Localizable' do
         expect(subject.lookup_attributes).to be_an(Hash).and be_present
       end
       it 'includes the basic attribute keys' do
-        expect(subject.lookup_attributes.keys).to include('id', 'code', 'updated_at', 'created_at')
+        expect(subject.lookup_attributes.keys).to include('id', 'code')
       end
       it 'includes also the additional localized labels' do
         expect(subject.lookup_attributes.keys).to include('label', 'long_label', 'alt_label')

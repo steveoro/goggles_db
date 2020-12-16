@@ -78,7 +78,6 @@ module GogglesDb
       describe '#iso_latitude' do
         subject { subject_city.iso_latitude(fixture_iso_city) }
         it 'is a non-empty String' do
-          ap fixture_iso_city if subject.nil?
           expect(subject).to be_a(String).and be_present
         end
       end
@@ -132,8 +131,7 @@ module GogglesDb
         expect(subject).to be_an(Hash).and be_present
       end
       it 'includes all the legacy customizable City attributes plus the additional ISO attributes' do
-        expect(subject.keys).to include('id', 'created_at', 'updated_at', 'name', 'latitude', 'longitude',
-                                        'country', 'country_code', 'region', 'area', 'area_code', 'zip')
+        expect(subject.keys).to include('id', 'name', 'latitude', 'longitude', 'country', 'country_code', 'region', 'area', 'area_code', 'zip')
       end
       # Just a couple of quick checks to verify supported locales are actually there:
       it 'allows locale override for a chosen country name translation' do

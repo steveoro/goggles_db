@@ -6,7 +6,7 @@ module GogglesDb
   #
   # = MeetingIndividualResult model
   #
-  #   - version:  7.041
+  #   - version:  7.047
   #   - author:   Steve A.
   #
   class MeetingIndividualResult < ApplicationRecord
@@ -158,13 +158,13 @@ module GogglesDb
       attributes.merge(
         'meeting' => meeting_attributes,
         'meeting_session' => meeting_session_attributes,
-        'meeting_program' => meeting_program.attributes,
+        'meeting_program' => meeting_program.minimal_attributes,
         'pool_type' => pool_type.lookup_attributes,
         'event_type' => event_type.lookup_attributes,
-        'category_type' => category_type.attributes,
+        'category_type' => category_type.minimal_attributes,
         'gender_type' => gender_type.lookup_attributes,
         'stroke_type' => stroke_type.lookup_attributes,
-        'laps' => laps&.map(&:attributes) # (Optional)
+        'laps' => laps&.map(&:minimal_attributes) # (Optional)
       ).to_json(options)
     end
   end

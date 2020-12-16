@@ -4,7 +4,7 @@ module GogglesDb
   #
   # = Team model
   #
-  #   - version:  7.036
+  #   - version:  7.047
   #   - author:   Steve A.
   #
   class Team < ApplicationRecord
@@ -62,9 +62,9 @@ module GogglesDb
     # Override: includes *most* of its 1st-level associations into the typical to_json output.
     def to_json(options = nil)
       attributes.merge(
-        'city' => city&.attributes, # (optional)
-        'badges' => recent_badges.map(&:attributes),
-        'team_affiliations' => recent_affiliations.map(&:attributes)
+        'city' => city&.minimal_attributes, # (optional)
+        'badges' => recent_badges.map(&:minimal_attributes),
+        'team_affiliations' => recent_affiliations.map(&:minimal_attributes)
       ).to_json(options)
     end
   end

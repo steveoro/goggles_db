@@ -6,7 +6,7 @@ module GogglesDb
   #
   # = MeetingRelaySwimmer model
   #
-  #   - version:  7.041
+  #   - version:  7.047
   #   - author:   Steve A.
   #
   class MeetingRelaySwimmer < ApplicationRecord
@@ -45,10 +45,10 @@ module GogglesDb
     # Override: includes most relevant data for its 1st-level associations
     def to_json(options = nil)
       attributes.merge(
-        'meeting_relay_result' => meeting_relay_result.attributes,
-        'team' => team.attributes,
-        'swimmer' => swimmer.attributes,
-        'badge' => badge.attributes,
+        'meeting_relay_result' => meeting_relay_result.minimal_attributes,
+        'team' => team.minimal_attributes,
+        'swimmer' => swimmer.minimal_attributes,
+        'badge' => badge.minimal_attributes,
         'event_type' => event_type.lookup_attributes,
         'stroke_type' => stroke_type.lookup_attributes
       ).to_json(options)

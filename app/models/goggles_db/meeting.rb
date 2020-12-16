@@ -4,7 +4,7 @@ module GogglesDb
   #
   # = Meeting model
   #
-  #   - version:  7.041
+  #   - version:  7.047
   #   - author:   Steve A.
   #
   class Meeting < ApplicationRecord
@@ -24,7 +24,7 @@ module GogglesDb
     has_one :season_type, through: :season
     has_one :federation_type, through: :season
 
-    # # First-level children: (they "belongs_to" meeting)
+    # First-level children: (they "belongs_to" meeting)
     has_many :meeting_sessions, -> { order(:session_order) }, dependent: :delete_all
     has_many :swimming_pools,   through: :meeting_sessions
     has_many :pool_types,       through: :meeting_sessions
@@ -122,13 +122,13 @@ module GogglesDb
     def to_json(options = nil)
       attributes.merge(
         'edition_label' => edition_label,
-        'season' => season.attributes,
+        'season' => season.minimal_attributes,
         'edition_type' => edition_type.lookup_attributes,
         'timing_type' => timing_type.lookup_attributes,
-        'season_type' => season_type.attributes,
-        'federation_type' => federation_type.attributes,
-        'meeting_sessions' => meeting_sessions.map(&:attributes),
-        'meeting_events' => meeting_events.map(&:attributes)
+        'season_type' => season_type.minimal_attributes,
+        'federation_type' => federation_type.minimal_attributes,
+        'meeting_sessions' => meeting_sessions.map(&:minimal_attributes),
+        'meeting_events' => meeting_events.map(&:minimal_attributes)
       ).to_json(options)
     end
   end

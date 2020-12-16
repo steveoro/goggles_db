@@ -4,7 +4,7 @@ module GogglesDb
   #
   # = Swimmer model
   #
-  #   - version:  7.041
+  #   - version:  7.047
   #   - author:   Steve A.
   #
   class Swimmer < ApplicationRecord
@@ -30,7 +30,7 @@ module GogglesDb
     # Override: includes all 1st-level associations into the typical to_json output.
     def to_json(options = nil)
       attributes.merge(
-        'associated_user' => associated_user&.attributes,
+        'associated_user' => associated_user&.minimal_attributes,
         'gender_type' => gender_type.lookup_attributes
       ).to_json(options)
     end

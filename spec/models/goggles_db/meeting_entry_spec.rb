@@ -123,6 +123,18 @@ module GogglesDb
       it_behaves_like 'TimingManageable'
     end
 
+    describe '#minimal_attributes' do
+      subject { GogglesDb::MeetingEntry.limit(100).sample.minimal_attributes }
+      it 'is an Hash' do
+        expect(subject).to be_an(Hash)
+      end
+      %w[team team_affiliation swimmer pool_type event_type category_type gender_type].each do |association_name|
+        it "includes the #{association_name} association key" do
+          expect(subject.keys).to include(association_name)
+        end
+      end
+    end
+
     describe '#to_json' do
       subject { FactoryBot.create(:meeting_entry) }
 

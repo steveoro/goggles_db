@@ -4,7 +4,7 @@ module GogglesDb
   #
   # = MeetingProgram model
   #
-  #   - version:  7.041
+  #   - version:  7.047
   #   - author:   Steve A.
   #
   class MeetingProgram < ApplicationRecord
@@ -60,16 +60,40 @@ module GogglesDb
     #-- ------------------------------------------------------------------------
     #++
 
-    # Override: includes *most* of its 1st-level associations into the typical to_json output.
+    # Override: include the "minimum required" hash of associations.
+    #
+    def minimal_attributes
+      super.merge(minimal_associations)
+    end
+
+    # Override: includes *most* of the 1st-level associations into the typical to_json output.
     def to_json(options = nil)
-      attributes.merge(
-        'meeting_event' => meeting_event.attributes,
+      base = attributes.merge('meeting_event' => meeting_event.minimal_attributes)
+                       .merge(minimal_associations)
+
+      if relay? && meeting_relay_results.count.positive?
+        base.merge!(
+          'meeting_relay_results' => meeting_relay_results.map(&:minimal_attributes)
+        )
+      elsif !relay? && meeting_individual_results.count.positive?
+        base.merge!(
+          'meeting_individual_results' => meeting_individual_results.map(&:minimal_attributes)
+        )
+      end
+      base.to_json(options)
+    end
+
+    private
+
+    # Returns the "minimum required" hash of associations.
+    def minimal_associations
+      {
         'pool_type' => pool_type.lookup_attributes,
         'event_type' => event_type.lookup_attributes,
-        'category_type' => category_type.attributes,
+        'category_type' => category_type.minimal_attributes,
         'gender_type' => gender_type.lookup_attributes,
         'stroke_type' => stroke_type.lookup_attributes
-      ).to_json(options)
+      }
     end
   end
 end
