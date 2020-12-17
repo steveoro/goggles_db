@@ -297,7 +297,8 @@ CREATE TABLE `cities` (
   `longitude` varchar(50) DEFAULT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `index_cities_on_country_code_and_area_and_name` (`country_code`,`area`,`name`),
-  KEY `index_cities_on_name` (`name`)
+  KEY `index_cities_on_name` (`name`),
+  FULLTEXT KEY `city_name` (`name`,`area`)
 ) ENGINE=InnoDB AUTO_INCREMENT=187 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 DROP TABLE IF EXISTS `coach_level_types`;
@@ -1881,7 +1882,8 @@ CREATE TABLE `meetings` (
   KEY `fk_meetings_score_team_score_computation_types` (`team_score_computation_type_id`),
   KEY `fk_meetings_score_meeting_score_computation_types` (`meeting_score_computation_type_id`),
   KEY `idx_meetings_user` (`user_id`),
-  KEY `index_meetings_on_organization_team_id` (`organization_team_id`)
+  KEY `index_meetings_on_organization_team_id` (`organization_team_id`),
+  FULLTEXT KEY `meeting_name` (`description`,`code`)
 ) ENGINE=InnoDB AUTO_INCREMENT=19318 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 DROP TABLE IF EXISTS `movement_scope_types`;
@@ -2289,7 +2291,8 @@ CREATE TABLE `swimmers` (
   KEY `index_swimmers_on_associated_user_id` (`associated_user_id`),
   KEY `fk_swimmers_gender_types` (`gender_type_id`),
   KEY `index_swimmers_on_complete_name` (`complete_name`),
-  KEY `idx_swimmers_user` (`user_id`)
+  KEY `idx_swimmers_user` (`user_id`),
+  FULLTEXT KEY `swimmer_name` (`last_name`,`first_name`,`complete_name`)
 ) ENGINE=InnoDB AUTO_INCREMENT=40699 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 DROP TABLE IF EXISTS `swimming_pool_reviews`;
@@ -2350,7 +2353,8 @@ CREATE TABLE `swimming_pools` (
   KEY `fk_swimming_pools_shower_types` (`shower_type_id`),
   KEY `fk_swimming_pools_hair_dryer_types` (`hair_dryer_type_id`),
   KEY `fk_swimming_pools_locker_cabinet_types` (`locker_cabinet_type_id`),
-  KEY `idx_swimming_pools_user` (`user_id`)
+  KEY `idx_swimming_pools_user` (`user_id`),
+  FULLTEXT KEY `swimming_pool_name` (`name`)
 ) ENGINE=InnoDB AUTO_INCREMENT=241 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 DROP TABLE IF EXISTS `taggings`;
@@ -2408,7 +2412,8 @@ CREATE TABLE `team_affiliations` (
   KEY `index_team_affiliations_on_name` (`name`),
   KEY `fk_team_affiliations_teams` (`team_id`),
   KEY `index_team_affiliations_on_number` (`number`),
-  KEY `idx_team_affiliations_user` (`user_id`)
+  KEY `idx_team_affiliations_user` (`user_id`),
+  FULLTEXT KEY `team_affiliation_name` (`name`)
 ) ENGINE=InnoDB AUTO_INCREMENT=5826 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 DROP TABLE IF EXISTS `team_lap_templates`;
@@ -2465,7 +2470,8 @@ CREATE TABLE `teams` (
   KEY `index_teams_on_name` (`name`),
   KEY `index_teams_on_editable_name` (`editable_name`),
   KEY `fk_teams_cities` (`city_id`),
-  KEY `idx_teams_user` (`user_id`)
+  KEY `idx_teams_user` (`user_id`),
+  FULLTEXT KEY `team_name` (`name`,`editable_name`,`name_variations`)
 ) ENGINE=InnoDB AUTO_INCREMENT=1322 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 DROP TABLE IF EXISTS `timing_types`;
@@ -3137,6 +3143,8 @@ INSERT INTO `schema_migrations` (version) VALUES
 ('20201216124312'),
 ('20201216133048'),
 ('20201216134025'),
-('20201216172430');
+('20201216172430'),
+('20201217101006'),
+('20201217114100');
 
 

@@ -26,6 +26,10 @@ module GogglesDb
       end
 
       it_behaves_like(
+        'responding to a list of class methods',
+        %i[for_year for_years for_name]
+      )
+      it_behaves_like(
         'responding to a list of methods',
         %i[season_type badges managed_affiliations
            recent_badges managers autofilled?
@@ -50,6 +54,11 @@ module GogglesDb
     end
     describe 'self.for_year' do
       it_behaves_like('filtering scope for_year', TeamAffiliation)
+    end
+    describe 'self.for_name' do
+      it_behaves_like('filtering scope FULLTEXT for_name', TeamAffiliation, %w[name], 'ferrari')
+      it_behaves_like('filtering scope FULLTEXT for_name', TeamAffiliation, %w[name], 'dynamic')
+      it_behaves_like('filtering scope FULLTEXT for_name', TeamAffiliation, %w[name], 'reggiana')
     end
     #-- ------------------------------------------------------------------------
     #++

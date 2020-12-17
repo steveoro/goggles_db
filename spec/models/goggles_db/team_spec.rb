@@ -3,6 +3,7 @@
 require 'rails_helper'
 require 'support/shared_method_existance_examples'
 require 'support/shared_sorting_scopes_examples'
+require 'support/shared_filtering_scopes_examples'
 require 'support/shared_to_json_examples'
 
 module GogglesDb
@@ -18,6 +19,10 @@ module GogglesDb
         %i[name editable_name]
       )
 
+      it_behaves_like(
+        'responding to a list of class methods',
+        %i[by_name for_name]
+      )
       it_behaves_like(
         'responding to a list of methods',
         %i[city badges swimmers team_affiliations seasons season_types managed_affiliations
@@ -42,6 +47,13 @@ module GogglesDb
     # Sorting scopes:
     describe 'self.by_name' do
       it_behaves_like('sorting scope by_<ANY_VALUE_NAME>', Team, 'name', 'name')
+    end
+
+    # Filtering scopes:
+    describe 'self.for_name' do
+      it_behaves_like('filtering scope FULLTEXT for_name', Team, %w[name editable_name name_variations], 'ferrari')
+      it_behaves_like('filtering scope FULLTEXT for_name', Team, %w[name editable_name name_variations], 'dynamic')
+      it_behaves_like('filtering scope FULLTEXT for_name', Team, %w[name editable_name name_variations], 'reggiana')
     end
     #-- ------------------------------------------------------------------------
     #++

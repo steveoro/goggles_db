@@ -2,6 +2,7 @@
 
 require 'rails_helper'
 require 'support/shared_method_existance_examples'
+require 'support/shared_filtering_scopes_examples'
 
 module GogglesDb
   RSpec.describe City, type: :model do
@@ -16,6 +17,10 @@ module GogglesDb
         %i[name country_code]
       )
 
+      it_behaves_like(
+        'responding to a list of class methods',
+        %i[for_name]
+      )
       it_behaves_like(
         'responding to a list of methods',
         %i[
@@ -35,6 +40,19 @@ module GogglesDb
     context 'when using the factory, the resulting instance' do
       subject { FactoryBot.create(:city) }
       it_behaves_like('a valid City instance')
+    end
+    #-- ------------------------------------------------------------------------
+    #++
+
+    # Filtering scopes:
+    describe 'self.for_name' do
+      it_behaves_like('filtering scope FULLTEXT for_name', City, %w[name area], 'forl')
+      it_behaves_like('filtering scope FULLTEXT for_name', City, %w[name area], 'albinea')
+      it_behaves_like('filtering scope FULLTEXT for_name', City, %w[name area], 'bologna')
+      it_behaves_like('filtering scope FULLTEXT for_name', City, %w[name area], 'carpi')
+      it_behaves_like('filtering scope FULLTEXT for_name', City, %w[name area], 'emilia')
+      it_behaves_like('filtering scope FULLTEXT for_name', City, %w[name area], 'modena')
+      it_behaves_like('filtering scope FULLTEXT for_name', City, %w[name area], 'reggio')
     end
     #-- ------------------------------------------------------------------------
     #++
