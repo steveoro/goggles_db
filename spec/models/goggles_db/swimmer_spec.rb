@@ -2,6 +2,7 @@
 
 require 'rails_helper'
 require 'support/shared_method_existance_examples'
+require 'support/shared_filtering_scopes_examples'
 require 'support/shared_to_json_examples'
 
 module GogglesDb
@@ -14,6 +15,10 @@ module GogglesDb
         %i[gender_type]
       )
 
+      it_behaves_like(
+        'responding to a list of class methods',
+        %i[for_name]
+      )
       it_behaves_like(
         'responding to a list of methods',
         %i[associated_user male? female? intermixed? year_guessed?]
@@ -39,6 +44,17 @@ module GogglesDb
         expect(subject).to respond_to(:year_of_birth)
         expect(subject.year_of_birth).to be_present
       end
+    end
+    #-- ------------------------------------------------------------------------
+    #++
+
+    # Filtering scopes:
+    describe 'self.for_name' do
+      it_behaves_like('filtering scope FULLTEXT for_name', Swimmer, %w[last_name first_name complete_name], 'john')
+      it_behaves_like('filtering scope FULLTEXT for_name', Swimmer, %w[last_name first_name complete_name], 'steve')
+      it_behaves_like('filtering scope FULLTEXT for_name', Swimmer, %w[last_name first_name complete_name], 'nicolas')
+      it_behaves_like('filtering scope FULLTEXT for_name', Swimmer, %w[last_name first_name complete_name], 'nicole')
+      it_behaves_like('filtering scope FULLTEXT for_name', Swimmer, %w[last_name first_name complete_name], 'serena')
     end
     #-- ------------------------------------------------------------------------
     #++

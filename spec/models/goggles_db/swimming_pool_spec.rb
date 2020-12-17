@@ -3,6 +3,7 @@
 require 'rails_helper'
 require 'support/shared_method_existance_examples'
 require 'support/shared_sorting_scopes_examples'
+require 'support/shared_filtering_scopes_examples'
 require 'support/shared_to_json_examples'
 
 module GogglesDb
@@ -23,6 +24,11 @@ module GogglesDb
         %i[name nick_name lanes_number]
       )
 
+      it_behaves_like(
+        'responding to a list of class methods',
+        %i[by_name by_city by_pool_type
+           for_name]
+      )
       it_behaves_like(
         'responding to a list of methods',
         %i[shower_type hair_dryer_type locker_cabinet_type
@@ -55,6 +61,13 @@ module GogglesDb
     end
     describe 'self.by_type' do
       it_behaves_like('sorting scope by_<ANY_ENTITY_NAME>', SwimmingPool, 'pool_type', 'code')
+    end
+
+    # Filtering scopes:
+    describe 'self.for_name' do
+      it_behaves_like('filtering scope FULLTEXT for_name', SwimmingPool, %w[name], 'ferrari')
+      it_behaves_like('filtering scope FULLTEXT for_name', SwimmingPool, %w[name], 'ferretti')
+      it_behaves_like('filtering scope FULLTEXT for_name', SwimmingPool, %w[name], 'comunale')
     end
     #-- ------------------------------------------------------------------------
     #++

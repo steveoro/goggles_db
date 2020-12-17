@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_12_16_172430) do
+ActiveRecord::Schema.define(version: 2020_12_17_114100) do
 
   create_table "achievement_rows", id: :integer, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
     t.integer "lock_version", default: 0
@@ -219,6 +219,7 @@ ActiveRecord::Schema.define(version: 2020_12_16_172430) do
     t.string "latitude", limit: 50
     t.string "longitude", limit: 50
     t.index ["country_code", "area", "name"], name: "index_cities_on_country_code_and_area_and_name", unique: true
+    t.index ["name", "area"], name: "city_name", type: :fulltext
     t.index ["name"], name: "index_cities_on_name"
   end
 
@@ -1481,6 +1482,7 @@ ActiveRecord::Schema.define(version: 2020_12_16_172430) do
     t.decimal "event_fee", precision: 10, scale: 2
     t.decimal "relay_fee", precision: 10, scale: 2
     t.index ["code", "edition"], name: "idx_meetings_code"
+    t.index ["description", "code"], name: "meeting_name", type: :fulltext
     t.index ["edition_type_id"], name: "fk_meetings_edition_types"
     t.index ["entry_deadline"], name: "index_meetings_on_entry_deadline"
     t.index ["header_date"], name: "idx_meetings_header_date"
@@ -1770,6 +1772,7 @@ ActiveRecord::Schema.define(version: 2020_12_16_172430) do
     t.index ["complete_name", "year_of_birth"], name: "name_and_year", unique: true
     t.index ["complete_name"], name: "index_swimmers_on_complete_name"
     t.index ["gender_type_id"], name: "fk_swimmers_gender_types"
+    t.index ["last_name", "first_name", "complete_name"], name: "swimmer_name", type: :fulltext
     t.index ["last_name", "first_name"], name: "full_name"
     t.index ["nickname"], name: "index_swimmers_on_nickname"
     t.index ["user_id"], name: "idx_swimmers_user"
@@ -1820,6 +1823,7 @@ ActiveRecord::Schema.define(version: 2020_12_16_172430) do
     t.index ["hair_dryer_type_id"], name: "fk_swimming_pools_hair_dryer_types"
     t.index ["locker_cabinet_type_id"], name: "fk_swimming_pools_locker_cabinet_types"
     t.index ["name"], name: "index_swimming_pools_on_name"
+    t.index ["name"], name: "swimming_pool_name", type: :fulltext
     t.index ["nick_name"], name: "index_swimming_pools_on_nick_name", unique: true
     t.index ["pool_type_id"], name: "fk_swimming_pools_pool_types"
     t.index ["shower_type_id"], name: "fk_swimming_pools_shower_types"
@@ -1863,6 +1867,7 @@ ActiveRecord::Schema.define(version: 2020_12_16_172430) do
     t.datetime "updated_at"
     t.boolean "autofilled", default: false
     t.index ["name"], name: "index_team_affiliations_on_name"
+    t.index ["name"], name: "team_affiliation_name", type: :fulltext
     t.index ["number"], name: "index_team_affiliations_on_number"
     t.index ["season_id", "team_id"], name: "uk_team_affiliations_seasons_teams", unique: true
     t.index ["team_id"], name: "fk_team_affiliations_teams"
@@ -1912,6 +1917,7 @@ ActiveRecord::Schema.define(version: 2020_12_16_172430) do
     t.string "home_page_url", limit: 150
     t.index ["city_id"], name: "fk_teams_cities"
     t.index ["editable_name"], name: "index_teams_on_editable_name"
+    t.index ["name", "editable_name", "name_variations"], name: "team_name", type: :fulltext
     t.index ["name"], name: "index_teams_on_name"
     t.index ["user_id"], name: "idx_teams_user"
   end

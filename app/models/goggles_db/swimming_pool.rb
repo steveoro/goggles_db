@@ -4,7 +4,7 @@ module GogglesDb
   #
   # = SwimmingPool model
   #
-  #   - version:  7.047
+  #   - version:  7.050
   #   - author:   Steve A.
   #
   class SwimmingPool < ApplicationRecord
@@ -39,6 +39,11 @@ module GogglesDb
     validates :child_area,     inclusion: { in: [true, false] }
     validates :read_only,      inclusion: { in: [true, false] }
 
+    delegate :name, to: :city, prefix: true, allow_nil: false
+
+    # acts_as_taggable_on :tags_by_users
+    # acts_as_taggable_on :tags_by_teams
+
     # Sorting scopes:
     scope :by_name, ->(dir = :asc) { order(name: dir) }
     scope :by_city, ->(dir = :asc) { includes(:city).joins(:city).order('cities.name': dir) }
@@ -47,10 +52,8 @@ module GogglesDb
       includes(:pool_type).joins(:pool_type).order('pool_types.code': dir, 'swimming_pools.name': dir)
     end
 
-    # acts_as_taggable_on :tags_by_users
-    # acts_as_taggable_on :tags_by_teams
-
-    delegate :name, to: :city, prefix: true, allow_nil: false
+    # Filtering scopes:
+    scope :for_name, ->(name) { where('MATCH(name) AGAINST(?)', name) }
     #-- ------------------------------------------------------------------------
     #++
 

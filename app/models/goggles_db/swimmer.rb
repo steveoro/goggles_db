@@ -4,7 +4,7 @@ module GogglesDb
   #
   # = Swimmer model
   #
-  #   - version:  7.047
+  #   - version:  7.050
   #   - author:   Steve A.
   #
   class Swimmer < ApplicationRecord
@@ -24,6 +24,9 @@ module GogglesDb
     validates :year_guessed, inclusion: { in: [true, false] }
 
     delegate :male?, :female?, :intermixed?, to: :gender_type
+
+    # Filtering scopes:
+    scope :for_name, ->(name) { where('MATCH(last_name, first_name, complete_name) AGAINST(?)', name) }
     #-- ------------------------------------------------------------------------
     #++
 

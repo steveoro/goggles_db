@@ -4,7 +4,7 @@ module GogglesDb
   #
   # = TeamAffiliation model
   #
-  #   - version:  7.047
+  #   - version:  7.050
   #   - author:   Steve A.
   #
   class TeamAffiliation < ApplicationRecord
@@ -33,6 +33,7 @@ module GogglesDb
     # Filtering scopes:
     scope :for_year,  ->(header_year) { joins(:season).where('seasons.header_year': header_year) }
     scope :for_years, ->(*year_list)  { joins(:season).where(['seasons.header_year IN (?)', year_list]) }
+    scope :for_name,  ->(name)        { where('MATCH(name) AGAINST(?)', name) }
     #-- ------------------------------------------------------------------------
     #++
 

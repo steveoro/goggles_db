@@ -3,6 +3,7 @@
 require 'rails_helper'
 require 'support/shared_method_existance_examples'
 require 'support/shared_sorting_scopes_examples'
+require 'support/shared_filtering_scopes_examples'
 require 'support/shared_to_json_examples'
 
 module GogglesDb
@@ -23,6 +24,11 @@ module GogglesDb
         %i[code header_year edition description]
       )
 
+      it_behaves_like(
+        'responding to a list of class methods',
+        %i[by_date by_season
+           for_name]
+      )
       it_behaves_like(
         'responding to a list of methods',
         %i[meeting_sessions swimming_pools pool_types event_types
@@ -58,6 +64,16 @@ module GogglesDb
     end
     describe 'self.by_season' do
       it_behaves_like('sorting scope by_<ANY_ENTITY_NAME>', Meeting, 'season', 'begin_date')
+    end
+
+    # Filtering scopes:
+    describe 'self.for_name' do
+      it_behaves_like('filtering scope FULLTEXT for_name', Meeting, %w[description code], 'riccione')
+      it_behaves_like('filtering scope FULLTEXT for_name', Meeting, %w[description code], 'reggio')
+      it_behaves_like('filtering scope FULLTEXT for_name', Meeting, %w[description code], 'parma')
+      it_behaves_like('filtering scope FULLTEXT for_name', Meeting, %w[description code], 'deakker')
+      it_behaves_like('filtering scope FULLTEXT for_name', Meeting, %w[description code], 'bologna')
+      it_behaves_like('filtering scope FULLTEXT for_name', Meeting, %w[description code], 'ravenna')
     end
     #-- ------------------------------------------------------------------------
     #++
