@@ -77,16 +77,9 @@ module GogglesDb
     def to_json(options = nil)
       base = attributes.merge('meeting' => meeting_attributes, 'user' => user.minimal_attributes)
                        .merge(minimal_associations)
-
-      if meeting_event_reservations.count.positive?
-        base.merge!(
-          'meeting_event_reservations' => meeting_event_reservations.map(&:minimal_attributes)
-        )
-      elsif meeting_relay_reservations.count.positive?
-        base.merge!(
-          'meeting_relay_reservations' => meeting_relay_reservations.map(&:minimal_attributes)
-        )
-      end
+      # A Meeting reservation can have both type of children:
+      base.merge!('meeting_event_reservations' => meeting_event_reservations.map(&:minimal_attributes)) if meeting_event_reservations.count.positive?
+      base.merge!('meeting_relay_reservations' => meeting_relay_reservations.map(&:minimal_attributes)) if meeting_relay_reservations.count.positive?
       base.to_json(options)
     end
 
