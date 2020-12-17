@@ -1822,8 +1822,8 @@ ActiveRecord::Schema.define(version: 2020_12_17_114100) do
     t.index ["city_id"], name: "fk_swimming_pools_cities"
     t.index ["hair_dryer_type_id"], name: "fk_swimming_pools_hair_dryer_types"
     t.index ["locker_cabinet_type_id"], name: "fk_swimming_pools_locker_cabinet_types"
+    t.index ["name", "nick_name"], name: "swimming_pool_name", type: :fulltext
     t.index ["name"], name: "index_swimming_pools_on_name"
-    t.index ["name"], name: "swimming_pool_name", type: :fulltext
     t.index ["nick_name"], name: "index_swimming_pools_on_nick_name", unique: true
     t.index ["pool_type_id"], name: "fk_swimming_pools_pool_types"
     t.index ["shower_type_id"], name: "fk_swimming_pools_shower_types"

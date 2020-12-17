@@ -4,7 +4,7 @@ module GogglesDb
   #
   # = City model
   #
-  #   - version:  7.050
+  #   - version:  7.051
   #   - author:   Steve A.
   #
   # Check out:
@@ -21,7 +21,7 @@ module GogglesDb
     validates :area,         presence: { length: { within: 1..50 }, allow_nil: true }
 
     # Filtering scopes:
-    scope :for_name, ->(name) { where('MATCH(name, area) AGAINST(?)', name) }
+    scope :for_name, ->(name) { where('MATCH(cities.name, cities.area) AGAINST(?)', name) }
     #-- ------------------------------------------------------------------------
     #++
 

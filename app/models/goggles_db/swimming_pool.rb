@@ -4,7 +4,7 @@ module GogglesDb
   #
   # = SwimmingPool model
   #
-  #   - version:  7.050
+  #   - version:  7.051
   #   - author:   Steve A.
   #
   class SwimmingPool < ApplicationRecord
@@ -53,7 +53,7 @@ module GogglesDb
     end
 
     # Filtering scopes:
-    scope :for_name, ->(name) { where('MATCH(name) AGAINST(?)', name) }
+    scope :for_name, ->(name) { where('MATCH(swimming_pools.name, swimming_pools.nick_name) AGAINST(?)', name) }
     #-- ------------------------------------------------------------------------
     #++
 

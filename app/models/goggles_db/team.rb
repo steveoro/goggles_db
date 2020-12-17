@@ -4,7 +4,7 @@ module GogglesDb
   #
   # = Team model
   #
-  #   - version:  7.050
+  #   - version:  7.051
   #   - author:   Steve A.
   #
   class Team < ApplicationRecord
@@ -42,7 +42,7 @@ module GogglesDb
     scope :by_name, ->(dir = :asc) { order(name: dir) }
 
     # Filtering scopes:
-    scope :for_name, ->(name) { where('MATCH(name, editable_name, name_variations) AGAINST(?)', name) }
+    scope :for_name, ->(name) { where('MATCH(teams.name, teams.editable_name, teams.name_variations) AGAINST(?)', name) }
 
     # TODO: CLEAR UNUSED
     # scope :with_results, -> { where('EXISTS(SELECT 1 from meeting_individual_results where not is_disqualified and team_id = teams.id)') }

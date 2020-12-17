@@ -68,6 +68,16 @@ module GogglesDb
 
     # Filtering scopes:
     describe 'self.for_name' do
+      context 'when combined with other associations that include same-named columns,' do
+        subject do
+          GogglesDb::Meeting.joins(meeting_sessions: :swimming_pool)
+                            .includes(meeting_sessions: :swimming_pool)
+                            .for_name(%w[riccione CSI reggio parma].sample)
+        end
+        it 'does not raise errors' do
+          expect { subject.count }.not_to raise_error
+        end
+      end
       it_behaves_like('filtering scope FULLTEXT for_name', Meeting, %w[description code], 'riccione')
       it_behaves_like('filtering scope FULLTEXT for_name', Meeting, %w[description code], 'reggio')
       it_behaves_like('filtering scope FULLTEXT for_name', Meeting, %w[description code], 'parma')
