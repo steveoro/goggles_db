@@ -6,7 +6,7 @@ module GogglesDb
   #
   # = MeetingIndividualResult model
   #
-  #   - version:  7.047
+  #   - version:  7.049
   #   - author:   Steve A.
   #
   class MeetingIndividualResult < ApplicationRecord
