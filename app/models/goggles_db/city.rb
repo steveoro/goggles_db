@@ -4,7 +4,7 @@ module GogglesDb
   #
   # = City model
   #
-  #   - version:  7.047
+  #   - version:  7.050
   #   - author:   Steve A.
   #
   # Check out:
@@ -19,7 +19,10 @@ module GogglesDb
     validates :country,      presence: { length: { within: 1..50 }, allow_nil: true }
     validates :zip,          presence: { length: { within: 1..6 }, allow_nil: true }
     validates :area,         presence: { length: { within: 1..50 }, allow_nil: true }
-    #-- -----------------------------------------------------------------------
+
+    # Filtering scopes:
+    scope :for_name, ->(name) { where('MATCH(name, area) AGAINST(?)', name) }
+    #-- ------------------------------------------------------------------------
     #++
 
     # Returns the tuple [iso_country, iso_city] by searching for matches in the internal ISO-normalized
