@@ -56,6 +56,16 @@ module GogglesDb
       it_behaves_like('filtering scope for_year', TeamAffiliation)
     end
     describe 'self.for_name' do
+      context 'when combined with other associations that include same-named columns,' do
+        subject do
+          GogglesDb::TeamAffiliation.joins(:team)
+                                    .includes(:team)
+                                    .for_name(%w[ferrari dynamic reggiana].sample)
+        end
+        it 'does not raise errors' do
+          expect { subject.count }.not_to raise_error
+        end
+      end
       it_behaves_like('filtering scope FULLTEXT for_name', TeamAffiliation, %w[name], 'ferrari')
       it_behaves_like('filtering scope FULLTEXT for_name', TeamAffiliation, %w[name], 'dynamic')
       it_behaves_like('filtering scope FULLTEXT for_name', TeamAffiliation, %w[name], 'reggiana')

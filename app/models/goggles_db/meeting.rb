@@ -4,7 +4,7 @@ module GogglesDb
   #
   # = Meeting model
   #
-  #   - version:  7.050
+  #   - version:  7.051
   #   - author:   Steve A.
   #
   class Meeting < ApplicationRecord
@@ -78,7 +78,7 @@ module GogglesDb
     scope :by_season, ->(dir = :asc)  { joins(:season).order('seasons.begin_date': dir) }
 
     # Filtering scopes:
-    scope :for_name, ->(name) { where('MATCH(description, code) AGAINST(?)', name) }
+    scope :for_name, ->(name) { where('MATCH(meetings.description, meetings.code) AGAINST(?)', name) }
 
     # TODO: CLEAR UNUSED
     # scope :only_invitation, -> { where('invitation and not results_acquired') } # invitation = manifest
