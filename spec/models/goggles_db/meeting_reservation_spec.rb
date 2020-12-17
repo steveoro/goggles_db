@@ -103,9 +103,6 @@ module GogglesDb
           end
           let(:json_hash) { JSON.parse(subject.to_json) }
 
-          it "doesn't contain the MRRes list" do
-            expect(json_hash['meeting_relay_reservations']).to be nil
-          end
           it_behaves_like(
             '#to_json when the entity contains collection associations with',
             %w[meeting_event_reservations]
@@ -114,15 +111,12 @@ module GogglesDb
 
         context 'when the entity has MRRes,' do
           subject do
-            mrr = GogglesDb::MeetingRelayResult.limit(100).sample
+            mrr = GogglesDb::MeetingRelayReservation.limit(100).sample
             expect(mrr.meeting_reservation).to be_a(MeetingReservation).and be_valid
             mrr.meeting_reservation
           end
           let(:json_hash) { JSON.parse(subject.to_json) }
 
-          it "doesn't contain the MERes list" do
-            expect(json_hash['meeting_event_reservations']).to be nil
-          end
           it_behaves_like(
             '#to_json when the entity contains collection associations with',
             %w[meeting_relay_reservations]
