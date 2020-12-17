@@ -123,5 +123,16 @@ module GogglesDb
         )
       end
     end
+    #-- ------------------------------------------------------------------------
+    #++
+
+    # Verify that the "has_one :meeting, through: :meeting_session" association now relies on
+    # a properly defined callback chain: (was yielding errors in previous versions)
+    context 'when deleting a Meeting that is an ancestor of an existing event,' do
+      subject { FactoryBot.create(:meeting_event) }
+      it 'does not yield any error' do
+        expect { subject.meeting.destroy }.not_to raise_error
+      end
+    end
   end
 end

@@ -17,17 +17,6 @@ module GogglesDb
     validates_associated :event_type
     validates_associated :heat_type
 
-    # [Steve A. 20170718]
-    # Please note that due to how the complete callback chain is currently defined
-    # throughtout the entities, adding here the association:
-    #
-    #    has_one :meeting, through: :meeting_session"
-    #
-    # invalidates "dependent" actions called on top of it, like "meeting#destroy"
-    # due to validation failures.
-    # (Either we remove the meeting_session validation above, or we're happy with avoiding
-    #  adding the association helper method.)
-
     has_one :season,      through: :meeting_session
     has_one :meeting,     through: :meeting_session
     has_one :season_type, through: :meeting_session

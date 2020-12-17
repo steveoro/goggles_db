@@ -72,13 +72,9 @@ module GogglesDb
                        .merge(minimal_associations)
 
       if relay? && meeting_relay_results.count.positive?
-        base.merge!(
-          'meeting_relay_results' => meeting_relay_results.map(&:minimal_attributes)
-        )
+        base.merge!('meeting_relay_results' => meeting_relay_results.map(&:minimal_attributes))
       elsif !relay? && meeting_individual_results.count.positive?
-        base.merge!(
-          'meeting_individual_results' => meeting_individual_results.map(&:minimal_attributes)
-        )
+        base.merge!('meeting_individual_results' => meeting_individual_results.map(&:minimal_attributes))
       end
       base.to_json(options)
     end
