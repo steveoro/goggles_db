@@ -59,6 +59,18 @@ module GogglesDb
     #-- ------------------------------------------------------------------------
     #++
 
+    describe '#minimal_attributes' do
+      subject { FactoryBot.create(:swimmer).minimal_attributes }
+      it 'is an Hash' do
+        expect(subject).to be_an(Hash)
+      end
+      %w[associated_user gender_type].each do |association_name|
+        it "includes the #{association_name} association key" do
+          expect(subject.keys).to include(association_name)
+        end
+      end
+    end
+
     describe '#to_json' do
       subject { FactoryBot.create(:swimmer) }
 

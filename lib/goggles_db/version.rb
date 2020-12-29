@@ -3,13 +3,13 @@
 #
 # = Version module
 #
-#   - version:  7.050
+#   - version:  7.054
 #   - author:   Steve A.
 #
 #   Semantic Versioning implementation.
 module GogglesDb
   # Gem version
-  VERSION = '0.1.51'
+  VERSION = '0.1.54'
 
   module Version
     # Framework Core internal name.
@@ -19,10 +19,10 @@ module GogglesDb
     MAJOR   = '7'
 
     # Minor version.
-    MINOR   = '051'
+    MINOR   = '054'
 
     # Current build version.
-    BUILD   = '20201217'
+    BUILD   = '20201228'
 
     # Full versioning for the current release (Framework + Core).
     FULL    = "#{MAJOR}.#{MINOR}.#{BUILD} (#{CORE} v. #{VERSION})"

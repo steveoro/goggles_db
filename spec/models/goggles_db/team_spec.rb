@@ -86,6 +86,18 @@ module GogglesDb
     #-- ------------------------------------------------------------------------
     #++
 
+    describe '#minimal_attributes' do
+      subject { FactoryBot.create(:team, city: GogglesDb::City.limit(20).sample).minimal_attributes }
+      it 'is an Hash' do
+        expect(subject).to be_an(Hash)
+      end
+      %w[city].each do |association_name|
+        it "includes the #{association_name} association key" do
+          expect(subject.keys).to include(association_name)
+        end
+      end
+    end
+
     describe '#to_json' do
       # Test a minimalistic instance first:
       subject { FactoryBot.create(:team, city: nil) }
@@ -102,7 +114,7 @@ module GogglesDb
 
       # Optional associations:
       context 'when the entity contains other optional associations,' do
-        subject { FactoryBot.create(:team) }
+        subject { FactoryBot.create(:team, city: GogglesDb::City.limit(20).sample) }
         let(:json_hash) do
           expect(subject.city).to be_a(City).and be_valid
           JSON.parse(subject.to_json)

@@ -4,7 +4,7 @@ module GogglesDb
   #
   # = MeetingReservation model
   #
-  #   - version:  7.049
+  #   - version:  7.054
   #   - author:   Steve A.
   #
   # Reservations are individual Meeting registrations, associated just to a specific
@@ -89,6 +89,7 @@ module GogglesDb
     def minimal_associations
       {
         'badge' => badge.minimal_attributes,
+        # (^^ This includes: gender_type, category_type & entry_time_type)
         'team' => team.minimal_attributes,
         'swimmer' => swimmer.minimal_attributes
       }

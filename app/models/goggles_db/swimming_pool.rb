@@ -4,7 +4,7 @@ module GogglesDb
   #
   # = SwimmingPool model
   #
-  #   - version:  7.051
+  #   - version:  7.054
   #   - author:   Steve A.
   #
   class SwimmingPool < ApplicationRecord
@@ -57,16 +57,33 @@ module GogglesDb
     #-- ------------------------------------------------------------------------
     #++
 
+    # Override: include the minimum required 1st-level associations.
+    #
+    def minimal_attributes
+      super.merge(minimal_associations)
+    end
+
     # Override: includes the 1st-level associations into the typical to_json output.
     def to_json(options = nil)
-      attributes.merge(
-        'city' => city.minimal_attributes,
+      attributes.merge(minimal_associations).to_json(options)
+    end
+
+    private
+
+    # Returns the "minimum required" hash of associations.
+    #
+    # Note: the rationale here is to select just the bare amount of "leaf entities" in the hierachy tree,
+    # so that these won't be included more than once in a typical #minimal_attributes output of a
+    # higher level entity.
+    def minimal_associations
+      {
+        'city' => city&.iso_attributes, # (optional, always uses current locale)
         'pool_type' => pool_type.lookup_attributes,
         # Optional:
         'shower_type' => shower_type&.lookup_attributes,
         'hair_dryer_type' => hair_dryer_type&.lookup_attributes,
         'locker_cabinet_type' => locker_cabinet_type&.lookup_attributes
-      ).to_json(options)
+      }
     end
   end
 end

@@ -44,6 +44,7 @@ module GogglesDb
         %i[season_type gender_type managed_affiliations
            header_year
            off_gogglecup? fees_due? badge_due? relays_due?
+           minimal_attributes swimmer_attributes
            to_json]
       )
 
@@ -94,6 +95,24 @@ module GogglesDb
     end
     #-- ------------------------------------------------------------------------
     #++
+
+    describe '#minimal_attributes' do
+      let(:fixture_badge) { FactoryBot.create(:badge) }
+      subject { fixture_badge.minimal_attributes }
+
+      it 'is an Hash' do
+        expect(subject).to be_an(Hash)
+      end
+      %w[gender_type category_type entry_time_type].each do |association_name|
+        it "includes the #{association_name} association key" do
+          expect(subject.keys).to include(association_name)
+        end
+      end
+      it "contains the 'synthetized' swimmer details" do
+        expect(subject['swimmer']).to be_an(Hash).and be_present
+        expect(subject['swimmer']).to eq(fixture_badge.swimmer_attributes)
+      end
+    end
 
     describe '#to_json' do
       subject { FactoryBot.create(:badge) }

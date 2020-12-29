@@ -4,7 +4,7 @@ module GogglesDb
   #
   # = Badge model
   #
-  #   - version:  7.047
+  #   - version:  7.054
   #   - author:   Steve A.
   #
   class Badge < ApplicationRecord
@@ -65,6 +65,25 @@ module GogglesDb
     #-- ------------------------------------------------------------------------
     #++
 
+    # Override: include the minimum required 1st-level associations.
+    #
+    def minimal_attributes
+      super.merge(minimal_associations)
+    end
+
+    # Returns a commodity Hash wrapping the essential data that summarizes the Swimmer
+    # associated to this row.
+    def swimmer_attributes
+      {
+        'id' => swimmer.id,
+        'complete_name' => swimmer.complete_name,
+        'last_name' => swimmer.last_name,
+        'first_name' => swimmer.first_name,
+        'year_of_birth' => swimmer.year_of_birth,
+        'year_guessed' => swimmer.year_guessed
+      }
+    end
+
     # Override: includes all 1st-level associations into the typical to_json output.
     def to_json(options = nil)
       attributes.merge(
@@ -76,6 +95,22 @@ module GogglesDb
         'category_type' => category_type.minimal_attributes,
         'entry_time_type' => entry_time_type.lookup_attributes
       ).to_json(options)
+    end
+
+    private
+
+    # Returns the "minimum required" hash of associations.
+    #
+    # Note: the rationale here is to select just the bare amount of "leaf entities" in the hierachy tree,
+    # so that these won't be included more than once in a typical #minimal_attributes output of a
+    # higher level entity.
+    def minimal_associations
+      {
+        'swimmer' => swimmer_attributes,
+        'gender_type' => swimmer.gender_type.lookup_attributes,
+        'category_type' => category_type.minimal_attributes,
+        'entry_time_type' => entry_time_type.lookup_attributes
+      }
     end
   end
 end

@@ -72,9 +72,29 @@ module GogglesDb
     #-- ------------------------------------------------------------------------
     #++
 
+    describe '#minimal_attributes' do
+      subject { FactoryBot.create(:swimming_pool, city: GogglesDb::City.limit(20).sample).minimal_attributes }
+      it 'is an Hash' do
+        expect(subject).to be_an(Hash)
+      end
+      %w[city pool_type shower_type hair_dryer_type locker_cabinet_type].each do |association_name|
+        it "includes the #{association_name} association key" do
+          expect(subject.keys).to include(association_name)
+        end
+      end
+    end
+
     describe '#to_json' do
       # Test a minimalistic instance first:
-      subject { FactoryBot.create(:swimming_pool, shower_type: nil, hair_dryer_type: nil, locker_cabinet_type: nil) }
+      subject do
+        FactoryBot.create(
+          :swimming_pool,
+          city: GogglesDb::City.limit(20).sample,
+          shower_type: nil,
+          hair_dryer_type: nil,
+          locker_cabinet_type: nil
+        )
+      end
 
       # Required associations:
       it_behaves_like(

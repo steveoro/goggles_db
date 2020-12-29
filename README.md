@@ -43,13 +43,13 @@ The Engine will add a bunch of rake tasks to the application, among which:
 
 ## How to run the test suite
 
-For local testing, just keep your Guard friend running in the background, in a dedicated console:
+For local testing & development, just keep your [Guard](https://github.com/guard/guard) friend running in background from a dedicated console:
 
 ```bash
 $> guard
 ```
 
-If you want to run the full test suite, just hit enter on the Guard console.
+Whenever you want to run the full test suite just hit enter on the Guard console.
 
 As of Rails 6.0.3, most probably there are issues with the combined usage of Guard & Spring together with the new memory management modes in Rails during the Brakeman checks. Sometimes class reloading is prevented and the `brakeman` plugin for Guard fails to actually notice changes in the source code. The checks get a re-run but the result doesn't change (if you have actually fixed an issue). It could be just a simple mis-configuration or a peculiar use-case in this namespaced Engine: we'll see how this goes as we'll update to future versions of Rails.
 
@@ -59,7 +59,7 @@ In any case, although the Guard plugin for Brakeman runs correctly at start, it'
 $> bundle exec brakeman -Aq
 ```
 
-_Please, again, commit & push any changes only when the test suite is :green_heart:._
+_Please, make sure committing & pushing any changes to the repo is done only when the test suite is locally :green_heart:._
 
 
 
@@ -69,14 +69,14 @@ Make sure you have a running MariaDB server & client installation + development 
 
 To speed up the build process, the test suite uses pre-existing anonymized data seeds with **transactional fixtures** and _does not clear the DB before each run_.
 
-For this reason, you'll need a proper DB dump from which restore a suitable DB image before both running the tests or for running a local server during development.
+For this reason, you'll need a proper DB dump from which restore the DB for either running tests or for using a localhost server during development.
 
 
 ### DB management tasks
 
 The tasks added by GogglesDb deal mostly with its DB setup and management. (When called from the project root, in the context of an unmounted Engine, you need to prefix the tasks with `app:`)
 
-- (`app:`)`db:dump`: dumps current Rails environment DB inside the `db/dump` folder. When using the unmounted Engine by itself, the target context of the dumps is the default test-`dummy` app subfolder. The result will be un-namespaced: no database name prefixes on any DDL statements and no `USE` or `CREATE database` SQL statements in it.
+- (`app:`)`db:dump`: dumps current Rails environment DB inside the `db/dump` folder. When using the unmounted Engine by itself, the target context of the dumps is the default test-`dummy` app subfolder. The result of this task will be an un-namespaced, compressed, SQL file dump: no database name prefixes on any DDL statements and no `USE` or `CREATE database` statements in it.
 
 - (`app:`)`db:rebuild`: restores any valid `*.sql.bz2` dump file found stored in `db/dump`. Again, provided the dump image is structured as above: without any DB namespaces in it (as those created by `db:dump` typically are).
 
@@ -87,20 +87,20 @@ $> RAILS_ENV=test rails app:db:rebuild
 ```
 
 
-Also, _any other target DB_ can be prepared for local usage by copying a source dump to another target.
+_Any other target DB_ can be prepared for local usage by copying a source dump to another target.
 
-For example, if you need to work with the `development` environment, you can easily use the anonymized `test` image with:
+For example, if you need to work with the `development` environment, you can easily prepare it with the anonymized `test` image:
 
 ```bash
 $> rails app:db:rebuild from=test to=development
 ```
 
-(It will take some time depending of the dump size: sit back and relax...)
+(The execution will take some time depending of the dump size: sit back and relax...)
 
 
 ### From scratch
 
-A brand new DB image can be built by force-loading the SQL structure file after resetting the current DB and then running the factories for each entity you may need:
+A brand new DB image (for any environment) can be built by force-loading the SQL structure file after resetting the current DB and then running the factories for each entity you may need:
 
 ```bash
 $> rails db:reset
@@ -134,3 +134,8 @@ To create a brand new random user (for example):
 
 ## License
 The gem is available as open source under the terms of the [LGPL-3.0 License](https://opensource.org/licenses/LGPL-3.0).
+
+
+## Supporting
+
+Check out the "sponsor" button at the top of the page.
