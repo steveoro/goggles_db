@@ -27,10 +27,23 @@ Official Framework Wiki, [here](https://github.com/steveoro/goggles_db/wiki) (v.
 
 ## Installation
 
+Just clone the repository on `localhost` and run `bundle install`.
+
+To recreate the DB, see [Database setup](#database-setup) below.
+
+
+## Usage
+
 Add this line to your application's Gemfile:
 
 ```ruby
 gem 'goggles_db', git: 'https://github.com/steveoro/goggles_db'
+```
+
+This gem uses [Git LFS](https://git-lfs.github.com/) to store the `test` DB dump file. When updating the gem from inside any sub-project that uses it, you'll need to skip the DB dump file download with:
+
+```bash
+$> GIT_LFS_SKIP_SMUDGE=1 bundle update goggles_db
 ```
 
 The Engine will add a bunch of rake tasks to the application, among which:
@@ -49,7 +62,7 @@ For local testing & development, just keep your [Guard](https://github.com/guard
 $> guard
 ```
 
-Whenever you want to run the full test suite just hit enter on the Guard console.
+Whenever you want to run the full test suite just hit Enter on the Guard console.
 
 As of Rails 6.0.3, most probably there are issues with the combined usage of Guard & Spring together with the new memory management modes in Rails during the Brakeman checks. Sometimes class reloading is prevented and the `brakeman` plugin for Guard fails to actually notice changes in the source code. The checks get a re-run but the result doesn't change (if you have actually fixed an issue). It could be just a simple mis-configuration or a peculiar use-case in this namespaced Engine: we'll see how this goes as we'll update to future versions of Rails.
 
