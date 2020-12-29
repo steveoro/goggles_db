@@ -4,7 +4,7 @@ module GogglesDb
   #
   # = Team model
   #
-  #   - version:  7.051
+  #   - version:  7.054
   #   - author:   Steve A.
   #
   class Team < ApplicationRecord
@@ -52,6 +52,12 @@ module GogglesDb
     #-- ------------------------------------------------------------------------
     #++
 
+    # Override: include the minimum required 1st-level associations.
+    #
+    def minimal_attributes
+      super.merge(minimal_associations)
+    end
+
     # Instance scope helper for recent badges, given a list of years
     def recent_badges(year_list = [Time.zone.today.year - 1, Time.zone.today.year])
       badges.for_years(*year_list)
@@ -65,10 +71,23 @@ module GogglesDb
     # Override: includes *most* of its 1st-level associations into the typical to_json output.
     def to_json(options = nil)
       attributes.merge(
-        'city' => city&.minimal_attributes, # (optional)
+        'city' => city&.iso_attributes(options&.fetch(:locale, nil)), # (optional, may override locale w/ options)
         'badges' => recent_badges.map(&:minimal_attributes),
         'team_affiliations' => recent_affiliations.map(&:minimal_attributes)
       ).to_json(options)
+    end
+
+    private
+
+    # Returns the "minimum required" hash of associations.
+    #
+    # Note: the rationale here is to select just the bare amount of "leaf entities" in the hierachy tree,
+    # so that these won't be included more than once in a typical #minimal_attributes output of a
+    # higher level entity.
+    def minimal_associations
+      {
+        'city' => city&.iso_attributes # (optional, always uses current locale)
+      }
     end
   end
 end

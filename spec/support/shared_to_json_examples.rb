@@ -2,9 +2,13 @@
 
 # Handles both normal associations and associations with lookup entities (GogglesDb::ApplicationLookupEntity)
 def compare_attributes_between(parsed_json_association_obj, association)
+  # Handle also special case with ISO-normalized values, such as City:
+  if association.respond_to?(:iso_attributes)
+    expect(parsed_json_association_obj).to eq(JSON.parse(association.iso_attributes.to_json))
   # Expect associations with lookup entities to include translated labels in their to_json:
-  if association.respond_to?(:lookup_attributes)
+  elsif association.respond_to?(:lookup_attributes)
     expect(parsed_json_association_obj).to eq(JSON.parse(association.lookup_attributes.to_json))
+  # Default case for most entities:
   else
     expect(parsed_json_association_obj).to eq(JSON.parse(association.minimal_attributes.to_json))
   end
@@ -33,7 +37,7 @@ end
 
 # For model associations that have lots of fields, we may resort to output just a few.
 # Assumes the "synthetized association" uses a public method that has a name like '<ENTITY_attributes>'
-# (as is 'meeting' => 'meeting_attributes') to obtain the Hash of fields that we'll actually use as result.
+# (as is 'meeting' => meeting_attributes) to obtain the Hash of fields that we'll actually use as result.
 shared_examples_for '#to_json when called on a valid instance with a synthetized association' do |synth_associations|
   it 'is a String' do
     expect(subject.to_json).to be_a(String).and be_present

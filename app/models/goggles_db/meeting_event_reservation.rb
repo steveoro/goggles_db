@@ -4,7 +4,7 @@ module GogglesDb
   #
   # = MeetingEventReservation model
   #
-  #   - version:  7.047
+  #   - version:  7.054
   #   - author:   Steve A.
   #
   # Event reservations are individual event registrations, added personally by each athlete.
@@ -55,19 +55,33 @@ module GogglesDb
       }
     end
 
+    # Override: include the minimum required 1st-level associations.
+    #
+    def minimal_attributes
+      super.merge(minimal_associations)
+    end
+
     # Override: includes most relevant data for its 1st-level associations
     def to_json(options = nil)
       attributes.merge(
         'meeting' => meeting_attributes,
         'meeting_event' => meeting_event.minimal_attributes,
         'event_type' => event_type.lookup_attributes,
-        'category_type' => category_type.minimal_attributes,
-        'gender_type' => gender_type.lookup_attributes,
         'badge' => badge.minimal_attributes,
         'team' => team.minimal_attributes,
         'swimmer' => swimmer.minimal_attributes,
         'user' => user.minimal_attributes
       ).to_json(options)
+    end
+
+    private
+
+    # Returns the "minimum required" hash of associations.
+    def minimal_associations
+      {
+        'meeting_event' => meeting_event.minimal_attributes
+        # (^^ This includes: event_type, stroke_type & heat_type)
+      }
     end
   end
 end

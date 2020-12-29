@@ -4,7 +4,7 @@ module GogglesDb
   #
   # = Swimmer model
   #
-  #   - version:  7.051
+  #   - version:  7.054
   #   - author:   Steve A.
   #
   class Swimmer < ApplicationRecord
@@ -30,12 +30,25 @@ module GogglesDb
     #-- ------------------------------------------------------------------------
     #++
 
+    # Override: include the minimum required 1st-level associations.
+    #
+    def minimal_attributes
+      super.merge(minimal_associations)
+    end
+
     # Override: includes all 1st-level associations into the typical to_json output.
     def to_json(options = nil)
-      attributes.merge(
+      attributes.merge(minimal_associations).to_json(options)
+    end
+
+    private
+
+    # Returns the "minimum required" hash of associations.
+    def minimal_associations
+      {
         'associated_user' => associated_user&.minimal_attributes,
         'gender_type' => gender_type.lookup_attributes
-      ).to_json(options)
+      }
     end
   end
 end

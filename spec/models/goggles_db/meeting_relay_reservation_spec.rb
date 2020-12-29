@@ -46,13 +46,25 @@ module GogglesDb
     #-- ------------------------------------------------------------------------
     #++
 
+    describe '#minimal_attributes' do
+      subject { GogglesDb::MeetingRelayReservation.limit(20).sample.minimal_attributes }
+      it 'is an Hash' do
+        expect(subject).to be_an(Hash)
+      end
+      %w[meeting_event].each do |association_name|
+        it "includes the #{association_name} association key" do
+          expect(subject.keys).to include(association_name)
+        end
+      end
+    end
+
     describe '#to_json' do
       subject { FactoryBot.create(:meeting_relay_reservation) }
 
       # Required associations:
       it_behaves_like(
         '#to_json when called on a valid instance',
-        %w[meeting_event event_type category_type gender_type badge team swimmer user]
+        %w[meeting_event event_type badge team swimmer user]
       )
       it_behaves_like(
         '#to_json when called on a valid instance with a synthetized association',

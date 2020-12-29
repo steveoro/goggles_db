@@ -4,7 +4,7 @@ module GogglesDb
   #
   # = MeetingRelayReservation model
   #
-  #   - version:  7.035
+  #   - version:  7.054
   #   - author:   Steve A.
   #
   # Same properties and methods as MeetingEventReservation, with just a different table name
