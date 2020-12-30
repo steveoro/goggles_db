@@ -2,14 +2,14 @@
 
 #
 # = Timing
-#   - Goggles framework vers.:  7.036
+#   - Goggles framework vers.:  7.056
 #   - author: Steve A.
 #
 #  Utility class to store timing data and to allow simple mathematical operations
 #  between timings (delta, sum, ...).
 #
 # === Members:
-#  - <tt>:hundreds</tt> => Integer value for hundreds of a second.
+#  - <tt>:hundreds</tt> => Integer value for hundredths of a second.
 #  - <tt>:seconds</tt> => Integer value for seconds.
 #  - <tt>:minutes</tt> => Integer value for minutes.
 #  - <tt>:hours</tt> => Integer value for hours.
@@ -46,16 +46,6 @@ class Timing
   #-- -------------------------------------------------------------------------
   #++
 
-  # Converts the current instance to a readable string.
-  def to_s
-    (days.to_i.positive? ? "#{days}d " : '') +
-      (hours.to_i.positive? ? "#{hours}h " : '') +
-      format(
-        minutes.to_i.positive? ? "%2s'%02.0f\"%02.0f" : "%2s'%2s\"%02.0f",
-        minutes.to_i, seconds.to_i, hundreds.to_i
-      )
-  end
-
   # Converts the current instance value to total Fixnum value of hundreds of a second.
   def to_hundreds
     @hundreds + @seconds * 100 + @minutes * 6000 +
@@ -76,6 +66,27 @@ class Timing
     remainder = remainder % 100
     @hundreds = remainder
     self
+  end
+
+  # Converts the current instance to a readable string.
+  # Zeros are always displayed for minutes, seconds and hundredths.
+  def to_s
+    compact_digit(days, 'd ') +
+      compact_digit(hours, 'h ') +
+      compact_digit(minutes, "'", single_zero: true) +
+      compact_digit(seconds, '"', leading_zero: true) +
+      compact_digit(hundreds, '', leading_zero: true)
+  end
+
+  # Commodity class method. Similar to +to_s+ method, but it doesn't include
+  # members with non positive values in the output string.
+  #
+  def to_compact_s
+    compact_digit(days, 'd ') +
+      compact_digit(hours, 'h ') +
+      compact_digit(minutes, "'") +
+      compact_digit(seconds, '"', leading_zero: minutes.positive?) +
+      compact_digit(hundreds, '', leading_zero: seconds.positive?)
   end
   #-- -------------------------------------------------------------------------
   #++
@@ -136,25 +147,20 @@ class Timing
   #++
 
   # Commodity class method. Same as to_s.
+  # Normalizes the specified values into the correct number of units.
   #
   def self.to_s(hundreds = 0, seconds = 0, minutes = 0, hours = 0, days = 0)
     Timing.new(hundreds, seconds, minutes, hours, days).to_s
   end
 
-  # Commodity class method. Similar to +to_s+ method, but it doesn't include
-  # members with non positive values in the output string.
+  # Commodity class method. Same as to_compact_s.
+  # Normalizes the specified values into the correct number of units.
   #
   def self.to_compact_s(hundreds = 0, seconds = 0, minutes = 0, hours = 0, days = 0)
-    (days.to_i.zero?       ? '' : "#{days}d ") +
-      (hours.to_i.zero?    ? '' : "#{hours}h ") +
-      (minutes.to_i.zero?  ? '' : format("%<value>2s'", value: minutes)) +
-      (if seconds.to_i.zero?
-         ''
-       else
-         format((minutes.positive? ? '%<value>02.0f"' : '%<value>2s"'), value: seconds)
-       end) +
-      (hundreds.to_i.zero? ? '' : format('%<value>02.0f', value: hundreds))
+    Timing.new(hundreds, seconds, minutes, hours, days).to_compact_s
   end
+  #-- -------------------------------------------------------------------------
+  #++
 
   # Outputs the specified value of seconds in an hour-format string (Hh MM' SS").
   # It skips the output of any 2-digit part when its value is 0.
@@ -178,8 +184,6 @@ class Timing
     seconds = total_seconds.to_i % 60
     to_compact_s(0, seconds, minutes)
   end
-  #-- -------------------------------------------------------------------------
-  #++
 
   # Outputs the specified value of seconds in a "pause in seconds" format (P.SS").
   # Returns an empty string if the value is 0.
@@ -197,4 +201,26 @@ class Timing
   end
   #-- -------------------------------------------------------------------------
   #++
+
+  private
+
+  # Displays the +value+ as string followed by the +char_key+ but only if the value is non-zero.
+  # (Hides zeros otherwise.)
+  #
+  # == Options:
+  #
+  # - +leading_zero+: +true+, single digits will be returned as double digits prefixed with '0';
+  #                           a zero will become '00';
+  # - +single_zero+: +true+, single digits will NOT be prefixed with '0';
+  #                          a zero will remain displayed as '0'.
+  #
+  # When both options are false, zero values won't be displayed and an empty string will be returned.
+  #
+  def compact_digit(value, char_key, leading_zero: false, single_zero: false)
+    actual_layout = leading_zero && !single_zero ? '%<val>02.0f%<key>s' : '%<val>s%<key>s'
+    # Bail out with an empty string if no option is used and the value is zero:
+    return '' if value.to_i.zero? && !leading_zero && !single_zero
+
+    format(actual_layout, val: value, key: char_key)
+  end
 end

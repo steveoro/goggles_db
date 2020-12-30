@@ -9,9 +9,9 @@ module GogglesDb
   #
   # = "Find ISO3166 Cities" command
   #
-  #   - file vers.: 1.08
+  #   - file vers.: 1.56
   #   - author....: Steve A.
-  #   - build.....: 20201116
+  #   - build.....: 20201230
   #
   # === Dependencies:
   #
@@ -100,20 +100,7 @@ module GogglesDb
         return
       end
 
-      regexp = prepare_tokenized_reg_expression
-
-      @iso_country.cities.each do |key_name, city|
-        # Precendence to the Regexp match:
-        regexp_match = key_name =~ regexp
-        if regexp_match
-          @matches << OpenStruct.new(candidate: city, weight: 1.0)
-          break
-        end
-
-        # Store candidates only if they seem to be a match:
-        weight = compute_best_weight(key_name, city)
-        @matches << OpenStruct.new(candidate: city, weight: weight) if weight >= MATCH_BIAS
-      end
+      scan_iso_cities_for_candidates_matching(prepare_tokenized_reg_expression)
 
       errors.add(:name, @city_name) if @matches.empty?
       sort_matches
@@ -129,6 +116,26 @@ module GogglesDb
 
     # Any text distance >= MATCH_BIAS will be considered viable as a match
     MATCH_BIAS = 0.89
+
+    # Loops on the defined Cities names collecting a @matches list with the candidates and their
+    # best weight if the weight reaches at least the MATCH_BIAS.
+    #
+    # Updates directly the internal @matches list.
+    #
+    def scan_iso_cities_for_candidates_matching(regexp)
+      @iso_country.cities.each do |key_name, city|
+        # Precendence to the Regexp match:
+        regexp_match = key_name =~ regexp
+        if regexp_match
+          @matches << OpenStruct.new(candidate: city, weight: 1.0)
+          break
+        end
+
+        # Store candidates only if they seem to be a match:
+        weight = compute_best_weight(key_name, city)
+        @matches << OpenStruct.new(candidate: city, weight: weight) if weight >= MATCH_BIAS
+      end
+    end
 
     # Removes common conjunctions in names to build up a "tokenized" Regexp able to
     # find more easily at least a match from the list of "standardized" city names.
