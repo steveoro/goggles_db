@@ -41,7 +41,7 @@ describe Timing, type: :model do
 
     it_behaves_like(
       'responding to a list of methods',
-      %i[clear from_hundreds + - == <=> to_hundreds to_s]
+      %i[clear from_hundreds + - == <=> to_hundreds to_s to_compact_s]
     )
     it_behaves_like(
       'responding to a list of class methods',
@@ -198,7 +198,7 @@ describe Timing, type: :model do
         expect(subject).to be_an_instance_of(String)
       end
       it 'contains all zeros' do
-        expect(subject).to include("0\' 0\"00")
+        expect(subject).to match("0\'00\"00")
       end
     end
   end
@@ -213,7 +213,7 @@ describe Timing, type: :model do
         expect(subject).to be_an_instance_of(String)
       end
       it 'contains all zeros' do
-        expect(subject).to include("0\' 0\"00")
+        expect(subject).to eq("0\'00\"00")
       end
     end
   end
@@ -248,23 +248,21 @@ describe Timing, type: :model do
   describe 'self.to_hour_string' do
     context 'with a valid parameter,' do
       let(:fixture_secs) { rand * 600_000 }
+      let(:actual_timing) { Timing.new(0, fixture_secs) }
       subject { Timing.to_hour_string(fixture_secs) }
+      before(:each) { expect(actual_timing).to be_a(Timing) }
+
       it 'returns a String' do
         expect(subject).to be_an_instance_of(String)
       end
       it "contains the 'hours' member when its value is > 0" do
-        hours = fixture_secs.to_i / 3600
-        expect(subject).to include("#{hours}h") if hours.positive?
+        expect(subject).to include("#{actual_timing.hours}h") if actual_timing.hours.positive?
       end
       it "contains the 'minutes' member when its value is > 0" do
-        remainder = fixture_secs.to_i % 3600
-        minutes = remainder / 60
-        expect(subject).to include("#{minutes}'") if minutes.positive?
+        expect(subject).to include("#{actual_timing.minutes}'") if actual_timing.minutes.positive?
       end
       it "contains the 'seconds' member when its value is > 0" do
-        remainder = fixture_secs.to_i % 3600
-        seconds = remainder % 60
-        expect(subject).to include("#{seconds}\"") if seconds.positive?
+        expect(subject).to include("#{actual_timing.seconds}\"") if actual_timing.seconds.positive?
       end
     end
 
