@@ -3,7 +3,7 @@
 #
 # = Version module
 #
-#   - version:  7.056
+#   - version:  7.058
 #   - author:   Steve A.
 #
 #   Semantic Versioning implementation.
@@ -22,7 +22,7 @@ module GogglesDb
     MINOR   = '058'
 
     # Current build version.
-    BUILD   = '20210104'
+    BUILD   = '20210106'
 
     # Full versioning for the current release (Framework + Core).
     FULL    = "#{MAJOR}.#{MINOR}.#{BUILD} (#{CORE} v. #{VERSION})"

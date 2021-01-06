@@ -6,9 +6,9 @@ module GogglesDb
   #
   # = Creator command for MeetingReservations
   #
-  #   - file vers.: 1.56
+  #   - file vers.: 1.58
   #   - author....: Steve A.
-  #   - build.....: 20201230
+  #   - build.....: 20210106
   #
   # Allows to create a single MeetingReservation header row together with its associated
   # event & relay reservations for a single swimmer (badge) at a given Meeting.
@@ -41,7 +41,7 @@ module GogglesDb
       return unless internal_members_valid?
 
       result = create_master_row
-      return unless reservation_successful?(result)
+      return if result.nil?
 
       @meeting.meeting_events.each do |meeting_event|
         if meeting_event.relay?
@@ -56,7 +56,7 @@ module GogglesDb
 
     private
 
-    # Checks validity of the constructor parameters
+    # Checks validity of the constructor parameters; returns +false+ in case of error.
     def internal_members_valid?
       return true if @badge.instance_of?(GogglesDb::Badge) && @meeting.instance_of?(GogglesDb::Meeting) && @current_user.instance_of?(GogglesDb::User)
 
@@ -64,18 +64,10 @@ module GogglesDb
       false
     end
 
-    # Checks if the result row was correctly saved.
-    def reservation_successful?(result_row)
-      return true if result_row.persisted? && result_row.valid?
-
-      errors.add(:msg, 'Error during row creation')
-      false
-    end
-
-    # Returns the master reservation row.
-    # In case of error this won't be persisted and no exception will be raised.
+    # Returns the master reservation row, +nil+ in case of errors.
+    #
     def create_master_row
-      GogglesDb::MeetingReservation.create(
+      GogglesDb::MeetingReservation.create!(
         user_id: @current_user.id,
         meeting_id: @meeting.id,
         team_id: @badge.team_id,
@@ -84,40 +76,55 @@ module GogglesDb
         not_coming: false,
         confirmed: false
       )
+    rescue ActiveRecord::RecordNotUnique
+      errors.add(:msg, 'Duplicate master MeetingReservation: not saved')
+      nil
     end
 
-    # Returns a new event reservation row.
-    # Will raise exceptions in case of error during creation.
-    def create_detail_event_row(master_row, meeting_event)
-      GogglesDb::MeetingEventReservation.create!(
+    # Returns a new event reservation row, +nil+ in case of errors.
+    #
+    def prepare_common_options_for_event_detail(master_row, meeting_event)
+      {
         meeting_id: @meeting.id,
         team_id: @badge.team_id,
         swimmer_id: @badge.swimmer_id,
         badge_id: @badge.id,
         meeting_event_id: meeting_event.id,
-        user_id: @current_user.id,
-        minutes: 0,
-        seconds: 0,
-        hundreds: 0,
-        # TODO: ^^^ retrieve suggested timing using dedicated strategy
         accepted: false,
         meeting_reservation_id: master_row.id
-      )
+      }
     end
 
-    # Returns a new relay reservation row.
-    # Will raise exceptions in case of error during creation.
+    # Returns a new event reservation row, +nil+ in case of errors.
+    #
+    def create_detail_event_row(master_row, meeting_event)
+      # Retrieve a default/suggested timing for the entry using a dedicated strategy.
+      # The strategy relies on the EntryTimeType value stored on the @badge.
+      cmd = CmdFindEntryTime.call(@badge.swimmer, @meeting, meeting_event.event_type, meeting_event.pool_type, @badge.entry_time_type)
+      entry_timing = cmd.success? ? cmd.result : Timing.new
+
+      GogglesDb::MeetingEventReservation.create!(
+        prepare_common_options_for_event_detail(master_row, meeting_event)
+          .merge(
+            minutes: entry_timing.minutes,
+            seconds: entry_timing.minutes,
+            hundreds: entry_timing.minutes
+          )
+      )
+    rescue ActiveRecord::RecordNotUnique
+      errors.add(:msg, 'Duplicate detail MeetingEventReservation: not saved')
+      nil
+    end
+
+    # Returns a new relay reservation row, +nil+ in case of errors.
+    #
     def create_detail_relay_row(master_row, meeting_event)
       GogglesDb::MeetingRelayReservation.create!(
-        meeting_id: @meeting.id,
-        team_id: @badge.team_id,
-        swimmer_id: @badge.swimmer_id,
-        badge_id: @badge.id,
-        meeting_event_id: meeting_event.id,
-        user_id: @current_user.id,
-        accepted: false,
-        meeting_reservation_id: master_row.id
+        prepare_common_options_for_event_detail(master_row, meeting_event)
       )
+    rescue ActiveRecord::RecordNotUnique
+      errors.add(:msg, 'Duplicate detail MeetingRelayReservation: not saved')
+      nil
     end
     #-- --------------------------------------------------------------------------
     #++

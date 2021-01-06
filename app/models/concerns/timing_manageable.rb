@@ -5,11 +5,12 @@ require 'active_support'
 #
 # = TimingManageable
 #
-#   - version:  7.036
+#   - version:  7.058
 #   - author:   Steve A.
 #
 # Concrete Interface for Timing helper methods (@see lib/wrappers/timing.rb).
-# By including this concern, the includee adds to itself the #to_timing method.
+# By including this concern, the includee adds to itself the #to_timing and
+# the #from_timing methods.
 #
 # Assumes to be included into an ActiveRecord::Base sibling that includes the following fields:
 # - <tt>:hundreds</tt> => Integer value for hundreds of a second.
@@ -38,6 +39,18 @@ module TimingManageable
   def to_timing
     # MIR doesn't hold an "hour" column due to the typical short time span of the competition:
     Timing.new(hundreds, seconds, minutes % 60, 60 * (minutes / 60))
+  end
+
+  # Sets the internal #hundreds, #seconds & #minutes members according to the specified Timing value.
+  # Supports even hours & days(@see lib/wrappers/timing.rb)
+  #
+  def from_timing(timing)
+    self.hundreds = timing.hundreds
+    self.seconds = timing.seconds
+    self.minutes = timing.minutes
+    self.hours = timing.hours if respond_to?(:hours=)
+    self.days = timing.days if respond_to?(:days=)
+    self
   end
   #-- ------------------------------------------------------------------------
   #++

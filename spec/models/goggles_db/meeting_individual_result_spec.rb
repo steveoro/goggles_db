@@ -46,7 +46,8 @@ module GogglesDb
     #++
 
     # Sorting scopes:
-    # TODO
+    # TODO: by_rank, by_date, by_timing
+
     # describe 'self.by_event_type' do
     #   it_behaves_like('sorting scope by_<ANY_ENTITY_NAME>', MeetingIndividualResult, 'event_type', 'code')
     # end
@@ -81,6 +82,32 @@ module GogglesDb
     end
     describe 'self.for_gender_type' do
       it_behaves_like('filtering scope for_gender_type', MeetingIndividualResult)
+    end
+
+    describe 'self.for_event_type' do
+      it_behaves_like('filtering scope for_<ANY_ENTITY_NAME>', MeetingIndividualResult, 'event_type')
+    end
+    describe 'self.for_pool_type' do
+      it_behaves_like('filtering scope for_<ANY_ENTITY_NAME>', MeetingIndividualResult, 'pool_type')
+    end
+    describe 'self.for_swimmer' do
+      it_behaves_like('filtering scope for_<ANY_ENTITY_NAME>', MeetingIndividualResult, 'swimmer')
+    end
+
+    describe 'self.for_meeting_code' do
+      let(:meeting_filter) do
+        # Filter out unique IDs quick, then load the whole row:
+        meeting_id = Meeting.joins(meeting_events: :meeting_individual_results).select(:id).distinct.limit(20).sample.id
+        Meeting.find(meeting_id)
+      end
+      let(:result) { MeetingIndividualResult.for_meeting_code(meeting_filter).limit(20) }
+
+      it 'is a relation containing only MeetingIndividualResults associated to the filter' do
+        expect(result).to be_a(ActiveRecord::Relation)
+        expect(result).to all be_a(MeetingIndividualResult)
+        list_of_meeting_codes = result.map { |mir| mir.meeting.code }.uniq.sort
+        expect(list_of_meeting_codes).to eq([meeting_filter.code])
+      end
     end
     #-- ------------------------------------------------------------------------
     #++

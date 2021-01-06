@@ -43,7 +43,7 @@ module GogglesDb
         'responding to a list of methods',
         %i[meetings meeting_team_scores computed_season_rankings standard_timings
            category_types badges swimmers team_affiliations teams
-           ended? started? individual_rank?]
+           ended? started? ongoing? individual_rank?]
       )
       # Presence of fields & requiredness:
       it_behaves_like(
@@ -53,13 +53,26 @@ module GogglesDb
       #-- ----------------------------------------------------------------------
       #++
 
-      describe '#ended?' do
+      shared_examples_for 'Season date range checking methods evaluating a custom date' do |method_name, member_name|
         context 'when checking specific dates,' do
           it 'evaluates the given date returning true or false accordingly' do
-            expect(subject.ended?(subject.end_date + 365.days)).to be true
-            expect(subject.ended?(subject.end_date - 365.days)).to be false
+            expect(subject.send(method_name, subject.end_date + 365.days)).to be true
+            expect(subject.send(method_name, subject.end_date - 365.days)).to be false
           end
         end
+        context 'when the subject has invalid dates,' do
+          it 'returns always false' do
+            subject.send(member_name, nil)
+            expect(subject.send(method_name, Date.parse('2025-12-31'))).to be false
+            expect(subject.send(method_name, Date.parse('1999-01-01'))).to be false
+            expect(subject.send(method_name)).to be false
+          end
+        end
+      end
+
+      describe '#ended?' do
+        it_behaves_like('Season date range checking methods evaluating a custom date', :ended?, :end_date=)
+
         context 'when moving or extending the subject dates,' do
           it 'evaluates the given date returning true or false accordingly' do
             subject.begin_date = Date.today - 465.days
@@ -71,23 +84,11 @@ module GogglesDb
             expect(subject.ended?).to be false
           end
         end
-        context 'when the subject has invalid dates,' do
-          it 'returns always false' do
-            subject.end_date = nil
-            expect(subject.ended?(Date.parse('2025-12-31'))).to be false
-            expect(subject.ended?(Date.parse('1999-01-01'))).to be false
-            expect(subject.ended?).to be false
-          end
-        end
       end
 
       describe '#started?' do
-        context 'when checking specific dates,' do
-          it 'evaluates the given date returning true or false accordingly' do
-            expect(subject.started?(subject.begin_date + 365.days)).to be true
-            expect(subject.started?(subject.begin_date - 365.days)).to be false
-          end
-        end
+        it_behaves_like('Season date range checking methods evaluating a custom date', :started?, :begin_date=)
+
         context 'when moving or extending the subject dates,' do
           it 'evaluates the given date returning true or false accordingly' do
             subject.begin_date = Date.today - 200.days
@@ -97,12 +98,30 @@ module GogglesDb
             expect(subject.started?).to be false
           end
         end
-        context 'when the subject has invalid dates,' do
-          it 'returns always false' do
-            subject.begin_date = nil
-            expect(subject.started?(Date.parse('2025-12-31'))).to be false
-            expect(subject.started?(Date.parse('1999-01-01'))).to be false
-            expect(subject.started?).to be false
+      end
+
+      describe '#ongoing?' do
+        context 'when checking dates outside the season definition,' do
+          it 'is always false' do
+            expect(subject.ongoing?(subject.begin_date + 365.days)).to be false
+            expect(subject.ongoing?(subject.begin_date - 365.days)).to be false
+          end
+        end
+        context 'when checking dates inside the season definition,' do
+          it 'is always true' do
+            expect(subject.ongoing?).to be true # (Default seasons created by the factory will always be ongoing)
+          end
+        end
+        context 'when checking a not-yet started season,' do
+          it 'is always false' do
+            subject.begin_date = Time.zone.today + 1.months
+            expect(subject.ongoing?).to be false
+          end
+        end
+        context 'when checking an already ended season,' do
+          it 'is always false' do
+            subject.end_date = Time.zone.today - 1.week
+            expect(subject.ongoing?).to be false
           end
         end
       end
@@ -122,6 +141,7 @@ module GogglesDb
         let(:result) { subject.class.ongoing }
         it 'is a list of started, ongoing Seasons' do
           expect(result).to be_a(ActiveRecord::Relation)
+          expect(result).to all be_a(Season).and be_ongoing
           expect(result).to all be_a(Season).and be_started
           expect(result.none?(&:ended?)).to be true
         end

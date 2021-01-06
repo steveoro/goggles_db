@@ -78,7 +78,7 @@ module GogglesDb
         end
         it 'has a non-empty #errors list displaying a error message about header creation failure' do
           expect(subject.errors).to be_present
-          expect(subject.errors[:msg]).to eq(['Error during row creation'])
+          expect(subject.errors[:msg]).to eq(['Duplicate master MeetingReservation: not saved'])
         end
         it 'has a nil #result' do
           expect(subject.result).to be nil

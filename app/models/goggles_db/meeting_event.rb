@@ -4,7 +4,7 @@ module GogglesDb
   #
   # = MeetingEvent model
   #
-  #   - version:  7.049
+  #   - version:  7.058
   #   - author:   Steve A.
   #
   class MeetingEvent < ApplicationRecord
@@ -20,6 +20,7 @@ module GogglesDb
     has_one :season,      through: :meeting_session
     has_one :meeting,     through: :meeting_session
     has_one :season_type, through: :meeting_session
+    has_one :pool_type,   through: :meeting_session
     has_one :stroke_type, through: :event_type
 
     has_many :meeting_programs, dependent: :delete_all
@@ -81,6 +82,7 @@ module GogglesDb
     def minimal_associations
       {
         'event_type' => event_type.lookup_attributes,
+        'pool_type' => pool_type.lookup_attributes,
         'stroke_type' => stroke_type.lookup_attributes,
         'heat_type' => heat_type.lookup_attributes
       }
