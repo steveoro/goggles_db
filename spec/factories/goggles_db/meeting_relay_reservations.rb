@@ -8,7 +8,6 @@ FactoryBot.define do
     badge                 { meeting_reservation.badge }
     team                  { badge.team }
     swimmer               { badge.swimmer }
-    user
     accepted              { true }
     notes                 { nil }
     #-- -----------------------------------------------------------------------

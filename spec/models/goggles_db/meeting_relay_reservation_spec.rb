@@ -14,7 +14,7 @@ module GogglesDb
 
       it_behaves_like(
         'having one or more required associations',
-        %i[meeting_reservation meeting meeting_event badge team swimmer user
+        %i[meeting_reservation meeting meeting_event badge team swimmer
            season season_type meeting_session event_type category_type gender_type]
       )
 
@@ -64,7 +64,7 @@ module GogglesDb
       # Required associations:
       it_behaves_like(
         '#to_json when called on a valid instance',
-        %w[meeting_event event_type badge team swimmer user]
+        %w[meeting_event event_type badge team swimmer]
       )
       it_behaves_like(
         '#to_json when called on a valid instance with a synthetized association',

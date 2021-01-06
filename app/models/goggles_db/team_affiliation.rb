@@ -4,7 +4,7 @@ module GogglesDb
   #
   # = TeamAffiliation model
   #
-  #   - version:  7.051
+  #   - version:  7.058
   #   - author:   Steve A.
   #
   class TeamAffiliation < ApplicationRecord
@@ -28,7 +28,6 @@ module GogglesDb
     # TODO: unused yet
     # scope :by_season, ->(dir = :asc) { joins(:season).order('seasons.begin_date': dir, 'team_affiliations.name': dir) }
     # scope :by_team,   ->(dir = :asc) { joins(:team).order('teams.name': dir) }
-    # scope :by_user,   ->(dir = :asc) { joins(:user).order('users.name': dir) }
 
     # Filtering scopes:
     scope :for_year,  ->(header_year) { joins(:season).where('seasons.header_year': header_year) }
