@@ -6,7 +6,6 @@ FactoryBot.define do
     badge                 { meeting_reservation.badge }
     team                  { badge.team }
     swimmer               { badge.swimmer }
-    user
     minutes               { ((rand * 2) % 2).to_i }
     seconds               { ((rand * 59) % 59).to_i }
     hundreds              { ((rand * 100) % 99).to_i }

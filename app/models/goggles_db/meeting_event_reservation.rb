@@ -4,7 +4,7 @@ module GogglesDb
   #
   # = MeetingEventReservation model
   #
-  #   - version:  7.054
+  #   - version:  7.058
   #   - author:   Steve A.
   #
   # Event reservations are individual event registrations, added personally by each athlete.
@@ -20,7 +20,6 @@ module GogglesDb
     belongs_to :badge
     belongs_to :team
     belongs_to :swimmer
-    belongs_to :user
 
     validates_associated :meeting_reservation
     validates_associated :meeting
@@ -28,7 +27,6 @@ module GogglesDb
     validates_associated :badge
     validates_associated :team
     validates_associated :swimmer
-    validates_associated :user
 
     has_one :season,          through: :meeting
     has_one :season_type,     through: :meeting
@@ -69,8 +67,7 @@ module GogglesDb
         'event_type' => event_type.lookup_attributes,
         'badge' => badge.minimal_attributes,
         'team' => team.minimal_attributes,
-        'swimmer' => swimmer.minimal_attributes,
-        'user' => user.minimal_attributes
+        'swimmer' => swimmer.minimal_attributes
       ).to_json(options)
     end
 

@@ -10,6 +10,23 @@ namespace :db do
     puts "\r\n*** Anonimize data ***"
     # Prevent messing around with production data:
     abort('The Rails environment is running in production mode!') if Rails.env.production?
+
+    puts "\r\n--> Processing Meetings (clearing personal data references, all-in-one, tot. #{GogglesDb::Meeting.count})..."
+    GogglesDb::Meeting.update_all(
+      reference_phone: nil,
+      reference_e_mail: nil,
+      reference_name: nil,
+      notes: nil
+    )
+    puts "--> Processing Swimming pools (clearing personal data references, all-in-one, tot. #{GogglesDb::SwimmingPool.count})..."
+    GogglesDb::SwimmingPool.update_all(
+      phone_number: nil,
+      fax_number: nil,
+      e_mail: nil,
+      contact_name: nil,
+      notes: nil
+    )
+
     puts 'Importing factories...'
     FactoryBot.definition_file_paths = ["#{GogglesDb::Engine.root}/spec/factories"]
     FactoryBot.reload
@@ -28,7 +45,7 @@ namespace :db do
     puts "\r\n--> Processing Swimmers (1x'.' => 10x; tot. #{GogglesDb::Swimmer.count})"
     # Skip our associated swimmers (because we don't have anything to hide :-) ):
     GogglesDb::Swimmer.where('(id != 23) AND (id != 142)')
-                      .find_each(batch_size: 100).with_index do |swimmer, index|
+                      .find_each(batch_size: 500).with_index do |swimmer, index|
       fake_row = FactoryBot.build(:swimmer)
       swimmer.update_columns(
         fake_row.attributes.compact.reject { |attr| attr == 'lock_version' }
