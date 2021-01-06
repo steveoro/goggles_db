@@ -15,7 +15,7 @@ module GogglesDb
       it_behaves_like(
         'having one or more required associations',
         %i[meeting_session event_type heat_type
-           season meeting season_type stroke_type]
+           season meeting pool_type season_type stroke_type]
       )
 
       # Presence of fields & requiredness:
@@ -95,7 +95,7 @@ module GogglesDb
       it 'is an Hash' do
         expect(subject).to be_an(Hash)
       end
-      %w[event_type stroke_type heat_type].each do |association_name|
+      %w[event_type pool_type stroke_type heat_type].each do |association_name|
         it "includes the #{association_name} association key" do
           expect(subject.keys).to include(association_name)
         end
@@ -106,7 +106,7 @@ module GogglesDb
       # Required associations:
       it_behaves_like(
         '#to_json when called on a valid instance',
-        %w[meeting_session event_type stroke_type heat_type season season_type]
+        %w[meeting_session event_type pool_type stroke_type heat_type season season_type]
       )
       # Collection associations:
       context 'when the entity contains collection associations,' do

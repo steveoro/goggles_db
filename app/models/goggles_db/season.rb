@@ -4,7 +4,7 @@ module GogglesDb
   #
   # = Season model
   #
-  #   - version:  7.041
+  #   - version:  7.058
   #   - author:   Steve A.
   #
   class Season < ApplicationRecord
@@ -50,7 +50,7 @@ module GogglesDb
 
     # Filtering scopes:
     scope :for_season_type, ->(season_type) { where(season_type_id: season_type.id) }
-    scope :ongoing,      -> { where(Arel.sql('end_date IS NOT NULL AND end_date >= curdate()')) }
+    scope :ongoing,      -> { where(Arel.sql('begin_date IS NOT NULL AND begin_date <= curdate() AND end_date IS NOT NULL AND end_date >= curdate()')) }
     scope :ended,        -> { where(Arel.sql('end_date IS NOT NULL AND end_date < curdate()')) }
     scope :ended_before, ->(end_date) { where('end_date IS NOT NULL AND end_date < ?', end_date) }
     # TODO
@@ -79,6 +79,15 @@ module GogglesDb
     #
     def started?(check_date = Date.today)
       begin_date ? begin_date <= check_date : false
+    end
+
+    # Returns if the season is still ongoing according to the specified date; false otherwise.
+    #
+    # == Parameters:
+    # - check_date: the date for the check
+    #
+    def ongoing?(check_date = Date.today)
+      started?(check_date) && !ended?(check_date)
     end
 
     # Override: includes all 1st-level associations into the typical to_json output.

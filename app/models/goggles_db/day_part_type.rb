@@ -32,7 +32,7 @@ module GogglesDb
           instance_variable_get("@#{word}")
         end
       end
-      # Define an helper class method that returns true if the ID corresponds to the word token:
+      # Define an helper instance method that returns true if the ID corresponds to the word token:
       # (As in: def male? ; id == MALE_ID ; end )
       define_method("#{word}?".to_sym) { id == "#{self.class.name}::#{word.upcase}_ID".constantize }
     end

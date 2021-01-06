@@ -62,7 +62,7 @@ module GogglesDb
         end
       end
 
-      # Define an helper class method that returns true if the ID corresponds to the word token:
+      # Define an helper instance method that returns true if the ID corresponds to the word token:
       define_method("#{word}?".to_sym) { id == "#{self.class.name}::#{word.upcase}_ID".constantize }
     end
     #-- ------------------------------------------------------------------------
