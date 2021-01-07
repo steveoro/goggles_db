@@ -22,7 +22,7 @@ module GogglesDb
     MINOR   = '058'
 
     # Current build version.
-    BUILD   = '20210106'
+    BUILD   = '20210107'
 
     # Full versioning for the current release (Framework + Core).
     FULL    = "#{MAJOR}.#{MINOR}.#{BUILD} (#{CORE} v. #{VERSION})"

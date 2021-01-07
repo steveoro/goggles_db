@@ -15,6 +15,7 @@ module GogglesDb
     let(:fixture_mir) do
       GogglesDb::MeetingIndividualResult.includes(:pool_type, :event_type)
                                         .joins(:pool_type, :event_type)
+                                        .qualifications
                                         .where(
                                           'pool_types.id': fixture_pool_type.id,
                                           'event_types.id': fixture_event_type.id
