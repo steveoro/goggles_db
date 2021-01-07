@@ -7,9 +7,9 @@ module GogglesDb
   #
   # = MeetingEntry suggested timing finder command
   #
-  #   - file vers.: 1.58
+  #   - file vers.: 7.059
   #   - author....: Steve A.
-  #   - build.....: 20210106
+  #   - build.....: 20210107
   #
   # Finds the best MeetingIndividualResult candidate (MIR, for brevity) that encapsulates
   # the timing to be used for a new MeetingEntry.
@@ -23,8 +23,8 @@ module GogglesDb
     attr_reader :mir
 
     # Creates a new command object given the parameters.
-    #
-    def initialize(swimmer, meeting, event_type, pool_type, entry_time_type)
+    # Defaults to GogglesDb::EntryTimeType.last_race when the entry_time_type is not set on the Badge.
+    def initialize(swimmer, meeting, event_type, pool_type, entry_time_type = GogglesDb::EntryTimeType.last_race)
       @swimmer = swimmer
       @meeting = meeting
       @event_type = event_type
@@ -54,8 +54,10 @@ module GogglesDb
 
     # Checks validity of the constructor parameters; returns +false+ in case of error.
     def internal_members_valid?
-      return true if @swimmer.instance_of?(GogglesDb::Swimmer) && @meeting.instance_of?(GogglesDb::Meeting) &&
-                     @event_type.instance_of?(GogglesDb::EventType) && @pool_type.instance_of?(GogglesDb::PoolType) &&
+      # (The Meeting instance is not critical and could also be nil is some edge use-cases)
+      return true if @swimmer.instance_of?(GogglesDb::Swimmer) &&
+                     @event_type.instance_of?(GogglesDb::EventType) &&
+                     @pool_type.instance_of?(GogglesDb::PoolType) &&
                      @entry_time_type.instance_of?(GogglesDb::EntryTimeType)
 
       errors.add(:msg, 'Invalid constructor parameters')

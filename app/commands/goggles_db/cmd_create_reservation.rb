@@ -58,7 +58,9 @@ module GogglesDb
 
     # Checks validity of the constructor parameters; returns +false+ in case of error.
     def internal_members_valid?
-      return true if @badge.instance_of?(GogglesDb::Badge) && @meeting.instance_of?(GogglesDb::Meeting) && @current_user.instance_of?(GogglesDb::User)
+      return true if @badge.instance_of?(GogglesDb::Badge) && @badge.valid? &&
+                     @meeting.instance_of?(GogglesDb::Meeting) && @meeting.valid? &&
+                     @current_user.instance_of?(GogglesDb::User) && @current_user.valid?
 
       errors.add(:msg, 'Invalid constructor parameters')
       false

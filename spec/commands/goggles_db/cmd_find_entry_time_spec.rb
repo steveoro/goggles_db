@@ -105,11 +105,12 @@ module GogglesDb
     context 'when using invalid constructor parameters,' do
       describe '#call' do
         subject do
-          option = [fixture_swimmer, fixture_meeting, fixture_event_type,
+          option = [fixture_swimmer, fixture_event_type,
                     fixture_pool_type, EntryTimeType.all.sample]
           # Make a random item invalid for the constructor:
+          # (The Meeting instance is not critical and is not checked)
           option[(rand * 10 % option.size).to_i] = nil
-          CmdFindEntryTime.call(option[0], option[1], option[2], option[3], option[4])
+          CmdFindEntryTime.call(option[0], fixture_meeting, option[2], option[3], option[4])
         end
 
         it 'returns itself' do

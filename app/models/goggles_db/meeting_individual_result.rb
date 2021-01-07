@@ -6,7 +6,7 @@ module GogglesDb
   #
   # = MeetingIndividualResult model
   #
-  #   - version:  7.058
+  #   - version:  7.059
   #   - author:   Steve A.
   #
   class MeetingIndividualResult < ApplicationRecord
@@ -92,7 +92,7 @@ module GogglesDb
     scope :for_event_type,    ->(event_type)  { joins(:event_type).where('event_types.id': event_type.id) }
     scope :for_pool_type,     ->(pool_type)   { joins(:pool_type).where('pool_types.id': pool_type.id) }
     scope :for_swimmer,       ->(swimmer)     { where(swimmer_id: swimmer.id) }
-    scope :for_meeting_code,  ->(meeting)     { joins(:meeting).where('meetings.code': meeting.code) }
+    scope :for_meeting_code,  ->(meeting)     { joins(:meeting).where('meetings.code': meeting&.code) }
 
     # TODO: CLEAR UNUSED
     # scope :with_rank,         ->(rank_filter) { where(rank: rank_filter) }
