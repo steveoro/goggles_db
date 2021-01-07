@@ -54,7 +54,7 @@ module GogglesDb
         it 'creates the same number & types of events' do
           expect(
             subject.result.meeting_events.map { |me| me.event_type.code }
-          ).to eq(
+          ).to match_array(
             meeting_source.meeting_events.map { |me| me.event_type.code }
           )
         end
@@ -71,7 +71,7 @@ module GogglesDb
           # Extract result list of coded programs and compare it with source:
           expect(
             subject.result.meeting_programs.map { |mprg| compose_coded_meeting_program(mprg) }
-          ).to eq(
+          ).to match_array(
             meeting_source.meeting_programs.map { |mprg| compose_coded_meeting_program(mprg) }
           )
         end
