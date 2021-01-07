@@ -4,7 +4,7 @@ module GogglesDb
   #
   # = Meeting model
   #
-  #   - version:  7.059
+  #   - version:  7.060
   #   - author:   Steve A.
   #
   class Meeting < ApplicationRecord
@@ -15,7 +15,7 @@ module GogglesDb
     belongs_to :timing_type
 
     # Legacy name: "organization_team"
-    # belongs_to :home_team, optional: true, class_name: 'Team'
+    belongs_to :home_team, optional: true, class_name: 'Team'
 
     validates_associated :season
     validates_associated :edition_type
