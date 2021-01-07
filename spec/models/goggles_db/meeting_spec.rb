@@ -36,6 +36,7 @@ module GogglesDb
            meeting_events meeting_programs meeting_entries meeting_individual_results meeting_relay_results
            meeting_reservations meeting_event_reservations meeting_relay_reservations
            reference_phone reference_e_mail reference_name configuration_file
+           home_team
            max_individual_events max_individual_events_per_session
            warm_up_pool? allows_under_25? manifest? startlist? off_season? confirmed? cancelled?
            tweeted? posted?

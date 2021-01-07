@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_01_04_183700) do
+ActiveRecord::Schema.define(version: 2021_01_07_181622) do
 
   create_table "achievement_rows", id: :integer, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
     t.integer "lock_version", default: 0
@@ -1418,7 +1418,7 @@ ActiveRecord::Schema.define(version: 2021_01_04_183700) do
     t.boolean "posted", default: false
     t.boolean "cancelled", default: false
     t.boolean "pb_acquired", default: false
-    t.bigint "organization_team_id"
+    t.bigint "home_team_id"
     t.boolean "read_only", default: false, null: false
     t.decimal "meeting_fee", precision: 10, scale: 2
     t.decimal "event_fee", precision: 10, scale: 2
@@ -1428,9 +1428,9 @@ ActiveRecord::Schema.define(version: 2021_01_04_183700) do
     t.index ["edition_type_id"], name: "fk_meetings_edition_types"
     t.index ["entry_deadline"], name: "index_meetings_on_entry_deadline"
     t.index ["header_date"], name: "idx_meetings_header_date"
+    t.index ["home_team_id"], name: "index_meetings_on_home_team_id"
     t.index ["individual_score_computation_type_id"], name: "fk_meetings_score_individual_score_computation_types"
     t.index ["meeting_score_computation_type_id"], name: "fk_meetings_score_meeting_score_computation_types"
-    t.index ["organization_team_id"], name: "index_meetings_on_organization_team_id"
     t.index ["relay_score_computation_type_id"], name: "fk_meetings_score_relay_score_computation_types"
     t.index ["season_id"], name: "fk_meetings_seasons"
     t.index ["team_score_computation_type_id"], name: "fk_meetings_score_team_score_computation_types"
