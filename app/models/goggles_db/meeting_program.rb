@@ -4,7 +4,7 @@ module GogglesDb
   #
   # = MeetingProgram model
   #
-  #   - version:  7.047
+  #   - version:  7.061
   #   - author:   Steve A.
   #
   class MeetingProgram < ApplicationRecord
@@ -82,6 +82,9 @@ module GogglesDb
     private
 
     # Returns the "minimum required" hash of associations.
+    #
+    # Typical use for this is as helper method called from within the #to_json definition of a parent entity.
+    # Assuming the above, usually most associations can be safely skipped avoid duplication output.
     def minimal_associations
       {
         'pool_type' => pool_type.lookup_attributes,

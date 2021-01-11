@@ -4,7 +4,7 @@ module GogglesDb
   #
   # = TeamAffiliation model
   #
-  #   - version:  7.058
+  #   - version:  7.061
   #   - author:   Steve A.
   #
   class TeamAffiliation < ApplicationRecord
@@ -51,7 +51,7 @@ module GogglesDb
       attributes.merge(
         'team' => team.minimal_attributes,
         'season' => season.minimal_attributes,
-        'badges' => recent_badges.map(&:minimal_attributes),
+        'badges' => recent_badges([season.begin_date.year, season.end_date.year]).map(&:minimal_attributes),
         'managers' => managers
       ).to_json(options)
     end
