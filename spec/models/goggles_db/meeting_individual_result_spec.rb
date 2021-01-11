@@ -29,7 +29,7 @@ module GogglesDb
       it_behaves_like(
         'responding to a list of methods',
         %i[out_of_race? disqualified? personal_best?
-           valid_for_ranking? to_timing to_json]
+           valid_for_ranking? to_timing minimal_attributes to_json]
       )
     end
 
@@ -132,6 +132,23 @@ module GogglesDb
     describe 'regarding the timing fields,' do
       let(:fixture_row) { FactoryBot.build(:meeting_individual_result) }
       it_behaves_like 'TimingManageable'
+    end
+
+    describe '#minimal_attributes' do
+      let(:fixture_mir) { MeetingIndividualResult.limit(500).sample }
+      before(:each) { expect(fixture_mir).to be_a(MeetingIndividualResult).and be_valid }
+
+      subject { fixture_mir.minimal_attributes }
+
+      it 'is an Hash' do
+        expect(subject).to be_an(Hash)
+      end
+      %w[swimmer team_affiliation disqualification_code_type].each do |association_name|
+        it "includes the #{association_name} association key" do
+          # Don't check nil association links: (it may happen)
+          expect(subject.keys).to include(association_name) if fixture_mir.send(association_name).present?
+        end
+      end
     end
 
     describe '#to_json' do

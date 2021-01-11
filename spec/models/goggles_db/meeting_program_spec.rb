@@ -72,7 +72,7 @@ module GogglesDb
     #++
 
     describe '#minimal_attributes' do
-      subject { GogglesDb::MeetingProgram.limit(200).sample.minimal_attributes }
+      subject { MeetingProgram.limit(500).sample.minimal_attributes }
       it 'is an Hash' do
         expect(subject).to be_an(Hash)
       end

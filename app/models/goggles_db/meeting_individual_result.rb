@@ -6,7 +6,7 @@ module GogglesDb
   #
   # = MeetingIndividualResult model
   #
-  #   - version:  7.059
+  #   - version:  7.061
   #   - author:   Steve A.
   #
   class MeetingIndividualResult < ApplicationRecord
@@ -159,6 +159,12 @@ module GogglesDb
       }
     end
 
+    # Override: include the "minimum required" hash of associations.
+    #
+    def minimal_attributes
+      super.merge(minimal_associations)
+    end
+
     # Override: includes most relevant data for its 1st-level associations
     def to_json(options = nil)
       attributes.merge(
@@ -172,6 +178,20 @@ module GogglesDb
         'stroke_type' => stroke_type.lookup_attributes,
         'laps' => laps&.map(&:minimal_attributes) # (Optional)
       ).to_json(options)
+    end
+
+    private
+
+    # Returns the "minimum required" hash of associations.
+    #
+    # Typical use for this is as helper method called from within the #to_json definition of a parent entity.
+    # Assuming the above, usually most associations can be safely skipped avoid duplication output.
+    def minimal_associations
+      {
+        'swimmer' => swimmer&.minimal_attributes,
+        'team_affiliation' => team_affiliation&.minimal_attributes,
+        'disqualification_code_type' => disqualification_code_type&.lookup_attributes
+      }
     end
   end
 end
