@@ -49,6 +49,7 @@ module GogglesDb
 
     # Sorting scopes:
     scope :by_rank,   ->(dir = :asc) { order(disqualified: :asc, rank: dir.to_s.downcase.to_sym) }
+    scope :by_date,   ->(dir = :asc) { joins(:meeting_session).order('meeting_sessions.scheduled_date': dir) }
     scope :by_timing, lambda { |dir = :asc|
       order(
         disqualified: :asc,
@@ -61,7 +62,6 @@ module GogglesDb
 
     # TODO: CLEAR UNUSED
     # scope :by_meeting, ->(dir){ order("meeting_programs.meeting_session_id #{dir}, swimmers.last_name #{dir}, swimmers.first_name #{dir}") }
-    # scope :by_date,   ->(dir = :asc) { joins(:meeting_session).order('meeting_sessions.scheduled_date': dir) }
     # scope :by_swimmer, ->(dir = :asc) { joins(:swimmer).order("swimmers.complete_name #{dir}, meeting_individual_results.rank #{dir}") }
     # scope :by_team,    ->(dir = :asc) { joins(:team, :swimmer).order("teams.name #{dir}, swimmers.complete_name #{dir}") }
     # scope :by_badge,   ->(dir = :asc) { joins(:badge).order("badges.number #{dir}") }
