@@ -6,7 +6,7 @@ module GogglesDb
   #
   # = MeetingIndividualResult model
   #
-  #   - version:  7.061
+  #   - version:  7.063
   #   - author:   Steve A.
   #
   class MeetingIndividualResult < ApplicationRecord
@@ -49,7 +49,6 @@ module GogglesDb
 
     # Sorting scopes:
     scope :by_rank,   ->(dir = :asc) { order(disqualified: :asc, rank: dir.to_s.downcase.to_sym) }
-    scope :by_date,   ->(dir = :asc) { joins(:meeting_session).order('meeting_sessions.scheduled_date': dir) }
     scope :by_timing, lambda { |dir = :asc|
       order(
         disqualified: :asc,
@@ -62,6 +61,7 @@ module GogglesDb
 
     # TODO: CLEAR UNUSED
     # scope :by_meeting, ->(dir){ order("meeting_programs.meeting_session_id #{dir}, swimmers.last_name #{dir}, swimmers.first_name #{dir}") }
+    # scope :by_date,   ->(dir = :asc) { joins(:meeting_session).order('meeting_sessions.scheduled_date': dir) }
     # scope :by_swimmer, ->(dir = :asc) { joins(:swimmer).order("swimmers.complete_name #{dir}, meeting_individual_results.rank #{dir}") }
     # scope :by_team,    ->(dir = :asc) { joins(:team, :swimmer).order("teams.name #{dir}, swimmers.complete_name #{dir}") }
     # scope :by_badge,   ->(dir = :asc) { joins(:badge).order("badges.number #{dir}") }
@@ -150,12 +150,25 @@ module GogglesDb
     end
 
     # Similarly to <tt>#meeting_attributes</tt>, this returns a commodity Hash
-    # summarizing the MeetingSession associated to this row.
+    # summarizing the associated MeetingSession.
     def meeting_session_attributes
       {
         'id' => meeting_session.id,
         'session_order' => meeting_session.session_order,
         'scheduled_date' => meeting_session.scheduled_date
+      }
+    end
+
+    # Similarly to <tt>#meeting_attributes</tt>, this returns a commodity Hash
+    # summarizing the associated Swimmer.
+    def swimmer_attributes
+      {
+        'id' => swimmer_id,
+        'complete_name' => swimmer&.complete_name,
+        'last_name' => swimmer&.last_name,
+        'first_name' => swimmer&.first_name,
+        'year_of_birth' => swimmer&.year_of_birth,
+        'year_guessed' => swimmer&.year_guessed
       }
     end
 
@@ -177,6 +190,8 @@ module GogglesDb
         'gender_type' => gender_type.lookup_attributes,
         'stroke_type' => stroke_type.lookup_attributes,
         'laps' => laps&.map(&:minimal_attributes) # (Optional)
+      ).merge(
+        minimal_associations
       ).to_json(options)
     end
 
@@ -184,12 +199,12 @@ module GogglesDb
 
     # Returns the "minimum required" hash of associations.
     #
-    # Typical use for this is as helper method called from within the #to_json definition of a parent entity.
-    # Assuming the above, usually most associations can be safely skipped avoid duplication output.
+    # Typical use for this is as helper called from within the #to_json definition
+    # of a parent entity via a #minimal_attributes call.
     def minimal_associations
       {
-        'swimmer' => swimmer&.minimal_attributes,
         'team_affiliation' => team_affiliation&.minimal_attributes,
+        'swimmer' => swimmer_attributes,
         'disqualification_code_type' => disqualification_code_type&.lookup_attributes
       }
     end

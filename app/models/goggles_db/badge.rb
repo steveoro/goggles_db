@@ -4,7 +4,7 @@ module GogglesDb
   #
   # = Badge model
   #
-  #   - version:  7.054
+  #   - version:  7.063
   #   - author:   Steve A.
   #
   class Badge < ApplicationRecord
@@ -101,9 +101,15 @@ module GogglesDb
 
     # Returns the "minimum required" hash of associations.
     #
-    # Note: the rationale here is to select just the bare amount of "leaf entities" in the hierachy tree,
-    # so that these won't be included more than once in a typical #minimal_attributes output of a
-    # higher level entity.
+    # === Note:
+    # Typically these should be a subset of the (full) associations enlisted
+    # inside #to_json.
+    # The rationale here is to select just the bare amount of "leaf entities"
+    # in the hierachy tree so that these won't be included more than once in
+    # any #minimal_attributes output invoked from a higher level or parent entity.
+    #
+    # Example:
+    # #to_json or #attributes of team_affilition.badges vs single badge output.
     def minimal_associations
       {
         'swimmer' => swimmer_attributes,
