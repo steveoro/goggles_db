@@ -61,6 +61,22 @@ module GogglesDb
       it_behaves_like('sorting scope by_<ANY_VALUE_NAME> (with prepared result)', MeetingIndividualResult, 'rank')
     end
 
+    describe 'self.by_date' do
+      let(:result) do
+        mirs = GogglesDb::MeetingIndividualResult.where(swimmer_id: 142).by_date
+        expect(mprg.meeting_individual_results.count).to be > 300
+        mirs
+      end
+      it 'is a MeetingIndividualResult relation' do
+        expect(result).to be_a(ActiveRecord::Relation)
+        expect(result).to all be_a(MeetingIndividualResult)
+      end
+      it 'is ordered' do
+        expect(result.first.meeting_session.scheduled_date).to be <= result.sample.meeting_session.scheduled_date
+        expect(result.sample.meeting_session.scheduled_date).to be <= result.last.meeting_session.scheduled_date
+      end
+    end
+
     describe 'self.by_timing' do
       let(:result) do
         mprg = GogglesDb::MeetingProgram.includes(:event_type, :stroke_type)
