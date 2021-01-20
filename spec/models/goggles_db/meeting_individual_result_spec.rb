@@ -64,7 +64,7 @@ module GogglesDb
     describe 'self.by_date' do
       let(:result) do
         mirs = GogglesDb::MeetingIndividualResult.where(swimmer_id: 142).by_date
-        expect(mprg.meeting_individual_results.count).to be > 300
+        expect(mirs.count).to be > 300
         mirs
       end
       it 'is a MeetingIndividualResult relation' do
