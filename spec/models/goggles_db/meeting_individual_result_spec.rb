@@ -29,7 +29,9 @@ module GogglesDb
       it_behaves_like(
         'responding to a list of methods',
         %i[out_of_race? disqualified? personal_best?
-           valid_for_ranking? to_timing minimal_attributes to_json]
+           valid_for_ranking? to_timing
+           meeting_attributes meeting_session_attributes swimmer_attributes
+           minimal_attributes to_json]
       )
     end
 
@@ -46,8 +48,32 @@ module GogglesDb
     #++
 
     # Sorting scopes:
-    # TODO: by_rank, by_date, by_timing
+    describe 'self.by_rank' do
+      let(:result) do
+        # Choose a sample MPrg for which we are sure there will be multiple MIRs:
+        mprg = GogglesDb::MeetingProgram.includes(:event_type, :stroke_type)
+                                        .joins(:event_type, :stroke_type)
+                                        .where('event_types.code': '50SL')
+                                        .last(300).sample
+        expect(mprg.meeting_individual_results.count).to be_positive
+        mprg.meeting_individual_results.by_rank
+      end
+      it_behaves_like('sorting scope by_<ANY_VALUE_NAME> (with prepared result)', MeetingIndividualResult, 'rank')
+    end
 
+    describe 'self.by_timing' do
+      let(:result) do
+        mprg = GogglesDb::MeetingProgram.includes(:event_type, :stroke_type)
+                                        .joins(:event_type, :stroke_type)
+                                        .where('event_types.code': '50SL')
+                                        .last(300).sample
+        expect(mprg.meeting_individual_results.count).to be_positive
+        mprg.meeting_individual_results.by_timing
+      end
+      it_behaves_like('sorting scope by_<ANY_VALUE_NAME> (with prepared result)', MeetingIndividualResult, 'to_timing')
+    end
+
+    # TODO: FUTUREDEV
     # describe 'self.by_event_type' do
     #   it_behaves_like('sorting scope by_<ANY_ENTITY_NAME>', MeetingIndividualResult, 'event_type', 'code')
     # end
@@ -133,6 +159,8 @@ module GogglesDb
       let(:fixture_row) { FactoryBot.build(:meeting_individual_result) }
       it_behaves_like 'TimingManageable'
     end
+    #-- ------------------------------------------------------------------------
+    #++
 
     describe '#minimal_attributes' do
       let(:fixture_mir) { MeetingIndividualResult.limit(500).sample }
@@ -149,6 +177,10 @@ module GogglesDb
           expect(subject.keys).to include(association_name) if fixture_mir.send(association_name).present?
         end
       end
+      it "contains the 'synthetized' swimmer details" do
+        expect(subject['swimmer']).to be_an(Hash).and be_present
+        expect(subject['swimmer']).to eq(fixture_mir.swimmer_attributes)
+      end
     end
 
     describe '#to_json' do
@@ -157,11 +189,11 @@ module GogglesDb
       # Required associations:
       it_behaves_like(
         '#to_json when called on a valid instance',
-        %w[meeting_program pool_type event_type category_type gender_type stroke_type]
+        %w[meeting_program team_affiliation pool_type event_type category_type gender_type stroke_type]
       )
       it_behaves_like(
         '#to_json when called on a valid instance with a synthetized association',
-        %w[meeting meeting_session]
+        %w[meeting meeting_session swimmer]
       )
 
       # Collection associations:
