@@ -51,12 +51,39 @@ module GogglesDb
     describe 'self.by_distance' do
       it_behaves_like('sorting scope by_<ANY_VALUE_NAME>', Lap, 'distance', 'length_in_meters')
     end
+
+    # Filtering scopes:
+    describe 'self.with_time' do
+      it_behaves_like('filtering scope with_time', Lap)
+    end
+    describe 'self.with_no_time' do
+      it_behaves_like('filtering scope with_no_time', Lap)
+    end
     #-- ------------------------------------------------------------------------
     #++
 
+    let(:fixture_row) { FactoryBot.create(:lap) }
+
     describe 'regarding the timing fields,' do
-      let(:fixture_row) { FactoryBot.build(:lap) }
+      # subject = fixture_row (can even be just built, not created)
       it_behaves_like 'TimingManageable'
+    end
+
+    describe '#minimal_attributes' do
+      subject { fixture_row.minimal_attributes }
+
+      it 'is an Hash' do
+        expect(subject).to be_an(Hash)
+      end
+      %w[gender_type].each do |association_name|
+        it "includes the #{association_name} association key" do
+          expect(subject.keys).to include(association_name)
+        end
+      end
+      it "contains the 'synthetized' swimmer details" do
+        expect(subject['swimmer']).to be_an(Hash).and be_present
+        expect(subject['swimmer']).to eq(fixture_row.swimmer_attributes)
+      end
     end
 
     describe '#to_json' do
@@ -65,11 +92,11 @@ module GogglesDb
       # Required associations:
       it_behaves_like(
         '#to_json when called on a valid instance',
-        %w[meeting_program swimmer team meeting_individual_result event_type pool_type]
+        %w[meeting_program team meeting_individual_result event_type pool_type]
       )
       it_behaves_like(
         '#to_json when called on a valid instance with a synthetized association',
-        %w[meeting]
+        %w[meeting swimmer]
       )
     end
   end

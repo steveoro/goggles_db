@@ -26,6 +26,69 @@ shared_examples_for 'filtering scope for_season_type' do |subject_class|
   end
 end
 
+shared_examples_for 'filtering scope for_rank' do |subject_class|
+  context "given there are at least some #{subject_class.to_s.pluralize} rows having the chosen rank," do
+    let(:chosen_filter) { (1..10).to_a.sample }
+    let(:result) { subject_class.for_rank(chosen_filter).limit(10) }
+
+    it "is a relation containing only #{subject_class}s having the specified rank" do
+      expect(result).to be_a(ActiveRecord::Relation)
+      expect(result).to all be_a(subject_class)
+      expect(result.map(&:rank).uniq).to all eq(chosen_filter)
+    end
+  end
+end
+
+shared_examples_for 'filtering scope with_rank' do |subject_class|
+  context "given there are #{subject_class.to_s.pluralize} rows having any positive rank," do
+    let(:result) { subject_class.with_rank.limit(10) }
+
+    it "is a relation containing only #{subject_class}s having a positive rank" do
+      expect(result).to be_a(ActiveRecord::Relation)
+      expect(result).to all be_a(subject_class)
+      expect(result.map(&:rank).uniq).to all be_positive
+    end
+  end
+end
+
+shared_examples_for 'filtering scope with_no_rank' do |subject_class|
+  context "given there are #{subject_class.to_s.pluralize} rows having no ranking at all," do
+    let(:result) { subject_class.with_no_rank.limit(10) }
+
+    it "is a relation containing only #{subject_class}s having no rank or rank zero" do
+      expect(result).to be_a(ActiveRecord::Relation)
+      expect(result).to all be_a(subject_class)
+      result.each { |row| expect(row.rank.zero? || row.rank.nil?).to be true }
+    end
+  end
+end
+
+shared_examples_for 'filtering scope with_time' do |subject_class|
+  context "given there are #{subject_class.to_s.pluralize} rows having a positive time," do
+    let(:result) { subject_class.with_time.limit(10) }
+
+    it "is a relation containing only #{subject_class}s having a positive timings" do
+      expect(result).to be_a(ActiveRecord::Relation)
+      expect(result).to all be_a(subject_class)
+      expect(result.map { |row| row.minutes + row.seconds + row.hundreds }).to all be_positive
+    end
+  end
+end
+
+shared_examples_for 'filtering scope with_no_time' do |subject_class|
+  context "given there are #{subject_class.to_s.pluralize} rows having a zero timing," do
+    let(:result) { subject_class.with_no_time.limit(10) }
+
+    it "is a relation containing only #{subject_class}s having no time at all" do
+      expect(result).to be_a(ActiveRecord::Relation)
+      expect(result).to all be_a(subject_class)
+      expect(result.map { |row| row.minutes + row.seconds + row.hundreds }).to all be_zero
+    end
+  end
+end
+#-- ---------------------------------------------------------------------------
+#++
+
 # The following meta-example works best with +entity_name+ values such as:
 #
 # - 'team'

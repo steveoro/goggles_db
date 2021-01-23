@@ -6,10 +6,19 @@ module GogglesDb
   #
   # = MeetingEntry model
   #
-  #   - version:  7.047
+  #   - version:  7.067
   #   - author:   Steve A.
   #
-  # Can be used for adding startlist entries for both individual & relay results.
+  # This model should be used for *individual* startlist entries only,
+  # even though the structure could be used for relays as well.
+  #
+  # (It even has the #relay? helper to discriminate any relay entries
+  # from the rest, but this should never be used from this version onward.)
+  #
+  # Relay results are able to store entry data directly inside MRR rows.
+  # Frequently the MRR itself is used to setup or optimize the relay entry
+  # up until the last second before the relay registration term (which may fall after
+  # the actual start of the Meeting itself).
   #
   class MeetingEntry < ApplicationRecord
     self.table_name = 'meeting_entries'
