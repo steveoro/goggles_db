@@ -30,7 +30,8 @@ module GogglesDb
         'responding to a list of methods',
         %i[minutes seconds hundreds
            entry_minutes entry_seconds entry_hundreds
-           out_of_race? disqualified? valid_for_ranking? to_timing to_json]
+           out_of_race? disqualified? valid_for_ranking?
+           to_timing to_json]
       )
     end
 
@@ -80,6 +81,19 @@ module GogglesDb
       end
     end
 
+    describe 'self.by_timing' do
+      let(:result) do
+        event_code = %w[S4X50SL S4X50MI].sample # choose one among the most common relays
+        mprg = GogglesDb::MeetingProgram.includes(:event_type, :stroke_type)
+                                        .joins(:event_type, :stroke_type)
+                                        .where('event_types.code': event_code)
+                                        .last(300).sample
+        expect(mprg.meeting_relay_results.count).to be_positive
+        mprg.meeting_relay_results.by_timing
+      end
+      it_behaves_like('sorting scope by_<ANY_VALUE_NAME> (with prepared result)', MeetingRelayResult, 'to_timing')
+    end
+
     # Filtering scopes:
     describe 'self.valid_for_ranking' do
       let(:result) { subject.class.valid_for_ranking.order('out_of_race DESC, disqualified DESC').limit(20) }
@@ -98,6 +112,26 @@ module GogglesDb
       it 'contains only qualified results' do
         expect(result).to all(be_disqualified)
       end
+    end
+
+    describe 'self.for_team' do
+      it_behaves_like('filtering scope for_<ANY_ENTITY_NAME>', MeetingRelayResult, 'team')
+    end
+    describe 'self.for_rank' do
+      it_behaves_like('filtering scope for_rank', MeetingRelayResult)
+    end
+
+    describe 'self.with_rank' do
+      it_behaves_like('filtering scope with_rank', MeetingRelayResult)
+    end
+    describe 'self.with_no_rank' do
+      it_behaves_like('filtering scope with_no_rank', MeetingRelayResult)
+    end
+    describe 'self.with_time' do
+      it_behaves_like('filtering scope with_time', MeetingRelayResult)
+    end
+    describe 'self.with_no_time' do
+      it_behaves_like('filtering scope with_no_time', MeetingRelayResult)
     end
     #-- ------------------------------------------------------------------------
     #++

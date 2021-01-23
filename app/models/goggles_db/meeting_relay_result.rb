@@ -6,7 +6,7 @@ module GogglesDb
   #
   # = MeetingRelayResult model
   #
-  #   - version:  7.047
+  #   - version:  7.068
   #   - author:   Steve A.
   #
   class MeetingRelayResult < ApplicationRecord
@@ -44,11 +44,14 @@ module GogglesDb
     validates :reaction_time, presence: true, numericality: true
 
     # Sorting scopes:
-    # TODO: WIP:
     scope :by_rank, -> { order(disqualified: :asc, standard_points: :desc, meeting_points: :desc, rank: :asc) }
+    scope :by_timing, lambda { |dir = :asc|
+      order(
+        disqualified: :asc,
+        Arel.sql('minutes * 6000 + seconds * 100 + hundreds') => dir.to_s.downcase.to_sym
+      )
+    }
     # TODO: CLEAR UNUSED / add more only if really needed
-    # scope :by_timing, ->(dir = :asc) { order(is_disqualified: :asc, minutes: dir.to_s.downcase.to_sym,
-    #     seconds: dir.to_s.downcase.to_sym, hundreds: dir.to_s.downcase.to_sym) }
     # scope :by_split_category, ->(dir = :asc) { joins(:category_type, :gender_type).order('gender_types.code': :desc, 'category_types.code': dir) }
     # scope :by_meeting_relay, ->(dir)         { order("meeting_program_id #{dir}, rank #{dir}") }
 
@@ -56,12 +59,17 @@ module GogglesDb
     scope :valid_for_ranking, -> { where(out_of_race: false, disqualified: false) }
     scope :qualifications,    -> { where(disqualified: false) }
     scope :disqualifications, -> { where(disqualified: true) }
-    scope :for_team,          ->(team) { where(team_id: team.id) }
+
+    scope :for_team, ->(team) { where(team_id: team.id) }
+    scope :for_rank, ->(rank_filter) { where(rank: rank_filter) }
+
+    scope :with_rank,    -> { where('rank > 0') } # any positive rank => qualified
+    scope :with_no_rank, -> { where('(rank = 0) OR (rank IS NULL)') }
+    scope :with_time,    -> { where('(minutes > 0) OR (seconds > 0) OR (hundreds > 0)') }
+    scope :with_no_time, -> { where(minutes: 0, seconds: 0, hundreds: 0) }
+
     # TODO: CLEAR UNUSED
-    # scope :with_rank,         ->(rank_filter) { where(rank: rank_filter) }
     # scope :with_score,        ->(score_sym = 'standard_points') { where("#{score_sym} > 0") }
-    # # [Steve, 20180613] Do not change the scope below with a composite check on each field joined by 'AND's, because it does not work
-    # scope :with_timing,       -> { where('(minutes + seconds + hundreds > 0)') }
     # scope :for_over_that_score, ->(score_sym = 'standard_points', points = 800) { where("#{score_sym} > #{points}") }
     #-- ------------------------------------------------------------------------
     #++
@@ -70,6 +78,8 @@ module GogglesDb
     def valid_for_ranking?
       !out_of_race? && !disqualified?
     end
+    #-- ------------------------------------------------------------------------
+    #++
 
     # Returns a commodity Hash wrapping the essential data that summarizes the Meeting
     # associated to this row.

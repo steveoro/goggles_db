@@ -6,7 +6,7 @@ module GogglesDb
   #
   # = MeetingIndividualResult model
   #
-  #   - version:  7.063
+  #   - version:  7.068
   #   - author:   Steve A.
   #
   class MeetingIndividualResult < ApplicationRecord
@@ -88,17 +88,23 @@ module GogglesDb
     scope :qualifications,    -> { where(disqualified: false) }
     scope :disqualifications, -> { where(disqualified: true) }
     scope :personal_bests,    -> { where(personal_best: true) }
-    scope :for_gender_type,   ->(gender_type) { joins(:gender_type).where('gender_types.id': gender_type.id) }
-    scope :for_event_type,    ->(event_type)  { joins(:event_type).where('event_types.id': event_type.id) }
-    scope :for_pool_type,     ->(pool_type)   { joins(:pool_type).where('pool_types.id': pool_type.id) }
-    scope :for_swimmer,       ->(swimmer)     { where(swimmer_id: swimmer.id) }
-    scope :for_meeting_code,  ->(meeting)     { joins(:meeting).where('meetings.code': meeting&.code) }
+
+    scope :for_meeting_code, ->(meeting)     { joins(:meeting).where('meetings.code': meeting&.code) }
+    scope :for_pool_type,    ->(pool_type)   { joins(:pool_type).where('pool_types.id': pool_type.id) }
+    scope :for_event_type,   ->(event_type)  { joins(:event_type).where('event_types.id': event_type.id) }
+    scope :for_gender_type,  ->(gender_type) { joins(:gender_type).where('gender_types.id': gender_type.id) }
+    scope :for_swimmer,      ->(swimmer)     { where(swimmer_id: swimmer.id) }
+
+    scope :for_team, ->(team) { where(team_id: team.id) }
+    scope :for_rank, ->(rank_filter) { where(rank: rank_filter) }
+
+    scope :with_rank,    -> { where('rank > 0') } # any positive rank => qualified
+    scope :with_no_rank, -> { where('(rank = 0) OR (rank IS NULL)') }
+    scope :with_time,    -> { where('(minutes > 0) OR (seconds > 0) OR (hundreds > 0)') }
+    scope :with_no_time, -> { where(minutes: 0, seconds: 0, hundreds: 0) }
 
     # TODO: CLEAR UNUSED
-    # scope :with_rank,         ->(rank_filter) { where(rank: rank_filter) }
     # scope :with_score,        ->(score_sym = 'standard_points') { where("#{score_sym} > 0") }
-    # # [Steve, 20180613] Do not change the scope below with a composite check on each field joined by 'AND's, because it does not work
-    # scope :with_timing,              -> { where('(minutes + seconds + hundreds > 0)') }
     # scope :season_type_bests,        -> { where(season_type_best: true) }
     # scope :for_season_type,          ->(season_type)          { joins(:season_type).where(['season_types.id = ?', season_type.id]) }
     # scope :for_team,                 ->(team)                 { where(team_id: team.id) }

@@ -122,19 +122,6 @@ module GogglesDb
         expect(result).to all(be_personal_best)
       end
     end
-    describe 'self.for_gender_type' do
-      it_behaves_like('filtering scope for_gender_type', MeetingIndividualResult)
-    end
-
-    describe 'self.for_event_type' do
-      it_behaves_like('filtering scope for_<ANY_ENTITY_NAME>', MeetingIndividualResult, 'event_type')
-    end
-    describe 'self.for_pool_type' do
-      it_behaves_like('filtering scope for_<ANY_ENTITY_NAME>', MeetingIndividualResult, 'pool_type')
-    end
-    describe 'self.for_swimmer' do
-      it_behaves_like('filtering scope for_<ANY_ENTITY_NAME>', MeetingIndividualResult, 'swimmer')
-    end
 
     describe 'self.for_meeting_code' do
       let(:meeting_filter) do
@@ -150,6 +137,38 @@ module GogglesDb
         list_of_meeting_codes = result.map { |mir| mir.meeting.code }.uniq.sort
         expect(list_of_meeting_codes).to eq([meeting_filter.code])
       end
+    end
+    describe 'self.for_pool_type' do
+      it_behaves_like('filtering scope for_<ANY_ENTITY_NAME>', MeetingIndividualResult, 'pool_type')
+    end
+    describe 'self.for_event_type' do
+      it_behaves_like('filtering scope for_<ANY_ENTITY_NAME>', MeetingIndividualResult, 'event_type')
+    end
+    describe 'self.for_gender_type' do
+      it_behaves_like('filtering scope for_gender_type', MeetingIndividualResult)
+    end
+    describe 'self.for_swimmer' do
+      it_behaves_like('filtering scope for_<ANY_ENTITY_NAME>', MeetingIndividualResult, 'swimmer')
+    end
+
+    describe 'self.for_team' do
+      it_behaves_like('filtering scope for_<ANY_ENTITY_NAME>', MeetingIndividualResult, 'team')
+    end
+    describe 'self.for_rank' do
+      it_behaves_like('filtering scope for_rank', MeetingIndividualResult)
+    end
+
+    describe 'self.with_rank' do
+      it_behaves_like('filtering scope with_rank', MeetingIndividualResult)
+    end
+    describe 'self.with_no_rank' do
+      it_behaves_like('filtering scope with_no_rank', MeetingIndividualResult)
+    end
+    describe 'self.with_time' do
+      it_behaves_like('filtering scope with_time', MeetingIndividualResult)
+    end
+    describe 'self.with_no_time' do
+      it_behaves_like('filtering scope with_no_time', MeetingIndividualResult)
     end
     #-- ------------------------------------------------------------------------
     #++

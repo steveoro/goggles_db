@@ -3,6 +3,7 @@
 require 'rails_helper'
 require 'support/shared_method_existance_examples'
 require 'support/shared_sorting_scopes_examples'
+require 'support/shared_filtering_scopes_examples'
 require 'support/shared_timing_manageable_examples'
 require 'support/shared_to_json_examples'
 
@@ -28,6 +29,7 @@ module GogglesDb
       it_behaves_like(
         'responding to a list of methods',
         %i[minutes seconds hundreds
+           minimal_attributes swimmer_attributes
            to_timing to_json]
       )
     end
@@ -51,12 +53,39 @@ module GogglesDb
 
       it_behaves_like('sorting scope by_<ANY_VALUE_NAME> (with prepared result)', MeetingRelaySwimmer, 'relay_order')
     end
+
+    # Filtering scopes:
+    describe 'self.with_time' do
+      it_behaves_like('filtering scope with_time', MeetingRelaySwimmer)
+    end
+    describe 'self.with_no_time' do
+      it_behaves_like('filtering scope with_no_time', MeetingRelaySwimmer)
+    end
     #-- ------------------------------------------------------------------------
     #++
 
+    let(:fixture_row) { FactoryBot.create(:meeting_relay_swimmer) }
+
     describe 'regarding the timing fields,' do
-      let(:fixture_row) { FactoryBot.build(:meeting_relay_swimmer) }
+      # subject = fixture_row (can even be just built, not created)
       it_behaves_like 'TimingManageable'
+    end
+
+    describe '#minimal_attributes' do
+      subject { fixture_row.minimal_attributes }
+
+      it 'is an Hash' do
+        expect(subject).to be_an(Hash)
+      end
+      %w[gender_type stroke_type].each do |association_name|
+        it "includes the #{association_name} association key" do
+          expect(subject.keys).to include(association_name)
+        end
+      end
+      it "contains the 'synthetized' swimmer details" do
+        expect(subject['swimmer']).to be_an(Hash).and be_present
+        expect(subject['swimmer']).to eq(fixture_row.swimmer_attributes)
+      end
     end
 
     describe '#to_json' do
@@ -65,7 +94,7 @@ module GogglesDb
       # Required associations:
       it_behaves_like(
         '#to_json when called on a valid instance',
-        %w[meeting_relay_result team swimmer badge event_type stroke_type]
+        %w[meeting_relay_result team badge event_type stroke_type]
       )
     end
   end
