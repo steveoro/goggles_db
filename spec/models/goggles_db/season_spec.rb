@@ -131,7 +131,7 @@ module GogglesDb
 
     # Scopes & "virtual" scopes:
     describe 'self.for_season_type' do
-      it_behaves_like('filtering scope for_season_type', Season)
+      it_behaves_like('filtering scope for_<ANY_CHOSEN_FILTER>', Season, 'for_season_type', 'season_type', GogglesDb::SeasonType.all_masters.sample)
     end
 
     describe 'self.ongoing' do

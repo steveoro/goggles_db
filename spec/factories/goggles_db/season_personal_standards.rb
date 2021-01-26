@@ -13,7 +13,7 @@ FactoryBot.define do
 
     minutes  { ((rand * 2) % 2).to_i }
     seconds  { ((rand * 59) % 59).to_i }
-    hundreds { ((rand * 100) % 99).to_i }
+    hundredths { ((rand * 100) % 99).to_i }
     #-- -----------------------------------------------------------------------
     #++
 

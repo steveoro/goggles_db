@@ -6,7 +6,7 @@ module GogglesDb
   #
   # = MeetingRelaySwimmer (MRS) model
   #
-  #   - version:  7.068
+  #   - version:  7.070
   #   - author:   Steve A.
   #
   # == Note:
@@ -46,8 +46,8 @@ module GogglesDb
     # scope :by_stroke_type, ->(dir = :asc) { joins(:stroke_type).order('stroke_types.code': dir) }
 
     # Filtering scopes:
-    scope :with_time,    -> { where('(minutes > 0) OR (seconds > 0) OR (hundreds > 0)') }
-    scope :with_no_time, -> { where(minutes: 0, seconds: 0, hundreds: 0) }
+    scope :with_time,    -> { where('(minutes > 0) OR (seconds > 0) OR (hundredths > 0)') }
+    scope :with_no_time, -> { where(minutes: 0, seconds: 0, hundredths: 0) }
     #-- ------------------------------------------------------------------------
     #++
 

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_01_07_181622) do
+ActiveRecord::Schema.define(version: 2021_01_25_123953) do
 
   create_table "achievement_rows", id: :integer, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
     t.integer "lock_version", default: 0
@@ -54,6 +54,17 @@ ActiveRecord::Schema.define(version: 2021_01_07_181622) do
     t.index ["entity"], name: "index_admin_grants_on_entity"
     t.index ["user_id", "entity"], name: "index_admin_grants_on_user_id_and_entity", unique: true
     t.index ["user_id"], name: "index_admin_grants_on_user_id"
+  end
+
+  create_table "api_daily_uses", options: "ENGINE=InnoDB DEFAULT CHARSET=latin1", force: :cascade do |t|
+    t.integer "lock_version", default: 0
+    t.string "route", null: false
+    t.date "day", null: false
+    t.bigint "count", default: 0
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.index ["route", "day"], name: "index_api_daily_uses_on_route_and_day", unique: true
+    t.index ["route"], name: "index_api_daily_uses_on_route"
   end
 
   create_table "app_parameters", id: :integer, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
@@ -973,7 +984,7 @@ ActiveRecord::Schema.define(version: 2021_01_07_181622) do
     t.integer "lock_version", default: 0
     t.integer "minutes", limit: 3, default: 0
     t.integer "seconds", limit: 2, default: 0
-    t.integer "hundreds", limit: 2, default: 0
+    t.integer "hundredths", limit: 2, default: 0
     t.integer "event_type_id"
     t.integer "pool_type_id"
     t.datetime "created_at"
@@ -1031,6 +1042,24 @@ ActiveRecord::Schema.define(version: 2021_01_07_181622) do
     t.index ["code"], name: "idx_heat_types_code", unique: true
   end
 
+  create_table "import_queues", options: "ENGINE=InnoDB DEFAULT CHARSET=latin1", force: :cascade do |t|
+    t.integer "lock_version", default: 0
+    t.bigint "user_id", null: false
+    t.integer "processed_depth", default: 0
+    t.integer "requested_depth", default: 0
+    t.integer "solvable_depth", default: 0
+    t.text "request_data", null: false
+    t.text "solved_data", null: false
+    t.boolean "done", default: false, null: false
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.index ["done"], name: "index_import_queues_on_done"
+    t.index ["processed_depth"], name: "index_import_queues_on_processed_depth"
+    t.index ["requested_depth"], name: "index_import_queues_on_requested_depth"
+    t.index ["solvable_depth"], name: "index_import_queues_on_solvable_depth"
+    t.index ["user_id"], name: "index_import_queues_on_user_id"
+  end
+
   create_table "individual_records", id: :integer, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
     t.integer "lock_version", default: 0
     t.datetime "created_at"
@@ -1041,7 +1070,7 @@ ActiveRecord::Schema.define(version: 2021_01_07_181622) do
     t.integer "gender_type_id"
     t.integer "minutes", limit: 3, default: 0
     t.integer "seconds", limit: 2, default: 0
-    t.integer "hundreds", limit: 2, default: 0
+    t.integer "hundredths", limit: 2, default: 0
     t.boolean "team_record", default: false
     t.integer "swimmer_id"
     t.integer "team_id"
@@ -1065,7 +1094,7 @@ ActiveRecord::Schema.define(version: 2021_01_07_181622) do
     t.integer "lock_version", default: 0
     t.integer "minutes", limit: 3, default: 0
     t.integer "seconds", limit: 2, default: 0
-    t.integer "hundreds", limit: 2, default: 0
+    t.integer "hundredths", limit: 2, default: 0
     t.integer "meeting_program_id"
     t.integer "length_in_meters"
     t.datetime "created_at"
@@ -1073,20 +1102,17 @@ ActiveRecord::Schema.define(version: 2021_01_07_181622) do
     t.decimal "reaction_time", precision: 5, scale: 2
     t.integer "stroke_cycles", limit: 3
     t.integer "underwater_seconds", limit: 2
-    t.integer "underwater_hundreds", limit: 2
+    t.integer "underwater_hundredths", limit: 2
     t.integer "underwater_kicks", limit: 2
     t.integer "breath_cycles", limit: 3
     t.integer "position", limit: 3
     t.integer "minutes_from_start", limit: 3
     t.integer "seconds_from_start", limit: 2
-    t.integer "hundreds_from_start", limit: 2
-    t.boolean "native_from_start", default: false
+    t.integer "hundredths_from_start", limit: 2
     t.integer "meeting_individual_result_id"
-    t.integer "meeting_entry_id"
     t.integer "swimmer_id"
     t.integer "team_id"
     t.index ["length_in_meters"], name: "index_laps_on_length_in_meters"
-    t.index ["meeting_entry_id"], name: "idx_passages_meeting_entry"
     t.index ["meeting_individual_result_id"], name: "idx_passages_meeting_individual_result"
     t.index ["meeting_program_id"], name: "passages_x_badges"
     t.index ["swimmer_id"], name: "idx_passages_swimmer"
@@ -1139,7 +1165,7 @@ ActiveRecord::Schema.define(version: 2021_01_07_181622) do
     t.integer "entry_time_type_id"
     t.integer "minutes", limit: 3
     t.integer "seconds", limit: 2
-    t.integer "hundreds", limit: 2
+    t.integer "hundredths", limit: 2
     t.boolean "no_time", default: false
     t.index ["badge_id"], name: "idx_meeting_entries_badge"
     t.index ["entry_time_type_id"], name: "idx_meeting_entries_entry_time_type"
@@ -1157,7 +1183,7 @@ ActiveRecord::Schema.define(version: 2021_01_07_181622) do
     t.integer "meeting_event_id"
     t.integer "minutes", limit: 3
     t.integer "seconds", limit: 2
-    t.integer "hundreds", limit: 2
+    t.integer "hundredths", limit: 2
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.boolean "accepted", default: false, null: false
@@ -1197,10 +1223,10 @@ ActiveRecord::Schema.define(version: 2021_01_07_181622) do
     t.boolean "out_of_race", default: false
     t.boolean "disqualified", default: false
     t.decimal "standard_points", precision: 10, scale: 2, default: "0.0"
-    t.decimal "meeting_individual_points", precision: 10, scale: 2, default: "0.0"
+    t.decimal "meeting_points", precision: 10, scale: 2, default: "0.0"
     t.integer "minutes", limit: 3, default: 0
     t.integer "seconds", limit: 2, default: 0
-    t.integer "hundreds", limit: 2, default: 0
+    t.integer "hundredths", limit: 2, default: 0
     t.integer "meeting_program_id"
     t.integer "swimmer_id"
     t.integer "team_id"
@@ -1280,15 +1306,15 @@ ActiveRecord::Schema.define(version: 2021_01_07_181622) do
     t.decimal "meeting_points", precision: 10, scale: 2, default: "0.0"
     t.integer "minutes", limit: 3, default: 0
     t.integer "seconds", limit: 2, default: 0
-    t.integer "hundreds", limit: 2, default: 0
+    t.integer "hundredths", limit: 2, default: 0
     t.integer "team_id"
     t.integer "meeting_program_id"
     t.integer "disqualification_code_type_id"
-    t.string "relay_header", limit: 60, default: ""
+    t.string "relay_code", limit: 60, default: ""
     t.decimal "reaction_time", precision: 5, scale: 2, default: "0.0"
     t.integer "entry_minutes", limit: 3
     t.integer "entry_seconds", limit: 2
-    t.integer "entry_hundreds", limit: 2
+    t.integer "entry_hundredths", limit: 2
     t.integer "team_affiliation_id"
     t.integer "entry_time_type_id"
     t.index ["disqualification_code_type_id"], name: "idx_mrr_disqualification_code_type"
@@ -1309,7 +1335,7 @@ ActiveRecord::Schema.define(version: 2021_01_07_181622) do
     t.decimal "reaction_time", precision: 5, scale: 2, default: "0.0"
     t.integer "minutes", limit: 3, default: 0
     t.integer "seconds", limit: 2, default: 0
-    t.integer "hundreds", limit: 2, default: 0
+    t.integer "hundredths", limit: 2, default: 0
     t.integer "meeting_relay_result_id"
     t.index ["badge_id"], name: "fk_meeting_relay_swimmers_badges"
     t.index ["meeting_relay_result_id"], name: "fk_meeting_relay_swimmers_meeting_relay_results"
@@ -1367,10 +1393,10 @@ ActiveRecord::Schema.define(version: 2021_01_07_181622) do
     t.datetime "updated_at"
     t.integer "rank", default: 0
     t.decimal "sum_team_points", precision: 10, scale: 2, default: "0.0"
-    t.decimal "meeting_individual_points", precision: 10, scale: 2, default: "0.0"
+    t.decimal "meeting_points", precision: 10, scale: 2, default: "0.0"
     t.decimal "meeting_relay_points", precision: 10, scale: 2, default: "0.0"
     t.decimal "meeting_team_points", precision: 10, scale: 2, default: "0.0"
-    t.decimal "season_individual_points", precision: 10, scale: 2, default: "0.0"
+    t.decimal "season_points", precision: 10, scale: 2, default: "0.0"
     t.decimal "season_relay_points", precision: 10, scale: 2, default: "0.0"
     t.decimal "season_team_points", precision: 10, scale: 2, default: "0.0"
     t.integer "season_id"
@@ -1553,7 +1579,7 @@ ActiveRecord::Schema.define(version: 2021_01_07_181622) do
     t.integer "lock_version", default: 0
     t.integer "minutes", limit: 3, default: 0, null: false
     t.integer "seconds", limit: 2, default: 0, null: false
-    t.integer "hundreds", limit: 2, default: 0, null: false
+    t.integer "hundredths", limit: 2, default: 0, null: false
     t.integer "season_id"
     t.integer "swimmer_id"
     t.integer "event_type_id"
@@ -1640,7 +1666,7 @@ ActiveRecord::Schema.define(version: 2021_01_07_181622) do
     t.integer "lock_version", default: 0
     t.integer "minutes", limit: 3, default: 0
     t.integer "seconds", limit: 2, default: 0
-    t.integer "hundreds", limit: 2, default: 0
+    t.integer "hundredths", limit: 2, default: 0
     t.integer "season_id"
     t.integer "gender_type_id"
     t.integer "pool_type_id"
@@ -1935,7 +1961,7 @@ ActiveRecord::Schema.define(version: 2021_01_07_181622) do
     t.boolean "disqualified", default: false
     t.integer "minutes", limit: 3, default: 0
     t.integer "seconds", limit: 2, default: 0
-    t.integer "hundreds", limit: 2, default: 0
+    t.integer "hundredths", limit: 2, default: 0
     t.integer "swimmer_id"
     t.integer "category_type_id"
     t.integer "pool_type_id"

@@ -28,8 +28,8 @@ module GogglesDb
 
       it_behaves_like(
         'responding to a list of methods',
-        %i[minutes seconds hundreds
-           entry_minutes entry_seconds entry_hundreds
+        %i[minutes seconds hundredths
+           entry_minutes entry_seconds entry_hundredths
            out_of_race? disqualified? valid_for_ranking?
            to_timing to_json]
       )
@@ -89,7 +89,8 @@ module GogglesDb
                                         .where('event_types.code': event_code)
                                         .last(300).sample
         expect(mprg.meeting_relay_results.count).to be_positive
-        mprg.meeting_relay_results.by_timing
+        # (Note: exclude disqualified results to simplify time comparison)
+        mprg.meeting_relay_results.qualifications.by_timing
       end
       it_behaves_like('sorting scope by_<ANY_VALUE_NAME> (with prepared result)', MeetingRelayResult, 'to_timing')
     end
@@ -118,7 +119,7 @@ module GogglesDb
       it_behaves_like('filtering scope for_<ANY_ENTITY_NAME>', MeetingRelayResult, 'team')
     end
     describe 'self.for_rank' do
-      it_behaves_like('filtering scope for_rank', MeetingRelayResult)
+      it_behaves_like('filtering scope for_<ANY_CHOSEN_FILTER>', MeetingRelayResult, 'for_rank', 'rank', (1..10).to_a.sample)
     end
 
     describe 'self.with_rank' do

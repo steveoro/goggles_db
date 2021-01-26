@@ -6,7 +6,7 @@ module GogglesDb
   #
   # = MeetingEntry model
   #
-  #   - version:  7.067
+  #   - version:  7.070
   #   - author:   Steve A.
   #
   # This model should be used for *individual* startlist entries only,
@@ -55,9 +55,9 @@ module GogglesDb
       order(
         start_list_number: :asc,
         no_time: :desc,
-        Arel.sql('minutes * 6000 + seconds * 100 + hundreds') => :desc
+        Arel.sql('minutes * 6000 + seconds * 100 + hundredths') => :desc
         # Using an all in one computed column with Arel for ordering is about the same order of speed
-        # than using 3 separate as (minutes: :desc, seconds: :desc, hundreds: :desc), but
+        # than using 3 separate as (minutes: :desc, seconds: :desc, hundredths: :desc), but
         # yields slighlty faster results a bit more often. (Tested with benchmarks or real data)
       )
     }
@@ -67,7 +67,7 @@ module GogglesDb
         .order(
           'meeting_programs.gender_type_id': :desc, # (Females first)
           no_time: :desc,
-          Arel.sql('minutes * 6000 + seconds * 100 + hundreds') => :desc
+          Arel.sql('minutes * 6000 + seconds * 100 + hundredths') => :desc
         )
     }
 

@@ -15,7 +15,7 @@ shared_examples_for 'a TimingFinder strategy #search_by that can select a MIR wi
   end
 
   it 'has a positive timing' do
-    expect(subject.to_timing.to_hundreds).to be_positive
+    expect(subject.to_timing.to_hundredths).to be_positive
   end
 end
 

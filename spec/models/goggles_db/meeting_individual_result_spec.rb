@@ -23,7 +23,7 @@ module GogglesDb
       # Presence of fields & requiredness:
       it_behaves_like(
         'having one or more required & present attributes (invalid if missing)',
-        %i[rank standard_points meeting_individual_points goggle_cup_points team_points reaction_time]
+        %i[rank standard_points meeting_points goggle_cup_points team_points reaction_time]
       )
 
       it_behaves_like(
@@ -84,7 +84,8 @@ module GogglesDb
                                         .where('event_types.code': '50SL')
                                         .last(300).sample
         expect(mprg.meeting_individual_results.count).to be_positive
-        mprg.meeting_individual_results.by_timing
+        # (Note: exclude disqualified results to simplify time comparison)
+        mprg.meeting_individual_results.qualifications.by_timing
       end
       it_behaves_like('sorting scope by_<ANY_VALUE_NAME> (with prepared result)', MeetingIndividualResult, 'to_timing')
     end
@@ -145,7 +146,13 @@ module GogglesDb
       it_behaves_like('filtering scope for_<ANY_ENTITY_NAME>', MeetingIndividualResult, 'event_type')
     end
     describe 'self.for_gender_type' do
-      it_behaves_like('filtering scope for_gender_type', MeetingIndividualResult)
+      it_behaves_like(
+        'filtering scope for_<ANY_CHOSEN_FILTER>',
+        MeetingIndividualResult,
+        'for_gender_type',
+        'gender_type',
+        GogglesDb::GenderType.send(%w[male female].sample)
+      )
     end
     describe 'self.for_swimmer' do
       it_behaves_like('filtering scope for_<ANY_ENTITY_NAME>', MeetingIndividualResult, 'swimmer')
@@ -155,7 +162,7 @@ module GogglesDb
       it_behaves_like('filtering scope for_<ANY_ENTITY_NAME>', MeetingIndividualResult, 'team')
     end
     describe 'self.for_rank' do
-      it_behaves_like('filtering scope for_rank', MeetingIndividualResult)
+      it_behaves_like('filtering scope for_<ANY_CHOSEN_FILTER>', MeetingIndividualResult, 'for_rank', 'rank', (1..10).to_a.sample)
     end
 
     describe 'self.with_rank' do

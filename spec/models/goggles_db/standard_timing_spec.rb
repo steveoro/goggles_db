@@ -54,7 +54,13 @@ module GogglesDb
       it_behaves_like('filtering scope for_<ANY_ENTITY_NAME>', StandardTiming, 'event_type')
     end
     describe 'self.for_gender_type' do
-      it_behaves_like('filtering scope for_gender_type', StandardTiming)
+      it_behaves_like(
+        'filtering scope for_<ANY_CHOSEN_FILTER>',
+        StandardTiming,
+        'for_gender_type',
+        'gender_type',
+        GogglesDb::GenderType.send(%w[male female].sample)
+      )
     end
     describe 'self.for_category_type' do
       it_behaves_like('filtering scope for_<ANY_ENTITY_NAME>', StandardTiming, 'category_type')

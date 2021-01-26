@@ -2,14 +2,14 @@
 
 #
 # = Timing
-#   - Goggles framework vers.:  7.056
+#   - Goggles framework vers.:  7.070
 #   - author: Steve A.
 #
 #  Utility class to store timing data and to allow simple mathematical operations
 #  between timings (delta, sum, ...).
 #
 # === Members:
-#  - <tt>:hundreds</tt> => Integer value for hundredths of a second.
+#  - <tt>:hundredths</tt> => Integer value for hundredths of a second.
 #  - <tt>:seconds</tt> => Integer value for seconds.
 #  - <tt>:minutes</tt> => Integer value for minutes.
 #  - <tt>:hours</tt> => Integer value for hours.
@@ -18,25 +18,25 @@
 class Timing
   include Comparable
 
-  attr_accessor :hundreds, :seconds, :minutes, :hours, :days
+  attr_accessor :hundredths, :seconds, :minutes, :hours, :days
 
   # Creates a new instance.
   # The ascending precision of the parameters allows to skip rarely used ones.
   #
-  def initialize(hundreds = 0, seconds = 0, minutes = 0, hours = 0, days = 0)
-    @hundreds = hundreds.to_i
+  def initialize(hundredths = 0, seconds = 0, minutes = 0, hours = 0, days = 0)
+    @hundredths = hundredths.to_i
     @seconds = seconds.to_i
     @minutes = minutes.to_i
     @hours = hours.to_i
     @days = days.to_i
     # Adjust & round the result:
-    from_hundreds(to_hundreds)
+    from_hundredths(to_hundredths)
   end
 
   # Sets the instance to zero.
   #
   def clear
-    @hundreds = 0
+    @hundredths = 0
     @seconds = 0
     @minutes = 0
     @hours = 0
@@ -46,25 +46,25 @@ class Timing
   #-- -------------------------------------------------------------------------
   #++
 
-  # Converts the current instance value to total Fixnum value of hundreds of a second.
-  def to_hundreds
-    @hundreds + @seconds * 100 + @minutes * 6000 +
+  # Converts the current instance value to total Fixnum value of hundredths of a second.
+  def to_hundredths
+    @hundredths + @seconds * 100 + @minutes * 6000 +
       @hours * 360_000 + @days * 8_640_000
   end
 
-  # Sets the current instance value according to the total Fixnum value of hundreds of a second
+  # Sets the current instance value according to the total Fixnum value of hundredths of a second
   # specified as a parameter.
   #
-  def from_hundreds(hundreds_value)
-    @days = hundreds_value / 8_640_000
-    remainder = hundreds_value % 8_640_000
+  def from_hundredths(hundredths_value)
+    @days = hundredths_value / 8_640_000
+    remainder = hundredths_value % 8_640_000
     @hours = remainder / 360_000
     remainder = remainder % 360_000
     @minutes = remainder / 6000
     remainder = remainder % 6000
     @seconds = remainder / 100
     remainder = remainder % 100
-    @hundreds = remainder
+    @hundredths = remainder
     self
   end
 
@@ -75,7 +75,7 @@ class Timing
       compact_digit(hours, 'h ') +
       compact_digit(minutes, "'", single_zero: true) +
       compact_digit(seconds, '"', leading_zero: true) +
-      compact_digit(hundreds, '', leading_zero: true)
+      compact_digit(hundredths, '', leading_zero: true)
   end
 
   # Commodity class method. Similar to +to_s+ method, but it doesn't include
@@ -86,7 +86,7 @@ class Timing
       compact_digit(hours, 'h ') +
       compact_digit(minutes, "'") +
       compact_digit(seconds, '"', leading_zero: minutes.positive?) +
-      compact_digit(hundreds, '', leading_zero: seconds.positive?)
+      compact_digit(hundredths, '', leading_zero: seconds.positive?)
   end
   #-- -------------------------------------------------------------------------
   #++
@@ -96,7 +96,7 @@ class Timing
   #
   def +(other)
     Timing.new(
-      @hundreds + other.hundreds,
+      @hundredths + other.hundredths,
       @seconds + other.seconds,
       @minutes + other.minutes,
       @hours + other.hours,
@@ -109,7 +109,7 @@ class Timing
   #
   def -(other)
     Timing.new(
-      @hundreds - other.hundreds,
+      @hundredths - other.hundredths,
       @seconds - other.seconds,
       @minutes - other.minutes,
       @hours - other.hours,
@@ -128,7 +128,7 @@ class Timing
       @hours == other.hours &&
       @minutes == other.minutes &&
       @seconds == other.seconds &&
-      @hundreds == other.hundreds
+      @hundredths == other.hundredths
     )
   end
 
@@ -141,7 +141,7 @@ class Timing
   def <=>(other)
     raise ArgumentError, "the specified #{other.class.name} is neither a Timing or nil." unless other.nil? || other.instance_of?(Timing)
 
-    other.nil? ? 1 : to_hundreds <=> other.to_hundreds
+    other.nil? ? 1 : to_hundredths <=> other.to_hundredths
   end
   #-- -------------------------------------------------------------------------
   #++
@@ -149,22 +149,22 @@ class Timing
   # Commodity class method. Same as to_s.
   # Normalizes the specified values into the correct number of units.
   #
-  def self.to_s(hundreds = 0, seconds = 0, minutes = 0, hours = 0, days = 0)
-    Timing.new(hundreds, seconds, minutes, hours, days).to_s
+  def self.to_s(hundredths = 0, seconds = 0, minutes = 0, hours = 0, days = 0)
+    Timing.new(hundredths, seconds, minutes, hours, days).to_s
   end
 
   # Commodity class method. Same as to_compact_s.
   # Normalizes the specified values into the correct number of units.
   #
-  def self.to_compact_s(hundreds = 0, seconds = 0, minutes = 0, hours = 0, days = 0)
-    Timing.new(hundreds, seconds, minutes, hours, days).to_compact_s
+  def self.to_compact_s(hundredths = 0, seconds = 0, minutes = 0, hours = 0, days = 0)
+    Timing.new(hundredths, seconds, minutes, hours, days).to_compact_s
   end
   #-- -------------------------------------------------------------------------
   #++
 
   # Outputs the specified value of seconds in an hour-format string (Hh MM' SS").
   # It skips the output of any 2-digit part when its value is 0.
-  # (This is true for hours, minutes, seconds and even hundreds, making this method
+  # (This is true for hours, minutes, seconds and even hundredths, making this method
   # ideal to represent a total duration or span of time, without displaying the
   # non-significant members).
   #

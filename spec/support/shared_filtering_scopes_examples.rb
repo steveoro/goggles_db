@@ -1,43 +1,20 @@
 # frozen_string_literal: true
 
-shared_examples_for 'filtering scope for_gender_type' do |subject_class|
-  context "given the chosen GenderType has any #{subject_class.to_s.pluralize} associated to it," do
-    let(:chosen_filter) { GogglesDb::GenderType.send(%w[male female].sample) }
-    let(:result) { subject_class.for_gender_type(chosen_filter).limit(10) }
+# => All the Meta-examples in this file assume that 'subject_class' has a non-empty domain. <=
 
-    it "is a relation containing only #{subject_class}s belonging to the specified GenderType" do
+shared_examples_for 'filtering scope for_<ANY_CHOSEN_FILTER>' do |subject_class, full_scope_name, comparable_name, chosen_filter|
+  context "given the chosen '#{comparable_name}' (#{chosen_filter}) has any matching #{subject_class.to_s.pluralize} for it," do
+    let(:result) { subject_class.send(full_scope_name, chosen_filter).limit(10) }
+
+    it "is a relation containing only #{subject_class}s matching the #{comparable_name} filter" do
       expect(result).to be_a(ActiveRecord::Relation)
       expect(result).to all be_a(subject_class)
-      expect(result.map(&:gender_type).uniq).to all eq(chosen_filter)
+      expect(result.map(&comparable_name.to_sym).uniq).to all eq(chosen_filter)
     end
   end
 end
-
-shared_examples_for 'filtering scope for_season_type' do |subject_class|
-  context "given the chosen SeasonType has any #{subject_class.to_s.pluralize} associated to it," do
-    let(:chosen_filter) { GogglesDb::SeasonType.all_masters.sample }
-    let(:result) { subject_class.for_season_type(chosen_filter).limit(10) }
-
-    it "is a relation containing only #{subject_class.to_s.pluralize} belonging to the specified SeasonType" do
-      expect(result).to be_a(ActiveRecord::Relation)
-      expect(result).to all be_a(subject_class)
-      expect(result.map(&:season_type).uniq).to all eq(chosen_filter)
-    end
-  end
-end
-
-shared_examples_for 'filtering scope for_rank' do |subject_class|
-  context "given there are at least some #{subject_class.to_s.pluralize} rows having the chosen rank," do
-    let(:chosen_filter) { (1..10).to_a.sample }
-    let(:result) { subject_class.for_rank(chosen_filter).limit(10) }
-
-    it "is a relation containing only #{subject_class}s having the specified rank" do
-      expect(result).to be_a(ActiveRecord::Relation)
-      expect(result).to all be_a(subject_class)
-      expect(result.map(&:rank).uniq).to all eq(chosen_filter)
-    end
-  end
-end
+#-- ---------------------------------------------------------------------------
+#++
 
 shared_examples_for 'filtering scope with_rank' do |subject_class|
   context "given there are #{subject_class.to_s.pluralize} rows having any positive rank," do
@@ -70,7 +47,7 @@ shared_examples_for 'filtering scope with_time' do |subject_class|
     it "is a relation containing only #{subject_class}s having a positive timings" do
       expect(result).to be_a(ActiveRecord::Relation)
       expect(result).to all be_a(subject_class)
-      expect(result.map { |row| row.minutes + row.seconds + row.hundreds }).to all be_positive
+      expect(result.map { |row| row.minutes + row.seconds + row.hundredths }).to all be_positive
     end
   end
 end
@@ -82,7 +59,7 @@ shared_examples_for 'filtering scope with_no_time' do |subject_class|
     it "is a relation containing only #{subject_class}s having no time at all" do
       expect(result).to be_a(ActiveRecord::Relation)
       expect(result).to all be_a(subject_class)
-      expect(result.map { |row| row.minutes + row.seconds + row.hundreds }).to all be_zero
+      expect(result.map { |row| row.minutes + row.seconds + row.hundredths }).to all be_zero
     end
   end
 end
@@ -150,6 +127,8 @@ shared_examples_for 'filtering scope for_<PLURAL_ENTITY_NAME>' do |subject_class
     end
   end
 end
+#-- ---------------------------------------------------------------------------
+#++
 
 shared_examples_for 'filtering scope for_years' do |subject_class|
   context "given there are #{subject_class.to_s.pluralize} defined for the filtering value," do

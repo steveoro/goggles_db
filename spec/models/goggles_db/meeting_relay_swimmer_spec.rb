@@ -28,7 +28,7 @@ module GogglesDb
 
       it_behaves_like(
         'responding to a list of methods',
-        %i[minutes seconds hundreds
+        %i[minutes seconds hundredths
            minimal_attributes swimmer_attributes
            to_timing to_json]
       )

@@ -6,7 +6,7 @@ module GogglesDb
   #
   # = Lap model
   #
-  #   - version:  7.068
+  #   - version:  7.070
   #   - author:   Steve A.
   #
   # == Note:
@@ -26,7 +26,6 @@ module GogglesDb
     validates_associated :team
 
     belongs_to :meeting_individual_result, optional: true
-    belongs_to :meeting_entry_id, optional: true
 
     has_one :meeting,    through: :meeting_program
     has_one :event_type, through: :meeting_program
@@ -40,7 +39,7 @@ module GogglesDb
 
     validates :minutes,  presence: { length: { within: 1..3, allow_nil: false } }, numericality: true
     validates :seconds,  presence: { length: { within: 1..2, allow_nil: false } }, numericality: true
-    validates :hundreds, presence: { length: { within: 1..2, allow_nil: false } }, numericality: true
+    validates :hundredths, presence: { length: { within: 1..2, allow_nil: false } }, numericality: true
 
     validates :stroke_cycles, length: { within: 1..3 }, allow_nil: true
     validates :breath_cycles, length: { within: 1..3 }, allow_nil: true
@@ -48,14 +47,14 @@ module GogglesDb
 
     validates :underwater_kicks,    length: { within: 1..3 }, allow_nil: true
     validates :underwater_seconds,  length: { within: 1..2 }, allow_nil: true
-    validates :underwater_hundreds, length: { within: 1..2 }, allow_nil: true
+    validates :underwater_hundredths, length: { within: 1..2 }, allow_nil: true
 
     # Sorting scopes:
     scope :by_distance, -> { order(:length_in_meters) }
 
     # Filtering scopes:
-    scope :with_time,    -> { where('(minutes > 0) OR (seconds > 0) OR (hundreds > 0)') }
-    scope :with_no_time, -> { where(minutes: 0, seconds: 0, hundreds: 0) }
+    scope :with_time,    -> { where('(minutes > 0) OR (seconds > 0) OR (hundredths > 0)') }
+    scope :with_no_time, -> { where(minutes: 0, seconds: 0, hundredths: 0) }
 
     # TODO: CLEAR UNUSED
     # scope :for_event_type, ->(event_type) { joins(:event_type).where('event_types.id': event_type.id) }

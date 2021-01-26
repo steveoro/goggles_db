@@ -6,7 +6,7 @@ module GogglesDb
   #
   # = MeetingRelayResult model
   #
-  #   - version:  7.068
+  #   - version:  7.070
   #   - author:   Steve A.
   #
   class MeetingRelayResult < ApplicationRecord
@@ -37,7 +37,7 @@ module GogglesDb
 
     has_many :meeting_relay_swimmers, dependent: :delete_all
 
-    validates :relay_header, length: { maximum: 60 }, allow_blank: true
+    validates :relay_code, length: { maximum: 60 }, allow_blank: true
     validates :rank, presence: { length: { within: 1..4, allow_nil: false }, numericality: true }
     validates :standard_points, presence: true, numericality: true
     validates :meeting_points, presence: true, numericality: true
@@ -48,7 +48,7 @@ module GogglesDb
     scope :by_timing, lambda { |dir = :asc|
       order(
         disqualified: :asc,
-        Arel.sql('minutes * 6000 + seconds * 100 + hundreds') => dir.to_s.downcase.to_sym
+        Arel.sql('minutes * 6000 + seconds * 100 + hundredths') => dir.to_s.downcase.to_sym
       )
     }
     # TODO: CLEAR UNUSED / add more only if really needed
@@ -65,8 +65,8 @@ module GogglesDb
 
     scope :with_rank,    -> { where('rank > 0') } # any positive rank => qualified
     scope :with_no_rank, -> { where('(rank = 0) OR (rank IS NULL)') }
-    scope :with_time,    -> { where('(minutes > 0) OR (seconds > 0) OR (hundreds > 0)') }
-    scope :with_no_time, -> { where(minutes: 0, seconds: 0, hundreds: 0) }
+    scope :with_time,    -> { where('(minutes > 0) OR (seconds > 0) OR (hundredths > 0)') }
+    scope :with_no_time, -> { where(minutes: 0, seconds: 0, hundredths: 0) }
 
     # TODO: CLEAR UNUSED
     # scope :with_score,        ->(score_sym = 'standard_points') { where("#{score_sym} > 0") }
