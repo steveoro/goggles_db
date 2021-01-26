@@ -11,13 +11,14 @@ FactoryBot.define do
     meeting_points   { standard_points }
     minutes          { ((rand * 3) % 3).to_i }
     seconds          { ((rand * 60) % 60).to_i }
-    hundreds         { ((rand * 100) % 100).to_i }
+    hundredths       { ((rand * 100) % 100).to_i }
 
-    relay_header       { FFaker::Lorem.paragraph[0..50] } # internal name for this relay
-    reaction_time      { rand.round(2) }
+    relay_code    { FFaker::Lorem.paragraph[0..50] } # internal name for this relay
+    reaction_time { rand.round(2) }
+
     entry_minutes      { ((rand * 3) % 3).to_i }
     entry_seconds      { ((rand * 60) % 60).to_i }
-    entry_hundreds     { ((rand * 100) % 100).to_i }
+    entry_hundredths   { ((rand * 100) % 100).to_i }
     entry_time_type_id { GogglesDb::EntryTimeType::LAST_RACE_ID }
 
     disqualification_code_type { nil } # (No disqualify)

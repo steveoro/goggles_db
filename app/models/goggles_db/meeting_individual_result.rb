@@ -6,7 +6,7 @@ module GogglesDb
   #
   # = MeetingIndividualResult model
   #
-  #   - version:  7.068
+  #   - version:  7.070
   #   - author:   Steve A.
   #
   class MeetingIndividualResult < ApplicationRecord
@@ -41,11 +41,11 @@ module GogglesDb
     validates :rank, presence: { length: { within: 1..4, allow_nil: false } },
                      numericality: true
 
-    validates :standard_points,           presence: true, numericality: true
-    validates :meeting_individual_points, presence: true, numericality: true
-    validates :goggle_cup_points,         presence: true, numericality: true
-    validates :team_points,               presence: true, numericality: true
-    validates :reaction_time,             presence: true, numericality: true
+    validates :standard_points,   presence: true, numericality: true
+    validates :meeting_points,    presence: true, numericality: true
+    validates :goggle_cup_points, presence: true, numericality: true
+    validates :team_points,       presence: true, numericality: true
+    validates :reaction_time,     presence: true, numericality: true
 
     # Sorting scopes:
     scope :by_rank,   ->(dir = :asc) { order(disqualified: :asc, rank: dir.to_s.downcase.to_sym) }
@@ -53,9 +53,9 @@ module GogglesDb
     scope :by_timing, lambda { |dir = :asc|
       order(
         disqualified: :asc,
-        Arel.sql('minutes * 6000 + seconds * 100 + hundreds') => dir.to_s.downcase.to_sym
+        Arel.sql('minutes * 6000 + seconds * 100 + hundredths') => dir.to_s.downcase.to_sym
         # Using an all in one computed column with Arel for ordering is about the same order of speed
-        # than using 3 separate as (minutes: :desc, seconds: :desc, hundreds: :desc), but
+        # than using 3 separate as (minutes: :desc, seconds: :desc, hundredths: :desc), but
         # yields slighlty faster results a bit more often. (Tested with benchmarks or real data)
       )
     }
@@ -80,7 +80,7 @@ module GogglesDb
     # scope :event_and_timing, lambda { |dir = :asc|
     #   joins(:meeting_program, :meeting_event, :meeting_session)
     #     .includes(:meeting_event, :meeting_session)
-    #     .order('meeting_sessions.session_order': dir, 'meeting_events.event_order' :dir, :disqualified, :minutes, :seconds, :hundreds)
+    #     .order('meeting_sessions.session_order': dir, 'meeting_events.event_order' :dir, :disqualified, :minutes, :seconds, :hundredths)
     # }
 
     # Filtering scopes:
@@ -100,8 +100,8 @@ module GogglesDb
 
     scope :with_rank,    -> { where('rank > 0') } # any positive rank => qualified
     scope :with_no_rank, -> { where('(rank = 0) OR (rank IS NULL)') }
-    scope :with_time,    -> { where('(minutes > 0) OR (seconds > 0) OR (hundreds > 0)') }
-    scope :with_no_time, -> { where(minutes: 0, seconds: 0, hundreds: 0) }
+    scope :with_time,    -> { where('(minutes > 0) OR (seconds > 0) OR (hundredths > 0)') }
+    scope :with_no_time, -> { where(minutes: 0, seconds: 0, hundredths: 0) }
 
     # TODO: CLEAR UNUSED
     # scope :with_score,        ->(score_sym = 'standard_points') { where("#{score_sym} > 0") }

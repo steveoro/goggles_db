@@ -6,7 +6,7 @@ require 'support/shared_method_existance_examples'
 require 'wrappers/timing'
 
 describe Timing, type: :model do
-  let(:fix1_hundreds)  { (rand * 100).to_i % 100 }
+  let(:fix1_hundredths)  { (rand * 100).to_i % 100 }
   let(:fix1_secs)      { (rand * 60).to_i % 60 }
   let(:fix1_mins)      { (rand * 60).to_i % 60 }
   let(:fix1_hours)     { (rand * 24).to_i % 24 }
@@ -20,7 +20,7 @@ describe Timing, type: :model do
     it 'has 0 hours'    do expect(subject.hours).to eq(0); end
     it 'has 0 minutes'  do expect(subject.minutes).to eq(0); end
     it 'has 0 seconds'  do expect(subject.seconds).to eq(0); end
-    it 'has 0 hundreds' do expect(subject.hundreds).to eq(0); end
+    it 'has 0 hundredths' do expect(subject.hundredths).to eq(0); end
   end
 
   shared_examples_for 'a valid Timing with all members assigned' do
@@ -31,7 +31,7 @@ describe Timing, type: :model do
     it 'has 0 hours'    do expect(subject.hours).to eq(fix1_hours); end
     it 'has 0 minutes'  do expect(subject.minutes).to eq(fix1_mins); end
     it 'has 0 seconds'  do expect(subject.seconds).to eq(fix1_secs); end
-    it 'has 0 hundreds' do expect(subject.hundreds).to eq(fix1_hundreds); end
+    it 'has 0 hundredths' do expect(subject.hundredths).to eq(fix1_hundredths); end
   end
   #-- -------------------------------------------------------------------------
   #++
@@ -41,7 +41,7 @@ describe Timing, type: :model do
 
     it_behaves_like(
       'responding to a list of methods',
-      %i[clear from_hundreds + - == <=> to_hundreds to_s to_compact_s]
+      %i[clear from_hundredths + - == <=> to_hundredths to_s to_compact_s]
     )
     it_behaves_like(
       'responding to a list of class methods',
@@ -63,7 +63,7 @@ describe Timing, type: :model do
     end
 
     context '[for a non-zero instance]' do
-      subject { Timing.new(fix1_hundreds, fix1_secs, fix1_mins, fix1_hours, fix1_days) }
+      subject { Timing.new(fix1_hundredths, fix1_secs, fix1_mins, fix1_hours, fix1_days) }
       it_behaves_like('a valid Timing with all members assigned')
     end
   end
@@ -72,28 +72,28 @@ describe Timing, type: :model do
 
   describe '#clear' do
     context '[for a non-zero instance]' do
-      subject { Timing.new(fix1_hundreds, fix1_secs, fix1_mins, fix1_hours, fix1_days).clear }
+      subject { Timing.new(fix1_hundredths, fix1_secs, fix1_mins, fix1_hours, fix1_days).clear }
       it_behaves_like('a valid Timing with all members at 0')
     end
   end
 
-  describe '#from_hundreds' do
-    let(:fixture_hundreds) { (rand * 10_000).to_i }
-    subject { Timing.new.from_hundreds(fixture_hundreds) }
+  describe '#from_hundredths' do
+    let(:fixture_hundredths) { (rand * 10_000).to_i }
+    subject { Timing.new.from_hundredths(fixture_hundredths) }
 
-    it 'has an equal value of hundreds' do
-      expect(subject.to_hundreds).to eq(fixture_hundreds)
+    it 'has an equal value of hundredths' do
+      expect(subject.to_hundredths).to eq(fixture_hundredths)
     end
   end
 
-  describe '#to_hundreds' do
-    subject { Timing.new(fix1_hundreds, fix1_secs, fix1_mins, fix1_hours) }
+  describe '#to_hundredths' do
+    subject { Timing.new(fix1_hundredths, fix1_secs, fix1_mins, fix1_hours) }
 
     it 'returns a positive number' do
-      expect(subject.to_hundreds).to be > 0
+      expect(subject.to_hundredths).to be > 0
     end
-    it 'has an equal value of hundreds' do
-      expect(subject.to_hundreds).to eq(fix1_hours * 360_000 + fix1_mins * 6000 + fix1_secs * 100 + fix1_hundreds)
+    it 'has an equal value of hundredths' do
+      expect(subject.to_hundredths).to eq(fix1_hours * 360_000 + fix1_mins * 6000 + fix1_secs * 100 + fix1_hundredths)
     end
   end
   #-- -------------------------------------------------------------------------
@@ -107,8 +107,8 @@ describe Timing, type: :model do
     it 'returns a Timing object' do
       expect(subject).to be_an_instance_of(Timing)
     end
-    it 'corresponds to the sum of the two objects in hundreds' do
-      expect(subject.to_hundreds).to eq(fixture_1.to_hundreds + fixture_2.to_hundreds)
+    it 'corresponds to the sum of the two objects in hundredths' do
+      expect(subject.to_hundredths).to eq(fixture_1.to_hundredths + fixture_2.to_hundredths)
     end
   end
 
@@ -120,16 +120,16 @@ describe Timing, type: :model do
     it 'returns a Timing object' do
       expect(subject).to be_an_instance_of(Timing)
     end
-    it 'corresponds to the sum of the two objects in hundreds' do
-      expect(subject.to_hundreds).to eq(fixture_1.to_hundreds - fixture_2.to_hundreds)
+    it 'corresponds to the sum of the two objects in hundredths' do
+      expect(subject.to_hundredths).to eq(fixture_1.to_hundredths - fixture_2.to_hundredths)
     end
   end
 
   describe '#==' do
     let(:fixture_1)    { Timing.new(rand * 100, rand * 60, rand * 60, rand * 24) }
-    let(:fixture_1_eq) { Timing.new(fixture_1.hundreds, fixture_1.seconds, fixture_1.minutes, fixture_1.hours) }
+    let(:fixture_1_eq) { Timing.new(fixture_1.hundredths, fixture_1.seconds, fixture_1.minutes, fixture_1.hours) }
     let(:fixture_2)    { Timing.new(rand * 100, rand * 60, rand * 60, rand * 24) }
-    let(:fixture_2_eq) { Timing.new(fixture_2.hundreds, fixture_2.seconds, fixture_2.minutes, fixture_2.hours) }
+    let(:fixture_2_eq) { Timing.new(fixture_2.hundredths, fixture_2.seconds, fixture_2.minutes, fixture_2.hours) }
 
     it 'returns false for instances with different values' do
       expect(fixture_1 == fixture_2).to be false
@@ -145,10 +145,10 @@ describe Timing, type: :model do
 
   describe '#<=>' do
     let(:fixture)       { Timing.new(rand * 100, rand * 60, rand * 60, rand * 24) }
-    let(:fixture_eq)    { Timing.new(fixture.hundreds, fixture.seconds, fixture.minutes, fixture.hours) }
+    let(:fixture_eq)    { Timing.new(fixture.hundredths, fixture.seconds, fixture.minutes, fixture.hours) }
     let(:fixture_prev) do
       Timing.new(
-        fixture.hundreds - rand * fixture.hundreds,
+        fixture.hundredths - rand * fixture.hundredths,
         fixture.seconds - rand * fixture.seconds,
         fixture.minutes - rand * fixture.minutes,
         fixture.hours
@@ -156,7 +156,7 @@ describe Timing, type: :model do
     end
     let(:fixture_succ) do
       Timing.new(
-        fixture.hundreds + rand * fixture.hundreds,
+        fixture.hundredths + rand * fixture.hundredths,
         fixture.seconds + rand * fixture.seconds,
         fixture.minutes + rand * fixture.minutes,
         fixture.hours
@@ -181,7 +181,7 @@ describe Timing, type: :model do
       expect(subject).to be_an_instance_of(String)
     end
     it 'includes the value of its most significant and non-zero members' do
-      expect(subject).to include(fix1_hundreds.to_s) if fix1_hundreds.to_i > 0
+      expect(subject).to include(fix1_hundredths.to_s) if fix1_hundredths.to_i > 0
       expect(subject).to include(fix1_secs.to_s) if fix1_secs.to_i > 0
       expect(subject).to include(fix1_mins.to_s) if fix1_mins.to_i > 0
       expect(subject).to include(fix1_hours.to_s) if fix1_hours.to_i > 0
@@ -189,7 +189,7 @@ describe Timing, type: :model do
   end
 
   describe '#to_s' do
-    subject { Timing.new(fix1_hundreds, fix1_secs, fix1_mins, fix1_hours).to_s }
+    subject { Timing.new(fix1_hundredths, fix1_secs, fix1_mins, fix1_hours).to_s }
     it_behaves_like('the String result from a converted Timing instance')
 
     context 'with nil parameters,' do
@@ -204,7 +204,7 @@ describe Timing, type: :model do
   end
 
   describe 'self.to_s' do
-    subject { Timing.to_s(fix1_hundreds, fix1_secs, fix1_mins, fix1_hours) }
+    subject { Timing.to_s(fix1_hundredths, fix1_secs, fix1_mins, fix1_hours) }
     it_behaves_like('the String result from a converted Timing instance')
 
     context 'with nil parameters,' do
@@ -219,7 +219,7 @@ describe Timing, type: :model do
   end
 
   describe 'self.to_compact_s' do
-    subject { Timing.to_compact_s(fix1_hundreds, fix1_secs, fix1_mins, fix1_hours) }
+    subject { Timing.to_compact_s(fix1_hundredths, fix1_secs, fix1_mins, fix1_hours) }
     it_behaves_like('the String result from a converted Timing instance')
 
     context 'with parameters having all 0 value,' do

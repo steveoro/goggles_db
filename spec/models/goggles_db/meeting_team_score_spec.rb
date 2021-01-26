@@ -20,8 +20,8 @@ module GogglesDb
       it_behaves_like(
         'having one or more required & present attributes (invalid if missing)',
         %i[rank sum_individual_points sum_relay_points sum_team_points
-           meeting_individual_points meeting_relay_points meeting_team_points
-           season_individual_points season_relay_points season_team_points]
+           meeting_points meeting_relay_points meeting_team_points
+           season_points season_relay_points season_team_points]
       )
     end
 
@@ -41,7 +41,7 @@ module GogglesDb
     describe 'self.with_season_score' do
       let(:fixture_meeting) do
         # Create a list with 5 team scores, 1 zero + 4 positive:
-        first_score = FactoryBot.create(:meeting_team_score, season_individual_points: 0, season_relay_points: 0, season_team_points: 0)
+        first_score = FactoryBot.create(:meeting_team_score, season_points: 0, season_relay_points: 0, season_team_points: 0)
         FactoryBot.create_list(
           :meeting_team_score, 4,
           meeting: first_score.meeting,
@@ -54,7 +54,7 @@ module GogglesDb
       it 'is a relation containing only positive MeetingTeamScores' do
         expect(result).to be_a(ActiveRecord::Relation)
         expect(result).to all be_a(MeetingTeamScore)
-        expect(result.sum { |row| row.season_individual_points + row.season_relay_points + row.season_team_points }).to be_positive
+        expect(result.sum { |row| row.season_points + row.season_relay_points + row.season_team_points }).to be_positive
       end
     end
 

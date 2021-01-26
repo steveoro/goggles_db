@@ -99,7 +99,7 @@ module GogglesDb
     end
 
     describe 'self.for_season_type' do
-      it_behaves_like('filtering scope for_season_type', CategoryType)
+      it_behaves_like('filtering scope for_<ANY_CHOSEN_FILTER>', CategoryType, 'for_season_type', 'season_type', GogglesDb::SeasonType.all_masters.sample)
     end
     describe 'self.for_season' do
       it_behaves_like('filtering scope for_<ANY_ENTITY_NAME>', CategoryType, 'season')

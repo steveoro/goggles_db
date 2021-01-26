@@ -52,7 +52,7 @@ module GogglesDb
               expect(subject.result).to be_a(Timing).and eq(Timing.new)
             else
               expect(subject.result).to be_a(Timing)
-              expect(subject.result.to_hundreds).to be_positive
+              expect(subject.result.to_hundredths).to be_positive
             end
           end
           it 'sets the #mir member to an associated MIR instance (when available)' do

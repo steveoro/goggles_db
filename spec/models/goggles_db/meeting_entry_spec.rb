@@ -26,7 +26,7 @@ module GogglesDb
         'responding to a list of methods',
         %i[pool_type
            start_list_number lane_number heat_number heat_arrival_order
-           minutes seconds hundreds
+           minutes seconds hundredths
            swimmer badge entry_time_type
            relay? intermixed? male? female?
            no_time? to_timing
@@ -106,7 +106,13 @@ module GogglesDb
 
     # Filtering scopes:
     describe 'self.for_gender_type' do
-      it_behaves_like('filtering scope for_gender_type', MeetingEntry)
+      it_behaves_like(
+        'filtering scope for_<ANY_CHOSEN_FILTER>',
+        MeetingEntry,
+        'for_gender_type',
+        'gender_type',
+        GogglesDb::GenderType.send(%w[male female].sample)
+      )
     end
     describe 'self.for_team' do
       it_behaves_like('filtering scope for_<ANY_ENTITY_NAME>', MeetingEntry, 'team')

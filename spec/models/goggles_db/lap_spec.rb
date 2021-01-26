@@ -22,14 +22,14 @@ module GogglesDb
       # Presence of fields & requiredness:
       it_behaves_like(
         'having one or more required & present attributes (invalid if missing)',
-        %i[length_in_meters minutes seconds hundreds]
+        %i[length_in_meters minutes seconds hundredths]
       )
 
       it_behaves_like(
         'responding to a list of methods',
         %i[reaction_time stroke_cycles breath_cycles position
-           minutes_from_start seconds_from_start hundreds_from_start native_from_start
-           underwater_kicks underwater_seconds underwater_hundreds
+           minutes_from_start seconds_from_start hundredths_from_start
+           underwater_kicks underwater_seconds underwater_hundredths
            meeting_attributes
            to_timing to_json]
       )

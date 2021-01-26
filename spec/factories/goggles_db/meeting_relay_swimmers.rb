@@ -13,7 +13,7 @@ FactoryBot.define do
     reaction_time { ((rand * 59) % 59).to_i }  # Forced not to use 59
     minutes       { 0 }
     seconds       { ((rand * 59) % 59).to_i }  # Forced not to use 59
-    hundreds      { ((rand * 99) % 99).to_i }  # Forced not to use 99
+    hundredths    { ((rand * 99) % 99).to_i }  # Forced not to use 99
 
     badge   { create(:badge, season: meeting_relay_result.team_affiliation.season, team: meeting_relay_result.team) }
     swimmer { badge.swimmer }

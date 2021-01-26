@@ -6,9 +6,9 @@ module GogglesDb
   #
   # = Creator command for MeetingReservations
   #
-  #   - file vers.: 1.58
+  #   - file vers.: 7.070
   #   - author....: Steve A.
-  #   - build.....: 20210106
+  #   - build.....: 20210125
   #
   # Allows to create a single MeetingReservation header row together with its associated
   # event & relay reservations for a single swimmer (badge) at a given Meeting.
@@ -110,7 +110,7 @@ module GogglesDb
           .merge(
             minutes: entry_timing.minutes,
             seconds: entry_timing.minutes,
-            hundreds: entry_timing.minutes
+            hundredths: entry_timing.minutes
           )
       )
     rescue ActiveRecord::RecordNotUnique

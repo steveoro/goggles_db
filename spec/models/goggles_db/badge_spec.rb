@@ -73,10 +73,10 @@ module GogglesDb
       it_behaves_like('filtering scope for_<ANY_ENTITY_NAME>', Badge, 'category_type')
     end
     describe 'self.for_gender_type' do
-      it_behaves_like('filtering scope for_gender_type', Badge)
+      it_behaves_like('filtering scope for_<ANY_CHOSEN_FILTER>', Badge, 'for_gender_type', 'gender_type', GogglesDb::GenderType.send(%w[male female].sample))
     end
     describe 'self.for_season_type' do
-      it_behaves_like('filtering scope for_season_type', Badge)
+      it_behaves_like('filtering scope for_<ANY_CHOSEN_FILTER>', Badge, 'for_season_type', 'season_type', GogglesDb::SeasonType.all_masters.sample)
     end
     describe 'self.for_season' do
       it_behaves_like('filtering scope for_<ANY_ENTITY_NAME>', Badge, 'season')

@@ -9,7 +9,7 @@
 #   Semantic Versioning implementation.
 module GogglesDb
   # Gem version
-  VERSION = '0.1.68'
+  VERSION = '0.1.70'
 
   module Version
     # Framework Core internal name.
@@ -19,10 +19,10 @@ module GogglesDb
     MAJOR   = '7'
 
     # Minor version.
-    MINOR   = '068'
+    MINOR   = '070'
 
     # Current build version.
-    BUILD   = '20210123'
+    BUILD   = '20210126'
 
     # Full versioning for the current release (Framework + Core).
     FULL    = "#{MAJOR}.#{MINOR}.#{BUILD} (#{CORE} v. #{VERSION})"
@@ -32,7 +32,7 @@ module GogglesDb
 
     # Current internal DB structure version
     # (this is independent from migrations and framework release)
-    DB      = '1.60.01'
+    DB      = '1.70.01'
 
     # Pointless UNICODE emojis, just for fun:
     EMOJI_BUTTERFLY    = 'з== ( ▀ ͜͞ʖ▀) ==ε'
