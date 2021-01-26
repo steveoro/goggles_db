@@ -2,7 +2,7 @@
 
 module GogglesDb
   #
-  # = ApiDailyUse model
+  # = APIDailyUse model
   #
   #   - version:  7.070
   #   - author:   Steve A.
@@ -10,7 +10,7 @@ module GogglesDb
   # Stores overall count of API calls for each (route, day).
   # Used to exatract periodic stats.
   #
-  class ApiDailyUse < ApplicationRecord
+  class APIDailyUse < ApplicationRecord
     self.table_name = 'api_daily_uses'
 
     # Stores 'request.path':
@@ -36,7 +36,7 @@ module GogglesDb
     # any valid string.
     #
     def self.increase_for!(route, day = Date.today)
-      counter_row = ApiDailyUse.create_or_find_by!(route: route, day: day)
+      counter_row = APIDailyUse.create_or_find_by!(route: route, day: day)
       counter_row.increment!(:count)
     end
   end
