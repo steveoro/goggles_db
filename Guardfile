@@ -74,7 +74,7 @@ end
 
 # == RSpec ==
 
-# Note: The cmd option is now required due to the increasing number of ways
+# NOTE: The cmd option is now required due to the increasing number of ways
 #       rspec may be run, below are examples of the most common uses.
 #  * bundler: 'bundle exec rspec'
 #  * bundler binstubs: 'bin/rspec'
@@ -132,4 +132,22 @@ guard 'spring', bundler: true do
   watch(%r{^config/})
   watch(%r{^spec/(support|factories)/})
   watch(%r{^spec/factory.rb})
+end
+
+# == Inch - documentation grader ==
+
+# - use all_type: :stats for
+guard :inch, pedantic: false, private: false, all_on_start: true, all_type: :suggest do
+  watch(/.+\.rb/)
+end
+
+# == HAMLLint ==
+
+# Guard-HamlLint supports a lot options with default values:
+# all_on_start: true            # Check all files at Guard startup. default: true
+# haml_dires: ['app/views']     # Check Directories. default: 'app/views' or '.'
+# cli: '--fail-fast --no-color' # Additional command line options to haml-lint.
+guard :haml_lint do
+  watch(/.+\.html.*\.haml$/)
+  watch(%r{(?:.+/)?\.haml-lint\.yml$}) { |m| File.dirname(m[0]) }
 end

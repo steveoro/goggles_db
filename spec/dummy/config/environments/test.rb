@@ -53,6 +53,8 @@ Rails.application.configure do
   # Bullet gem specific configuration:
   # ============================================================================
   # (see https://github.com/flyerhzm/bullet)
+  #
+  # [Steve, 20210128] Note: Bullet doesn't support ActiveRecord 6.1 yet
   config.after_initialize do
     Bullet.enable = true
     Bullet.bullet_logger = true

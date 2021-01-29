@@ -35,7 +35,7 @@ module GogglesDb
     scope :only_undivided,    -> { where(undivided: true) }
     scope :only_gender_split, -> { where(undivided: false) }
     scope :for_season_type,   ->(season_type) { includes(:season_type).joins(:season_type).where('season_types.id': season_type.id) }
-    scope :for_season,        ->(season)      { includes(:season).joins(:season).where('season_id': season.id) }
+    scope :for_season,        ->(season)      { includes(:season).joins(:season).where(season_id: season.id) }
     #-- ------------------------------------------------------------------------
     #++
 

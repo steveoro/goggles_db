@@ -13,9 +13,6 @@ gemspec
 # Git. Remember to move these dependencies to your gemspec before releasing
 # your gem to rubygems.org.
 
-# To use a debugger
-# gem 'byebug', group: [:development, :test]
-
 group :development do
   gem 'better_errors'
   gem 'binding_of_caller'
@@ -23,10 +20,18 @@ group :development do
   gem 'guard'
   gem 'guard-brakeman'
   gem 'guard-bundler', require: false
+  gem 'guard-haml_lint'
+  gem 'guard-inch'
   gem 'guard-rspec'
   gem 'guard-rubocop'
   gem 'guard-spring'
-  # Spring speeds up development by keeping your application running in the background. Read more: https://github.com/rails/spring
+  gem 'haml_lint'
+  gem 'inch', require: false # grades source documentation
+  gem 'listen', '~> 3.2'
+  # [20210128] Rubocop 1.9.0 seems to have several issues currently
+  gem 'rubocop', '= 1.8.1', require: false
+  gem 'rubocop-rails'
+  gem 'rubocop-rspec'
   gem 'spring'
   gem 'spring-commands-rspec'
   gem 'spring-commands-rubocop'
@@ -37,18 +42,16 @@ group :development, :test do
   gem 'awesome_print' # color output formatter for Ruby objects
   gem 'brakeman'
   gem 'bullet'
+  # gem 'byebug' # Uncomment and call 'byebug' anywhere in the code to stop execution and get a debugger console
   gem 'ffaker'
   gem 'letter_opener'
   gem 'pry'
   gem 'rspec'
   gem 'rspec-rails'
-  gem 'rubocop', require: false # For style checking
-  gem 'rubocop-rails'
-  gem 'rubocop-rspec'
 end
 
 group :test do
-  gem 'codeclimate-test-reporter', require: false
+  # For CodeClimate: use 'cc-test-reporter' from the command line.
   gem 'codecov', require: false
   gem 'coveralls', require: false
 end

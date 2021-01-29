@@ -28,7 +28,8 @@ Gem::Specification.new do |spec|
   spec.files = Dir['{app,config,db,lib}/**/*', 'LICENSE', 'Rakefile', 'README.md']
 
   # Base Rails dependancy:
-  spec.add_dependency 'rails', '~> 6', '>= 6.0.3.3'
+  # [20210128] ActiveRecord 6.1 introduces too many changes for the current version
+  spec.add_dependency 'rails', '= 6.0.3.4'
 
   spec.add_dependency 'acts-as-taggable-on'
   spec.add_dependency 'acts_as_votable'
@@ -42,17 +43,18 @@ Gem::Specification.new do |spec|
   spec.add_dependency 'devise'
   spec.add_dependency 'devise-i18n'
   spec.add_dependency 'draper'
+  spec.add_dependency 'fuzzy-string-match'
   spec.add_dependency 'haml'
+  spec.add_dependency 'haml-rails'
   spec.add_dependency 'jwt'
   spec.add_dependency 'mini_magick'
   spec.add_dependency 'simple_command'
-  spec.add_dependency 'tzinfo', '~> 1.2', '>= 1.2.2'
+  spec.add_dependency 'tzinfo'
 
-  # Currently publishing data factories even on production to allow
-  # fixture creation even on staging/production environment for testing purposes:
   spec.add_dependency 'factory_bot_rails'
   spec.add_dependency 'ffaker'
-  spec.add_dependency 'fuzzy-string-match'
+  # NOTE: data factories are published here to allow
+  # fixture creation even on staging/production environments
 
   spec.add_development_dependency 'mysql2'
 end

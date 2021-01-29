@@ -100,46 +100,46 @@ describe Timing, type: :model do
   #++
 
   describe '#+' do
-    let(:fixture_1) { Timing.new(rand * 100, rand * 60, rand * 60, rand * 24) }
-    let(:fixture_2) { Timing.new(rand * 100, rand * 60, rand * 60, rand * 24) }
-    subject { fixture_1 + fixture_2 }
+    let(:fixture1) { Timing.new(rand * 100, rand * 60, rand * 60, rand * 24) }
+    let(:fixture2) { Timing.new(rand * 100, rand * 60, rand * 60, rand * 24) }
+    subject { fixture1 + fixture2 }
 
     it 'returns a Timing object' do
       expect(subject).to be_an_instance_of(Timing)
     end
     it 'corresponds to the sum of the two objects in hundredths' do
-      expect(subject.to_hundredths).to eq(fixture_1.to_hundredths + fixture_2.to_hundredths)
+      expect(subject.to_hundredths).to eq(fixture1.to_hundredths + fixture2.to_hundredths)
     end
   end
 
   describe '#-' do
-    let(:fixture_1) { Timing.new(rand * 100, rand * 60, rand * 60, rand * 24) }
-    let(:fixture_2) { Timing.new(rand * 100, rand * 60, rand * 60, rand * 24) }
-    subject { fixture_1 - fixture_2 }
+    let(:fixture1) { Timing.new(rand * 100, rand * 60, rand * 60, rand * 24) }
+    let(:fixture2) { Timing.new(rand * 100, rand * 60, rand * 60, rand * 24) }
+    subject { fixture1 - fixture2 }
 
     it 'returns a Timing object' do
       expect(subject).to be_an_instance_of(Timing)
     end
     it 'corresponds to the sum of the two objects in hundredths' do
-      expect(subject.to_hundredths).to eq(fixture_1.to_hundredths - fixture_2.to_hundredths)
+      expect(subject.to_hundredths).to eq(fixture1.to_hundredths - fixture2.to_hundredths)
     end
   end
 
   describe '#==' do
-    let(:fixture_1)    { Timing.new(rand * 100, rand * 60, rand * 60, rand * 24) }
-    let(:fixture_1_eq) { Timing.new(fixture_1.hundredths, fixture_1.seconds, fixture_1.minutes, fixture_1.hours) }
-    let(:fixture_2)    { Timing.new(rand * 100, rand * 60, rand * 60, rand * 24) }
-    let(:fixture_2_eq) { Timing.new(fixture_2.hundredths, fixture_2.seconds, fixture_2.minutes, fixture_2.hours) }
+    let(:fixture1)    { Timing.new(rand * 100, rand * 60, rand * 60, rand * 24) }
+    let(:fixture1_eq) { Timing.new(fixture1.hundredths, fixture1.seconds, fixture1.minutes, fixture1.hours) }
+    let(:fixture2)    { Timing.new(rand * 100, rand * 60, rand * 60, rand * 24) }
+    let(:fixture2_eq) { Timing.new(fixture2.hundredths, fixture2.seconds, fixture2.minutes, fixture2.hours) }
 
     it 'returns false for instances with different values' do
-      expect(fixture_1 == fixture_2).to be false
+      expect(fixture1 == fixture2).to be false
     end
     it 'returns false for uncomparable objects' do
-      expect(fixture_1 == 'asdfg').to be false
+      expect(fixture1 == 'asdfg').to be false
     end
     it 'returns true for instances with equal values' do
-      expect(fixture_1 == fixture_1_eq).to be true
-      expect(fixture_2 == fixture_2_eq).to be true
+      expect(fixture1 == fixture1_eq).to be true
+      expect(fixture2 == fixture2_eq).to be true
     end
   end
 

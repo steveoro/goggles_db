@@ -16,12 +16,13 @@ shared_examples_for 'Localizable' do
   # Describes the requistes of the including class and the outcome of the module inclusion:
   context 'by including this concern, the sibling:' do
     it_behaves_like('responding to a list of class methods', %i[table_name])
-    # Note:
-    # Adding here 'attributes' to the list of methods to enforce Concern inclusion only
+    # *Note*
+    # Adding here 'attributes' to the list of methods shall enforce Concern inclusion only
     # inside siblings of ActiveRecord::Base.
     #
-    # Even if some of the following examples are stored inside ApplicationLookupEntity, by checking them
-    # here in this shared group, we'll apply the specs to any sibling that behaves_like this.
+    # Even if some of the following examples are stored inside ApplicationLookupEntity,
+    # by checking them below in this shared group, we'll apply the specs to any sibling
+    # that behaves_like 'Localizable'.
     it_behaves_like(
       'responding to a list of methods',
       %i[attributes to_json code label long_label alt_label]
