@@ -6,9 +6,9 @@ module GogglesDb
   #
   # = Jwt Manager strategy object
   #
-  #   - file vers.: 1.02
+  #   - file vers.: 1.03
   #   - author....: Steve A.
-  #   - build.....: 20200908
+  #   - build.....: 20210128
   #
   #   Wraps encoding & decoding helper methods for JSON Web Token usage.
   #
@@ -92,13 +92,9 @@ module GogglesDb
       HashWithIndifferentAccess.new(
         JWT.decode(jwt_token, base_key, true, algorithm: 'HS512').first
       )['data']
-    rescue JWT::ExpiredSignature, JWT::VerificationError
+    rescue JWT::ExpiredSignature, JWT::VerificationError, JWT::DecodeError
       # Verbose output for debugging purposes:
-      # puts "JWT token expired!"
-      nil
-    rescue JWT::DecodeError
-      # Verbose output for debugging purposes:
-      # puts "JWT Decode error!"
+      # puts $!
       nil
     end
   end

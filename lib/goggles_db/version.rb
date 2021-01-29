@@ -3,36 +3,32 @@
 #
 # = Version module
 #
-#   - version:  7.072
+#   - version:  7.073
 #   - author:   Steve A.
 #
-#   Semantic Versioning implementation.
 module GogglesDb
-  # Gem version
-  VERSION = '0.1.72'
+  # Public gem version
+  VERSION = '0.1.73'
 
+  # == Semantic versioning
+  #
+  # Framework Core internal name & versioning constants.
+  #
+  # Includes core, major, minor, build & composed labels
+  # for quick reference on pages.
+  #
   module Version
-    # Framework Core internal name.
     CORE    = 'C7'
-
-    # Major version.
     MAJOR   = '7'
+    MINOR   = '073'
+    BUILD   = '20210129'
 
-    # Minor version.
-    MINOR   = '072'
-
-    # Current build version.
-    BUILD   = '20210126'
-
-    # Full versioning for the current release (Framework + Core).
+    # Full label
     FULL    = "#{MAJOR}.#{MINOR}.#{BUILD} (#{CORE} v. #{VERSION})"
 
-    # Compact versioning label for the current release.
+    # Compact label
     COMPACT = "#{MAJOR.gsub('.', '')}#{MINOR}"
-
-    # Current internal DB structure version
-    # (this is independent from migrations and framework release)
-    DB      = '1.70.01'
+    DB      = '1.70.01' # Internal DB structure
 
     # Pointless UNICODE emojis, just for fun:
     EMOJI_BUTTERFLY    = 'з== ( ▀ ͜͞ʖ▀) ==ε'

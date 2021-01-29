@@ -63,9 +63,11 @@ Rails.application.configure do
   # config.file_watcher = ActiveSupport::EventedFileUpdateChecker
 
   # ============================================================================
-  # Bullet gem specific configuration:  [Steve A., 20181131]
+  # Bullet gem specific configuration:
   # ============================================================================
   # (see https://github.com/flyerhzm/bullet)
+  #
+  # [Steve, 20210128] Note: Bullet doesn't support ActiveRecord 6.1 yet
   config.after_initialize do
     Bullet.enable = true
     # Pop up a JavaScript alert in the browser:

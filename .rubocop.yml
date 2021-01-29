@@ -40,7 +40,7 @@ Metrics/AbcSize:
 Metrics/BlockLength:
   Max: 40
   CountAsOne: ['array', 'heredoc']
-  ExcludedMethods: ['describe', 'context', 'define', 'shared_examples_for']
+  IgnoredMethods: ['describe', 'context', 'define', 'shared_examples_for']
   Exclude:
     - 'lib/tasks/*.rake'
     - 'spec/models/goggles_db/city_spec.rb'
@@ -51,13 +51,17 @@ Metrics/ClassLength:
 Metrics/MethodLength:
   Max: 40
   CountAsOne: ['array', 'heredoc']
-  ExcludedMethods: ['describe', 'context']
+  IgnoredMethods: ['describe', 'context']
 
 Metrics/ModuleLength:
   Max: 200
   # If Rubocop whines too much for a spec length, exclude the individual files:
   # Exclude:
   #   - 'spec/path_to/specific_spec_file'
+
+Naming/VariableNumber:
+  Exclude:
+    - 'db/migrate/20201121173221_rename_bool_fields_for_mevents_plus_more.rb'
 
 Style/Documentation:
   Exclude:

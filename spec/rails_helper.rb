@@ -6,43 +6,51 @@
 # SimpleCov is used as report formatter by the following services:
 # (the result is a static HTML report inside '/coverage')
 #
-# - CodeClimate.com:
-#   ENV variable to be set *before* the test runs:
-#     $> export CODECLIMATE_REPO_TOKEN=YOUR_CODECLIMATE_REPO_TOKEN
-#   Then, after the test suite:
-#     $> bundle exec codeclimate-test-reporter
-#   (Works all the time, indipendently from which one of the other 2 is being run)
+# - CoverAlls.io:
+#   Code quality report works best when prepared under a CI service with a
+#   structured build. Uses the COVERALLS_REPO_TOKEN variable.
+#   By choice, this specific coverage report is currently set to be updated only
+#   after a successful Semaphore 2.0 build.
 #
-# - CoverAlls:
-#   ENV variable to be set *before* the test runs:
-#     $> export COVERALLS_REPO_TOKEN=YOUR_COVERALLS_REPO_TOKEN
-#   Coveralls.wear! will automatically post the results to the service.
-#   (Works only inside CI; enable either this or CodeCov.io)
+# - CodeClimate.com...:
+#   This report can be updated both from the Semaphore builds as well as from
+#   a local test suite run, but needs the ENV variable CODECLIMATE_REPO_TOKEN
+#   to be set. (Run './send_coverage.sh' for this - see below)
 #
-# - CodeCov.io:
-#   ENV variable to be set *before* the test runs:
-#     $> export CODECOV_TOKEN=YOUR_CODECOV_REPO_TOKEN
-#   (Enable either this or CoverAlls: the last one defined & set will run)
-#   Step for manual execution (not needed if ENV is set):
-#     $> bash <(curl -s https://codecov.io/bash) -cF test_subgroupname
+# - CodeCov.io........:
+#   As above, but it needs CODECOV_TOKEN instead before the test suite run.
 #
-# => Run locally CodeCov.io by setting the ENV variable & just leave CoverAlls
-#    execution to the CI environment.
+# The last ENV variable set will overwrite the SimpleCov formatter used.
+#
+# Only CodeClimate.com allows to re-processing of the /coverage folder to extract
+# the report data without re-running the test suite. For the other 2 services at
+# the moment that is not so easily done.
+#
+# Thus, to avoid running the tests 2 times in order to have different code coverage
+# reports for comparison, we'll choose to delegate Coveralls.io to the CI setup and
+# just update CodeCov.io only locally, while CodeClimate can be updated in both ways.
+#
+# To update the code coverage from localhost, run './send_coverage.sh'
+# (ask Steve if you haven't got a copy - the Bash file includes the tokens).
+#
+# The script will re-run the whole test suite just 1 time and send the overall resulting
+# report to both CodeCov.io & CodeClimate.com, using the latest commit as version ID
+# of the code coverage report.
 #
 require 'simplecov'
 SimpleCov.start 'rails'
 puts 'SimpleCov required and started.'
 
-require 'coveralls'
-unless ENV['COVERALLS_REPO_TOKEN'].to_s.empty?
+# Let's give Coveralls priority if both ENV variables are set:
+if ENV['COVERALLS_REPO_TOKEN'].to_s.present?
+  require 'coveralls'
   Coveralls.wear!
-  puts 'Coveralls started.'
-end
+  puts 'Coveralls.io selected for reporting output.'
 
-require 'codecov'
-unless ENV['CODECOV_TOKEN'].to_s.empty?
+elsif ENV['CODECOV_TOKEN'].to_s.present?
+  require 'codecov'
   SimpleCov.formatter = SimpleCov::Formatter::Codecov
-  puts 'Setting CodeCov as SimpleCov formatter.'
+  puts 'CodeCov.io selected for reporting output.'
 end
 
 # This file is copied to spec/ when you run 'rails generate rspec:install'
@@ -54,7 +62,7 @@ abort('The Rails environment is running in production mode!') if Rails.env.produ
 require 'rspec/rails'
 # Add additional requires below this line. Rails is not loaded until this point!
 
-require 'devise' # note: require 'devise' after require 'rspec/rails' (this allows to use devise test helpers)
+require 'devise' # NOTE: require 'devise' after require 'rspec/rails' (this allows to use devise test helpers)
 
 # Add factories from core engine into the dummy app:
 require 'factory_bot_rails'

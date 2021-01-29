@@ -10,6 +10,7 @@
 
 
 DB structure and base Rails models for the Goggles Framework applications.
+Includes the [Devise](https://github.com/heartcombo/devise) routes for `User` (the Engine must be mounted in `routes.rb` in order to publish them).
 
 
 ## Wiki & HOW-TOs
@@ -19,9 +20,9 @@ Official Framework Wiki, [here](https://github.com/steveoro/goggles_db/wiki) (v.
 
 ## Requires
 
-- Ruby 2.6+
-- Rails 6+
-- MySql
+- Ruby 2.6.3
+- Rails 6.0.3
+- MariaDb 10.3.25+ or any other MySql equivalent version
 
 
 
