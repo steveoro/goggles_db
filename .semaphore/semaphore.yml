@@ -69,35 +69,35 @@ blocks:
           - 'curl -L -o spec/dummy/db/dump/test.sql.bz2 "https://github.com/steveoro/goggles_db/raw/master/spec/dummy/db/dump/test.sql.bz2"'
           - 'RAILS_ENV=test bin/rails app:db:rebuild from=test to=test'
           - 'RAILS_ENV=test bin/rails db:migrate'
-          - cc-test-reporter before-build
+          - ./cc-test-reporter before-build
       jobs:
         - name: RSpec - models
           commands:
             - 'bundle exec rspec -t type:model'
             - bash <(curl -s https://codecov.io/bash) -cF model
-            - cc-test-reporter format-coverage -t simplecov
-            - cc-test-reporter upload-coverage
+            - ./cc-test-reporter format-coverage -t simplecov
+            - ./cc-test-reporter upload-coverage
 
         - name: RSpec - commands
           commands:
             - 'bundle exec rspec -t type:command'
             - bash <(curl -s https://codecov.io/bash) -cF command
-            - cc-test-reporter format-coverage -t simplecov
-            - cc-test-reporter upload-coverage
+            - ./cc-test-reporter format-coverage -t simplecov
+            - ./cc-test-reporter upload-coverage
 
         - name: RSpec - strategies
           commands:
             - 'bundle exec rspec -t type:strategy'
             - bash <(curl -s https://codecov.io/bash) -cF strategy
-            - cc-test-reporter format-coverage -t simplecov
-            - cc-test-reporter upload-coverage
+            - ./cc-test-reporter format-coverage -t simplecov
+            - ./cc-test-reporter upload-coverage
 
         - name: RSpec - validators
           commands:
             - 'bundle exec rspec -t type:validator'
             - bash <(curl -s https://codecov.io/bash) -cF validator
-            - cc-test-reporter format-coverage -t simplecov
-            - cc-test-reporter upload-coverage
+            - ./cc-test-reporter format-coverage -t simplecov
+            - ./cc-test-reporter upload-coverage
 
         # Not currently used:
         # - name: RSpec - decorators
