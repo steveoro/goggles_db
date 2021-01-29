@@ -1,53 +1,16 @@
 # frozen_string_literal: true
 
-# == SimpleCov: Test coverage report formatter setup ==
-#
+# == SimpleCov: Test coverage report formatter ==
 # [Steve A., 20201030]
-# SimpleCov is used as report formatter by the following services:
-# (the result is a static HTML report inside '/coverage')
-#
-# - CoverAlls.io:
-#   Code quality report works best when prepared under a CI service with a
-#   structured build. Uses the COVERALLS_REPO_TOKEN variable.
-#   By choice, this specific coverage report is currently set to be updated only
-#   after a successful Semaphore 2.0 build.
-#
-# - CodeClimate.com...:
-#   This report can be updated both from the Semaphore builds as well as from
-#   a local test suite run, but needs the ENV variable CODECLIMATE_REPO_TOKEN
-#   to be set. (Run './send_coverage.sh' for this - see below)
-#
-# - CodeCov.io........:
-#   As above, but it needs CODECOV_TOKEN instead before the test suite run.
-#
-# The last ENV variable set will overwrite the SimpleCov formatter used.
-#
-# Only CodeClimate.com allows to re-processing of the /coverage folder to extract
-# the report data without re-running the test suite. For the other 2 services at
-# the moment that is not so easily done.
-#
-# Thus, to avoid running the tests 2 times in order to have different code coverage
-# reports for comparison, we'll choose to delegate Coveralls.io to the CI setup and
-# just update CodeCov.io only locally, while CodeClimate can be updated in both ways.
-#
-# To update the code coverage from localhost, run './send_coverage.sh'
-# (ask Steve if you haven't got a copy - the Bash file includes the tokens).
-#
-# The script will re-run the whole test suite just 1 time and send the overall resulting
-# report to both CodeCov.io & CodeClimate.com, using the latest commit as version ID
-# of the code coverage report.
-#
+# SimpleCov prepares a static HTML code-coverage report inside '/coverage';
+# the formatter is used by both CodeClimate.com & CodeCov.io build configurations.
+# The CoverAlls configuration is currently no longer maintained.
+
 require 'simplecov'
 SimpleCov.start 'rails'
 puts 'SimpleCov required and started.'
 
-# Let's give Coveralls priority if both ENV variables are set:
-if ENV['COVERALLS_REPO_TOKEN'].to_s.present?
-  require 'coveralls'
-  Coveralls.wear!
-  puts 'Coveralls.io selected for reporting output.'
-
-elsif ENV['CODECOV_TOKEN'].to_s.present?
+unless ENV['CODECOV_TOKEN'].to_s.empty?
   require 'codecov'
   SimpleCov.formatter = SimpleCov::Formatter::Codecov
   puts 'CodeCov.io selected for reporting output.'
