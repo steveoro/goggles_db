@@ -5,7 +5,6 @@
 [![Maintainability](https://api.codeclimate.com/v1/badges/ba9e005076a6aa97f788/maintainability)](https://codeclimate.com/github/steveoro/goggles_db/maintainability)
 [![Test Coverage](https://api.codeclimate.com/v1/badges/ba9e005076a6aa97f788/test_coverage)](https://codeclimate.com/github/steveoro/goggles_db/test_coverage)
 [![codecov](https://codecov.io/gh/steveoro/goggles_db/branch/master/graph/badge.svg?token=G4E7NVC4T4)](undefined)
-[![Coverage Status](https://coveralls.io/repos/github/steveoro/goggles_db/badge.svg?branch=master)](https://coveralls.io/github/steveoro/goggles_db?branch=master)
 ![](https://api.kindspeech.org/v1/badge)
 
 
@@ -148,6 +147,9 @@ To create a brand new random user (for example):
 
 ## License
 The gem is available as open source under the terms of the [LGPL-3.0 License](https://opensource.org/licenses/LGPL-3.0).
+
+[![FOSSA Status](https://app.fossa.com/api/projects/custom%2B22810%2Fgit%40github.com%3Asteveoro%2Fgoggles_db.git.svg?type=large)](https://app.fossa.com/projects/custom%2B22810%2Fgit%40github.com%3Asteveoro%2Fgoggles_db.git?ref=badge_large)
+
 
 
 ## Supporting
