@@ -2,7 +2,7 @@
 
 #
 # = Timing
-#   - Goggles framework vers.:  7.074
+#   - Goggles framework vers.:  7.075
 #   - author: Steve A.
 #
 #  Utility class to store timing data and to allow simple mathematical operations
@@ -30,11 +30,11 @@ class Timing
   #  - <tt>:days</tt> => Integer value for days.
   #
   def initialize(options = {})
-    @hundredths = options.fetch(:hundredths, 0).to_i
-    @seconds = options.fetch(:seconds, 0).to_i
-    @minutes = options.fetch(:minutes, 0).to_i
-    @hours = options.fetch(:hours, 0).to_i
-    @days = options.fetch(:days, 0).to_i
+    @hundredths = options&.fetch(:hundredths, 0).to_i
+    @seconds = options&.fetch(:seconds, 0).to_i
+    @minutes = options&.fetch(:minutes, 0).to_i
+    @hours = options&.fetch(:hours, 0).to_i
+    @days = options&.fetch(:days, 0).to_i
     # Adjust & round the result:
     from_hundredths(to_hundredths)
   end
@@ -180,11 +180,11 @@ class Timing
   #
   def self.to_s(options = {})
     Timing.new(
-      hundredths: options.fetch(:hundredths, 0).to_i,
-      seconds: options.fetch(:seconds, 0).to_i,
-      minutes: options.fetch(:minutes, 0).to_i,
-      hours: options.fetch(:hours, 0).to_i,
-      days: options.fetch(:days, 0).to_i
+      hundredths: options&.fetch(:hundredths, 0).to_i,
+      seconds: options&.fetch(:seconds, 0).to_i,
+      minutes: options&.fetch(:minutes, 0).to_i,
+      hours: options&.fetch(:hours, 0).to_i,
+      days: options&.fetch(:days, 0).to_i
     ).to_s
   end
 
@@ -201,11 +201,11 @@ class Timing
   #
   def self.to_compact_s(options = {})
     Timing.new(
-      hundredths: options.fetch(:hundredths, 0).to_i,
-      seconds: options.fetch(:seconds, 0).to_i,
-      minutes: options.fetch(:minutes, 0).to_i,
-      hours: options.fetch(:hours, 0).to_i,
-      days: options.fetch(:days, 0).to_i
+      hundredths: options&.fetch(:hundredths, 0).to_i,
+      seconds: options&.fetch(:seconds, 0).to_i,
+      minutes: options&.fetch(:minutes, 0).to_i,
+      hours: options&.fetch(:hours, 0).to_i,
+      days: options&.fetch(:days, 0).to_i
     ).to_compact_s
   end
   #-- -------------------------------------------------------------------------

@@ -4,7 +4,7 @@ module GogglesDb
   #
   # = SwimmingPool model
   #
-  #   - version:  7.054
+  #   - version:  7.075
   #   - author:   Steve A.
   #
   class SwimmingPool < ApplicationRecord
@@ -44,15 +44,27 @@ module GogglesDb
     # acts_as_taggable_on :tags_by_users
     # acts_as_taggable_on :tags_by_teams
 
-    # Sorting scopes:
+    #-- ------------------------------------------------------------------------
+    #   Sorting scopes:
+    #-- ------------------------------------------------------------------------
+    #++
+
     scope :by_name, ->(dir = :asc) { order(name: dir) }
     scope :by_city, ->(dir = :asc) { includes(:city).joins(:city).order('cities.name': dir) }
 
+    # Sort by PoolType(type code, pool name)
+    # == Params
+    # - dir: :asc|:desc
     def self.by_pool_type(dir = :asc)
       includes(:pool_type).joins(:pool_type).order('pool_types.code': dir, 'swimming_pools.name': dir)
     end
 
-    # Filtering scopes:
+    #-- ------------------------------------------------------------------------
+    #   Filtering scopes:
+    #-- ------------------------------------------------------------------------
+    #++
+
+    # Fulltext search by name or nick_name
     scope :for_name, ->(name) { where('MATCH(swimming_pools.name, swimming_pools.nick_name) AGAINST(?)', name) }
     #-- ------------------------------------------------------------------------
     #++

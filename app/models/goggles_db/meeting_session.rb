@@ -34,6 +34,9 @@ module GogglesDb
     scope :by_order, ->(dir = :asc) { order(session_order: dir) }
     scope :by_date,  ->(dir = :asc) { order(scheduled_date: dir, session_order: dir) }
 
+    # Sort by Meeting(description)
+    # == Params
+    # - dir: :asc|:desc
     def self.by_meeting(dir = :asc)
       includes(:pool_type).joins(:meeting).order('meetings.description': dir, session_order: dir)
     end
@@ -52,6 +55,8 @@ module GogglesDb
     end
 
     # Override: includes the 1st-level associations into the typical to_json output.
+    # == Params
+    # - options: can be any option hash accepted by JSON#generate
     def to_json(options = nil)
       attributes.merge(
         'meeting' => meeting_attributes,
