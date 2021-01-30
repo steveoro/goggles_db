@@ -16,6 +16,24 @@ parsers:
       method: no
       macro: no
 
+flags:
+  command:
+    paths:
+      - app/commands/*
+    carryforward: true
+  model:
+    paths:
+      - app/models/*
+    carryforward: true
+  strategy:
+    paths:
+      - app/strategies/*
+    carryforward: true
+  validator:
+    paths:
+      - app/validators/*
+    carryforward: true
+
 comment:
   layout: "reach,diff,flags,files,footer"
   behavior: default
