@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    goggles_db (0.1.73)
+    goggles_db (0.1.74)
       acts-as-taggable-on
       acts_as_votable
       carrierwave
@@ -464,4 +464,4 @@ DEPENDENCIES
   spring-watcher-listen
 
 BUNDLED WITH
-   2.1.4
+   2.2.7
