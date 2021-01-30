@@ -74,28 +74,28 @@ blocks:
         - name: RSpec - models
           commands:
             - 'bundle exec rspec -t type:model'
-            - bash <(curl -s https://codecov.io/bash) -cF model
+            - bash <(curl -s https://codecov.io/bash) -c -F model
             - ./cc-test-reporter format-coverage -t simplecov
             - ./cc-test-reporter upload-coverage
 
         - name: RSpec - commands
           commands:
             - 'bundle exec rspec -t type:command'
-            - bash <(curl -s https://codecov.io/bash) -cF command
+            - bash <(curl -s https://codecov.io/bash) -c -F command
             - ./cc-test-reporter format-coverage -t simplecov
             - ./cc-test-reporter upload-coverage
 
         - name: RSpec - strategies
           commands:
             - 'bundle exec rspec -t type:strategy'
-            - bash <(curl -s https://codecov.io/bash) -cF strategy
+            - bash <(curl -s https://codecov.io/bash) -c -F strategy
             - ./cc-test-reporter format-coverage -t simplecov
             - ./cc-test-reporter upload-coverage
 
         - name: RSpec - validators
           commands:
             - 'bundle exec rspec -t type:validator'
-            - bash <(curl -s https://codecov.io/bash) -cF validator
+            - bash <(curl -s https://codecov.io/bash) -c -F validator
             - ./cc-test-reporter format-coverage -t simplecov
             - ./cc-test-reporter upload-coverage
 
