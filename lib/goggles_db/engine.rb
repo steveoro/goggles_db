@@ -10,6 +10,10 @@ require 'factory_bot_rails'
 
 require 'extensions/integer'
 
+# = GogglesDb
+#
+# DB structure and base Rails models for the Goggles Framework applications.
+#
 module GogglesDb
   class Engine < ::Rails::Engine
     isolate_namespace GogglesDb

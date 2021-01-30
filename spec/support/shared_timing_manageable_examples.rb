@@ -33,7 +33,7 @@ shared_examples_for 'TimingManageable' do
     let(:new_minutes) { ((rand * 100) % 59).to_i }
     let(:new_hours) { ((rand * 100) % 24).to_i }
     let(:new_days) { ((rand * 100) % 5).to_i }
-    let(:new_timing) { Timing.new(new_hundredths, new_seconds, new_minutes, new_hours, new_days) }
+    let(:new_timing) { Timing.new(hundredths: new_hundredths, seconds: new_seconds, minutes: new_minutes, hours: new_hours, days: new_days) }
     subject { fixture_row.from_timing(new_timing) }
 
     it 'returns self' do

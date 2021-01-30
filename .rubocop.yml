@@ -47,6 +47,8 @@ Metrics/BlockLength:
 
 Metrics/ClassLength:
   Max: 120
+  Exclude:
+    - 'lib/wrappers/timing.rb'
 
 Metrics/MethodLength:
   Max: 40

@@ -40,21 +40,32 @@ module GogglesDb
 
     delegate :scheduled_date, to: :meeting_session, prefix: false, allow_nil: false
     delegate :relay?,         to: :meeting_event,   prefix: false, allow_nil: false
+    #-- ------------------------------------------------------------------------
+    #   Sorting scopes:
+    #-- ------------------------------------------------------------------------
+    #++
 
-    # Sorting scopes:
+    # Sort by EventType(code, event_order)
+    # == Params
+    # - dir: :asc|:desc
     def self.by_event_type(dir = :asc)
       joins(:event_type)
         .includes(:event_type)
         .order('event_types.code': dir, 'meeting_programs.event_order': dir)
     end
 
+    # Sort by EventType(code, event_order)
+    # == Params
+    # - dir: :asc|:desc
     def self.by_category_type(dir = :asc)
       joins(:category_type)
         .includes(:category_type)
         .order('category_types.code': dir, 'meeting_programs.event_order': dir)
     end
 
-    # Filtering scopes:
+    #-- ------------------------------------------------------------------------
+    #   Filtering scopes:
+    #-- ------------------------------------------------------------------------
     scope :relays,      -> { joins(:event_type).includes(:event_type).where('event_types.relay': true) }
     scope :individuals, -> { joins(:event_type).includes(:event_type).where('event_types.relay': false) }
     #-- ------------------------------------------------------------------------
@@ -67,6 +78,9 @@ module GogglesDb
     end
 
     # Override: includes *most* of the 1st-level associations into the typical to_json output.
+    # == Params
+    # - options: can be any option hash accepted by JSON#generate (spaces, indentation,
+    #            formatting, ...).
     def to_json(options = nil)
       base = attributes.merge('meeting_event' => meeting_event.minimal_attributes)
                        .merge(minimal_associations)

@@ -63,7 +63,7 @@ describe Timing, type: :model do
     end
 
     context '[for a non-zero instance]' do
-      subject { Timing.new(fix1_hundredths, fix1_secs, fix1_mins, fix1_hours, fix1_days) }
+      subject { Timing.new(hundredths: fix1_hundredths, seconds: fix1_secs, minutes: fix1_mins, hours: fix1_hours, days: fix1_days) }
       it_behaves_like('a valid Timing with all members assigned')
     end
   end
@@ -72,7 +72,7 @@ describe Timing, type: :model do
 
   describe '#clear' do
     context '[for a non-zero instance]' do
-      subject { Timing.new(fix1_hundredths, fix1_secs, fix1_mins, fix1_hours, fix1_days).clear }
+      subject { Timing.new(hundredths: fix1_hundredths, seconds: fix1_secs, minutes: fix1_mins, hours: fix1_hours, days: fix1_days).clear }
       it_behaves_like('a valid Timing with all members at 0')
     end
   end
@@ -87,7 +87,7 @@ describe Timing, type: :model do
   end
 
   describe '#to_hundredths' do
-    subject { Timing.new(fix1_hundredths, fix1_secs, fix1_mins, fix1_hours) }
+    subject { Timing.new(hundredths: fix1_hundredths, seconds: fix1_secs, minutes: fix1_mins, hours: fix1_hours) }
 
     it 'returns a positive number' do
       expect(subject.to_hundredths).to be > 0
@@ -100,8 +100,8 @@ describe Timing, type: :model do
   #++
 
   describe '#+' do
-    let(:fixture1) { Timing.new(rand * 100, rand * 60, rand * 60, rand * 24) }
-    let(:fixture2) { Timing.new(rand * 100, rand * 60, rand * 60, rand * 24) }
+    let(:fixture1) { Timing.new(hundredths: rand * 100, seconds: rand * 60, minutes: rand * 60, hours: rand * 24) }
+    let(:fixture2) { Timing.new(hundredths: rand * 100, seconds: rand * 60, minutes: rand * 60, hours: rand * 24) }
     subject { fixture1 + fixture2 }
 
     it 'returns a Timing object' do
@@ -113,8 +113,8 @@ describe Timing, type: :model do
   end
 
   describe '#-' do
-    let(:fixture1) { Timing.new(rand * 100, rand * 60, rand * 60, rand * 24) }
-    let(:fixture2) { Timing.new(rand * 100, rand * 60, rand * 60, rand * 24) }
+    let(:fixture1) { Timing.new(hundredths: rand * 100, seconds: rand * 60, minutes: rand * 60, hours: rand * 24) }
+    let(:fixture2) { Timing.new(hundredths: rand * 100, seconds: rand * 60, minutes: rand * 60, hours: rand * 24) }
     subject { fixture1 - fixture2 }
 
     it 'returns a Timing object' do
@@ -126,10 +126,10 @@ describe Timing, type: :model do
   end
 
   describe '#==' do
-    let(:fixture1)    { Timing.new(rand * 100, rand * 60, rand * 60, rand * 24) }
-    let(:fixture1_eq) { Timing.new(fixture1.hundredths, fixture1.seconds, fixture1.minutes, fixture1.hours) }
-    let(:fixture2)    { Timing.new(rand * 100, rand * 60, rand * 60, rand * 24) }
-    let(:fixture2_eq) { Timing.new(fixture2.hundredths, fixture2.seconds, fixture2.minutes, fixture2.hours) }
+    let(:fixture1)    { Timing.new(hundredths: rand * 100, seconds: rand * 60, minutes: rand * 60, hours: rand * 24) }
+    let(:fixture1_eq) { Timing.new(hundredths: fixture1.hundredths, seconds: fixture1.seconds, minutes: fixture1.minutes, hours: fixture1.hours) }
+    let(:fixture2)    { Timing.new(hundredths: rand * 100, seconds: rand * 60, minutes: rand * 60, hours: rand * 24) }
+    let(:fixture2_eq) { Timing.new(hundredths: fixture2.hundredths, seconds: fixture2.seconds, minutes: fixture2.minutes, hours: fixture2.hours) }
 
     it 'returns false for instances with different values' do
       expect(fixture1 == fixture2).to be false
@@ -144,22 +144,22 @@ describe Timing, type: :model do
   end
 
   describe '#<=>' do
-    let(:fixture)       { Timing.new(rand * 100, rand * 60, rand * 60, rand * 24) }
-    let(:fixture_eq)    { Timing.new(fixture.hundredths, fixture.seconds, fixture.minutes, fixture.hours) }
+    let(:fixture)       { Timing.new(hundredths: rand * 100, seconds: rand * 60, minutes: rand * 60, hours: rand * 24) }
+    let(:fixture_eq)    { Timing.new(hundredths: fixture.hundredths, seconds: fixture.seconds, minutes: fixture.minutes, hours: fixture.hours) }
     let(:fixture_prev) do
       Timing.new(
-        fixture.hundredths - rand * fixture.hundredths,
-        fixture.seconds - rand * fixture.seconds,
-        fixture.minutes - rand * fixture.minutes,
-        fixture.hours
+        hundredths: fixture.hundredths - rand * fixture.hundredths,
+        seconds: fixture.seconds - rand * fixture.seconds,
+        minutes: fixture.minutes - rand * fixture.minutes,
+        hours: fixture.hours
       )
     end
     let(:fixture_succ) do
       Timing.new(
-        fixture.hundredths + rand * fixture.hundredths,
-        fixture.seconds + rand * fixture.seconds,
-        fixture.minutes + rand * fixture.minutes,
-        fixture.hours
+        hundredths: fixture.hundredths + rand * fixture.hundredths,
+        seconds: fixture.seconds + rand * fixture.seconds,
+        minutes: fixture.minutes + rand * fixture.minutes,
+        hours: fixture.hours
       )
     end
 
@@ -189,7 +189,7 @@ describe Timing, type: :model do
   end
 
   describe '#to_s' do
-    subject { Timing.new(fix1_hundredths, fix1_secs, fix1_mins, fix1_hours).to_s }
+    subject { Timing.new(hundredths: fix1_hundredths, seconds: fix1_secs, minutes: fix1_mins, hours: fix1_hours).to_s }
     it_behaves_like('the String result from a converted Timing instance')
 
     context 'with nil parameters,' do
@@ -248,7 +248,7 @@ describe Timing, type: :model do
   describe 'self.to_hour_string' do
     context 'with a valid parameter,' do
       let(:fixture_secs) { rand * 600_000 }
-      let(:actual_timing) { Timing.new(0, fixture_secs) }
+      let(:actual_timing) { Timing.new(seconds: fixture_secs) }
       subject { Timing.to_hour_string(fixture_secs) }
       before(:each) { expect(actual_timing).to be_a(Timing) }
 

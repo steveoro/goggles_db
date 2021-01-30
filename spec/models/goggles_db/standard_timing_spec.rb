@@ -4,6 +4,7 @@ require 'rails_helper'
 require 'support/shared_method_existance_examples'
 require 'support/shared_sorting_scopes_examples'
 require 'support/shared_filtering_scopes_examples'
+require 'support/shared_timing_manageable_examples'
 
 module GogglesDb
   RSpec.describe StandardTiming, type: :model do
