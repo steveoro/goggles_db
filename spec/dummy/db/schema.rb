@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_01_25_123953) do
+ActiveRecord::Schema.define(version: 2021_01_30_164719) do
 
   create_table "achievement_rows", id: :integer, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
     t.integer "lock_version", default: 0
@@ -1412,7 +1412,7 @@ ActiveRecord::Schema.define(version: 2021_01_25_123953) do
     t.string "description", limit: 100
     t.date "entry_deadline"
     t.boolean "warm_up_pool", default: false
-    t.boolean "allows_under_25", default: false
+    t.boolean "allows_under25", default: false
     t.string "reference_phone", limit: 40
     t.string "reference_e_mail", limit: 50
     t.string "reference_name", limit: 50
