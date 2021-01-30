@@ -28,7 +28,7 @@ module GogglesDb
 
     # Compact label
     COMPACT = "#{MAJOR.gsub('.', '')}#{MINOR}"
-    DB      = '1.70.01' # Internal DB structure
+    DB      = '1.70.03' # Internal DB structure
 
     # Pointless UNICODE emojis, just for fun:
     EMOJI_BUTTERFLY    = 'з== ( ▀ ͜͞ʖ▀) ==ε'

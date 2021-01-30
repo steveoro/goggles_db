@@ -38,7 +38,7 @@ module GogglesDb
            reference_phone reference_e_mail reference_name configuration_file
            home_team
            max_individual_events max_individual_events_per_session
-           warm_up_pool? allows_under_25? manifest? startlist? off_season? confirmed? cancelled?
+           warm_up_pool? allows_under25? manifest? startlist? off_season? confirmed? cancelled?
            tweeted? posted?
            results_acquired? autofilled? read_only? pb_acquired?
            to_json]
