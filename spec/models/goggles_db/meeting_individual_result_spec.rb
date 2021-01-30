@@ -51,8 +51,8 @@ module GogglesDb
     describe 'self.by_rank' do
       let(:result) do
         # Choose a sample MPrg for which we are sure there will be multiple MIRs:
-        mprg = GogglesDb::MeetingProgram.includes(:event_type, :stroke_type)
-                                        .joins(:event_type, :stroke_type)
+        mprg = GogglesDb::MeetingProgram.includes(:meeting_individual_results, :event_type)
+                                        .joins(:meeting_individual_results, :event_type)
                                         .where('event_types.code': '50SL')
                                         .last(300).sample
         expect(mprg.meeting_individual_results.count).to be_positive
@@ -79,8 +79,8 @@ module GogglesDb
 
     describe 'self.by_timing' do
       let(:result) do
-        mprg = GogglesDb::MeetingProgram.includes(:event_type, :stroke_type)
-                                        .joins(:event_type, :stroke_type)
+        mprg = GogglesDb::MeetingProgram.includes(:meeting_individual_results, :event_type)
+                                        .joins(:meeting_individual_results, :event_type)
                                         .where('event_types.code': '50SL')
                                         .last(300).sample
         expect(mprg.meeting_individual_results.count).to be_positive
