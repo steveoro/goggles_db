@@ -193,7 +193,7 @@ describe Timing, type: :model do
     it_behaves_like('the String result from a converted Timing instance')
 
     context 'with nil parameters,' do
-      subject { Timing.to_s(nil, nil, nil) }
+      subject { Timing.to_s(hundredths: nil, seconds: nil, minutes: nil) }
       it 'returns a String' do
         expect(subject).to be_an_instance_of(String)
       end
@@ -204,11 +204,11 @@ describe Timing, type: :model do
   end
 
   describe 'self.to_s' do
-    subject { Timing.to_s(fix1_hundredths, fix1_secs, fix1_mins, fix1_hours) }
+    subject { Timing.to_s(hundredths: fix1_hundredths, seconds: fix1_secs, minutes: fix1_mins, hours: fix1_hours) }
     it_behaves_like('the String result from a converted Timing instance')
 
     context 'with nil parameters,' do
-      subject { Timing.to_s(nil, nil, nil) }
+      subject { Timing.to_s(hundredths: nil, seconds: nil, minutes: nil) }
       it 'returns a String' do
         expect(subject).to be_an_instance_of(String)
       end
@@ -219,11 +219,11 @@ describe Timing, type: :model do
   end
 
   describe 'self.to_compact_s' do
-    subject { Timing.to_compact_s(fix1_hundredths, fix1_secs, fix1_mins, fix1_hours) }
+    subject { Timing.to_compact_s(hundredths: fix1_hundredths, seconds: fix1_secs, minutes: fix1_mins, hours: fix1_hours) }
     it_behaves_like('the String result from a converted Timing instance')
 
     context 'with parameters having all 0 value,' do
-      subject { Timing.to_compact_s(0, 0, 0, 0) }
+      subject { Timing.to_compact_s(hundredths: 0, seconds: 0, minutes: 0, hours: 0) }
       it 'returns an empty String' do
         expect(subject).to eq('')
       end
@@ -233,7 +233,7 @@ describe Timing, type: :model do
     end
 
     context 'with nil parameters,' do
-      subject { Timing.to_compact_s(nil, nil, nil) }
+      subject { Timing.to_compact_s(hundredths: nil, seconds: nil, minutes: nil) }
       it 'returns an empty String' do
         expect(subject).to eq('')
       end

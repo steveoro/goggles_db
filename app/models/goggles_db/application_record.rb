@@ -1,6 +1,11 @@
 # frozen_string_literal: true
 
 module GogglesDb
+  #
+  # = ApplicationRecord abstract model
+  #
+  # Shared methods container
+  #
   class ApplicationRecord < ActiveRecord::Base
     self.abstract_class = true
 
