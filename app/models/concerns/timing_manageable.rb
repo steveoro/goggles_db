@@ -37,8 +37,8 @@ module TimingManageable
   # (@see lib/wrappers/timing.rb)
   #
   def to_timing
-    # MIR doesn't hold an "hour" column due to the typical short time span of the competition:
-    Timing.new(hundredths, seconds, minutes % 60, 60 * (minutes / 60))
+    # (MIR doesn't hold an "hour" column due to the typical short time span of the competition)
+    Timing.new(hundredths: hundredths, seconds: seconds, minutes: minutes % 60, hours: 60 * (minutes / 60))
   end
 
   # Sets the internal #hundredths, #seconds & #minutes members according to the specified Timing value.

@@ -6,7 +6,7 @@ module GogglesDb
   #
   # This entity is assumed to be pre-seeded on the database.
   #
-  #   - version:  7.041
+  #   - version:  7.074
   #   - authors:  Steve A.
   #
   class EventsByPoolType < ApplicationRecord
@@ -59,17 +59,23 @@ module GogglesDb
           min_length, max_length
         )
     }
-
-    # Virtual scopes:
     # rubocop:disable Style/TrivialAccessors
+    #-- ------------------------------------------------------------------------
+    #++
+
+    # Array of all possible event type combinations (pool types x event types).
+    # Choosing one association row among this list guarantees that the tuple is a valid event-pool combination.
+    # Includes both relay- & individual-event types.
     def self.all_eventable
       @all_eventable
     end
 
+    # Array of all possible event type combinations (pool types x event types) but only for relays.
     def self.all_relays
       @all_relays
     end
 
+    # Array of all possible event type combinations (pool types x event types) but only for invididual events.
     def self.all_individuals
       @all_individuals
     end
@@ -83,6 +89,9 @@ module GogglesDb
     end
 
     # Override: includes all 1st-level associations into the typical to_json output.
+    # == Params
+    # - options: can be any option hash accepted by JSON#generate (spaces, indentation,
+    #            formatting and so on).
     def to_json(options = nil)
       attributes.merge(
         'pool_type' => pool_type.lookup_attributes,
