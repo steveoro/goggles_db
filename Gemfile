@@ -53,4 +53,10 @@ end
 group :test do
   # For CodeClimate: use the stand-alone 'cc-test-reporter' from the command line.
   gem 'codecov', require: false
+  # SimpleCov >= 0.17 seems to break parsing for CodeClimate test reporter
+  # NOTE: prior of upgrading the gem version, test it locally with something like:
+  # > cc-test-reporter before-build
+  # > bundle exec rspec -t type:command
+  # > cc-test-reporter format-coverage -t simplecov -o coverage/cc-command.json
+  gem 'simplecov', '= 0.13.0', require: false
 end
