@@ -149,8 +149,7 @@ To create a brand new random user (for example):
 ## License
 The gem is available as open source under the terms of the [LGPL-3.0 License](https://opensource.org/licenses/LGPL-3.0).
 
-
-[![FOSSA Status](https://app.fossa.com/api/projects/custom%2B22810%2Fgit%40github.com%3Asteveoro%2Fgoggles_db.git.svg?type=large)](https://app.fossa.com/projects/custom%2B22810%2Fgit%40github.com%3Asteveoro%2Fgoggles_db.git?ref=badge_large)
+[![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2Fsteveoro%2Fgoggles_db.svg?type=large)](https://app.fossa.com/projects/git%2Bgithub.com%2Fsteveoro%2Fgoggles_db?ref=badge_large)
 
 
 
