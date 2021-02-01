@@ -25,7 +25,10 @@ global_job_config:
       - mkdir -pv tmp coverage
       - curl -L https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64 > ./cc-test-reporter
       - chmod +x ./cc-test-reporter
-      - cache restore coverage-$(checksum spec/**/{,**/}*.rb)
+      - cache restore cc-model-goggles_db
+      - cache restore cc-command-goggles_db
+      - cache restore cc-strategy-goggles_db
+      - cache restore cc-validator-goggles_db
 
 blocks:
   - name: Code coverage upload
