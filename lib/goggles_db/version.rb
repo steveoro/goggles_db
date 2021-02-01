@@ -21,7 +21,7 @@ module GogglesDb
     CORE    = 'C7'
     MAJOR   = '7'
     MINOR   = '075'
-    BUILD   = '20210130'
+    BUILD   = '20210201'
 
     # Full label
     FULL    = "#{MAJOR}.#{MINOR}.#{BUILD} (#{CORE} v. #{VERSION})"

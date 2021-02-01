@@ -7,10 +7,10 @@ module GogglesDb
   # This entity is assumed to be pre-seeded on the database.
   # Due to the low number of entity values, all rows have been Memoized.
   #
-  #   - version:  7.030
+  #   - version:  7.076
   #   - author:   Steve A.
   #
-  class GenderType <  ApplicationLookupEntity
+  class GenderType < ApplicationLookupEntity
     self.table_name = 'gender_types'
 
     # Unique IDs used inside the DB, the description will be retrieved using I18n.t

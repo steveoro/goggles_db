@@ -22,7 +22,7 @@ global_job_config:
   prologue:
     commands:
       - checkout
-      - mkdir -pv tmp
+      - mkdir -pv tmp coverage
       # Make sure we are using Bundler 2+:
       - gem i bundler
       # Use GogglesDb::VERSION as bundle version here, or force a minor version change to rebuild the cache:
@@ -74,28 +74,34 @@ blocks:
         - name: RSpec - models
           commands:
             - 'bundle exec rspec -t type:model'
-            - ./cc-test-reporter format-coverage -t simplecov
-            - ./cc-test-reporter upload-coverage
+            - ./cc-test-reporter format-coverage -t simplecov -o coverage/cc-model.json
+            - cache store coverage-$(checksum spec/**/{,**/}*.rb) coverage/*.json
 
         - name: RSpec - commands
           commands:
             - 'bundle exec rspec -t type:command'
-            - ./cc-test-reporter format-coverage -t simplecov
-            - ./cc-test-reporter upload-coverage
+            - ./cc-test-reporter format-coverage -t simplecov -o coverage/cc-command.json
+            - cache store coverage-$(checksum spec/**/{,**/}*.rb) coverage/*.json
 
         - name: RSpec - strategies
           commands:
             - 'bundle exec rspec -t type:strategy'
-            - ./cc-test-reporter format-coverage -t simplecov
-            - ./cc-test-reporter upload-coverage
+            - ./cc-test-reporter format-coverage -t simplecov -o coverage/cc-strategy.json
+            - cache store coverage-$(checksum spec/**/{,**/}*.rb) coverage/*.json
 
         - name: RSpec - validators
           commands:
             - 'bundle exec rspec -t type:validator'
-            - ./cc-test-reporter format-coverage -t simplecov
-            - ./cc-test-reporter upload-coverage
+            - ./cc-test-reporter format-coverage -t simplecov -o coverage/cc-validator.json
+            - cache store coverage-$(checksum spec/**/{,**/}*.rb) coverage/*.json
 
         # Not currently used:
         # - name: RSpec - decorators
         #   commands:
         #     - 'bundle exec rspec -t type:decorator'
+
+promotions:
+  - name: Code coverage
+    pipeline_file: semaphore_coverage_upload.yml
+    auto_promote:
+      when: branch = 'master' AND result = 'passed'

@@ -51,7 +51,6 @@ group :development, :test do
 end
 
 group :test do
-  # For CodeClimate: use 'cc-test-reporter' from the command line.
+  # For CodeClimate: use the stand-alone 'cc-test-reporter' from the command line.
   gem 'codecov', require: false
-  gem 'coveralls', require: false
 end
