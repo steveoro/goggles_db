@@ -21,6 +21,9 @@ unless ENV['CODECOV_TOKEN'].to_s.empty?
   puts 'CodeCov.io selected for reporting output.'
 end
 
+# Add DSL for "N+1 query" issues directly inside RSpec:
+require 'n_plus_one_control/rspec'
+
 # This file is copied to spec/ when you run 'rails generate rspec:install'
 require 'spec_helper'
 ENV['RAILS_ENV'] ||= 'test'
@@ -32,7 +35,7 @@ require 'rspec/rails'
 
 require 'devise' # NOTE: require 'devise' after require 'rspec/rails' (this allows to use devise test helpers)
 
-# Add factories from core engine into the dummy app:
+# Add factories directly from core engine:
 require 'factory_bot_rails'
 FactoryBot.definition_file_paths << "#{GogglesDb::Engine.root}/spec/factories"
 FactoryBot.reload
@@ -50,7 +53,9 @@ FactoryBot.reload
 # directory. Alternatively, in the individual `*_spec.rb` files, manually
 # require only the support files necessary.
 #
-# Dir[Rails.root.join('spec', 'support', '**', '*.rb')].sort.each { |f| require f }
+# Add support files directly from Core engine and then from current app:
+# Dir[GogglesDb::Engine.root.join('spec', 'support', '**', '*.rb')].sort.each { |f| require f }
+Dir[Rails.root.join('spec', 'support', '**', '*.rb')].sort.each { |f| require f }
 
 # Checks for pending migrations and applies them before tests are run.
 # If you are not using ActiveRecord, you can remove these lines.
