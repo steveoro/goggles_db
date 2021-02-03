@@ -25,7 +25,7 @@ group :development do
   gem 'guard-rspec'
   gem 'guard-rubocop'
   gem 'guard-spring'
-  gem 'haml_lint'
+  gem 'haml_lint', require: false
   gem 'inch', require: false # grades source documentation
   gem 'listen', '~> 3.2'
   # [20210128] Rubocop 1.9.0 seems to have several issues currently
