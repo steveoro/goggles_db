@@ -21,7 +21,10 @@ module GogglesDb
       )
       it_behaves_like(
         'responding to a list of methods',
-        %i[associated_user male? female? intermixed? year_guessed?]
+        %i[
+          associated_user male? female? intermixed? year_guessed?
+          minimal_attributes to_json
+        ]
       )
       #-- ----------------------------------------------------------------------
       #++

@@ -7,6 +7,7 @@ require 'haml'
 require 'acts-as-taggable-on'
 require 'acts_as_votable'
 require 'factory_bot_rails'
+require 'ledermann-rails-settings'
 
 require 'extensions/integer'
 

@@ -4,7 +4,7 @@ module GogglesDb
   #
   # = AppParameter model
   #
-  #   - version:  7.030
+  #   - version:  7.78
   #   - author:   Steve A.
   #
   class AppParameter < ApplicationRecord
@@ -16,12 +16,21 @@ module GogglesDb
     DB_VERSION_FIELDNAME = 'a_string'
     TOGGLE_FIELDNAME     = 'a_bool'
 
+    # These shall be serialized only for +#versioning_row+:
+    has_settings :framework_urls, :framework_emails, :social_urls
+
     # Retrieves the "versioning" parameter row
     def self.versioning_row
       record = find_by(code: VERSIONING_CODE)
       raise "Missing required parameter row with code #{VERSIONING_CODE}" unless record.present?
 
       record
+    end
+
+    # Retrieves the configuration row that stores the setting objects
+    # (with eager loading).
+    def self.config
+      includes(:setting_objects).versioning_row
     end
 
     # Checks the value of the maintenance flag inside the versioning parameter row.
