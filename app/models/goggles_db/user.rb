@@ -4,7 +4,7 @@ module GogglesDb
   #
   # = User model
   #
-  #   - version:  7.036
+  #   - version:  7.78
   #   - author:   Steve A.
   #
   class User < ApplicationRecord
@@ -18,7 +18,8 @@ module GogglesDb
     belongs_to :swimmer_level_type, optional: true
     belongs_to :coach_level_type, optional: true
 
-    has_one :swimmer
+    has_one :swimmer, foreign_key: 'associated_user_id',
+                      inverse_of: :associated_user
     has_many :managed_affiliations
 
     validates :name, presence: true, uniqueness: { case_sensitive: true, message: :already_exists }

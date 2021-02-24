@@ -32,5 +32,28 @@ module GogglesDb
         expect(subject.email).to be_present
       end
     end
+
+    describe '#swimmer' do
+      let(:swimmer) { FactoryBot.create(:swimmer) }
+      subject { FactoryBot.create(:user, swimmer: swimmer) }
+
+      before(:each) do
+        expect(swimmer).to be_a(Swimmer).and be_valid
+        expect(subject).to be_a(User).and be_valid
+      end
+
+      context 'when a User is associated to a Swimmer' do
+        it 'does not yield errors' do
+          expect { subject.swimmer }.not_to raise_error
+        end
+        it 'is the associated Swimmer' do
+          expect(subject.swimmer).to eq(swimmer)
+        end
+        it 'is maps correctly the inverse association' do
+          expect(subject.swimmer.associated_user).to eq(subject)
+          expect(swimmer.associated_user).to eq(subject)
+        end
+      end
+    end
   end
 end
