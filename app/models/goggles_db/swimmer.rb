@@ -4,7 +4,7 @@ module GogglesDb
   #
   # = Swimmer model
   #
-  #   - version:  7.054
+  #   - version:  7.78
   #   - author:   Steve A.
   #
   class Swimmer < ApplicationRecord
@@ -12,10 +12,17 @@ module GogglesDb
 
     # Actual User row associated with this Swimmer. It can be nil.
     belongs_to :associated_user, class_name: 'User', optional: true,
-                                 foreign_key: 'associated_user_id'
+                                 foreign_key: 'associated_user_id',
+                                 inverse_of: :swimmer
 
     belongs_to            :gender_type
     validates_associated  :gender_type
+
+    has_many :badges
+    has_many :teams,          through: :badges
+    has_many :category_types, through: :badges
+    has_many :seasons,        through: :badges
+    has_many :season_types,   through: :badges
 
     validates :complete_name, presence: { length: { within: 1..100, allow_nil: false } }
     validates :last_name, length: { maximum: 50 }

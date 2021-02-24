@@ -141,9 +141,11 @@ To create a brand new random user (for example):
 
 
 ## Contributing
-1. Clone the project
-2. Make a pull request based on the branch most relevant to you
-3. Await the PR's review by the maintainers
+1. Clone the project.
+2. Make a new custom branch for your changes, naming the branch accordingly (i.e. use prefixes like: `feature-`, `fix-`, `upgrade-`, ...).
+3. When you think you're done, make sure you type `guard` (+`Enter`) and wait for the whole spec suite to end.
+4. Make sure your branch is locally green (:green_heart:) before submitting the pull request.
+5. Await the PR's review by the maintainers.
 
 
 ## License
