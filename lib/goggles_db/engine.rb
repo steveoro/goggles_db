@@ -8,6 +8,7 @@ require 'acts-as-taggable-on'
 require 'acts_as_votable'
 require 'factory_bot_rails'
 require 'ledermann-rails-settings'
+require 'plus_codes/open_location_code'
 
 require 'extensions/integer'
 

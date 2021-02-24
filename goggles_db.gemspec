@@ -49,6 +49,7 @@ Gem::Specification.new do |spec|
   spec.add_dependency 'jwt'
   spec.add_dependency 'ledermann-rails-settings' # https://github.com/ledermann/rails-settings
   spec.add_dependency 'mini_magick'
+  spec.add_dependency 'plus_codes' # https://github.com/google/open-location-code/tree/master/ruby
   spec.add_dependency 'simple_command'
   spec.add_dependency 'tzinfo'
 

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_02_24_155119) do
+ActiveRecord::Schema.define(version: 2021_02_24_170621) do
 
   create_table "achievement_rows", id: :integer, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
     t.integer "lock_version", default: 0
@@ -225,6 +225,7 @@ ActiveRecord::Schema.define(version: 2021_02_24_155119) do
     t.datetime "updated_at"
     t.string "latitude", limit: 50
     t.string "longitude", limit: 50
+    t.string "plus_code", limit: 50
     t.index ["country_code", "area", "name"], name: "index_cities_on_country_code_and_area_and_name", unique: true
     t.index ["name", "area"], name: "city_name", type: :fulltext
     t.index ["name"], name: "index_cities_on_name"
@@ -1784,6 +1785,9 @@ ActiveRecord::Schema.define(version: 2021_02_24_155119) do
     t.datetime "created_at"
     t.datetime "updated_at"
     t.boolean "read_only", default: false, null: false
+    t.string "latitude", limit: 50
+    t.string "longitude", limit: 50
+    t.string "plus_code", limit: 50
     t.index ["city_id"], name: "fk_swimming_pools_cities"
     t.index ["hair_dryer_type_id"], name: "fk_swimming_pools_hair_dryer_types"
     t.index ["locker_cabinet_type_id"], name: "fk_swimming_pools_locker_cabinet_types"

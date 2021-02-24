@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    goggles_db (0.1.78)
+    goggles_db (0.1.79)
       acts-as-taggable-on
       acts_as_votable
       carrierwave
@@ -19,6 +19,7 @@ PATH
       jwt
       ledermann-rails-settings
       mini_magick
+      plus_codes
       rails (= 6.0.3.4)
       simple_command
       tzinfo
@@ -265,6 +266,7 @@ GEM
     parallel (1.20.1)
     parser (3.0.0.0)
       ast (~> 2.4.1)
+    plus_codes (0.2.1)
     pry (0.13.1)
       coderay (~> 1.1)
       method_source (~> 1.0)
