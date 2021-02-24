@@ -15,7 +15,7 @@ module GogglesDb
 
       it_behaves_like(
         'responding to a list of methods',
-        %i[swimmer coach_level_type managed_affiliations]
+        %i[settings swimmer coach_level_type managed_affiliations]
       )
       #-- ----------------------------------------------------------------------
       #++
@@ -30,6 +30,15 @@ module GogglesDb
       it 'is has an #email' do
         expect(subject).to respond_to(:email)
         expect(subject.email).to be_present
+      end
+    end
+
+    # Any user settings should have the :prefs key:
+    describe '#settings' do
+      subject { GogglesDb::User.limit(20).sample }
+      it 'includes the :prefs key' do
+        expect(subject.settings(:prefs)).to be_a(RailsSettings::SettingObject)
+        expect(subject.settings(:prefs).value).to be_an(Hash)
       end
     end
 

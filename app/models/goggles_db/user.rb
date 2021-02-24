@@ -15,6 +15,18 @@ module GogglesDb
            :confirmable, :lockable, :trackable,
            :recoverable, :rememberable, :validatable
 
+    has_settings do |s|
+      s.key :prefs, defaults: {
+        # Inline tutorial/help:
+        hide_search_help: false,
+        hide_dashboard_help: false,
+        # EMail notifications (for entries, registrations & results):
+        notify_my_meetings: false,
+        notify_new_team_meeting: false, # (Team-manager can enforce this)
+        notify_any_meeting: false
+      }
+    end
+
     belongs_to :swimmer_level_type, optional: true
     belongs_to :coach_level_type, optional: true
 

@@ -49,5 +49,19 @@ module GogglesDb
         expect { AppParameter.maintenance = true }.to change(AppParameter, :maintenance?).to true
       end
     end
+
+    describe 'self.config' do
+      subject { AppParameter.config }
+
+      it 'is an instance of AppParameter' do
+        expect(subject).to be_an(AppParameter).and be_valid
+      end
+      %i[framework_urls framework_emails social_urls].each do |setting_key|
+        it "includes the :#{setting_key} settings key" do
+          expect(subject.settings(setting_key)).to be_a(RailsSettings::SettingObject)
+          expect(subject.settings(setting_key).value).to be_an(Hash)
+        end
+      end
+    end
   end
 end
