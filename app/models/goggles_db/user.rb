@@ -4,16 +4,16 @@ module GogglesDb
   #
   # = User model
   #
-  #   - version:  7.78
+  #   - version:  7.80
   #   - author:   Steve A.
   #
   class User < ApplicationRecord
     self.table_name = 'users'
 
-    # Include devise modules. Others available are: :omniauthable
     devise :database_authenticatable, :registerable,
            :confirmable, :lockable, :trackable,
-           :recoverable, :rememberable, :validatable
+           :recoverable, :rememberable, :validatable,
+           :omniauthable, omniauth_providers: %i[facebook google_oauth2]
 
     has_settings do |s|
       s.key :prefs, defaults: {
@@ -40,5 +40,20 @@ module GogglesDb
     validates :first_name,    length: { maximum: 50 }
     validates :last_name,     length: { maximum: 50 }
     validates :year_of_birth, length: { maximum: 4 }
+    #-- ------------------------------------------------------------------------
+    #++
+
+    # Filtering scopes:
+    scope :from_omniauth, lambda { |auth|
+      where(provider: auth.provider, uid: auth.uid).first_or_initialize do |user|
+        user.email = auth&.info&.email
+        user.password = Devise.friendly_token[0, 20]
+        user.name = auth&.info&.name
+        user.first_name = auth&.info&.first_name
+        user.last_name = auth&.info&.last_name
+      end
+    }
+    #-- ------------------------------------------------------------------------
+    #++
   end
 end

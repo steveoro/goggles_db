@@ -3,6 +3,9 @@
 source 'https://rubygems.org'
 git_source(:github) { |repo| "https://github.com/#{repo}.git" }
 
+# [Steve A.] Force a specific version of Devise, supporting OAuth2:
+gem 'devise', github: 'heartcombo/devise', branch: 'ca-omniauth-2'
+
 # Declare your gem's dependencies in goggles_db.gemspec.
 # Bundler will treat runtime dependencies like base dependencies, and
 # development dependencies will be added by default to the :development group.

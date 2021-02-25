@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_02_24_170621) do
+ActiveRecord::Schema.define(version: 2021_02_25_130846) do
 
   create_table "achievement_rows", id: :integer, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
     t.integer "lock_version", default: 0
@@ -47,7 +47,7 @@ ActiveRecord::Schema.define(version: 2021_02_24_170621) do
 
   create_table "admin_grants", options: "ENGINE=InnoDB DEFAULT CHARSET=latin1", force: :cascade do |t|
     t.integer "lock_version", default: 0
-    t.string "entity"
+    t.string "entity", limit: 150
     t.bigint "user_id", null: false
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
@@ -1626,7 +1626,7 @@ ActiveRecord::Schema.define(version: 2021_02_24_170621) do
   end
 
   create_table "sessions", id: :integer, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
-    t.string "session_id"
+    t.string "session_id", collation: "latin1_swedish_ci"
     t.text "data"
     t.datetime "created_at"
     t.datetime "updated_at"
@@ -1635,9 +1635,9 @@ ActiveRecord::Schema.define(version: 2021_02_24_170621) do
   end
 
   create_table "settings", id: :integer, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4", force: :cascade do |t|
-    t.string "var", null: false
+    t.string "var", null: false, collation: "latin1_swedish_ci"
     t.text "value"
-    t.string "target_type", null: false
+    t.string "target_type", null: false, collation: "latin1_swedish_ci"
     t.integer "target_id", null: false
     t.datetime "created_at"
     t.datetime "updated_at"
@@ -2059,12 +2059,12 @@ ActiveRecord::Schema.define(version: 2021_02_24_170621) do
 
   create_table "users", id: :integer, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
     t.integer "lock_version", default: 0
-    t.string "name"
+    t.string "name", limit: 190, null: false
     t.string "description", limit: 100
     t.integer "swimmer_id"
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.string "email", default: ""
+    t.string "email", limit: 190, null: false
     t.string "encrypted_password", default: ""
     t.string "reset_password_token"
     t.datetime "reset_password_sent_at"
@@ -2094,9 +2094,8 @@ ActiveRecord::Schema.define(version: 2021_02_24_170621) do
     t.string "last_name", limit: 50
     t.string "first_name", limit: 50
     t.integer "year_of_birth", default: 1900
-    t.bigint "facebook_uid"
-    t.bigint "goggle_uid"
-    t.bigint "twitter_uid"
+    t.string "provider"
+    t.string "uid"
     t.index ["authentication_token"], name: "index_users_on_authentication_token", unique: true
     t.index ["coach_level_type_id"], name: "idx_users_coach_level_type"
     t.index ["confirmation_token"], name: "index_users_on_confirmation_token", unique: true
@@ -2111,11 +2110,11 @@ ActiveRecord::Schema.define(version: 2021_02_24_170621) do
 
   create_table "votes", id: :integer, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
     t.integer "votable_id"
-    t.string "votable_type"
+    t.string "votable_type", collation: "latin1_swedish_ci"
     t.integer "voter_id"
-    t.string "voter_type"
+    t.string "voter_type", collation: "latin1_swedish_ci"
     t.boolean "vote_flag"
-    t.string "vote_scope"
+    t.string "vote_scope", collation: "latin1_swedish_ci"
     t.integer "vote_weight"
     t.datetime "created_at"
     t.datetime "updated_at"
