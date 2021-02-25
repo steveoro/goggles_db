@@ -64,5 +64,37 @@ module GogglesDb
         end
       end
     end
+    #-- ------------------------------------------------------------------------
+    #++
+
+    # Filtering scopes:
+    describe 'self.from_omniauth' do
+      # User found, confirmed & ok:
+      context 'for an existing, confirmed user with valid auth.info data,' do
+        # TODO
+      end
+
+      # User found, unconfirmed but ok:
+      context 'for an existing, unconfirmed user with valid auth.info data,' do
+        # TODO
+      end
+
+      # User found, wrong response:
+      context 'for an existing user with invalid or empty auth.info data,' do
+        # TODO
+      end
+
+      # New User, ok:
+      context 'for a new user with valid auth.info data,' do
+        # TODO
+      end
+
+      # New User, wrong response:
+      context 'for a new user with invalid or empty auth.info data,' do
+        # TODO
+      end
+    end
+    #-- ------------------------------------------------------------------------
+    #++
   end
 end
