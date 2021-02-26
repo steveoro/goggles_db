@@ -21,7 +21,7 @@ module GogglesDb
     CORE    = 'C7'
     MAJOR   = '7'
     MINOR   = '80' # (this should be = patch version)
-    BUILD   = '20210225'
+    BUILD   = '20210226'
 
     # Full label
     FULL    = "#{MAJOR}.#{MINOR}.#{BUILD} (#{CORE} v. #{VERSION})"

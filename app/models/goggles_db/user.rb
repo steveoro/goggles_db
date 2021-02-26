@@ -44,14 +44,34 @@ module GogglesDb
     #++
 
     # Filtering scopes:
+
+    # Finder for users from OAuth results.
+    #
+    # == Params:
+    # - auth: an OmniAuth::AuthHash instance containing the user data (mostly the info fields are required)
+    #
+    # == Returns:
+    # Returns the User matching either the OAuth email or the OAuth +provider+ & +uid+.
+    # If an existing user matching the email is found, the +provider+ & +uid+ are updated.
+    # If no matching users are found, returns a new pre-confirmed instance using the auth data.
+    #
     scope :from_omniauth, lambda { |auth|
-      where(provider: auth.provider, uid: auth.uid).first_or_initialize do |user|
-        user.email = auth&.info&.email
-        user.password = Devise.friendly_token[0, 20]
-        user.name = auth&.info&.name
-        user.first_name = auth&.info&.first_name
-        user.last_name = auth&.info&.last_name
-      end
+      return nil unless auth.is_a?(OmniAuth::AuthHash) && auth.valid?
+
+      result_user = find_by(email: auth.info.email) ||
+                    where(provider: auth.provider, uid: auth.uid).first_or_initialize do |user|
+                      user.email = auth.info.email
+                      user.password = Devise.friendly_token[0, 20]
+                      user.name = auth.info.name
+                      user.first_name = auth.info.first_name
+                      user.last_name = auth.info.last_name
+                      user.confirmed_at = Time.zone.now
+                    end
+      # Always skip the confirmation emails since this new user comes from a trusted
+      # OAuth source that already confirms them:
+      result_user.skip_confirmation_notification!
+      result_user.update!(provider: auth.provider, uid: auth.uid, confirmed_at: Time.zone.now) && result_user.reload if result_user.persisted?
+      result_user
     }
     #-- ------------------------------------------------------------------------
     #++
