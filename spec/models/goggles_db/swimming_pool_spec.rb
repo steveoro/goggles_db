@@ -65,9 +65,9 @@ module GogglesDb
 
     # Filtering scopes:
     describe 'self.for_name' do
-      it_behaves_like('filtering scope FULLTEXT for_name', SwimmingPool, %w[name], 'ferrari')
-      it_behaves_like('filtering scope FULLTEXT for_name', SwimmingPool, %w[name], 'ferretti')
-      it_behaves_like('filtering scope FULLTEXT for_name', SwimmingPool, %w[name], 'comunale')
+      %w[ferrari ferretti comunale].each do |filter_text|
+        it_behaves_like('filtering scope FULLTEXT for_...', SwimmingPool, :for_name, %w[name], filter_text)
+      end
     end
     #-- ------------------------------------------------------------------------
     #++

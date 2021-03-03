@@ -51,9 +51,9 @@ module GogglesDb
 
     # Filtering scopes:
     describe 'self.for_name' do
-      it_behaves_like('filtering scope FULLTEXT for_name', Team, %w[name editable_name name_variations], 'ferrari')
-      it_behaves_like('filtering scope FULLTEXT for_name', Team, %w[name editable_name name_variations], 'dynamic')
-      it_behaves_like('filtering scope FULLTEXT for_name', Team, %w[name editable_name name_variations], 'reggiana')
+      %w[ferrari dynamic reggiana].each do |filter_text|
+        it_behaves_like('filtering scope FULLTEXT for_...', Team, :for_name, %w[name editable_name name_variations], filter_text)
+      end
     end
     #-- ------------------------------------------------------------------------
     #++

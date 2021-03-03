@@ -29,7 +29,7 @@ Gem::Specification.new do |spec|
 
   # Base Rails dependancy:
   # [20210128] ActiveRecord 6.1 introduces too many changes for the current version
-  spec.add_dependency 'rails', '= 6.0.3.4'
+  spec.add_dependency 'rails', '= 6.0.3.5'
 
   spec.add_dependency 'acts-as-taggable-on'
   spec.add_dependency 'acts_as_votable'
@@ -52,6 +52,7 @@ Gem::Specification.new do |spec|
   spec.add_dependency 'omniauth-facebook'
   spec.add_dependency 'omniauth-google-oauth2'
   spec.add_dependency 'omniauth-rails_csrf_protection'
+  spec.add_dependency 'omniauth-twitter'
   spec.add_dependency 'plus_codes' # https://github.com/google/open-location-code/tree/master/ruby
   spec.add_dependency 'simple_command'
   spec.add_dependency 'tzinfo'

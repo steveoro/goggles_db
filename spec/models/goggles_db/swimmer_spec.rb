@@ -53,11 +53,27 @@ module GogglesDb
 
     # Filtering scopes:
     describe 'self.for_name' do
-      it_behaves_like('filtering scope FULLTEXT for_name', Swimmer, %w[last_name first_name complete_name], 'john')
-      it_behaves_like('filtering scope FULLTEXT for_name', Swimmer, %w[last_name first_name complete_name], 'steve')
-      it_behaves_like('filtering scope FULLTEXT for_name', Swimmer, %w[last_name first_name complete_name], 'nicolas')
-      it_behaves_like('filtering scope FULLTEXT for_name', Swimmer, %w[last_name first_name complete_name], 'nicole')
-      it_behaves_like('filtering scope FULLTEXT for_name', Swimmer, %w[last_name first_name complete_name], 'serena')
+      %w[john steve nicolas nicole serena].each do |filter_text|
+        it_behaves_like('filtering scope FULLTEXT for_...', Swimmer, :for_name, %w[last_name first_name complete_name], filter_text)
+      end
+    end
+
+    describe 'self.for_first_name' do
+      %w[john steve nicolas nicole serena].each do |filter_text|
+        it_behaves_like('filtering scope FULLTEXT for_...', Swimmer, :for_first_name, %w[first_name], filter_text)
+      end
+    end
+
+    describe 'self.for_last_name' do
+      %w[Alloro Jenkins Ligabue Smith].each do |filter_text|
+        it_behaves_like('filtering scope FULLTEXT for_...', Swimmer, :for_last_name, %w[last_name], filter_text)
+      end
+    end
+
+    describe 'self.for_complete_name' do
+      ['Alloro Stefano', 'Jenkins', 'Ligabue', 'Smith'].each do |filter_text|
+        it_behaves_like('filtering scope FULLTEXT for_...', Swimmer, :for_complete_name, %w[complete_name], filter_text)
+      end
     end
     #-- ------------------------------------------------------------------------
     #++

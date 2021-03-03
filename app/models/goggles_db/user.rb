@@ -4,16 +4,18 @@ module GogglesDb
   #
   # = User model
   #
-  #   - version:  7.80
+  #   - version:  7.82
   #   - author:   Steve A.
   #
   class User < ApplicationRecord
     self.table_name = 'users'
 
+    after_initialize :associate_to_swimmer!
+
     devise :database_authenticatable, :registerable,
            :confirmable, :lockable, :trackable,
            :recoverable, :rememberable, :validatable,
-           :omniauthable, omniauth_providers: %i[facebook google_oauth2]
+           :omniauthable, omniauth_providers: %i[facebook google_oauth2 twitter]
 
     has_settings do |s|
       s.key :prefs, defaults: {
@@ -66,14 +68,65 @@ module GogglesDb
                       user.first_name = auth.info.first_name
                       user.last_name = auth.info.last_name
                       user.confirmed_at = Time.zone.now
+                      user.avatar_url = auth.info.image
                     end
       # Always skip the confirmation emails since this new user comes from a trusted
       # OAuth source that already confirms them:
       result_user.skip_confirmation_notification!
-      result_user.update!(provider: auth.provider, uid: auth.uid, confirmed_at: Time.zone.now) && result_user.reload if result_user.persisted?
+      if result_user.persisted?
+        result_user.update!(
+          provider: auth.provider,
+          uid: auth.uid,
+          avatar_url: auth.info.image,
+          confirmed_at: Time.zone.now
+        )
+        result_user.reload
+      else
+        result_user.associate_to_swimmer!
+        result_user.save!
+      end
       result_user
     }
     #-- ------------------------------------------------------------------------
     #++
+
+    # Returns the list of Swimmers matching this user's name, last name & year of birth.
+    def matching_swimmers
+      # [Steve A.] The following convoluted condition performs better in finding
+      # complex western names combinations than most existing FULLTEXT indexes on swimmers. (See specs)
+      or_condition = []
+      last_name.to_s.split.each do |name_token|
+        or_condition << "swimmers.last_name like \"%#{name_token}%\""
+      end
+      # Add year of birth only when set:
+      where_condition = if year_of_birth.to_i > 1900
+                          "(swimmers.year_of_birth = #{year_of_birth}) AND (#{or_condition.join(' OR ')})"
+                        else
+                          "(#{or_condition.join(' OR ')})"
+                        end
+
+      or_condition = []
+      first_name.to_s.split.each do |name_token|
+        or_condition << "swimmers.first_name like \"%#{name_token}%\""
+      end
+      where_condition = "#{where_condition} AND (#{or_condition.join(' OR ')})"
+
+      Swimmer.where(ActiveRecord::Base.sanitize_sql_for_conditions(where_condition))
+    end
+
+    # == Auto-associate to swimmer.
+    # Changes the swimmer_id column if there's a matching swimmer that's
+    # *not* already associated to another user.
+    # The record does *not* get persisted (it still needs a manual save).
+    #
+    # Always returns the first swimmer found (& chosen), even when the association is not possible.
+    #
+    def associate_to_swimmer!
+      return nil unless last_name.present? && first_name.present?
+
+      matching_swimmer = matching_swimmers.first
+      self.swimmer_id = matching_swimmer.id if matching_swimmer && matching_swimmer.associated_user_id.blank?
+      matching_swimmer
+    end
   end
 end

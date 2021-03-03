@@ -2,6 +2,7 @@
 
 _Please, add the latest build info on top of the list; use Version::MAJOR only after gold release; keep semantic versioning in line with framework's_
 
+- **0.1.82** [Steve A.] removed unused legacy columns from users; support for future Twitter OAuth2 sign-in; auto-select associated swimmer finder for Users
 - **0.1.80** [Steve A.] added OAuth2 support for Google & Facebook direct login
 - **0.1.78** [Steve A.] fix for inverse association between User <=> Swimmer
 - **0.1.76** [Steve A.] improved build setup

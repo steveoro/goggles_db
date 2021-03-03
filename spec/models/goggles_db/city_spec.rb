@@ -46,13 +46,9 @@ module GogglesDb
 
     # Filtering scopes:
     describe 'self.for_name' do
-      it_behaves_like('filtering scope FULLTEXT for_name', City, %w[name area], 'forl')
-      it_behaves_like('filtering scope FULLTEXT for_name', City, %w[name area], 'albinea')
-      it_behaves_like('filtering scope FULLTEXT for_name', City, %w[name area], 'bologna')
-      it_behaves_like('filtering scope FULLTEXT for_name', City, %w[name area], 'carpi')
-      it_behaves_like('filtering scope FULLTEXT for_name', City, %w[name area], 'emilia')
-      it_behaves_like('filtering scope FULLTEXT for_name', City, %w[name area], 'modena')
-      it_behaves_like('filtering scope FULLTEXT for_name', City, %w[name area], 'reggio')
+      %w[forl albinea bologna carpi emilia modena reggio].each do |filter_text|
+        it_behaves_like('filtering scope FULLTEXT for_...', City, :for_name, %w[name area], filter_text)
+      end
     end
     #-- ------------------------------------------------------------------------
     #++

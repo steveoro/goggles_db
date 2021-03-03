@@ -79,12 +79,9 @@ module GogglesDb
           expect { subject.count }.not_to raise_error
         end
       end
-      it_behaves_like('filtering scope FULLTEXT for_name', Meeting, %w[description code], 'riccione')
-      it_behaves_like('filtering scope FULLTEXT for_name', Meeting, %w[description code], 'reggio')
-      it_behaves_like('filtering scope FULLTEXT for_name', Meeting, %w[description code], 'parma')
-      it_behaves_like('filtering scope FULLTEXT for_name', Meeting, %w[description code], 'deakker')
-      it_behaves_like('filtering scope FULLTEXT for_name', Meeting, %w[description code], 'bologna')
-      it_behaves_like('filtering scope FULLTEXT for_name', Meeting, %w[description code], 'ravenna')
+      %w[riccione reggio parma deakker bologna ravenna].each do |filter_text|
+        it_behaves_like('filtering scope FULLTEXT for_...', Meeting, :for_name, %w[description code], filter_text)
+      end
     end
     #-- ------------------------------------------------------------------------
     #++
