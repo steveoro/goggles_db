@@ -1,7 +1,13 @@
 # frozen_string_literal: true
 
+# [Steve A.]
+# ============================================================================================
+# >>>  WHEN MODIFIED, COPY THIS UNDER '/config/initializers' FOR ANY APP THAT USES DEVISE  <<<
+# ============================================================================================
+
 require 'omniauth-google-oauth2'
 require 'omniauth-facebook'
+require 'omniauth-twitter'
 
 # Assuming you have not yet modified this file, each configuration option below
 # is set to its default value. Note that some are commented out while others
@@ -275,8 +281,8 @@ Devise.setup do |config|
   # Add a new OmniAuth provider. Check the wiki for more information on setting
   # up on your models and hooks.
   config.omniauth :google_oauth2, ENV['GOOGLE_CLIENT_ID'], ENV['GOOGLE_CLIENT_SECRET'], {}
-  config.omniauth :facebook, ENV['FACEBOOK_APP_ID'], ENV['APP_SECRET'],
-                  callback_url: '/users/'
+  config.omniauth :facebook, ENV['FACEBOOK_APP_ID'], ENV['FACEBOOK_APP_SECRET']
+  config.omniauth :twitter, ENV['TWITTER_API_KEY'], ENV['TWITTER_API_SECRET']
 
   # ==> Warden configuration
   # If you want to use other strategies, that are not supported by Devise, or

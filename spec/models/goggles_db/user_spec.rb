@@ -71,7 +71,7 @@ module GogglesDb
 
     # Filtering scopes:
     describe 'self.from_omniauth' do
-      let(:provider) { %w[facebook github google twitter].sample }
+      let(:provider) { %w[facebook github google_oauth2 twitter].sample }
       let(:uid) { FFaker::SSN.ssn }
 
       before(:each) do
@@ -171,12 +171,24 @@ module GogglesDb
       context 'for a new user providing valid auth data,' do
         let(:new_user) { FactoryBot.build(:user, confirmed_at: nil) }
         let(:auth_response) { valid_auth(provider, uid, new_user) }
+        let(:existing_swimmer) do
+          FactoryBot.create(
+            :swimmer,
+            first_name: new_user.first_name,
+            last_name: new_user.last_name,
+            year_of_birth: new_user.year_of_birth,
+            complete_name: new_user.description,
+            associated_user_id: nil
+          )
+        end
 
         before(:each) do
           expect(new_user).to be_a(User).and be_valid
           expect(new_user).not_to be_confirmed
           expect(auth_response).to be_an(OmniAuth::AuthHash).and be_valid
           expect(auth_response.info['email']).to eq(new_user.email)
+          expect(existing_swimmer).to be_a(Swimmer).and be_valid
+          expect(new_user.matching_swimmers).not_to be_empty
         end
 
         subject { User.from_omniauth(auth_response) }
@@ -187,8 +199,8 @@ module GogglesDb
           expect(subject.first_name).to eq(auth_response.info['first_name'])
           expect(subject.last_name).to eq(auth_response.info['last_name'])
         end
-        it 'is not yet persisted' do
-          expect(subject).not_to be_persisted
+        it 'is persisted' do
+          expect(subject).to be_persisted
         end
         it 'is confirmed' do
           expect(subject).to be_confirmed
@@ -198,6 +210,9 @@ module GogglesDb
           expect(subject.provider).to eq(provider)
           expect(subject.uid).to eq(auth_response.uid)
           expect(subject.uid).to eq(uid)
+        end
+        it 'has an already associated swimmer by default (if there\'s a match)' do
+          expect(subject.reload.swimmer_id).to eq(existing_swimmer.id)
         end
       end
 
@@ -226,5 +241,156 @@ module GogglesDb
     end
     #-- ------------------------------------------------------------------------
     #++
+
+    let(:fixture_swimmer) { FactoryBot.create(:swimmer) }
+    let(:fixture_user) do
+      FactoryBot.create(
+        :user,
+        first_name: fixture_swimmer.first_name,
+        last_name: fixture_swimmer.last_name,
+        year_of_birth: fixture_swimmer.year_of_birth,
+        description: fixture_swimmer.complete_name,
+        swimmer_id: nil
+      )
+    end
+
+    describe '#matching_swimmers' do
+      # Same year of birth and equal name:
+      context 'when the user has a matching swimmer' do
+        before(:each) do
+          expect(fixture_user).to be_a(User).and be_valid
+          expect(fixture_swimmer).to be_a(Swimmer).and be_valid
+        end
+        subject { fixture_user.matching_swimmers }
+
+        it 'is a non-empty ActiveRecord::Relation' do
+          expect(subject).to be_a(ActiveRecord::Relation)
+          expect(subject).not_to be_empty
+        end
+        it 'includes the matching swimmer' do
+          expect(fixture_user.matching_swimmers).to include(fixture_swimmer)
+        end
+      end
+
+      # Same name but no user's year of birth:
+      context 'when the user has a matching swimmer but no birth date' do
+        before(:each) do
+          expect(fixture_user).to be_a(User).and be_valid
+          expect(fixture_swimmer).to be_a(Swimmer).and be_valid
+          fixture_user.update!(year_of_birth: 1900)
+          expect(fixture_user.year_of_birth != fixture_swimmer.year_of_birth).to be true
+        end
+        subject { fixture_user.matching_swimmers }
+
+        it 'is a non-empty ActiveRecord::Relation' do
+          expect(subject).to be_a(ActiveRecord::Relation)
+          expect(subject).not_to be_empty
+        end
+        it 'includes the matching swimmer' do
+          expect(fixture_user.matching_swimmers).to include(fixture_swimmer)
+        end
+      end
+
+      # Same year of birth but slightly-different name:
+      [
+        { user_first: 'Ido', user_last: 'Orlandini', swimmer_first: 'Ido Pieraldo', swimmer_last: 'Orlandini' },
+        { user_first: 'Stefano', user_last: 'Alloro', swimmer_first: 'Stefano Luca', swimmer_last: 'Alloro' },
+        { user_first: 'Marco Paolino', user_last: 'Gilbertazzi', swimmer_first: 'PAOLINO', swimmer_last: 'GILBERTAZZI' },
+        { user_first: 'Marco Pino', user_last: 'Gilbertazzi', swimmer_first: 'Marco', swimmer_last: 'GILBERTAZZI' },
+        { user_first: 'Lino Gino Rino', user_last: 'Rossi', swimmer_first: 'GINO', swimmer_last: 'Rossi' },
+        { user_first: 'Guendalina Veronica', user_last: 'Mazzanti Vien Dal Mare', swimmer_first: 'Veronica', swimmer_last: 'Mazzanti' },
+        { user_first: 'Paola Maria', user_last: 'Mazzanti Vien Dalmare', swimmer_first: 'Paola Maria Lucia', swimmer_last: 'Viendalmare' }
+      ].each do |names_hash|
+        context 'when the user has a partially-matching swimmer name' do
+          let(:fixture_swimmer1) do
+            FactoryBot.create(
+              :swimmer,
+              first_name: names_hash[:swimmer_first],
+              last_name: names_hash[:swimmer_last],
+              complete_name: "#{names_hash[:swimmer_last].upcase} #{names_hash[:swimmer_first].upcase}"
+            )
+          end
+          let(:fixture_user1) do
+            email = "#{names_hash[:user_last].split.first}.#{names_hash[:user_first].split.first}" +
+                    "#{(rand * 100_000).to_i}@#{%w[fake.example.com fake.example.org fake.example.net].sample}"
+            FactoryBot.create(
+              :user,
+              first_name: names_hash[:user_first],
+              last_name: names_hash[:user_last],
+              description: "#{names_hash[:user_last]} #{names_hash[:user_first]}",
+              email: email,
+              year_of_birth: fixture_swimmer1.year_of_birth
+            )
+          end
+          before(:each) do
+            expect(fixture_user1).to be_a(User).and be_valid
+            expect(fixture_swimmer1).to be_a(Swimmer).and be_valid
+          end
+          subject { fixture_user1.matching_swimmers }
+
+          it 'is a non-empty ActiveRecord::Relation' do
+            expect(subject).to be_a(ActiveRecord::Relation)
+            expect(subject).not_to be_empty
+          end
+          it 'includes the matching swimmer' do
+            expect(fixture_user1.matching_swimmers).to include(fixture_swimmer1)
+          end
+        end
+      end
+    end
+
+    describe '#associate_to_swimmer!' do
+      context 'when the user instance in new (and names are empty)' do
+        it 'returns nil' do
+          expect(User.new.associate_to_swimmer!).to be nil
+        end
+        it 'does not change the swimmer_id field' do
+          User.new.associate_to_swimmer!
+          expect(User.new.swimmer_id).to be_blank
+        end
+      end
+
+      context 'when the user has indeed a matching swimmer' do
+        before(:each) do
+          expect(fixture_user).to be_a(User).and be_valid
+          expect(fixture_swimmer).to be_a(Swimmer).and be_valid
+        end
+
+        context 'and the swimmer is not yet associated,' do
+          before(:each) do
+            fixture_swimmer.associated_user_id = nil
+            fixture_swimmer.save!
+          end
+          subject { fixture_user.associate_to_swimmer! }
+
+          it 'sets the swimmer_id field' do
+            fixture_user.associate_to_swimmer!
+            expect(fixture_user.swimmer_id).to eq(fixture_swimmer.id)
+          end
+          it 'changes the record' do
+            fixture_user.associate_to_swimmer!
+            expect(fixture_user).to be_changed
+          end
+          it 'returns the first swimmer found' do
+            expect(fixture_user.associate_to_swimmer!).to eq(fixture_swimmer)
+          end
+        end
+
+        context 'and the swimmer is already associated,' do
+          before(:each) do
+            fixture_swimmer.associated_user_id = fixture_user.id
+            fixture_swimmer.save!
+          end
+          it 'does not change the swimmer_id field' do
+            fixture_user.associate_to_swimmer!
+            expect(fixture_user.swimmer_id).to be_blank
+            expect(fixture_user).not_to be_changed
+          end
+          it 'returns the first swimmer found' do
+            expect(fixture_user.associate_to_swimmer!).to eq(fixture_swimmer)
+          end
+        end
+      end
+    end
   end
 end

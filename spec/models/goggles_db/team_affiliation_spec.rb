@@ -66,9 +66,9 @@ module GogglesDb
           expect { subject.count }.not_to raise_error
         end
       end
-      it_behaves_like('filtering scope FULLTEXT for_name', TeamAffiliation, %w[name], 'ferrari')
-      it_behaves_like('filtering scope FULLTEXT for_name', TeamAffiliation, %w[name], 'dynamic')
-      it_behaves_like('filtering scope FULLTEXT for_name', TeamAffiliation, %w[name], 'reggiana')
+      %w[ferrari dynamic reggiana].each do |filter_text|
+        it_behaves_like('filtering scope FULLTEXT for_...', TeamAffiliation, :for_name, %w[name], filter_text)
+      end
     end
     #-- ------------------------------------------------------------------------
     #++

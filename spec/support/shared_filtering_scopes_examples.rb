@@ -160,9 +160,9 @@ shared_examples_for 'filtering scope for_year' do |subject_class|
   end
 end
 
-shared_examples_for 'filtering scope FULLTEXT for_name' do |subject_class, matching_field_list, filter_value|
+shared_examples_for 'filtering scope FULLTEXT for_...' do |subject_class, method_name, matching_field_list, filter_value|
   context "given there are #{subject_class.to_s.pluralize} rows with values that match the filter," do
-    let(:result) { subject_class.for_name(filter_value).limit(10) }
+    let(:result) { subject_class.send(method_name, filter_value).limit(10) }
 
     it "is a relation containing only #{subject_class.to_s.pluralize} that match the specified filtering value" do
       expect(result).to be_a(ActiveRecord::Relation)

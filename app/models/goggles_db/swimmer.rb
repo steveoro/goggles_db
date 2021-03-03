@@ -4,7 +4,7 @@ module GogglesDb
   #
   # = Swimmer model
   #
-  #   - version:  7.78
+  #   - version:  7.82
   #   - author:   Steve A.
   #
   class Swimmer < ApplicationRecord
@@ -33,7 +33,10 @@ module GogglesDb
     delegate :male?, :female?, :intermixed?, to: :gender_type
 
     # Filtering scopes:
-    scope :for_name, ->(name) { where('MATCH(swimmers.last_name, swimmers.first_name, swimmers.complete_name) AGAINST(?)', name) }
+    scope :for_name,          ->(name) { where('MATCH(swimmers.last_name, swimmers.first_name, swimmers.complete_name) AGAINST(?)', name) }
+    scope :for_first_name,    ->(name) { where('swimmers.first_name like ?', "%#{name}%") } # { where('MATCH(swimmers.first_name) AGAINST(?)', name) }
+    scope :for_last_name,     ->(name) { where('swimmers.last_name like ?', "%#{name}%") } # { where('MATCH(swimmers.last_name) AGAINST(?)', name) }
+    scope :for_complete_name, ->(name) { where('MATCH(swimmers.complete_name) AGAINST(?)', name) }
     #-- ------------------------------------------------------------------------
     #++
 

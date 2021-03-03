@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_02_25_130846) do
+ActiveRecord::Schema.define(version: 2021_03_02_170844) do
 
   create_table "achievement_rows", id: :integer, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
     t.integer "lock_version", default: 0
@@ -1739,9 +1739,12 @@ ActiveRecord::Schema.define(version: 2021_02_25_130846) do
     t.index ["associated_user_id"], name: "index_swimmers_on_associated_user_id"
     t.index ["complete_name", "year_of_birth"], name: "name_and_year", unique: true
     t.index ["complete_name"], name: "index_swimmers_on_complete_name"
+    t.index ["complete_name"], name: "swimmer_complete_name", type: :fulltext
+    t.index ["first_name"], name: "swimmer_first_name", type: :fulltext
     t.index ["gender_type_id"], name: "fk_swimmers_gender_types"
     t.index ["last_name", "first_name", "complete_name"], name: "swimmer_name", type: :fulltext
     t.index ["last_name", "first_name"], name: "full_name"
+    t.index ["last_name"], name: "swimmer_last_name", type: :fulltext
     t.index ["nickname"], name: "index_swimmers_on_nickname"
   end
 
@@ -2081,14 +2084,10 @@ ActiveRecord::Schema.define(version: 2021_02_25_130846) do
     t.integer "failed_attempts", default: 0
     t.string "unlock_token"
     t.datetime "locked_at"
-    t.boolean "use_email_data_updates_notify", default: false
-    t.boolean "use_email_achievements_notify", default: false
-    t.boolean "use_email_newsletter_notify", default: false
-    t.boolean "use_email_community_notify", default: false
-    t.string "avatar_resource_filename", limit: 250
+    t.string "avatar_url", limit: 250
     t.integer "swimmer_level_type_id"
     t.integer "coach_level_type_id"
-    t.string "authentication_token"
+    t.string "jwt"
     t.integer "outstanding_goggle_score_bias", default: 800
     t.integer "outstanding_standard_score_bias", default: 800
     t.string "last_name", limit: 50
@@ -2096,10 +2095,10 @@ ActiveRecord::Schema.define(version: 2021_02_25_130846) do
     t.integer "year_of_birth", default: 1900
     t.string "provider"
     t.string "uid"
-    t.index ["authentication_token"], name: "index_users_on_authentication_token", unique: true
     t.index ["coach_level_type_id"], name: "idx_users_coach_level_type"
     t.index ["confirmation_token"], name: "index_users_on_confirmation_token", unique: true
     t.index ["email"], name: "index_users_on_email", unique: true
+    t.index ["jwt"], name: "index_users_on_jwt", unique: true
     t.index ["last_name", "first_name", "year_of_birth"], name: "full_name"
     t.index ["name"], name: "index_users_on_name", unique: true
     t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true

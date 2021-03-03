@@ -42,6 +42,7 @@ Metrics/BlockLength:
   CountAsOne: ['array', 'heredoc']
   IgnoredMethods: ['describe', 'context', 'define', 'shared_examples_for']
   Exclude:
+    - 'goggles_db.gemspec'
     - 'lib/tasks/*.rake'
     - 'spec/models/goggles_db/city_spec.rb'
 
@@ -58,8 +59,8 @@ Metrics/MethodLength:
 Metrics/ModuleLength:
   Max: 200
   # If Rubocop whines too much for a spec length, exclude the individual files:
-  # Exclude:
-  #   - 'spec/path_to/specific_spec_file'
+  Exclude:
+    - 'spec/models/goggles_db/user_spec.rb'
 
 Naming/VariableNumber:
   Exclude:
