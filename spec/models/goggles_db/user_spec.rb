@@ -32,6 +32,78 @@ module GogglesDb
         expect(subject.email).to be_present
       end
     end
+    #-- ------------------------------------------------------------------------
+    #++
+
+    context 'swimmer association: after_create' do
+      context 'when the user has an auto-match with an available swimmer' do
+        let(:existing_swimmer) { Swimmer.first(50).sample }
+        let(:fixture_user) do
+          FactoryBot.build(
+            :user,
+            first_name: existing_swimmer.first_name,
+            last_name: existing_swimmer.last_name,
+            year_of_birth: existing_swimmer.year_of_birth,
+            description: existing_swimmer.complete_name,
+            swimmer_id: nil
+          )
+        end
+        before(:each) do
+          # Verify domain:
+          expect(existing_swimmer).to be_a(Swimmer).and be_valid
+          expect(fixture_user).to be_a(User).and be_valid
+          # Create the user, then verify after create:
+          fixture_user.save!
+        end
+
+        it 'binds the user with swimmer updating both swimmer_id & associated_user_id' do
+          expect(fixture_user.swimmer_id).to eq(existing_swimmer.id)
+          # Need to reload the row updated indipendently by the after_action filter:
+          existing_swimmer.reload
+          expect(existing_swimmer.associated_user_id).to eq(fixture_user.id)
+        end
+      end
+    end
+
+    context 'swimmer association: after_safe' do
+      context 'when the user has changed the swimmer association' do
+        let(:fixture_swimmer) { FactoryBot.create(:swimmer) }
+        let(:fixture_user) do
+          FactoryBot.create(
+            :user,
+            first_name: fixture_swimmer.first_name,
+            last_name: fixture_swimmer.last_name,
+            year_of_birth: fixture_swimmer.year_of_birth,
+            description: fixture_swimmer.complete_name,
+            swimmer_id: fixture_swimmer.id
+          )
+        end
+        let(:another_swimmer) { Swimmer.last(50).sample }
+
+        before(:each) do
+          # Verify domain:
+          expect(fixture_swimmer).to be_a(Swimmer).and be_valid
+          expect(fixture_user).to be_a(User).and be_valid
+          expect(another_swimmer).to be_a(Swimmer).and be_valid
+          expect(fixture_user.swimmer_id).to eq(fixture_swimmer.id)
+          # Reload the row updated indipendently:
+          fixture_swimmer.reload
+          expect(fixture_swimmer.associated_user_id).to eq(fixture_user.id)
+          # Edit association just on one side, then verify after save:
+          fixture_user.swimmer_id = another_swimmer.id
+          fixture_user.save!
+        end
+
+        it 'binds the user with swimmer updating both swimmer_id & associated_user_id' do
+          expect(fixture_user.swimmer_id).to eq(another_swimmer.id)
+          # Reload the row updated indipendently:
+          another_swimmer.reload
+          expect(another_swimmer.associated_user_id).to eq(fixture_user.id)
+        end
+      end
+    end
+    #-- ------------------------------------------------------------------------
+    #++
 
     # Any user settings should have the :prefs key:
     describe '#settings' do
@@ -211,8 +283,16 @@ module GogglesDb
           expect(subject.uid).to eq(auth_response.uid)
           expect(subject.uid).to eq(uid)
         end
-        it 'has an already associated swimmer by default (if there\'s a match)' do
-          expect(subject.reload.swimmer_id).to eq(existing_swimmer.id)
+        context 'when there\'s and existing, matching (and available) swimmer,' do
+          it 'is automatically associated to that swimmer by default' do
+            expect(subject.reload.swimmer_id).to eq(existing_swimmer.id)
+          end
+          it 'binds automatically also the associated swimmer to the user' do
+            expect(subject.id).to be_positive
+            # Reload the row updated indipendently:
+            existing_swimmer.reload
+            expect(existing_swimmer.associated_user_id).to eq(subject.id)
+          end
         end
       end
 
@@ -242,21 +322,21 @@ module GogglesDb
     #-- ------------------------------------------------------------------------
     #++
 
-    let(:fixture_swimmer) { FactoryBot.create(:swimmer) }
-    let(:fixture_user) do
-      FactoryBot.create(
-        :user,
-        first_name: fixture_swimmer.first_name,
-        last_name: fixture_swimmer.last_name,
-        year_of_birth: fixture_swimmer.year_of_birth,
-        description: fixture_swimmer.complete_name,
-        swimmer_id: nil
-      )
-    end
-
     describe '#matching_swimmers' do
+      let(:fixture_swimmer) { FactoryBot.create(:swimmer) }
       # Same year of birth and equal name:
       context 'when the user has a matching swimmer' do
+        let(:fixture_user) do
+          FactoryBot.create(
+            :user,
+            first_name: fixture_swimmer.first_name,
+            last_name: fixture_swimmer.last_name,
+            year_of_birth: fixture_swimmer.year_of_birth,
+            description: fixture_swimmer.complete_name,
+            swimmer_id: nil
+          )
+        end
+
         before(:each) do
           expect(fixture_user).to be_a(User).and be_valid
           expect(fixture_swimmer).to be_a(Swimmer).and be_valid
@@ -274,10 +354,21 @@ module GogglesDb
 
       # Same name but no user's year of birth:
       context 'when the user has a matching swimmer but no birth date' do
+        let(:fixture_swimmer) { FactoryBot.create(:swimmer) }
+        let(:fixture_user) do
+          FactoryBot.create(
+            :user,
+            first_name: fixture_swimmer.first_name,
+            last_name: fixture_swimmer.last_name,
+            year_of_birth: 1900,
+            description: fixture_swimmer.complete_name,
+            swimmer_id: nil
+          )
+        end
+
         before(:each) do
           expect(fixture_user).to be_a(User).and be_valid
           expect(fixture_swimmer).to be_a(Swimmer).and be_valid
-          fixture_user.update!(year_of_birth: 1900)
           expect(fixture_user.year_of_birth != fixture_swimmer.year_of_birth).to be true
         end
         subject { fixture_user.matching_swimmers }
@@ -338,59 +429,260 @@ module GogglesDb
         end
       end
     end
+    #-- -----------------------------------------------------------------------
+    #++
 
-    describe '#associate_to_swimmer!' do
-      context 'when the user instance in new (and names are empty)' do
-        it 'returns nil' do
-          expect(User.new.associate_to_swimmer!).to be nil
-        end
-        it 'does not change the swimmer_id field' do
-          User.new.associate_to_swimmer!
-          expect(User.new.swimmer_id).to be_blank
+    shared_examples_for '#associate_to_swimmer! skipping updates' do |use_override|
+      # (With or without 'swimmer_override')
+      let(:swimmer_override) { use_override ? fixture_swimmer : nil }
+
+      it 'doesn\'t change the User\'s swimmer_id (as well as the row itself)' do
+        expect { fixture_user.associate_to_swimmer!(swimmer_override) }.not_to change(
+          fixture_user, :swimmer_id
+        )
+      end
+      # Skip whole test if override is not used:
+      if use_override
+        it 'doesn\'t change the Swimmer\'s associated_user_id (as well as the row itself)' do
+          expect { fixture_user.associate_to_swimmer!(swimmer_override) }.not_to change(
+            swimmer_override, :associated_user_id
+          )
         end
       end
+    end
 
-      context 'when the user has indeed a matching swimmer' do
-        before(:each) do
-          expect(fixture_user).to be_a(User).and be_valid
-          expect(fixture_swimmer).to be_a(Swimmer).and be_valid
+    # (Subject method is invoked in shared examples)
+    shared_examples_for '#associate_to_swimmer! returning nil (unpersisted, NO update)' do |use_override|
+      # (With or without 'swimmer_override')
+      let(:swimmer_override) { use_override ? fixture_swimmer : nil }
+
+      it 'doesn\'t save the user instance' do
+        fixture_user.associate_to_swimmer!(swimmer_override)
+        expect(fixture_user).not_to be_persisted
+      end
+      it 'returns nil' do
+        expect(fixture_user.associate_to_swimmer!(swimmer_override)).to be nil
+      end
+
+      it_behaves_like('#associate_to_swimmer! skipping updates', use_override)
+    end
+
+    shared_examples_for '#associate_to_swimmer! successfully updates' do |use_override|
+      # (With or without 'swimmer_override')
+      let(:swimmer_override) { use_override ? fixture_swimmer : nil }
+
+      it 'saves the user instance' do
+        expect(fixture_user).to be_persisted
+      end
+      it 'updates the User\'s swimmer_id' do
+        expect(fixture_user.swimmer_id).to eq(fixture_swimmer.id)
+      end
+      it 'updates the Swimmer\'s associated_user_id' do
+        # Reload the row updated indipendently:
+        fixture_swimmer.reload
+        expect(fixture_swimmer.associated_user_id).to eq(fixture_user.id)
+      end
+      it 'returns the swimmer associated to the user' do
+        expect(fixture_user.associate_to_swimmer!(swimmer_override)).to eq(fixture_swimmer)
+      end
+    end
+    #-- -----------------------------------------------------------------------
+    #++
+
+    describe '#associate_to_swimmer!' do
+      let(:fixture_swimmer) { FactoryBot.create(:swimmer) }
+
+      context 'without a swimmer override parameter,' do
+        # ** NO UPDATE: new user, invalid **
+        context 'when the user instance is new and some required fields are missing' do
+          let(:fixture_user) { User.new }
+          before(:each) do
+            expect(fixture_swimmer).to be_a(Swimmer).and be_valid
+            expect(fixture_user).to be_a(User)
+          end
+
+          # (Subject method is invoked in shared examples)
+          it_behaves_like('#associate_to_swimmer! returning nil (unpersisted, NO update)', false)
         end
 
-        context 'and the swimmer is not yet associated,' do
+        # ** NO UPDATE: new user, valid but "unfilterable" **
+        context 'when the user instance is new but doesn\'t have a last_name (no filtering possible)' do
+          let(:fixture_user) do
+            FactoryBot.build(
+              :user,
+              first_name: fixture_swimmer.first_name,
+              last_name: nil,
+              year_of_birth: fixture_swimmer.year_of_birth,
+              description: fixture_swimmer.complete_name,
+              swimmer_id: nil
+            )
+          end
           before(:each) do
-            fixture_swimmer.associated_user_id = nil
-            fixture_swimmer.save!
+            expect(fixture_swimmer).to be_a(Swimmer).and be_valid
+            expect(fixture_user).to be_a(User).and be_valid
           end
-          subject { fixture_user.associate_to_swimmer! }
 
-          it 'sets the swimmer_id field' do
-            fixture_user.associate_to_swimmer!
-            expect(fixture_user.swimmer_id).to eq(fixture_swimmer.id)
+          # (Subject method is invoked in shared examples)
+          it_behaves_like('#associate_to_swimmer! returning nil (unpersisted, NO update)', false)
+        end
+
+        context 'when the user has indeed a matching swimmer' do
+          let(:fixture_user) do
+            FactoryBot.create(
+              :user,
+              first_name: fixture_swimmer.first_name,
+              last_name: fixture_swimmer.last_name,
+              year_of_birth: fixture_swimmer.year_of_birth,
+              description: fixture_swimmer.complete_name,
+              swimmer_id: nil
+            )
           end
-          it 'changes the record' do
-            fixture_user.associate_to_swimmer!
-            expect(fixture_user).to be_changed
+          before(:each) do
+            expect(fixture_swimmer).to be_a(Swimmer).and be_valid
+            expect(fixture_user).to be_a(User).and be_valid
           end
-          it 'returns the first swimmer found' do
-            expect(fixture_user.associate_to_swimmer!).to eq(fixture_swimmer)
+
+          # ** UPDATE: existing user, swimmer is free **
+          context 'and the swimmer is available,' do
+            before(:each) do
+              # We don't care about the user's association over here (could be anything)
+              # as it must be overwritten anyway
+              fixture_swimmer.reload.associated_user_id = nil
+              fixture_swimmer.save!
+              fixture_user.associate_to_swimmer!
+            end
+
+            it_behaves_like('#associate_to_swimmer! successfully updates', false)
+          end
+
+          # ** NO UPDATE: existing user, swimmer NOT free **
+          context 'and the swimmer is NOT available,' do
+            let(:another_user) { User.first(20).sample }
+            before(:each) do
+              fixture_swimmer.reload.associated_user_id = another_user.id
+              fixture_swimmer.save!
+            end
+
+            # (Subject method is invoked in shared examples)
+            it_behaves_like('#associate_to_swimmer! skipping updates', nil)
+
+            it 'returns the matching swimmer anyway' do
+              expect(fixture_user.associate_to_swimmer!).to eq(fixture_swimmer)
+            end
+          end
+        end
+      end
+      #-- ---------------------------------------------------------------------
+      #++
+
+      context 'with a matching_swimmer override parameter,' do
+        # ** NO UPDATE: new user, invalid + swimmer override **
+        context 'when the user instance is new and some required fields are missing (no filtering possible)' do
+          let(:fixture_user) { User.new }
+          before(:each) do
+            expect(fixture_swimmer).to be_a(Swimmer).and be_valid
+            expect(fixture_user).to be_a(User)
+          end
+
+          # (Subject method is invoked in shared examples)
+          it_behaves_like('#associate_to_swimmer! returning nil (unpersisted, NO update)', true)
+        end
+
+        context 'when the user instance is new and doesn\'t have a last_name (no filtering possible)' do
+          let(:fixture_user) do
+            FactoryBot.build(
+              :user,
+              first_name: fixture_swimmer.first_name,
+              last_name: nil,
+              year_of_birth: fixture_swimmer.year_of_birth,
+              description: fixture_swimmer.complete_name,
+              swimmer_id: nil
+            )
+          end
+          before(:each) do
+            expect(fixture_swimmer).to be_a(Swimmer).and be_valid
+            expect(fixture_user).to be_a(User).and be_valid
+          end
+
+          # ** UPDATE: new user, valid + swimmer override free **
+          context 'and the specified swimmer is available,' do
+            before(:each) do
+              # We don't care about the user's association over here (could be anything)
+              # as it will be overwritten anyway
+              fixture_swimmer.reload.associated_user_id = nil
+              fixture_swimmer.save!
+              fixture_user.associate_to_swimmer!(fixture_swimmer)
+            end
+
+            it_behaves_like('#associate_to_swimmer! successfully updates', true)
+          end
+
+          # ** NO UPDATE: new user, valid + swimmer override NOT free **
+          context 'and the specified swimmer is NOT available,' do
+            let(:another_user) { User.first(20).sample }
+            before(:each) do
+              fixture_swimmer.reload.associated_user_id = another_user.id
+              fixture_swimmer.save!
+            end
+
+            # (Subject method is invoked in shared examples)
+            it_behaves_like('#associate_to_swimmer! skipping updates', true)
+            it 'returns the specified swimmer anyway' do
+              expect(fixture_user.associate_to_swimmer!(fixture_swimmer)).to eq(fixture_swimmer)
+            end
           end
         end
 
-        context 'and the swimmer is already associated,' do
+        # ** UPDATE, with OVERRIDE **
+        context 'when the user has indeed a matching swimmer' do
+          let(:another_swimmer) { Swimmer.first(50).sample }
+          let(:fixture_user) do
+            FactoryBot.create(
+              :user,
+              first_name: another_swimmer.first_name,
+              last_name: another_swimmer.last_name,
+              year_of_birth: another_swimmer.year_of_birth,
+              description: another_swimmer.complete_name,
+              swimmer_id: nil
+            )
+          end
           before(:each) do
-            fixture_swimmer.associated_user_id = fixture_user.id
-            fixture_swimmer.save!
+            expect(another_swimmer).to be_a(Swimmer).and be_valid
+            expect(fixture_swimmer).to be_a(Swimmer).and be_valid
+            expect(fixture_user).to be_a(User).and be_valid
           end
-          it 'does not change the swimmer_id field' do
-            fixture_user.associate_to_swimmer!
-            expect(fixture_user.swimmer_id).to be_blank
-            expect(fixture_user).not_to be_changed
+
+          # ** UPDATE: valid user + swimmer override free **
+          context 'and the specified swimmer is available,' do
+            before(:each) do
+              # We don't care about the user's association over here (could be anything)
+              # as it will be overwritten anyway
+              fixture_swimmer.reload.associated_user_id = nil
+              fixture_swimmer.save!
+              fixture_user.associate_to_swimmer!(fixture_swimmer)
+            end
+
+            it_behaves_like('#associate_to_swimmer! successfully updates', true)
           end
-          it 'returns the first swimmer found' do
-            expect(fixture_user.associate_to_swimmer!).to eq(fixture_swimmer)
+
+          # ** NO UPDATE: new user, valid + swimmer override NOT free **
+          context 'and the specified swimmer is NOT available,' do
+            let(:another_user) { User.first(20).sample }
+            before(:each) do
+              fixture_swimmer.reload.associated_user_id = another_user.id
+              fixture_swimmer.save!
+            end
+
+            # (Subject method is invoked in shared examples)
+            it_behaves_like('#associate_to_swimmer! skipping updates', true)
+            it 'returns the specified swimmer anyway' do
+              expect(fixture_user.associate_to_swimmer!(fixture_swimmer)).to eq(fixture_swimmer)
+            end
           end
         end
       end
     end
+    #-- -----------------------------------------------------------------------
+    #++
   end
 end
