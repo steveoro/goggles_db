@@ -4,7 +4,7 @@ module GogglesDb
   #
   # = AppParameter model
   #
-  #   - version:  7.78
+  #   - version:  7.83
   #   - author:   Steve A.
   #
   class AppParameter < ApplicationRecord
@@ -27,8 +27,37 @@ module GogglesDb
       record
     end
 
-    # Retrieves the configuration row that stores the setting objects
+    # Retrieves a copy of the configuration row that stores the setting objects
     # (with eager loading).
+    #
+    # The returned row can be used to access directly the settings (see below).
+    #
+    # == Available Settings groups:
+    # - :framework_urls   => api, main, admin, chrono
+    # - :framework_emails => contact, admin, admin2, devops
+    # - :social_urls      => facebook, linkedin, twitter
+    #
+    # == Read Settings inside a group:
+    # For example, for framework_emails:
+    #
+    #   > AppParameter.config.settings(:framework_emails).contact
+    #
+    # == Update Settings inside a group:
+    # Again, for framework_emails:
+    #
+    #   > AppParameter.config.settings(:framework_emails).update!(contact: 'whatever@example.com')
+    #
+    # Don't use individual setters (a simple "=") for multiple edits directly on this
+    # helper, unless you store a copy of the returned 'config' row before hand, otherwise
+    # the #versioning_row finder will forfait your changes on the next assignation before the
+    # final save! call.
+    #
+    # To simply change multiple settings, use a multi-column update like this:
+    #
+    #   > AppParameter.config.settings(:framework_emails)
+    #       .update!(contact: 'whatever@example.com', admin1: 'whatever1@example.com'
+    #                admin2: 'whatever2@example.com', ...)
+    #
     def self.config
       includes(:setting_objects).versioning_row
     end
