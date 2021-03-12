@@ -4,7 +4,7 @@ module GogglesDb
   #
   # = User model
   #
-  #   - version:  7.85
+  #   - version:  7.86
   #   - author:   Steve A.
   #
   class User < ApplicationRecord
@@ -55,13 +55,22 @@ module GogglesDb
 
     # Filtering scopes:
 
-    # Finder for users from OAuth results.
+    # Finder for users from OAuth results. Should never raise errors, even if the user is not valid.
+    #
+    # == Finder strategy:
+    # 1. Email
+    # 2. OAuth provider & UID from last login
     #
     # == Params:
     # - auth: an OmniAuth::AuthHash instance containing the user data (mostly the info fields are required)
     #
     # == Returns:
-    # Returns the User matching either the OAuth email or the OAuth +provider+ & +uid+.
+    # Always returns the User instance found matching either the OAuth email or the OAuth +provider+ & +uid+.
+    # It may or may *not* be persisted, depending on user.valid? result.
+    #
+    # For instance, a User may be already existing with the same name but different email;
+    # in this case, the caller should check for user.persisted? and display any existing user.errors.
+    #
     # If an existing user matching the email is found, the +provider+ & +uid+ are updated.
     # If no matching users are found, returns a new pre-confirmed instance using the auth data.
     #
@@ -90,7 +99,8 @@ module GogglesDb
         )
         result_user.reload
       else
-        result_user.save!
+        # Try to persist the user (may yield validation errors; caller should check resulting user always)
+        result_user.save
       end
       result_user
     }
