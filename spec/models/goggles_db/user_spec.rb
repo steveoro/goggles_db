@@ -116,7 +116,15 @@ module GogglesDb
 
     describe '#swimmer' do
       let(:swimmer) { FactoryBot.create(:swimmer) }
-      subject { FactoryBot.create(:user, swimmer: swimmer) }
+      subject do
+        FactoryBot.create(
+          :user,
+          first_name: swimmer.first_name,
+          last_name: swimmer.last_name,
+          year_of_birth: swimmer.year_of_birth,
+          swimmer: swimmer
+        )
+      end
 
       before(:each) do
         expect(swimmer).to be_a(Swimmer).and be_valid
