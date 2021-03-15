@@ -239,6 +239,44 @@ module GogglesDb
         end
       end
 
+      # new User Email but existing (conflicting) User name found => error:
+      context 'for a new Email but with an already existing user name,' do
+        let(:another_user) { User.where('confirmed_at is not null').first(50).sample }
+        let(:conflicting_user) { FactoryBot.build(:user, name: another_user.name, email: FFaker::Internet.safe_email) }
+        let(:auth_response) { valid_auth(provider, uid, conflicting_user) }
+
+        before(:each) do
+          expect(another_user).to be_a(User).and be_valid
+          expect(conflicting_user).to be_a(User)
+          expect(auth_response).to be_an(OmniAuth::AuthHash).and be_valid
+          expect(auth_response.info['name']).to eq(another_user.name)
+          expect(auth_response.info['email']).to eq(conflicting_user.email)
+        end
+
+        subject { User.from_omniauth(auth_response) }
+
+        it 'includes the user name from the auth response' do
+          expect(subject.name).to eq(conflicting_user.name)
+          expect(subject.first_name).to eq(conflicting_user.first_name)
+          expect(subject.last_name).to eq(conflicting_user.last_name)
+        end
+        it 'includes the user email from the auth response' do
+          expect(subject.email).to eq(conflicting_user.email)
+        end
+        it 'is NOT persisted' do
+          expect(subject).not_to be_persisted
+        end
+        it 'is confirmed' do
+          expect(subject).to be_confirmed
+        end
+        it 'has updated the provider & uid fields' do
+          expect(subject.provider).to eq(auth_response.provider)
+          expect(subject.provider).to eq(provider)
+          expect(subject.uid).to eq(auth_response.uid)
+          expect(subject.uid).to eq(uid)
+        end
+      end
+
       # New User, ok:
       context 'for a new user providing valid auth data,' do
         let(:new_user) { FactoryBot.build(:user, confirmed_at: nil) }
