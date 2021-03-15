@@ -13,7 +13,7 @@ GIT
 PATH
   remote: .
   specs:
-    goggles_db (0.1.87)
+    goggles_db (0.1.88)
       acts-as-taggable-on
       acts_as_votable
       carrierwave

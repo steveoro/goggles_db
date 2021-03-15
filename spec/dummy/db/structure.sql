@@ -2702,7 +2702,7 @@ CREATE TABLE `users` (
   `failed_attempts` int(11) DEFAULT 0,
   `unlock_token` varchar(255) DEFAULT NULL,
   `locked_at` datetime DEFAULT NULL,
-  `avatar_url` varchar(250) DEFAULT NULL,
+  `avatar_url` text DEFAULT NULL,
   `swimmer_level_type_id` int(11) DEFAULT NULL,
   `coach_level_type_id` int(11) DEFAULT NULL,
   `jwt` varchar(255) DEFAULT NULL,
@@ -3135,6 +3135,7 @@ INSERT INTO `schema_migrations` (version) VALUES
 ('20210225122838'),
 ('20210225130846'),
 ('20210302125701'),
-('20210302170844');
+('20210302170844'),
+('20210315110522');
 
 

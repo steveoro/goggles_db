@@ -4,7 +4,7 @@ module GogglesDb
   #
   # = User model
   #
-  #   - version:  7.86
+  #   - version:  7.88
   #   - author:   Steve A.
   #
   class User < ApplicationRecord
@@ -16,7 +16,7 @@ module GogglesDb
     devise :database_authenticatable, :registerable,
            :confirmable, :lockable, :trackable,
            :recoverable, :rememberable, :validatable,
-           :omniauthable, omniauth_providers: %i[facebook google_oauth2 twitter]
+           :omniauthable, omniauth_providers: %i[facebook google_oauth2]
 
     # Read Settings like this:
     #
