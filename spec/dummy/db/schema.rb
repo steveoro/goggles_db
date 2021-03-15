@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_03_02_170844) do
+ActiveRecord::Schema.define(version: 2021_03_15_110522) do
 
   create_table "achievement_rows", id: :integer, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
     t.integer "lock_version", default: 0
@@ -2084,7 +2084,7 @@ ActiveRecord::Schema.define(version: 2021_03_02_170844) do
     t.integer "failed_attempts", default: 0
     t.string "unlock_token"
     t.datetime "locked_at"
-    t.string "avatar_url", limit: 250
+    t.text "avatar_url"
     t.integer "swimmer_level_type_id"
     t.integer "coach_level_type_id"
     t.string "jwt"
