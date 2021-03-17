@@ -44,6 +44,7 @@ module GogglesDb
     belongs_to :coach_level_type, optional: true
     has_many :managed_affiliations
 
+    validates :email, presence: true, uniqueness: { case_sensitive: false, message: :already_exists }
     validates :name, presence: true, uniqueness: { case_sensitive: true, message: :already_exists }
 
     validates :description,   length: { maximum: 100 } # Same as Swimmer#complete_name
