@@ -35,9 +35,30 @@ module GogglesDb
     #-- ------------------------------------------------------------------------
     #++
 
+    context 'base validations: uniqueness' do
+      let(:existing_user) { GogglesDb::User.first(50).sample }
+      before(:each) { expect(existing_user).to be_a(User).and be_valid }
+
+      context 'an instance with an already existing name' do
+        subject { FactoryBot.build(:user, name: existing_user.name) }
+        it 'is not valid' do
+          expect(subject).not_to be_valid
+        end
+      end
+
+      context 'an instance with an already existing email' do
+        subject { FactoryBot.build(:user, email: existing_user.email) }
+        it 'is not valid' do
+          expect(subject).not_to be_valid
+        end
+      end
+    end
+    #-- ------------------------------------------------------------------------
+    #++
+
     context 'swimmer association: after_create' do
       context 'when the user has an auto-match with an available swimmer' do
-        let(:existing_swimmer) { Swimmer.first(50).sample }
+        let(:existing_swimmer) { Swimmer.first(100).sample }
         let(:fixture_user) do
           FactoryBot.build(
             :user,
@@ -56,10 +77,11 @@ module GogglesDb
           fixture_user.save!
         end
 
-        it 'binds the user with swimmer updating both swimmer_id & associated_user_id' do
-          expect(fixture_user.swimmer_id).to eq(existing_swimmer.id)
+        it 'binds the user with the swimmer updating both the swimmer_id & its associated_user_id' do
+          fixture_user.reload
           # Need to reload the row updated indipendently by the after_action filter:
           existing_swimmer.reload
+          expect(fixture_user.swimmer_id).to eq(existing_swimmer.id)
           expect(existing_swimmer.associated_user_id).to eq(fixture_user.id)
         end
       end
@@ -330,13 +352,16 @@ module GogglesDb
           expect(subject.uid).to eq(uid)
         end
         context 'when there\'s and existing, matching (and available) swimmer,' do
+          before(:each) do
+            # Reload the row updated indipendently:
+            subject.reload
+            existing_swimmer.reload
+          end
           it 'is automatically associated to that swimmer by default' do
-            expect(subject.reload.swimmer_id).to eq(existing_swimmer.id)
+            expect(subject.swimmer_id).to eq(existing_swimmer.id)
           end
           it 'binds automatically also the associated swimmer to the user' do
             expect(subject.id).to be_positive
-            # Reload the row updated indipendently:
-            existing_swimmer.reload
             expect(existing_swimmer.associated_user_id).to eq(subject.id)
           end
         end
