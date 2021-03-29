@@ -6,7 +6,7 @@ module GogglesDb
   #
   # = MeetingEntry model
   #
-  #   - version:  7.070
+  #   - version:  7.90
   #   - author:   Steve A.
   #
   # This model should be used for *individual* startlist entries only,
@@ -82,7 +82,9 @@ module GogglesDb
     # Override: include the "minimum required" hash of associations.
     #
     def minimal_attributes
-      super.merge(minimal_associations)
+      super.merge(
+        'timing' => to_timing.to_s
+      ).merge(minimal_associations)
     end
 
     # Returns a commodity Hash wrapping the essential data that summarizes the Meeting
@@ -109,6 +111,7 @@ module GogglesDb
     # Override: includes most relevant data for its 1st-level associations
     def to_json(options = nil)
       attributes.merge(
+        'timing' => to_timing.to_s,
         'meeting' => meeting_attributes,
         'meeting_session' => meeting_session_attributes,
         'meeting_program' => meeting_program.minimal_attributes

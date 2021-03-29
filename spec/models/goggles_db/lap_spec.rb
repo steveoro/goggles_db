@@ -163,6 +163,14 @@ module GogglesDb
     describe '#to_json' do
       subject { FactoryBot.create(:lap) }
 
+      let(:result) { JSON.parse(subject.to_json) }
+      it 'includes the string timing' do
+        expect(result['timing']).to eq(subject.to_timing.to_s)
+      end
+      it 'includes the string timing from the start of the race' do
+        expect(result['timing_from_start']).to eq(subject.timing_from_start.to_s)
+      end
+
       # Required associations:
       it_behaves_like(
         '#to_json when called on a valid instance',

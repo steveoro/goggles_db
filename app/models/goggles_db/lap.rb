@@ -6,7 +6,7 @@ module GogglesDb
   #
   # = Lap model
   #
-  #   - version:  7.070
+  #   - version:  7.90
   #   - author:   Steve A.
   #
   # == Note:
@@ -122,6 +122,8 @@ module GogglesDb
     def to_json(options = nil)
       # [Steve A.] Using the safe-access operator because here there's no actual foreign key enforcement on associations:
       attributes.merge(
+        'timing' => to_timing.to_s,
+        'timing_from_start' => timing_from_start.to_s,
         'meeting_program' => meeting_program&.minimal_attributes,
         'swimmer' => swimmer_attributes,
         'team' => team&.minimal_attributes,

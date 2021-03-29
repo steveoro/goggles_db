@@ -6,7 +6,7 @@ module GogglesDb
   #
   # = MeetingRelayResult model
   #
-  #   - version:  7.070
+  #   - version:  7.90
   #   - author:   Steve A.
   #
   class MeetingRelayResult < ApplicationRecord
@@ -105,6 +105,7 @@ module GogglesDb
     # Override: includes most relevant data for its 1st-level associations
     def to_json(options = nil)
       attributes.merge(
+        'timing' => to_timing.to_s,
         'meeting' => meeting_attributes,
         'meeting_session' => meeting_session_attributes,
         'meeting_program' => meeting_program.minimal_attributes,
