@@ -30,6 +30,7 @@ module GogglesDb
         %i[reaction_time stroke_cycles breath_cycles position
            minutes_from_start seconds_from_start hundredths_from_start
            underwater_kicks underwater_seconds underwater_hundredths
+           timing_from_start
            meeting_attributes
            to_timing to_json]
       )
@@ -59,6 +60,30 @@ module GogglesDb
     describe 'self.with_no_time' do
       it_behaves_like('filtering scope with_no_time', Lap)
     end
+
+    describe 'self.related_laps' do
+      context 'given a Lap associated to a MIR,' do
+        let(:existing_row) { GogglesDb::Lap.includes(:meeting_individual_result).first(300).sample }
+        let(:result) { GogglesDb::Lap.related_laps(existing_row) }
+
+        it_behaves_like('filtering scope for the same group of Laps')
+      end
+    end
+
+    describe 'self.summing_laps' do
+      context 'given a Lap associated to a MIR,' do
+        let(:existing_row) { GogglesDb::Lap.includes(:meeting_individual_result).first(300).sample }
+        let(:result) { GogglesDb::Lap.summing_laps(existing_row) }
+
+        it_behaves_like('filtering scope for the same group of Laps')
+
+        it 'contains only preceding Laps plus the current one' do
+          expect(result).to be_a(ActiveRecord::Relation)
+          expect(result).to all be_a(Lap)
+          expect(result.map(&:length_in_meters)).to all be <= existing_row.length_in_meters
+        end
+      end
+    end
     #-- ------------------------------------------------------------------------
     #++
 
@@ -68,6 +93,49 @@ module GogglesDb
       # subject = fixture_row (can even be just built, not created)
       it_behaves_like 'TimingManageable'
     end
+
+    describe '#timing_from_start' do
+      context 'for an instance having the "_from_start" values,' do
+        before(:each) { expect(fixture_row.seconds_from_start).to be_positive }
+        subject { fixture_row.timing_from_start }
+
+        it 'returns the Timing instance computed using the "_from_start" values' do
+          expect(subject).to eq(
+            Timing.new(
+              hundredths: fixture_row.hundredths_from_start,
+              seconds: fixture_row.seconds_from_start,
+              minutes: fixture_row.minutes_from_start
+            )
+          )
+        end
+      end
+
+      context 'for an instance without the "_from_start" values,' do
+        let(:existing_row) do
+          Lap.where(hundredths_from_start: 0, seconds_from_start: 0, minutes_from_start: 0)
+             .first(100)
+             .sample
+        end
+        before(:each) do
+          expect(existing_row).to be_a(Lap).and be_valid
+          expect(existing_row.seconds_from_start).to be_zero
+        end
+        subject { existing_row.timing_from_start }
+
+        it 'computes the correct Timing instance using all involved previous laps' do
+          involved_laps = Lap.summing_laps(existing_row)
+          expect(subject).to eq(
+            Timing.new(
+              hundredths: involved_laps.sum(:hundredths),
+              seconds: involved_laps.sum(:seconds),
+              minutes: involved_laps.sum(:minutes)
+            )
+          )
+        end
+      end
+    end
+    #-- ------------------------------------------------------------------------
+    #++
 
     describe '#minimal_attributes' do
       subject { fixture_row.minimal_attributes }
@@ -79,6 +147,12 @@ module GogglesDb
         it "includes the #{association_name} association key" do
           expect(subject.keys).to include(association_name)
         end
+      end
+      it 'includes the string timing' do
+        expect(subject['timing']).to eq(fixture_row.to_timing.to_s)
+      end
+      it 'includes the string timing from the start of the race' do
+        expect(subject['timing_from_start']).to eq(fixture_row.timing_from_start.to_s)
       end
       it "contains the 'synthetized' swimmer details" do
         expect(subject['swimmer']).to be_an(Hash).and be_present

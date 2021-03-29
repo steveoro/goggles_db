@@ -2,7 +2,9 @@ FactoryBot.define do
   factory :user, class: 'GogglesDb::User' do
     first_name            { FFaker::Name.first_name }
     last_name             { FFaker::Name.last_name }
-    name                  { "#{first_name}.#{last_name}-#{(rand * 10_000).to_i}" }
+    name do
+      "#{first_name.to_s.downcase.gsub(' ', '.')}.#{last_name.to_s.downcase.gsub(' ', '.')}-#{(rand * 10_000).to_i}"
+    end
     email                 { "#{name}@#{%w[fake.example.com fake.example.org fake.example.net].sample}" }
     password              { 'Password123!' }
     password_confirmation { 'Password123!' }
