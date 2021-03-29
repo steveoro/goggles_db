@@ -56,15 +56,42 @@ module GogglesDb
     scope :with_time,    -> { where('(minutes > 0) OR (seconds > 0) OR (hundredths > 0)') }
     scope :with_no_time, -> { where(minutes: 0, seconds: 0, hundredths: 0) }
 
-    # TODO: CLEAR UNUSED
-    # scope :for_event_type, ->(event_type) { joins(:event_type).where('event_types.id': event_type.id) }
+    # All siblings laps:
+    scope :related_laps, ->(lap) { by_distance.where(meeting_individual_result_id: lap.meeting_individual_result_id) }
+    # All preceding laps, including the current one:
+    scope :summing_laps, ->(lap) { related_laps(lap).where('length_in_meters <= ?', lap.length_in_meters) }
+    #-- ------------------------------------------------------------------------
+    #++
+
+    # Returns the Timing instance storing the lap timing from the start of the race.
+    # If the "_from_start" fields have not been filled with data, the Timing value
+    # will be computed.
+    def timing_from_start
+      if seconds_from_start.to_i.positive?
+        Timing.new(
+          hundredths: hundredths_from_start,
+          seconds: seconds_from_start,
+          minutes: minutes_from_start
+        )
+      else
+        involved_laps = Lap.summing_laps(self)
+        Timing.new(
+          hundredths: involved_laps.sum(:hundredths),
+          seconds: involved_laps.sum(:seconds),
+          minutes: involved_laps.sum(:minutes)
+        )
+      end
+    end
     #-- ------------------------------------------------------------------------
     #++
 
     # Override: include the minimum required 1st-level associations.
     #
     def minimal_attributes
-      super.merge(minimal_associations)
+      super.merge(
+        'timing' => to_timing.to_s,
+        'timing_from_start' => timing_from_start.to_s
+      ).merge(minimal_associations)
     end
 
     # Returns a commodity Hash wrapping the essential data that summarizes the Swimmer

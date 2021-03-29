@@ -58,7 +58,7 @@ module GogglesDb
 
     context 'swimmer association: after_create' do
       context 'when the user has an auto-match with an available swimmer' do
-        let(:existing_swimmer) { Swimmer.first(100).sample }
+        let(:existing_swimmer) { FactoryBot.create(:swimmer) }
         let(:fixture_user) do
           FactoryBot.build(
             :user,
@@ -309,7 +309,7 @@ module GogglesDb
 
       # New User, ok:
       context 'for a new user providing valid auth data,' do
-        let(:new_user) { FactoryBot.build(:user, confirmed_at: nil) }
+        let(:new_user) { FactoryBot.build(:user, first_name: "#{FFaker::Name.first_name} Stewie1", confirmed_at: nil) }
         let(:auth_response) { valid_auth(provider, uid, new_user) }
         let(:existing_swimmer) do
           FactoryBot.create(
@@ -357,8 +357,10 @@ module GogglesDb
             subject.reload
             existing_swimmer.reload
           end
-          it 'is automatically associated to that swimmer by default' do
-            expect(subject.swimmer_id).to eq(existing_swimmer.id)
+          it 'is automatically associated to the first matching swimmer by default' do
+            expect(subject.swimmer_id).to eq(subject.matching_swimmers.first.id)
+            # [Steve A.] Note that given we are using random names, we cannot assert effectively that:
+            #                    subject.matching_swimmers.first.id == existing_swimmer.id
           end
           it 'binds automatically also the associated swimmer to the user' do
             expect(subject.id).to be_positive
