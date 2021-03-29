@@ -132,9 +132,13 @@ module GogglesDb
     end
 
     describe '#minimal_attributes' do
-      subject { GogglesDb::MeetingEntry.limit(100).sample.minimal_attributes }
+      let(:existing_row) { GogglesDb::MeetingEntry.limit(100).sample }
+      subject { existing_row.minimal_attributes }
       it 'is an Hash' do
         expect(subject).to be_an(Hash)
+      end
+      it 'includes the string timing' do
+        expect(subject['timing']).to eq(existing_row.to_timing.to_s)
       end
       %w[team team_affiliation swimmer pool_type event_type category_type gender_type].each do |association_name|
         it "includes the #{association_name} association key" do
@@ -145,6 +149,10 @@ module GogglesDb
 
     describe '#to_json' do
       subject { FactoryBot.create(:meeting_entry) }
+
+      it 'includes the string timing' do
+        expect(JSON.parse(subject.to_json)['timing']).to eq(subject.to_timing.to_s)
+      end
 
       # Required associations:
       it_behaves_like(

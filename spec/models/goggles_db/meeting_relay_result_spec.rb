@@ -162,6 +162,10 @@ module GogglesDb
     describe '#to_json' do
       subject { FactoryBot.create(:meeting_relay_result) }
 
+      it 'includes the string timing' do
+        expect(JSON.parse(subject.to_json)['timing']).to eq(subject.to_timing.to_s)
+      end
+
       # Required associations:
       it_behaves_like(
         '#to_json when called on a valid instance',

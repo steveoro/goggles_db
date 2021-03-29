@@ -77,6 +77,9 @@ module GogglesDb
       it 'is an Hash' do
         expect(subject).to be_an(Hash)
       end
+      it 'includes the string timing' do
+        expect(subject['timing']).to eq(fixture_row.to_timing.to_s)
+      end
       %w[gender_type stroke_type].each do |association_name|
         it "includes the #{association_name} association key" do
           expect(subject.keys).to include(association_name)
@@ -90,6 +93,10 @@ module GogglesDb
 
     describe '#to_json' do
       subject { FactoryBot.create(:meeting_relay_swimmer) }
+
+      it 'includes the string timing' do
+        expect(JSON.parse(subject.to_json)['timing']).to eq(subject.to_timing.to_s)
+      end
 
       # Required associations:
       it_behaves_like(

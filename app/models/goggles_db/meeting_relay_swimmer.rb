@@ -6,7 +6,7 @@ module GogglesDb
   #
   # = MeetingRelaySwimmer (MRS) model
   #
-  #   - version:  7.070
+  #   - version:  7.90
   #   - author:   Steve A.
   #
   # == Note:
@@ -54,7 +54,9 @@ module GogglesDb
     # Override: include the minimum required 1st-level associations.
     #
     def minimal_attributes
-      super.merge(minimal_associations)
+      super.merge(
+        'timing' => to_timing.to_s
+      ).merge(minimal_associations)
     end
 
     # Returns a commodity Hash wrapping the essential data that summarizes the Swimmer
@@ -73,6 +75,7 @@ module GogglesDb
     # Override: includes most relevant data for its 1st-level associations
     def to_json(options = nil)
       attributes.merge(
+        'timing' => to_timing.to_s,
         'meeting_relay_result' => meeting_relay_result.minimal_attributes,
         'team' => team.minimal_attributes,
         # (Badge already includes swimmer_attributes)
