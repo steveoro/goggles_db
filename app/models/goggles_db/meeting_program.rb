@@ -54,7 +54,7 @@ module GogglesDb
         .order('event_types.code': dir, 'meeting_programs.event_order': dir)
     end
 
-    # Sort by EventType(code, event_order)
+    # Sort by CategoryType(code, event_order)
     # == Params
     # - dir: :asc|:desc
     def self.by_category_type(dir = :asc)
