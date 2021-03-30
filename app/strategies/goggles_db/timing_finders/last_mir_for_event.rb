@@ -5,11 +5,11 @@ module GogglesDb
     #
     # = GoggleCupForEvent strategy object
     #
-    #   - file vers.: 1.58
+    #   - file vers.: 0.1.91
     #   - author....: Steve A.
-    #   - build.....: 20210106
+    #   - build.....: 20210330
     #
-    class LastMirForEvent < BaseStrategy
+    class LastMIRForEvent < BaseStrategy
       # Finds the generic, last MeetingIndividualResult row for the specified event and pool type.
       #
       # == Returns:
