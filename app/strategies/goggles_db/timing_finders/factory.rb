@@ -47,16 +47,16 @@ module GogglesDb
         raise(ArgumentError, 'Invalid parameter specified') unless entry_time_type.instance_of?(GogglesDb::EntryTimeType)
 
         if entry_time_type.prec_year?
-          BestMirForMeeting.new
+          BestMIRForMeeting.new
 
         elsif entry_time_type.gogglecup?
           GoggleCupForEvent.new
 
         elsif entry_time_type.last_race?
-          LastMirForEvent.new
+          LastMIRForEvent.new
 
         elsif entry_time_type.personal?
-          BestMirForEvent.new
+          BestMIRForEvent.new
 
         elsif entry_time_type.manual?
           NoTimeForEvent.new

@@ -5,7 +5,7 @@ require 'support/shared_method_existance_examples'
 require 'support/shared_timing_finders_examples'
 
 module GogglesDb
-  RSpec.describe TimingFinders::BestMirForEvent, type: :strategy do
+  RSpec.describe TimingFinders::BestMIRForEvent, type: :strategy do
     it_behaves_like('responding to a list of methods', %i[search_by])
 
     let(:fixture_pool_type)  { GogglesDb::PoolType.all_eventable.sample }
@@ -41,7 +41,7 @@ module GogglesDb
 
     describe '#search_by' do
       context 'when the parameters scope out existing MIRs,' do
-        subject { TimingFinders::BestMirForEvent.new.search_by(fixture_swimmer, fixture_meeting, fixture_event_type, fixture_pool_type) }
+        subject { TimingFinders::BestMIRForEvent.new.search_by(fixture_swimmer, fixture_meeting, fixture_event_type, fixture_pool_type) }
 
         it_behaves_like('a TimingFinder strategy #search_by that can select a MIR with a non-zero timing value')
       end
@@ -54,7 +54,7 @@ module GogglesDb
           expect(new_meeting).to be_a(GogglesDb::Meeting).and be_valid
         end
 
-        subject { TimingFinders::BestMirForEvent.new.search_by(new_swimmer, new_meeting, fixture_event_type, fixture_pool_type) }
+        subject { TimingFinders::BestMIRForEvent.new.search_by(new_swimmer, new_meeting, fixture_event_type, fixture_pool_type) }
 
         it_behaves_like('a TimingFinder strategy #search_by that cannot find any related MIR row')
       end
