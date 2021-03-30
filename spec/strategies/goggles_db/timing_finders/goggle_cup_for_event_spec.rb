@@ -4,7 +4,7 @@ require 'rails_helper'
 require 'support/shared_method_existance_examples'
 require 'support/shared_timing_finders_examples'
 
-# TODO: instead of relying on the fallback strategy (LastMirForEvent) with
+# TODO: instead of relying on the fallback strategy (LastMIRForEvent) with
 #       the copy-paste domain definition below, rewrite the domain using a
 #       valid GoggleCup definition + standard timing so that we can properly
 #       test this.

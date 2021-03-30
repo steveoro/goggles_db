@@ -25,8 +25,8 @@ module GogglesDb
 
       context "for a 'prec_year' EntryTimeType" do
         subject { TimingFinders::Factory.for(GogglesDb::EntryTimeType.prec_year) }
-        it 'is a BestMirForMeeting' do
-          expect(subject).to be_a(TimingFinders::BestMirForMeeting)
+        it 'is a BestMIRForMeeting' do
+          expect(subject).to be_a(TimingFinders::BestMIRForMeeting)
         end
       end
       context "for a 'gogglecup' EntryTimeType" do
@@ -37,14 +37,14 @@ module GogglesDb
       end
       context "for a 'last_race' EntryTimeType" do
         subject { TimingFinders::Factory.for(GogglesDb::EntryTimeType.last_race) }
-        it 'is a LastMirForEvent' do
-          expect(subject).to be_a(TimingFinders::LastMirForEvent)
+        it 'is a LastMIRForEvent' do
+          expect(subject).to be_a(TimingFinders::LastMIRForEvent)
         end
       end
       context "for a 'personal' EntryTimeType" do
         subject { TimingFinders::Factory.for(GogglesDb::EntryTimeType.personal) }
-        it 'is a BestMirForEvent' do
-          expect(subject).to be_a(TimingFinders::BestMirForEvent)
+        it 'is a BestMIRForEvent' do
+          expect(subject).to be_a(TimingFinders::BestMIRForEvent)
         end
       end
       context "for a 'manual' EntryTimeType" do

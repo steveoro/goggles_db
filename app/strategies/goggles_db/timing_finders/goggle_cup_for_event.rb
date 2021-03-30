@@ -29,7 +29,7 @@ module GogglesDb
         # result.from_timing(Timing.new( ...GoggleCup standard timing values... ))
 
         result = nil # TODO: (GoggleCup still WIP for this version)
-        return LastMirForEvent.new.search_by(swimmer, meeting, event_type, pool_type) unless result.present?
+        return LastMIRForEvent.new.search_by(swimmer, meeting, event_type, pool_type) unless result.present?
 
         result
       end
