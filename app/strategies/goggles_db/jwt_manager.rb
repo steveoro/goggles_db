@@ -4,15 +4,15 @@ require 'jwt'
 
 module GogglesDb
   #
-  # = Jwt Manager strategy object
+  # = JWT Manager strategy object
   #
-  #   - file vers.: 1.03
+  #   - file vers.: 0.1.91
   #   - author....: Steve A.
-  #   - build.....: 20210128
+  #   - build.....: 20210330
   #
   #   Wraps encoding & decoding helper methods for JSON Web Token usage.
   #
-  class JwtManager
+  class JWTManager
     # Default token duration for the encoded JWT, after which it will expire
     TOKEN_LIFE = 2.hours
 
@@ -36,7 +36,7 @@ module GogglesDb
     # A JWT encoded string.
     #
     def encode(payload_hash)
-      JwtManager.encode(payload_hash, @base_key, @jwt_expires_in)
+      JWTManager.encode(payload_hash, @base_key, @jwt_expires_in)
     end
 
     # Encodes a payload into an expirable JWT.
@@ -75,7 +75,7 @@ module GogglesDb
     # ]
     #
     def decode(jwt_token)
-      JwtManager.decode(jwt_token, @base_key)
+      JWTManager.decode(jwt_token, @base_key)
     end
 
     # Decodes and returns a payload hash from a given JWT.

@@ -4,7 +4,7 @@ require 'rails_helper'
 require 'support/shared_method_existance_examples'
 
 module GogglesDb
-  RSpec.describe JwtManager, type: :strategy do
+  RSpec.describe JWTManager, type: :strategy do
     let(:fixture_key)     { "fake_base_key #{rand * 10_000}" }
     let(:fixture_user_id) { (rand * 10_000).to_i }
     let(:fixture_text)    { 'whatever!' }
@@ -13,10 +13,10 @@ module GogglesDb
 
     context 'when using valid construction parameters,' do
       # (Testing the instance methods will automaticall test also the corresponding class implementation)
-      subject { JwtManager.new(fixture_key, 1.hour) }
+      subject { JWTManager.new(fixture_key, 1.hour) }
 
       it 'creates a new instance' do
-        expect(subject).to be_a(JwtManager)
+        expect(subject).to be_a(JWTManager)
       end
 
       # This tests the class methods using an instance, so this is the right context:

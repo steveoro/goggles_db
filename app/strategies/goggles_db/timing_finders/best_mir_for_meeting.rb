@@ -5,11 +5,11 @@ module GogglesDb
     #
     # = GoggleCupForEvent strategy object
     #
-    #   - file vers.: 1.58
+    #   - file vers.: 0.1.91
     #   - author....: Steve A.
-    #   - build.....: 20210106
+    #   - build.....: 20210330
     #
-    class BestMirForMeeting < BaseStrategy
+    class BestMIRForMeeting < BaseStrategy
       # Finds the "relative best" MeetingIndividualResult row for the specified event, pool type
       # and inside a restricted subset of Meetings, which should all beloging to the same edition type.
       #
