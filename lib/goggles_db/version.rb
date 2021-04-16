@@ -3,12 +3,12 @@
 #
 # = Version module
 #
-#   - version:  7.92
+#   - version:  7-0.2.01
 #   - author:   Steve A.
 #
 module GogglesDb
   # Public gem version (uses Semantic versioning)
-  VERSION = '0.1.92'
+  VERSION = '0.2.01'
 
   # == Versioning codes
   #
@@ -18,17 +18,18 @@ module GogglesDb
   # for quick reference on pages.
   #
   module Version
-    CORE    = 'C7'
-    MAJOR   = '7'
-    MINOR   = '92' # (this should be = patch version)
-    BUILD   = '20210330'
+    CORE  = 'C7'
+    MAJOR = '0'
+    MINOR = '2'
+    PATCH = '01'
+    BUILD = '20210416'
 
     # Full label
-    FULL    = "#{MAJOR}.#{MINOR}.#{BUILD} (#{CORE} v. #{VERSION})"
+    FULL = "#{MAJOR}.#{MINOR}.#{PATCH} (#{CORE}-#{BUILD})"
 
     # Compact label
-    COMPACT = "#{MAJOR.gsub('.', '')}#{MINOR}"
-    DB      = '1.88.0' # Internal DB structure (frozen <minor>.<patch>.<seq> from last migration)
+    SEMANTIC = "#{MAJOR}.#{MINOR}.#{PATCH}"
+    DB = '1.88.0' # Internal DB structure (frozen <minor>.<patch>.<seq> from last migration)
 
     # Pointless UNICODE emojis (just for fun):
     EMOJI_BUTTERFLY    = 'з== ( ▀ ͜͞ʖ▀) ==ε'
@@ -38,5 +39,6 @@ module GogglesDb
     EMOJI_STRONGMAN    = 'ᕦ(ò_óˇ)ᕤ'
     EMOJI_TEDDYBEAR    = 'ʕ•ᴥ•ʔ'
     EMOJI_SHRUG        = '¯\_(ツ)_/¯'
+    EMOJI_HELLO        = '٩( ▀ ͜͞ʖ▀)۶'
   end
 end
