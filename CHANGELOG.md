@@ -2,6 +2,7 @@
 
 _Please, add the latest build info on top of the list; use Version::MAJOR only after gold release; keep semantic versioning in line with framework's_
 
+- **0.2.01** [Steve A.] bump versioning according to main application
 - **0.1.89** [Steve A.] improved user spec stability & validations
 - **0.1.87** [Steve A.] amend Twitter OAuth2 sign-in; improved stability for user specs
 - **0.1.82** [Steve A.] removed unused legacy columns from users; support for future Twitter OAuth2 sign-in; auto-select associated swimmer finder for Users
