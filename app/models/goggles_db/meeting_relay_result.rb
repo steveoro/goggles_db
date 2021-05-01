@@ -6,7 +6,7 @@ module GogglesDb
   #
   # = MeetingRelayResult model
   #
-  #   - version:  7.90
+  #   - version:  7.02.09
   #   - author:   Steve A.
   #
   class MeetingRelayResult < ApplicationRecord
@@ -81,6 +81,14 @@ module GogglesDb
     #-- ------------------------------------------------------------------------
     #++
 
+    # Override: include the "minimum required" hash of attributes & associations.
+    #
+    def minimal_attributes
+      super.merge(
+        'timing' => to_timing.to_s
+      ).merge(minimal_associations)
+    end
+
     # Returns a commodity Hash wrapping the essential data that summarizes the Meeting
     # associated to this row.
     def meeting_attributes
@@ -112,9 +120,24 @@ module GogglesDb
         'pool_type' => pool_type.lookup_attributes,
         'event_type' => event_type.lookup_attributes,
         'category_type' => category_type.minimal_attributes,
-        'gender_type' => gender_type.lookup_attributes,
-        'meeting_relay_swimmers' => meeting_relay_swimmers.map(&:minimal_attributes)
+        'gender_type' => gender_type.lookup_attributes
+      ).merge(
+        minimal_associations
       ).to_json(options)
+    end
+
+    private
+
+    # Returns the "minimum required" hash of associations.
+    #
+    # Typical use for this is as helper called from within the #to_json definition
+    # of a parent entity via a #minimal_attributes call.
+    def minimal_associations
+      {
+        'team_affiliation' => team_affiliation&.minimal_attributes,
+        'meeting_relay_swimmers' => meeting_relay_swimmers.map(&:minimal_attributes),
+        'disqualification_code_type' => disqualification_code_type&.lookup_attributes
+      }
     end
   end
 end

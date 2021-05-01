@@ -4,7 +4,7 @@ module GogglesDb
   #
   # = MeetingEventReservation model
   #
-  #   - version:  7.058
+  #   - version:  7.02.09
   #   - author:   Steve A.
   #
   # Event reservations are individual event registrations, added personally by each athlete.
@@ -13,6 +13,7 @@ module GogglesDb
   #
   class MeetingEventReservation < ApplicationRecord
     self.table_name = 'meeting_event_reservations'
+    include TimingManageable
 
     belongs_to :meeting_reservation
     belongs_to :meeting
@@ -42,6 +43,14 @@ module GogglesDb
     #-- ------------------------------------------------------------------------
     #++
 
+    # Override: include the "minimum required" hash of attributes & associations.
+    #
+    def minimal_attributes
+      super.merge(
+        'timing' => to_timing.to_s
+      ).merge(minimal_associations)
+    end
+
     # Returns a commodity Hash wrapping the essential data that summarizes the Meeting
     # associated to this row.
     def meeting_attributes
@@ -53,15 +62,10 @@ module GogglesDb
       }
     end
 
-    # Override: include the minimum required 1st-level associations.
-    #
-    def minimal_attributes
-      super.merge(minimal_associations)
-    end
-
     # Override: includes most relevant data for its 1st-level associations
     def to_json(options = nil)
       attributes.merge(
+        'timing' => to_timing.to_s,
         'meeting' => meeting_attributes,
         'meeting_event' => meeting_event.minimal_attributes,
         'event_type' => event_type.lookup_attributes,

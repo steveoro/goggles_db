@@ -6,7 +6,7 @@ module GogglesDb
   #
   # = MeetingRelaySwimmer (MRS) model
   #
-  #   - version:  7.90
+  #   - version:  7.02.09
   #   - author:   Steve A.
   #
   # == Note:
@@ -51,7 +51,7 @@ module GogglesDb
     #-- ------------------------------------------------------------------------
     #++
 
-    # Override: include the minimum required 1st-level associations.
+    # Override: include the minimum required 1st-level attributes & associations.
     #
     def minimal_attributes
       super.merge(
