@@ -148,10 +148,10 @@ module GogglesDb
           expect(subject.keys).to include(association_name)
         end
       end
-      it 'includes the string timing' do
+      it 'includes the timing string' do
         expect(subject['timing']).to eq(fixture_row.to_timing.to_s)
       end
-      it 'includes the string timing from the start of the race' do
+      it 'includes the timing string from the start of the race' do
         expect(subject['timing_from_start']).to eq(fixture_row.timing_from_start.to_s)
       end
       it "contains the 'synthetized' swimmer details" do
@@ -164,10 +164,10 @@ module GogglesDb
       subject { FactoryBot.create(:lap) }
 
       let(:result) { JSON.parse(subject.to_json) }
-      it 'includes the string timing' do
+      it 'includes the timing string' do
         expect(result['timing']).to eq(subject.to_timing.to_s)
       end
-      it 'includes the string timing from the start of the race' do
+      it 'includes the timing string from the start of the race' do
         expect(result['timing_from_start']).to eq(subject.timing_from_start.to_s)
       end
 

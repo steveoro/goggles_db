@@ -6,7 +6,7 @@ module GogglesDb
   #
   # = MeetingEntry model
   #
-  #   - version:  7.90
+  #   - version:  7.02.09
   #   - author:   Steve A.
   #
   # This model should be used for *individual* startlist entries only,
@@ -79,7 +79,7 @@ module GogglesDb
     #-- ------------------------------------------------------------------------
     #++
 
-    # Override: include the "minimum required" hash of associations.
+    # Override: include the "minimum required" hash of attributes & associations.
     #
     def minimal_attributes
       super.merge(

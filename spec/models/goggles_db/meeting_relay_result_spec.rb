@@ -159,10 +159,30 @@ module GogglesDb
       it_behaves_like 'TimingManageable'
     end
 
+    describe '#minimal_attributes' do
+      let(:fixture_row) { FactoryBot.build(:meeting_relay_result) }
+      before(:each) { expect(fixture_row).to be_a(MeetingRelayResult).and be_valid }
+
+      subject { fixture_row.minimal_attributes }
+
+      it 'is an Hash' do
+        expect(subject).to be_an(Hash)
+      end
+      it 'includes the timing string' do
+        expect(subject['timing']).to eq(fixture_row.to_timing.to_s)
+      end
+      %w[team_affiliation meeting_relay_swimmers disqualification_code_type].each do |association_name|
+        it "includes the #{association_name} association key" do
+          # Don't check nil association links: (it may happen)
+          expect(subject.keys).to include(association_name) if fixture_row.send(association_name).present?
+        end
+      end
+    end
+
     describe '#to_json' do
       subject { FactoryBot.create(:meeting_relay_result) }
 
-      it 'includes the string timing' do
+      it 'includes the timing string' do
         expect(JSON.parse(subject.to_json)['timing']).to eq(subject.to_timing.to_s)
       end
 

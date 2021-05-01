@@ -137,7 +137,7 @@ module GogglesDb
       it 'is an Hash' do
         expect(subject).to be_an(Hash)
       end
-      it 'includes the string timing' do
+      it 'includes the timing string' do
         expect(subject['timing']).to eq(existing_row.to_timing.to_s)
       end
       %w[team team_affiliation swimmer pool_type event_type category_type gender_type].each do |association_name|
@@ -150,7 +150,7 @@ module GogglesDb
     describe '#to_json' do
       subject { FactoryBot.create(:meeting_entry) }
 
-      it 'includes the string timing' do
+      it 'includes the timing string' do
         expect(JSON.parse(subject.to_json)['timing']).to eq(subject.to_timing.to_s)
       end
 

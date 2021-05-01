@@ -6,7 +6,7 @@ module GogglesDb
   #
   # = MeetingIndividualResult model
   #
-  #   - version:  7.90
+  #   - version:  7.02.09
   #   - author:   Steve A.
   #
   class MeetingIndividualResult < ApplicationRecord
@@ -143,6 +143,16 @@ module GogglesDb
     def valid_for_ranking?
       !out_of_race? && !disqualified?
     end
+    #-- ------------------------------------------------------------------------
+    #++
+
+    # Override: include the "minimum required" hash of attributes & associations.
+    #
+    def minimal_attributes
+      super.merge(
+        'timing' => to_timing.to_s
+      ).merge(minimal_associations)
+    end
 
     # Returns a commodity Hash wrapping the essential data that summarizes the Meeting
     # associated to this row.
@@ -176,14 +186,6 @@ module GogglesDb
         'year_of_birth' => swimmer&.year_of_birth,
         'year_guessed' => swimmer&.year_guessed
       }
-    end
-
-    # Override: include the "minimum required" hash of associations.
-    #
-    def minimal_attributes
-      super.merge(
-        'timing' => to_timing.to_s
-      ).merge(minimal_associations)
     end
 
     # Override: includes most relevant data for its 1st-level associations

@@ -4,7 +4,7 @@ module GogglesDb
   #
   # = MeetingEvent model
   #
-  #   - version:  7.058
+  #   - version:  7.02.09
   #   - author:   Steve A.
   #
   class MeetingEvent < ApplicationRecord
@@ -56,8 +56,10 @@ module GogglesDb
     def eventable?
       !out_of_race?
     end
+    #-- ------------------------------------------------------------------------
+    #++
 
-    # Override: include the minimum required 1st-level associations.
+    # Override: include the minimum required 1st-level attributes & associations.
     #
     def minimal_attributes
       super.merge(minimal_associations)

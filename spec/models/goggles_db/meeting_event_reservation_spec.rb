@@ -3,6 +3,7 @@
 require 'rails_helper'
 require 'support/shared_method_existance_examples'
 require 'support/shared_filtering_scopes_examples'
+require 'support/shared_timing_manageable_examples'
 require 'support/shared_to_json_examples'
 
 module GogglesDb
@@ -49,10 +50,19 @@ module GogglesDb
     #-- ------------------------------------------------------------------------
     #++
 
+    describe 'regarding the timing fields,' do
+      let(:fixture_row) { FactoryBot.build(:meeting_event_reservation) }
+      it_behaves_like 'TimingManageable'
+    end
+
     describe '#minimal_attributes' do
-      subject { GogglesDb::MeetingEventReservation.limit(20).sample.minimal_attributes }
+      let(:fixture_row) { GogglesDb::MeetingEventReservation.limit(20).sample }
+      subject { fixture_row.minimal_attributes }
       it 'is an Hash' do
         expect(subject).to be_an(Hash)
+      end
+      it 'includes the timing string' do
+        expect(subject['timing']).to eq(fixture_row.to_timing.to_s)
       end
       %w[meeting_event].each do |association_name|
         it "includes the #{association_name} association key" do
@@ -63,6 +73,10 @@ module GogglesDb
 
     describe '#to_json' do
       subject { FactoryBot.create(:meeting_event_reservation) }
+
+      it 'includes the timing string' do
+        expect(JSON.parse(subject.to_json)['timing']).to eq(subject.to_timing.to_s)
+      end
 
       # Required associations:
       it_behaves_like(

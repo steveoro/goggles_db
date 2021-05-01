@@ -4,7 +4,7 @@ module GogglesDb
   #
   # = MeetingReservation model
   #
-  #   - version:  7.054
+  #   - version:  7.02.09
   #   - author:   Steve A.
   #
   # Reservations are individual Meeting registrations, associated just to a specific
@@ -55,8 +55,10 @@ module GogglesDb
     def coming?
       !not_coming?
     end
+    #-- ------------------------------------------------------------------------
+    #++
 
-    # Override: include the "minimum required" hash of associations.
+    # Override: include the "minimum required" hash of attributes & associations.
     #
     def minimal_attributes
       super.merge(minimal_associations)

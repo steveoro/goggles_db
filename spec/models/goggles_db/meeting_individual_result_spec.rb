@@ -205,33 +205,33 @@ module GogglesDb
     #++
 
     describe '#minimal_attributes' do
-      let(:fixture_mir) { MeetingIndividualResult.limit(500).sample }
-      before(:each) { expect(fixture_mir).to be_a(MeetingIndividualResult).and be_valid }
+      let(:fixture_row) { MeetingIndividualResult.limit(500).sample }
+      before(:each) { expect(fixture_row).to be_a(MeetingIndividualResult).and be_valid }
 
-      subject { fixture_mir.minimal_attributes }
+      subject { fixture_row.minimal_attributes }
 
       it 'is an Hash' do
         expect(subject).to be_an(Hash)
       end
-      it 'includes the string timing' do
-        expect(subject['timing']).to eq(fixture_mir.to_timing.to_s)
+      it 'includes the timing string' do
+        expect(subject['timing']).to eq(fixture_row.to_timing.to_s)
       end
       %w[swimmer team_affiliation disqualification_code_type].each do |association_name|
         it "includes the #{association_name} association key" do
           # Don't check nil association links: (it may happen)
-          expect(subject.keys).to include(association_name) if fixture_mir.send(association_name).present?
+          expect(subject.keys).to include(association_name) if fixture_row.send(association_name).present?
         end
       end
       it "contains the 'synthetized' swimmer details" do
         expect(subject['swimmer']).to be_an(Hash).and be_present
-        expect(subject['swimmer']).to eq(fixture_mir.swimmer_attributes)
+        expect(subject['swimmer']).to eq(fixture_row.swimmer_attributes)
       end
     end
 
     describe '#to_json' do
       subject { FactoryBot.create(:meeting_individual_result) }
 
-      it 'includes the string timing' do
+      it 'includes the timing string' do
         expect(JSON.parse(subject.to_json)['timing']).to eq(subject.to_timing.to_s)
       end
 
