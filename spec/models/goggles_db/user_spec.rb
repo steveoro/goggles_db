@@ -153,7 +153,7 @@ module GogglesDb
         expect(subject).to be_a(User).and be_valid
       end
 
-      context 'when a User is associated to a Swimmer' do
+      context 'when a User is associated to a Swimmer,' do
         it 'does not yield errors' do
           expect { subject.swimmer }.not_to raise_error
         end
@@ -311,6 +311,7 @@ module GogglesDb
       context 'for a new user providing valid auth data,' do
         let(:new_user) { FactoryBot.build(:user, first_name: "#{FFaker::Name.first_name} Stewie1", confirmed_at: nil) }
         let(:auth_response) { valid_auth(provider, uid, new_user) }
+        # Create an already existing matching swiming for the new user:
         let(:existing_swimmer) do
           FactoryBot.create(
             :swimmer,
@@ -318,7 +319,7 @@ module GogglesDb
             last_name: new_user.last_name,
             year_of_birth: new_user.year_of_birth,
             complete_name: new_user.description,
-            associated_user_id: nil
+            associated_user_id: nil # <-- expected to be set by the #from_omniauth method
           )
         end
 
@@ -351,20 +352,20 @@ module GogglesDb
           expect(subject.uid).to eq(auth_response.uid)
           expect(subject.uid).to eq(uid)
         end
-        context 'when there\'s and existing, matching (and available) swimmer,' do
+
+        # [Steve A.] Note that given we are using random names, we cannot assert effectively that:
+        #            subject.matching_swimmers.first.id == existing_swimmer.id
+        context 'when there\'s an existing, matching (and available) swimmer,' do
           before(:each) do
             # Reload the row updated indipendently:
             subject.reload
-            existing_swimmer.reload
           end
           it 'is automatically associated to the first matching swimmer by default' do
             expect(subject.swimmer_id).to eq(subject.matching_swimmers.first.id)
-            # [Steve A.] Note that given we are using random names, we cannot assert effectively that:
-            #                    subject.matching_swimmers.first.id == existing_swimmer.id
           end
           it 'binds automatically also the associated swimmer to the user' do
             expect(subject.id).to be_positive
-            expect(existing_swimmer.associated_user_id).to eq(subject.id)
+            expect(subject.swimmer.associated_user_id).to eq(subject.id)
           end
         end
       end

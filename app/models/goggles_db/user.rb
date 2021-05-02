@@ -99,6 +99,13 @@ module GogglesDb
           confirmed_at: Time.zone.now
         )
         result_user.reload
+
+        # Enforce bidirectional swimmer association when user |=> swimmer but not vice-versa:
+        if result_user.swimmer && result_user.swimmer_id != result_user.swimmer.associated_user_id
+          result_user.swimmer.associated_user_id = result_user.id
+          result_user.swimmer.save!
+        end
+
       else
         # Try to persist the user (may yield validation errors; caller should check resulting user always)
         result_user.save
