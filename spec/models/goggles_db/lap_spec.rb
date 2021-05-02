@@ -63,7 +63,11 @@ module GogglesDb
 
     describe 'self.related_laps' do
       context 'given a Lap associated to a MIR,' do
-        let(:existing_row) { GogglesDb::Lap.includes(:meeting_individual_result).first(300).sample }
+        let(:existing_row) do
+          GogglesDb::Lap.joins(:meeting_program)
+                        .includes(:meeting_individual_result)
+                        .first(300).sample
+        end
         let(:result) { GogglesDb::Lap.related_laps(existing_row) }
 
         it_behaves_like('filtering scope for the same group of Laps')
@@ -72,7 +76,11 @@ module GogglesDb
 
     describe 'self.summing_laps' do
       context 'given a Lap associated to a MIR,' do
-        let(:existing_row) { GogglesDb::Lap.includes(:meeting_individual_result).first(300).sample }
+        let(:existing_row) do
+          GogglesDb::Lap.joins(:meeting_program)
+                        .includes(:meeting_individual_result)
+                        .first(300).sample
+        end
         let(:result) { GogglesDb::Lap.summing_laps(existing_row) }
 
         it_behaves_like('filtering scope for the same group of Laps')

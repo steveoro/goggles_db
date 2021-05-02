@@ -2,6 +2,7 @@
 
 _Please, add the latest build info on top of the list; use Version::MAJOR only after gold release; keep semantic versioning in line with framework's_
 
+- **0.2.09** [Steve A.] added timing.to_s in minimal_attributes for reservations
 - **0.2.01** [Steve A.] bump versioning according to main application
 - **0.1.89** [Steve A.] improved user spec stability & validations
 - **0.1.87** [Steve A.] amend Twitter OAuth2 sign-in; improved stability for user specs
