@@ -4,11 +4,11 @@ require 'rails_helper'
 require 'support/shared_localizable_examples'
 
 # Dummy class holder for the fields used by the module
-class DummyLocalizableIncludee < GogglesDb::ApplicationLookupEntity
+class DummyLocalizableIncludee < GogglesDb::AbstractLookupEntity
   attr_accessor :code
 
   def self.table_name
-    'heat_types' # (any valid sibling of ApplicationLookupEntity will do)
+    'heat_types' # (any valid sibling of AbstractLookupEntity will do)
   end
 
   include Localizable

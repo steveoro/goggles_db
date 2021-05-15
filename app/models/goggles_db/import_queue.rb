@@ -4,7 +4,7 @@ module GogglesDb
   #
   # = ImportQueue model
   #
-  #   - version:  7.070
+  #   - version:  7.02.18
   #   - author:   Steve A.
   #
   # Stores '/import' API requests and generic import microtransactions steps.
@@ -142,13 +142,12 @@ module GogglesDb
 
     validates :done, inclusion: { in: [true, false] }
 
-    # Sorting scopes:
-    # TODO
-
     # Filtering scopes:
-    scope :for_processed_depth,  ->(depth = 0) { where(processed_depth: depth) }
-    scope :for_requested_depth,  ->(depth = 0) { where(requested_depth: depth) }
-    scope :for_solvable_depth,   ->(depth = 0) { where(solvable_depth: depth) }
+    scope :for_user,            ->(user) { where(user_id: user.id) }
+    scope :for_uid,             ->(uid) { where(uid: uid) }
+    scope :for_processed_depth, ->(depth = 0) { where(processed_depth: depth) }
+    scope :for_requested_depth, ->(depth = 0) { where(requested_depth: depth) }
+    scope :for_solvable_depth,  ->(depth = 0) { where(solvable_depth: depth) }
     #-- ------------------------------------------------------------------------
     #++
   end

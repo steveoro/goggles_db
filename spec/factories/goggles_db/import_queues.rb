@@ -7,6 +7,7 @@ FactoryBot.define do
     requested_depth { 0 }
     solvable_depth  { 0 }
     done            { false }
+    uid             { FFaker::Guid.guid }
 
     factory :import_queue_existing_swimmer do
       request_data do

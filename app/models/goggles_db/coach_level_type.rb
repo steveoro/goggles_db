@@ -7,7 +7,7 @@ module GogglesDb
   #   - version:  7.030
   #   - author:   Steve A.
   #
-  class CoachLevelType < ApplicationLookupEntity
+  class CoachLevelType < AbstractLookupEntity
     self.table_name = 'coach_level_types'
 
     # Unique IDs used inside the DB, the description will be retrieved using I18n.t

@@ -7,7 +7,7 @@ module GogglesDb
   #   - version:  7.030
   #   - author:   Steve A.
   #
-  class ShowerType < ApplicationLookupEntity
+  class ShowerType < AbstractLookupEntity
     self.table_name = 'shower_types'
   end
 end

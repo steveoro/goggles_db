@@ -10,7 +10,7 @@ module GogglesDb
   #   - version:  7.076
   #   - author:   Steve A.
   #
-  class GenderType < ApplicationLookupEntity
+  class GenderType < AbstractLookupEntity
     self.table_name = 'gender_types'
 
     # Unique IDs used inside the DB, the description will be retrieved using I18n.t

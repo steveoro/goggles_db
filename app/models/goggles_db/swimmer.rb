@@ -4,8 +4,9 @@ module GogglesDb
   #
   # = Swimmer model
   #
-  #   - version:  7.82
+  #   - version:  7.02.18
   #   - author:   Steve A.
+  #   - build:    20210512
   #
   class Swimmer < ApplicationRecord
     self.table_name = 'swimmers'
@@ -53,9 +54,11 @@ module GogglesDb
 
     private
 
-    # Returns the "minimum required" hash of associations.
+    # Returns the "minimum required" hash of associations and members.
+    # The result Hash will be used in both #minimal_attributes & #to_json.
     def minimal_associations
       {
+        'long_label' => "#{complete_name} (#{year_of_birth})",
         'associated_user' => associated_user&.minimal_attributes,
         'gender_type' => gender_type.lookup_attributes
       }

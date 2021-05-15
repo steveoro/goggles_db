@@ -7,7 +7,7 @@ module GogglesDb
   #   - version:  7.035
   #   - author:   Steve A.
   #
-  class EventType < ApplicationLookupEntity
+  class EventType < AbstractLookupEntity
     self.table_name = 'event_types'
 
     belongs_to :stroke_type

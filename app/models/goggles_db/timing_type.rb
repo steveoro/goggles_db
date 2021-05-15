@@ -10,7 +10,7 @@ module GogglesDb
   #   - version:  7.030
   #   - author:   Steve A.
   #
-  class TimingType < ApplicationLookupEntity
+  class TimingType < AbstractLookupEntity
     self.table_name = 'timing_types'
 
     # Unique IDs used inside the DB:

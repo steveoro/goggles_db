@@ -177,22 +177,3 @@ shared_examples_for 'filtering scope FULLTEXT for_...' do |subject_class, method
 end
 #-- ---------------------------------------------------------------------------
 #++
-
-# REQUIRES/ASSUMES:
-# - result.........: the actual subject to be tested
-# - existing_row...: a valid Lap instance
-shared_examples_for 'filtering scope for the same group of Laps' do
-  before(:each) { expect(existing_row).to be_a(GogglesDb::Lap).and be_valid }
-
-  it 'is a relation containing only Laps belonging to the same MIR' do
-    expect(result).to be_a(ActiveRecord::Relation)
-    expect(result).to all be_a(GogglesDb::Lap)
-    expect(result.map(&:meeting_individual_result_id).uniq).to all eq(existing_row.meeting_individual_result_id)
-  end
-  it 'has a positive number of items' do
-    expect(result.count).to be_positive
-  end
-  it 'includes the specified Lap' do
-    expect(result.map(&:id).uniq).to include(existing_row.id)
-  end
-end

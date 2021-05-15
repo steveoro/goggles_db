@@ -7,7 +7,7 @@ module GogglesDb
   #   - version:  7.030
   #   - author:   Steve A.
   #
-  class RecordType < ApplicationLookupEntity
+  class RecordType < AbstractLookupEntity
     self.table_name = 'record_types'
   end
 end

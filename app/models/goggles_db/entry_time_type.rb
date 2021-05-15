@@ -10,7 +10,7 @@ module GogglesDb
   #   - version:  7.030
   #   - author:   Steve A.
   #
-  class EntryTimeType < ApplicationLookupEntity
+  class EntryTimeType < AbstractLookupEntity
     self.table_name = 'entry_time_types'
 
     # Unique IDs used inside the DB, the description will be retrieved using I18n.t

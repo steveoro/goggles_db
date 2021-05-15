@@ -7,7 +7,7 @@ module GogglesDb
   #   - version:  7.030
   #   - author:   Steve A.
   #
-  class HairDryerType < ApplicationLookupEntity
+  class HairDryerType < AbstractLookupEntity
     self.table_name = 'hair_dryer_types'
   end
 end
