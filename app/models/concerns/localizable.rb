@@ -9,7 +9,7 @@ require 'active_support'
 #   Assumes to be included into an ActiveRecord::Base sibling (it must respond to self.table_name)
 #   and it must have a #code field.
 #
-#   - version:  7.041
+#   - version:  7.02.18
 #   - author:   Steve A.
 #
 module Localizable
@@ -17,7 +17,7 @@ module Localizable
 
   # [Steve A.] Can't enforce checking respond_to? in includees here, because since ver.7 this
   # concern is included in a shared abstract class (can't be instantiated).
-  # (For more information, compare implementation difference w/ TimingManageable.)
+  # (@see TimingManageable for code examples)
 
   # Computes a localized shorter description for the value/code associated with this data.
   # Supports a locale override code.

@@ -10,7 +10,7 @@ module GogglesDb
   #   - version:  7.035
   #   - author:   Steve A.
   #
-  class PoolType < ApplicationLookupEntity
+  class PoolType < AbstractLookupEntity
     self.table_name = 'pool_types'
 
     # Unique IDs used inside the DB, the description will be retrieved using I18n.t

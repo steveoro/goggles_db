@@ -10,7 +10,7 @@ module GogglesDb
   #   - version:  7.030
   #   - authors:  Steve A.
   #
-  class DayPartType < ApplicationLookupEntity
+  class DayPartType < AbstractLookupEntity
     self.table_name = 'day_part_types'
 
     # Unique IDs used inside the DB, the description will be retrieved using I18n.t

@@ -5,7 +5,7 @@ require 'active_support'
 #
 # = TimingManageable
 #
-#   - version:  7.070
+#   - version:  7.02.18
 #   - author:   Steve A.
 #
 # Concrete Interface for Timing helper methods (@see lib/wrappers/timing.rb).
@@ -23,15 +23,21 @@ require 'active_support'
 module TimingManageable
   extend ActiveSupport::Concern
 
+  # [Steve A.] Can't enforce checking respond_to? in includees here, because since ver.7 this
+  # concern is included in a shared abstract class (can't be instantiated).
+
+  # [Steve A.] Please leave this here as future reference:
+  # ---8<---
   # This will raise an exception if the includee does not already have defined the required fields:
-  def self.included(model)
-    base_instance = model.new
-    unless base_instance.respond_to?(:hundredths) &&
-           base_instance.respond_to?(:seconds) &&
-           base_instance.respond_to?(:minutes)
-      raise ArgumentError, "Includee #{model} must have the attributes #hundredths, #seconds & #minutes."
-    end
-  end
+  # def self.included(model)
+  #   base_instance = model.new
+  #   unless base_instance.respond_to?(:hundredths) &&
+  #          base_instance.respond_to?(:seconds) &&
+  #          base_instance.respond_to?(:minutes)
+  #     raise ArgumentError, "Includee #{model} must have the attributes #hundredths, #seconds & #minutes."
+  #   end
+  # end
+  # ---8<---
 
   # Returns a new Timing instance initialized with the timing data from this row
   # (@see lib/wrappers/timing.rb)

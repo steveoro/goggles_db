@@ -83,9 +83,9 @@ module GogglesDb
       it 'is an Hash' do
         expect(subject).to be_an(Hash)
       end
-      %w[associated_user gender_type].each do |association_name|
-        it "includes the #{association_name} association key" do
-          expect(subject.keys).to include(association_name)
+      %w[long_label associated_user gender_type].each do |member_name|
+        it "includes the #{member_name} member key" do
+          expect(subject.keys).to include(member_name)
         end
       end
     end
@@ -93,7 +93,12 @@ module GogglesDb
     describe '#to_json' do
       subject { FactoryBot.create(:swimmer) }
 
-      # Required associations:
+      # Required associations & members:
+      %w[long_label].each do |member_name|
+        it "includes the #{member_name} member key" do
+          expect(subject.to_json[member_name]).to be_present
+        end
+      end
       it_behaves_like(
         '#to_json when called on a valid instance',
         %w[gender_type]

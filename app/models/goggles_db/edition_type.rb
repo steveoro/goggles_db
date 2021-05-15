@@ -10,7 +10,7 @@ module GogglesDb
   #   - version:  7.030
   #   - author:   Steve A.
   #
-  class EditionType < ApplicationLookupEntity
+  class EditionType < AbstractLookupEntity
     self.table_name = 'edition_types'
 
     # Unique IDs used inside the DB:

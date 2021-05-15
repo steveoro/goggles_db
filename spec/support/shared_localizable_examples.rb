@@ -20,7 +20,7 @@ shared_examples_for 'Localizable' do
     # Adding here 'attributes' to the list of methods shall enforce Concern inclusion only
     # inside siblings of ActiveRecord::Base.
     #
-    # Even if some of the following examples are stored inside ApplicationLookupEntity,
+    # Even if some of the following examples are stored inside AbstractLookupEntity,
     # by checking them below in this shared group, we'll apply the specs to any sibling
     # that behaves_like 'Localizable'.
     it_behaves_like(

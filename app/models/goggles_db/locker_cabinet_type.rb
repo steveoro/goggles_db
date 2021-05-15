@@ -7,7 +7,7 @@ module GogglesDb
   #   - version:  7.030
   #   - author:   Steve A.
   #
-  class LockerCabinetType < ApplicationLookupEntity
+  class LockerCabinetType < AbstractLookupEntity
     self.table_name = 'locker_cabinet_types'
   end
 end

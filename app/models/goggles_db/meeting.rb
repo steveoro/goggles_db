@@ -4,22 +4,14 @@ module GogglesDb
   #
   # = Meeting model
   #
-  #   - version:  7.060
+  #   - version:  7.02.18
   #   - author:   Steve A.
   #
-  class Meeting < ApplicationRecord
+  class Meeting < AbstractMeeting
     self.table_name = 'meetings'
-
-    belongs_to :season
-    belongs_to :edition_type
-    belongs_to :timing_type
 
     # Legacy name: "organization_team"
     belongs_to :home_team, optional: true, class_name: 'Team'
-
-    validates_associated :season
-    validates_associated :edition_type
-    validates_associated :timing_type
 
     has_one :season_type, through: :season
     has_one :federation_type, through: :season
@@ -30,7 +22,7 @@ module GogglesDb
     has_many :pool_types,       through: :meeting_sessions
     has_many :event_types,      through: :meeting_sessions
 
-    has_many :meeting_team_scores, dependent: :delete_all
+    has_many :meeting_team_scores,        dependent: :delete_all
     has_many :meeting_reservations,       dependent: :delete_all
     has_many :meeting_event_reservations, dependent: :delete_all
     has_many :meeting_relay_reservations, dependent: :delete_all
@@ -61,11 +53,6 @@ module GogglesDb
     # acts_as_taggable_on :tags_by_users
     # acts_as_taggable_on :tags_by_teams
 
-    validates :code,        presence: { length: { within: 1..50 }, allow_nil: false }
-    validates :header_year, presence: { length: { within: 1..9 }, allow_nil: false }
-    validates :edition,     presence: { length: { maximum: 3 }, allow_nil: false }
-    validates :description, presence: { length: { maximum: 100 }, allow_nil: false }
-
     validates :reference_phone, length: { maximum: 40 }
     validates :reference_e_mail, length: { maximum: 50 }
     validates :reference_name, length: { maximum: 50 }
@@ -92,19 +79,6 @@ module GogglesDb
     #-- ------------------------------------------------------------------------
     #++
 
-    # Returns the verbose edition label based on the current edition value & type.
-    # Returns a safe empty string otherwise.
-    #
-    def edition_label
-      return edition.to_s if edition_type.ordinal?
-
-      return edition.to_i.to_roman if edition_type.roman?
-
-      return header_year if edition_type.seasonal? || edition_type.yearly?
-
-      ''
-    end
-
     # # Retrieves the first scheduled date for this meeting; nil when not found
     # def scheduled_date
     #   ms = meeting_sessions.sort_by_order.first
@@ -122,13 +96,7 @@ module GogglesDb
 
     # Override: includes main associations into the typical to_json output.
     def to_json(options = nil)
-      attributes.merge(
-        'edition_label' => edition_label,
-        'season' => season.minimal_attributes,
-        'edition_type' => edition_type.lookup_attributes,
-        'timing_type' => timing_type.lookup_attributes,
-        'season_type' => season_type.minimal_attributes,
-        'federation_type' => federation_type.minimal_attributes,
+      minimal_attributes.merge(
         'meeting_sessions' => meeting_sessions.map(&:minimal_attributes),
         'meeting_events' => meeting_events.map(&:minimal_attributes)
       ).to_json(options)

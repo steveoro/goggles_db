@@ -37,7 +37,7 @@ module GogglesDb
     #++
 
     let(:minimum_domain) do
-      FactoryBot.create_list(:import_queue_existing_swimmer, 3, processed_depth: 0, requested_depth: 1)
+      FactoryBot.create_list(:import_queue_existing_swimmer, 3, processed_depth: 0, requested_depth: 1, uid: 'FAKE-1')
       FactoryBot.create_list(:import_queue_existing_team, 3, processed_depth: 1, requested_depth: 1, solvable_depth: 1)
       ImportQueue.all
     end
@@ -45,6 +45,12 @@ module GogglesDb
     before(:each) { expect(minimum_domain.count).to be_positive }
 
     # Filtering scopes:
+    describe 'self.for_user' do
+      it_behaves_like('filtering scope for_<ANY_ENTITY_NAME>', ImportQueue, 'user')
+    end
+    describe 'self.for_uid' do
+      it_behaves_like('filtering scope for_<ANY_CHOSEN_FILTER>', ImportQueue, 'for_uid', 'uid', 'FAKE-1')
+    end
     describe 'self.for_processed_depth' do
       it_behaves_like('filtering scope for_<ANY_CHOSEN_FILTER>', ImportQueue, 'for_processed_depth', 'processed_depth', [0, 1].sample)
     end

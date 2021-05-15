@@ -5,6 +5,7 @@ require 'support/shared_method_existance_examples'
 require 'support/shared_sorting_scopes_examples'
 require 'support/shared_filtering_scopes_examples'
 require 'support/shared_to_json_examples'
+require 'support/shared_abstract_meeting_examples'
 
 module GogglesDb
   RSpec.describe Meeting, type: :model do
@@ -26,8 +27,7 @@ module GogglesDb
 
       it_behaves_like(
         'responding to a list of class methods',
-        %i[by_date by_season
-           for_name]
+        %i[by_date by_season for_name]
       )
       it_behaves_like(
         'responding to a list of methods',
@@ -41,6 +41,7 @@ module GogglesDb
            warm_up_pool? allows_under25? manifest? startlist? off_season? confirmed? cancelled?
            tweeted? posted?
            results_acquired? autofilled? read_only? pb_acquired?
+           edition_label minimal_attributes
            to_json]
       )
     end
@@ -86,35 +87,8 @@ module GogglesDb
     #-- ------------------------------------------------------------------------
     #++
 
-    describe '#edition_label' do
-      context 'for a Meeting with an ordinal edition type,' do
-        subject { FactoryBot.build(:meeting, edition_type: GogglesDb::EditionType.ordinal) }
-        it 'returns the label as a numeric string' do
-          expect(subject.edition_label).to eq(subject.edition.to_s)
-        end
-      end
-
-      context 'for a Meeting with a roman edition type,' do
-        subject { FactoryBot.build(:meeting, edition_type: GogglesDb::EditionType.roman) }
-        it 'returns the label as a roman numeral' do
-          expect(subject.edition_label).to eq(subject.edition.to_i.to_roman)
-        end
-      end
-
-      context 'for a Meeting with a seasonal or yearly edition type,' do
-        subject { FactoryBot.build(:meeting, edition_type: GogglesDb::EditionType.send(%w[yearly seasonal].sample)) }
-        it 'returns the header_year as label' do
-          expect(subject.edition_label).to eq(subject.header_year)
-        end
-      end
-
-      context 'for a Meeting with an unspecified edition type,' do
-        subject { FactoryBot.build(:meeting, edition_type: GogglesDb::EditionType.none) }
-        it 'returns an empty string label' do
-          expect(subject.edition_label).to eq('')
-        end
-      end
-    end
+    it_behaves_like('AbstractMeeting #edition_label', :meeting)
+    it_behaves_like('AbstractMeeting #minimal_attributes', Meeting)
 
     describe '#to_json' do
       # Required associations:

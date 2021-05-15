@@ -87,7 +87,7 @@ CREATE TABLE `api_daily_uses` (
   PRIMARY KEY (`id`),
   UNIQUE KEY `index_api_daily_uses_on_route_and_day` (`route`,`day`),
   KEY `index_api_daily_uses_on_route` (`route`)
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 DROP TABLE IF EXISTS `app_parameters`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
@@ -1025,7 +1025,7 @@ CREATE TABLE `delayed_jobs` (
   `updated_at` datetime DEFAULT NULL,
   PRIMARY KEY (`id`),
   KEY `delayed_jobs_priority` (`priority`,`run_at`)
-) ENGINE=InnoDB AUTO_INCREMENT=5146 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=5145 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 DROP TABLE IF EXISTS `disqualification_code_types`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
@@ -1351,12 +1351,14 @@ CREATE TABLE `import_queues` (
   `done` tinyint(1) NOT NULL DEFAULT 0,
   `created_at` datetime(6) NOT NULL,
   `updated_at` datetime(6) NOT NULL,
+  `uid` varchar(255) DEFAULT NULL,
   PRIMARY KEY (`id`),
   KEY `index_import_queues_on_user_id` (`user_id`),
   KEY `index_import_queues_on_processed_depth` (`processed_depth`),
   KEY `index_import_queues_on_requested_depth` (`requested_depth`),
   KEY `index_import_queues_on_solvable_depth` (`solvable_depth`),
-  KEY `index_import_queues_on_done` (`done`)
+  KEY `index_import_queues_on_done` (`done`),
+  KEY `index_import_queues_on_user_id_and_uid` (`user_id`,`uid`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 DROP TABLE IF EXISTS `individual_records`;
@@ -2552,6 +2554,31 @@ CREATE TABLE `user_achievements` (
   UNIQUE KEY `index_user_achievements_on_user_id_and_achievement_id` (`user_id`,`achievement_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
+DROP TABLE IF EXISTS `user_laps`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `user_laps` (
+  `id` bigint(20) NOT NULL AUTO_INCREMENT,
+  `user_result_id` int(11) NOT NULL,
+  `swimmer_id` int(11) NOT NULL,
+  `reaction_time` decimal(5,2) DEFAULT NULL,
+  `minutes` mediumint(9) DEFAULT NULL,
+  `seconds` smallint(6) DEFAULT NULL,
+  `hundredths` smallint(6) DEFAULT NULL,
+  `length_in_meters` int(11) DEFAULT NULL,
+  `position` mediumint(9) DEFAULT NULL,
+  `minutes_from_start` mediumint(9) DEFAULT NULL,
+  `seconds_from_start` smallint(6) DEFAULT NULL,
+  `hundredths_from_start` smallint(6) DEFAULT NULL,
+  `created_at` datetime(6) NOT NULL,
+  `updated_at` datetime(6) NOT NULL,
+  PRIMARY KEY (`id`),
+  KEY `index_user_laps_on_user_result_id` (`user_result_id`),
+  KEY `index_user_laps_on_swimmer_id` (`swimmer_id`),
+  CONSTRAINT `fk_rails_3a8ef09ce9` FOREIGN KEY (`user_result_id`) REFERENCES `user_results` (`id`),
+  CONSTRAINT `fk_rails_51835bd9c8` FOREIGN KEY (`swimmer_id`) REFERENCES `swimmers` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+/*!40101 SET character_set_client = @saved_cs_client */;
 DROP TABLE IF EXISTS `user_results`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
@@ -2568,7 +2595,6 @@ CREATE TABLE `user_results` (
   `swimmer_id` int(11) DEFAULT NULL,
   `category_type_id` int(11) DEFAULT NULL,
   `pool_type_id` int(11) DEFAULT NULL,
-  `meeting_individual_result_id` int(11) DEFAULT NULL,
   `user_id` int(11) DEFAULT NULL,
   `created_at` datetime DEFAULT NULL,
   `updated_at` datetime DEFAULT NULL,
@@ -2577,14 +2603,19 @@ CREATE TABLE `user_results` (
   `event_date` date DEFAULT NULL,
   `reaction_time` decimal(10,2) DEFAULT 0.00,
   `event_type_id` int(11) DEFAULT NULL,
+  `user_workshop_id` bigint(20) NOT NULL,
+  `swimming_pool_id` bigint(20) DEFAULT NULL,
   PRIMARY KEY (`id`),
-  KEY `meeting_id_rank` (`meeting_individual_result_id`,`rank`),
   KEY `fk_user_results_swimmers` (`swimmer_id`),
   KEY `fk_user_results_category_types` (`category_type_id`),
   KEY `fk_user_results_pool_types` (`pool_type_id`),
   KEY `fk_user_results_event_types` (`event_type_id`),
-  KEY `idx_user_results_user` (`user_id`),
-  KEY `idx_user_results_disqualification_code_type` (`disqualification_code_type_id`)
+  KEY `idx_user_results_disqualification_code_type` (`disqualification_code_type_id`),
+  KEY `fk_rails_e406f4db18` (`user_id`),
+  KEY `index_user_results_on_user_workshop_id` (`user_workshop_id`),
+  KEY `index_user_results_on_swimming_pool_id` (`swimming_pool_id`),
+  CONSTRAINT `fk_rails_6ac8587baa` FOREIGN KEY (`user_workshop_id`) REFERENCES `user_workshops` (`id`),
+  CONSTRAINT `fk_rails_e406f4db18` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 DROP TABLE IF EXISTS `user_swimmer_confirmations`;
@@ -2674,6 +2705,50 @@ CREATE TABLE `user_trainings` (
   KEY `index_user_trainings_on_user_id_and_description` (`user_id`,`description`)
 ) ENGINE=InnoDB AUTO_INCREMENT=46 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
+DROP TABLE IF EXISTS `user_workshops`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `user_workshops` (
+  `id` bigint(20) NOT NULL AUTO_INCREMENT,
+  `lock_version` int(11) DEFAULT 0,
+  `header_date` date DEFAULT NULL,
+  `header_year` varchar(10) DEFAULT NULL,
+  `code` varchar(80) DEFAULT NULL,
+  `description` varchar(100) DEFAULT NULL,
+  `edition` int(11) DEFAULT NULL,
+  `notes` text DEFAULT NULL,
+  `user_id` int(11) NOT NULL,
+  `team_id` int(11) NOT NULL,
+  `season_id` int(11) NOT NULL,
+  `edition_type_id` int(11) NOT NULL DEFAULT 3,
+  `timing_type_id` int(11) NOT NULL DEFAULT 1,
+  `swimming_pool_id` int(11) DEFAULT NULL,
+  `autofilled` tinyint(1) DEFAULT NULL,
+  `off_season` tinyint(1) DEFAULT NULL,
+  `confirmed` tinyint(1) DEFAULT NULL,
+  `cancelled` tinyint(1) DEFAULT NULL,
+  `pb_acquired` tinyint(1) DEFAULT NULL,
+  `read_only` tinyint(1) DEFAULT NULL,
+  `created_at` datetime(6) NOT NULL,
+  `updated_at` datetime(6) NOT NULL,
+  PRIMARY KEY (`id`),
+  KEY `index_user_workshops_on_user_id` (`user_id`),
+  KEY `index_user_workshops_on_team_id` (`team_id`),
+  KEY `index_user_workshops_on_season_id` (`season_id`),
+  KEY `index_user_workshops_on_edition_type_id` (`edition_type_id`),
+  KEY `index_user_workshops_on_timing_type_id` (`timing_type_id`),
+  KEY `index_user_workshops_on_swimming_pool_id` (`swimming_pool_id`),
+  KEY `index_user_workshops_on_header_date` (`header_date`),
+  KEY `index_user_workshops_on_header_year` (`header_year`),
+  KEY `index_user_workshops_on_code` (`code`),
+  FULLTEXT KEY `workshop_name` (`description`,`code`),
+  CONSTRAINT `fk_rails_1da8cf3948` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`),
+  CONSTRAINT `fk_rails_491714ee3b` FOREIGN KEY (`season_id`) REFERENCES `seasons` (`id`),
+  CONSTRAINT `fk_rails_68db6bc5bc` FOREIGN KEY (`edition_type_id`) REFERENCES `edition_types` (`id`),
+  CONSTRAINT `fk_rails_aa39033a10` FOREIGN KEY (`team_id`) REFERENCES `teams` (`id`),
+  CONSTRAINT `fk_rails_ebe7a00465` FOREIGN KEY (`timing_type_id`) REFERENCES `timing_types` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+/*!40101 SET character_set_client = @saved_cs_client */;
 DROP TABLE IF EXISTS `users`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
@@ -2724,7 +2799,7 @@ CREATE TABLE `users` (
   KEY `idx_users_swimmer` (`swimmer_id`),
   KEY `idx_users_swimmer_level_type` (`swimmer_level_type_id`),
   KEY `idx_users_coach_level_type` (`coach_level_type_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=753 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=750 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 DROP TABLE IF EXISTS `votes`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
@@ -3137,6 +3212,13 @@ INSERT INTO `schema_migrations` (version) VALUES
 ('20210302125701'),
 ('20210302170844'),
 ('20210315110522'),
-('20210429155847');
+('20210429155847'),
+('20210513113601'),
+('20210513155157'),
+('20210513170020'),
+('20210513170055'),
+('20210514082612'),
+('20210514131355'),
+('20210515172357');
 
 

@@ -2,15 +2,15 @@
 
 module GogglesDb
   #
-  # = ApplicationLookupEntity abstract model
+  # = Abstract Lookup Entity model
   #
   # Encapsulates common behavior for in-memory lookup entities.
   # Typical usage: short tables that store data that seldom needs any update.
   #
-  #   - version:  7.047
+  #   - version:  7.02.18
   #   - author:   Steve A.
   #
-  class ApplicationLookupEntity < ApplicationRecord
+  class AbstractLookupEntity < ApplicationRecord
     self.abstract_class = true
 
     include Localizable

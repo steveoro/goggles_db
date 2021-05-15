@@ -9,7 +9,7 @@ module GogglesDb
   #   - version:  7.035
   #   - authors:  Steve A.
   #
-  class DisqualificationCodeType < ApplicationLookupEntity
+  class DisqualificationCodeType < AbstractLookupEntity
     self.table_name = 'disqualification_code_types'
 
     validates :code, presence: { length: { within: 1..4 }, allow_nil: false },

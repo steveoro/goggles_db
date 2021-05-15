@@ -14,12 +14,12 @@ Gem::Specification.new do |spec|
   spec.homepage    = 'https://www.master-goggles.org'
   spec.summary     = 'Goggles DB engine'
   spec.description = 'contains just the models and the DB structure required to run the main Goggles app'
-  spec.license     = 'GPL-3.0-or-later'
+  spec.license     = 'LGPL-3.0-or-later'
 
   # Prevent pushing this gem to RubyGems.org. To allow pushes either set the 'allowed_push_host'
   # to allow pushing to a single host or delete this section to allow pushing to any host.
   if spec.respond_to?(:metadata)
-    spec.metadata['allowed_push_host'] = 'http://master-goggles.org' # (Not valid yet)
+    spec.metadata['allowed_push_host'] = 'https://master-goggles.org' # (Not valid yet)
   else
     raise 'RubyGems 2.0 or newer is required to protect against ' \
       'public gem pushes.'
@@ -29,7 +29,7 @@ Gem::Specification.new do |spec|
 
   # Base Rails dependancy:
   # [20210128] ActiveRecord 6.1 introduces too many changes for the current version
-  spec.add_dependency 'rails', '= 6.0.3.5'
+  spec.add_dependency 'rails', '>= 6.0.3.7', '< 6.1.0'
 
   spec.add_dependency 'acts-as-taggable-on'
   spec.add_dependency 'acts_as_votable'

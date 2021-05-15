@@ -13,7 +13,7 @@ FactoryBot.define do
     reaction_time             { rand.round(2) }
     minutes                   { 0 }
     seconds                   { ((rand * 60) % 60).to_i }
-    hundredths                  { ((rand * 100) % 100).to_i }
+    hundredths                { ((rand * 100) % 100).to_i }
 
     disqualification_code_type { [true, false].sample ? GogglesDb::DisqualificationCodeType.all.sample : nil }
     #-- -----------------------------------------------------------------------

@@ -10,7 +10,7 @@ module GogglesDb
   #   - version:  7.030
   #   - author:   Steve A.
   #
-  class HeatType < ApplicationLookupEntity
+  class HeatType < AbstractLookupEntity
     self.table_name = 'heat_types'
 
     # Unique IDs used inside the DB, the description will be retrieved using I18n.t

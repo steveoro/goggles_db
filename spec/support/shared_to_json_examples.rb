@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-# Handles both normal associations and associations with lookup entities (GogglesDb::ApplicationLookupEntity)
+# Handles both normal associations and associations with lookup entities (GogglesDb::AbstractLookupEntity)
 def compare_attributes_between(parsed_json_association_obj, association)
   # Handle also special case with ISO-normalized values, such as City:
   if association.respond_to?(:iso_attributes)

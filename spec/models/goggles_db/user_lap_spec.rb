@@ -9,15 +9,32 @@ require 'support/shared_to_json_examples'
 require 'support/shared_abstract_lap_examples'
 
 module GogglesDb
-  RSpec.describe Lap, type: :model do
-    shared_examples_for 'a valid Lap instance' do
+  RSpec.describe UserLap, type: :model do
+    # Make sure UserLaps have some fixtures too:
+    before(:all) do
+      FactoryBot.create_list(:user_result_with_laps, 4)
+      # Create also some fixtures with the timing from start zeroed out:
+      # (needed as part of the domain by some of the tests below)
+      FactoryBot.create_list(
+        :user_lap, 8,
+        user_result: FactoryBot.create(:user_result),
+        hundredths_from_start: 0,
+        seconds_from_start: 0,
+        minutes_from_start: 0
+      )
+      expect(GogglesDb::UserWorkshop.count).to be_positive
+      expect(GogglesDb::UserResult.count).to be_positive
+      expect(GogglesDb::UserLap.count).to be_positive
+    end
+
+    shared_examples_for 'a valid UserLap instance' do
       it 'is valid' do
-        expect(subject).to be_a(Lap).and be_valid
+        expect(subject).to be_a(UserLap).and be_valid
       end
 
       it_behaves_like(
         'having one or more required associations',
-        %i[meeting_program swimmer team meeting event_type pool_type]
+        %i[swimmer user_result user_workshop event_type pool_type]
       )
 
       # Presence of fields & requiredness:
@@ -28,9 +45,8 @@ module GogglesDb
 
       it_behaves_like(
         'responding to a list of methods',
-        %i[reaction_time stroke_cycles breath_cycles position
+        %i[reaction_time position
            minutes_from_start seconds_from_start hundredths_from_start
-           underwater_kicks underwater_seconds underwater_hundredths
            timing_from_start
            meeting_attributes
            to_timing to_json]
@@ -38,45 +54,45 @@ module GogglesDb
     end
 
     context 'any pre-seeded instance' do
-      subject { Lap.all.limit(20).sample }
-      it_behaves_like('a valid Lap instance')
+      subject { UserLap.all.limit(20).sample }
+      it_behaves_like('a valid UserLap instance')
     end
 
     context 'when using the factory, the resulting instance' do
-      subject { FactoryBot.create(:lap) }
-      it_behaves_like('a valid Lap instance')
+      subject { FactoryBot.create(:user_lap) }
+      it_behaves_like('a valid UserLap instance')
     end
     #-- ------------------------------------------------------------------------
     #++
 
     # Sorting scopes:
-    it_behaves_like('AbstractLap sorting scopes', Lap)
+    it_behaves_like('AbstractLap sorting scopes', UserLap)
 
     # Filtering scopes:
     let(:existing_row) do
-      Lap.joins(:meeting_program)
-         .includes(:meeting_individual_result)
-         .first(300).sample
+      UserLap.joins(:user_result)
+             .includes(:user_result)
+             .first(10).sample
     end
-    it_behaves_like('AbstractLap filtering scopes', Lap)
+    it_behaves_like('AbstractLap filtering scopes', UserLap)
     #-- ------------------------------------------------------------------------
     #++
 
     # TimingManageable:
-    let(:fixture_row) { FactoryBot.create(:lap) }
+    let(:fixture_row) { FactoryBot.create(:user_lap) }
 
     describe 'regarding the timing fields,' do
       # subject = fixture_row (can even be just built, not created)
       it_behaves_like('TimingManageable')
     end
 
-    it_behaves_like('AbstractLap #timing_from_start', Lap)
-    it_behaves_like('AbstractLap #minimal_attributes', Lap)
+    it_behaves_like('AbstractLap #timing_from_start', UserLap)
+    it_behaves_like('AbstractLap #minimal_attributes', UserLap)
     #-- ------------------------------------------------------------------------
     #++
 
     describe '#to_json' do
-      subject { FactoryBot.create(:lap) }
+      subject { FactoryBot.create(:user_lap) }
 
       let(:result) { JSON.parse(subject.to_json) }
       it 'includes the timing string' do
@@ -89,11 +105,11 @@ module GogglesDb
       # Required associations:
       it_behaves_like(
         '#to_json when called on a valid instance',
-        %w[meeting_program team meeting_individual_result event_type pool_type]
+        %w[user_result event_type pool_type]
       )
       it_behaves_like(
         '#to_json when called on a valid instance with a synthetized association',
-        %w[meeting swimmer]
+        %w[user_workshop swimmer]
       )
     end
   end

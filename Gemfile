@@ -3,8 +3,6 @@
 source 'https://rubygems.org'
 git_source(:github) { |repo| "https://github.com/#{repo}.git" }
 
-# [Steve A.] Force a specific version of Devise, supporting OAuth2:
-# gem 'devise', github: 'heartcombo/devise', branch: 'ca-omniauth-2'
 gem 'devise'
 
 # Declare your gem's dependencies in goggles_db.gemspec.
@@ -20,7 +18,6 @@ gemspec
 group :development do
   gem 'better_errors'
   gem 'binding_of_caller'
-
   gem 'guard'
   gem 'guard-brakeman'
   gem 'guard-bundler', require: false
@@ -32,7 +29,7 @@ group :development do
   gem 'haml_lint', require: false
   gem 'inch', require: false # grades source documentation
   gem 'listen', '~> 3.2'
-  # [20210128] Rubocop 1.9.0 seems to have several issues currently
+  # [20210128] Rubocop 1.9.0 seems to have several issues with the current stack
   gem 'rubocop', '= 1.8.1', require: false
   gem 'rubocop-rails'
   gem 'rubocop-rspec'
