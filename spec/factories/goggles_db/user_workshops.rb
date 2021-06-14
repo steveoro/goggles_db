@@ -1,5 +1,7 @@
 FactoryBot.define do
   factory :user_workshop, class: 'GogglesDb::UserWorkshop' do
+    before_create_validate_instance
+
     sequence(:code) { |n| "workshop-#{n}" }
     description     { "#{FFaker::Name.suffix} #{FFaker::Address.city} Workshop" }
     edition         { (1..40).to_a.sample }
@@ -30,13 +32,6 @@ FactoryBot.define do
     factory :workshop_with_results_and_laps do
       after(:create) do |created_instance, _evaluator|
         create_list(:user_result_with_laps, 4, user_workshop: created_instance)
-      end
-    end
-
-    before(:create) do |built_instance|
-      if built_instance.invalid?
-        puts "\r\nFactory def. error => " << GogglesDb::ValidationErrorTools.recursive_error_for(built_instance)
-        puts built_instance.inspect
       end
     end
   end

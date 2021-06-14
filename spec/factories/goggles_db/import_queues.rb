@@ -1,18 +1,25 @@
 FactoryBot.define do
   factory :import_queue, class: 'GogglesDb::ImportQueue' do
+    before_create_validate_instance
+
     user
-    request_data    { {}.to_json }
-    solved_data     { {}.to_json }
-    processed_depth { 0 }
-    requested_depth { 0 }
-    solvable_depth  { 0 }
-    done            { false }
-    uid             { FFaker::Guid.guid }
+    import_queue        { nil } # Parent
+    request_data        { {}.to_json }
+    solved_data         { {}.to_json }
+    process_runs        { 0 }
+    done                { false }
+    uid                 { FFaker::Guid.guid }
+    bindings_left_count { 0 }
+    bindings_left_list  { nil }
+    error_messages      { nil }
+    #-- -----------------------------------------------------------------------
+    #++
 
     factory :import_queue_existing_swimmer do
       request_data do
         existing_row = GogglesDb::Swimmer.first(100).sample
         request_hash = {
+          target_entity: 'Swimmer',
           swimmer: {
             complete_name: existing_row.complete_name,
             year_of_birth: existing_row.year_of_birth
@@ -26,20 +33,12 @@ FactoryBot.define do
       request_data do
         existing_row = GogglesDb::Team.first(100).sample
         request_hash = {
+          target_entity: 'Team',
           team: {
             name: existing_row.name
           }
         }
         request_hash.to_json
-      end
-    end
-    #-- -----------------------------------------------------------------------
-    #++
-
-    before(:create) do |built_instance|
-      if built_instance.invalid?
-        puts "\r\nFactory def. error => " << GogglesDb::ValidationErrorTools.recursive_error_for(built_instance)
-        puts built_instance.inspect
       end
     end
   end

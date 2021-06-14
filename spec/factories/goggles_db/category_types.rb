@@ -1,5 +1,7 @@
 FactoryBot.define do
   factory :category_type, class: 'GogglesDb::CategoryType' do
+    before_create_validate_instance
+
     season
     age_begin         { (25..100).step(5).to_a.sample }
     age_end           { age_begin + 4 }
@@ -11,12 +13,5 @@ FactoryBot.define do
     federation_code   { (rand * 100).to_i.to_s }
     relay             { false }
     out_of_race       { false }
-
-    before(:create) do |built_instance|
-      if built_instance.invalid?
-        puts "\r\nFactory def. error => " << GogglesDb::ValidationErrorTools.recursive_error_for(built_instance)
-        puts built_instance.inspect
-      end
-    end
   end
 end

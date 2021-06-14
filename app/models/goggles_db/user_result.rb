@@ -39,6 +39,7 @@ module GogglesDb
     has_one :stroke_type, through: :event_type
 
     belongs_to :swimming_pool, optional: true
+    belongs_to :disqualification_code_type, optional: true
 
     has_many :user_laps, -> { order('user_laps.length_in_meters') }, dependent: :delete_all
 

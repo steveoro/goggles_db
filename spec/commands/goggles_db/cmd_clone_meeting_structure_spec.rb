@@ -99,5 +99,27 @@ module GogglesDb
     end
     #-- --------------------------------------------------------------------------
     #++
+
+    context 'when using invalid constructor parameters,' do
+      describe '#call' do
+        subject do
+          described_class.call('')
+        end
+
+        it 'returns itself' do
+          expect(subject).to be_a(described_class)
+        end
+        it 'fails' do
+          expect(subject).to be_a_failure
+        end
+        it 'has a non-empty #errors list displaying a error message about constructor parameters' do
+          expect(subject.errors).to be_present
+          expect(subject.errors[:msg]).to eq(['Invalid constructor parameters'])
+        end
+        it 'has a nil #result' do
+          expect(subject.result).to be nil
+        end
+      end
+    end
   end
 end

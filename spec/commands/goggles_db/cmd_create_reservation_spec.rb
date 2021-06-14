@@ -85,6 +85,8 @@ module GogglesDb
         end
       end
     end
+    #-- --------------------------------------------------------------------------
+    #++
 
     context 'when using invalid constructor parameters,' do
       describe '#call' do
@@ -92,11 +94,11 @@ module GogglesDb
           option = [fixture_badge, fixture_meeting, fixture_user]
           # Make a random item invalid for the constructor:
           option[(rand * 10 % 3).to_i] = nil
-          CmdCreateReservation.call(option[0], option[1], option[2])
+          described_class.call(option[0], option[1], option[2])
         end
 
         it 'returns itself' do
-          expect(subject).to be_a(CmdCreateReservation)
+          expect(subject).to be_a(described_class)
         end
         it 'fails' do
           expect(subject).to be_a_failure
@@ -110,7 +112,5 @@ module GogglesDb
         end
       end
     end
-    #-- --------------------------------------------------------------------------
-    #++
   end
 end

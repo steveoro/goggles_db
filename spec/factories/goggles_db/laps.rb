@@ -1,7 +1,7 @@
-# frozen_string_literal: true
-
 FactoryBot.define do
   factory :lap, class: 'GogglesDb::Lap' do
+    before_create_validate_instance
+
     sequence(:length_in_meters) { |n| (n + 1) * 50 }
     meeting_individual_result   { create(:meeting_individual_result) }
 

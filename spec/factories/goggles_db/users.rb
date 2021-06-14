@@ -1,5 +1,7 @@
 FactoryBot.define do
   factory :user, class: 'GogglesDb::User' do
+    before_create_validate_instance
+
     first_name            { FFaker::Name.first_name }
     last_name             { FFaker::Name.last_name }
     name do
@@ -16,12 +18,5 @@ FactoryBot.define do
     description           { "#{first_name} #{last_name}" }
     year_of_birth         { 18.years.ago.year - ((rand * 100) % 60).to_i }
     swimmer_level_type    { GogglesDb::SwimmerLevelType.all.sample }
-
-    before(:create) do |built_instance|
-      if built_instance.invalid?
-        puts "\r\nFactory def. error => " << GogglesDb::ValidationErrorTools.recursive_error_for(built_instance)
-        puts built_instance.inspect
-      end
-    end
   end
 end
