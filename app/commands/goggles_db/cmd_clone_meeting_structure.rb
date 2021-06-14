@@ -6,7 +6,7 @@ module GogglesDb
   #
   # = Meeting structure cloner
   #
-  #   - file vers.: 7.059
+  #   - file vers.: 7.03.01
   #   - author....: Steve A.
   #   - build.....: 20210107
   #

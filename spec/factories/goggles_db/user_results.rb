@@ -1,5 +1,7 @@
 FactoryBot.define do
   factory :user_result, class: 'GogglesDb::UserResult' do
+    before_create_validate_instance
+
     user_workshop
     swimmer
     user do
@@ -23,6 +25,8 @@ FactoryBot.define do
                                  .event_type
     end
 
+    event_date      { Date.today }
+    description     { "#{swimmer.complete_name}, #{event_type.code}" }
     reaction_time   { rand.round(2) }
     minutes         { 0 }
     seconds         { ((rand * 60) % 60).to_i }
@@ -38,13 +42,6 @@ FactoryBot.define do
     factory :user_result_with_laps do
       after(:create) do |created_instance, _evaluator|
         create_list(:user_lap, [2, 4, 8].sample, user_result: created_instance)
-      end
-    end
-
-    before(:create) do |built_instance|
-      if built_instance.invalid?
-        puts "\r\nFactory def. error => " << GogglesDb::ValidationErrorTools.recursive_error_for(built_instance)
-        puts built_instance.inspect
       end
     end
   end

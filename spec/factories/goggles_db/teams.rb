@@ -1,5 +1,7 @@
 FactoryBot.define do
   factory :team, class: 'GogglesDb::Team' do
+    before_create_validate_instance
+
     city
     name          { "#{city ? city.name : FFaker::Address.city} Swimming Club #{Time.now.year}" }
     editable_name { name }
@@ -11,13 +13,6 @@ FactoryBot.define do
     contact_name  { FFaker::Name.name }
     notes         { FFaker::BaconIpsum.phrase }
     home_page_url { FFaker::Internet.http_url }
-
-    before(:create) do |built_instance|
-      if built_instance.invalid?
-        puts "\r\nFactory def. error => " << GogglesDb::ValidationErrorTools.recursive_error_for(built_instance)
-        puts built_instance.inspect
-      end
-    end
 
     # This will also create the proper team_affiliations:
     factory :team_with_badges do

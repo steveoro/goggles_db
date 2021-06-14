@@ -1,5 +1,7 @@
 FactoryBot.define do
   factory :user_lap, class: 'GogglesDb::UserLap' do
+    before_create_validate_instance
+
     user_result
 
     swimmer { user_result.swimmer }
@@ -14,12 +16,5 @@ FactoryBot.define do
     minutes_from_start    { 1 }
     seconds_from_start    { seconds }
     hundredths_from_start { hundredths }
-
-    before(:create) do |built_instance|
-      if built_instance.invalid?
-        puts "\r\nFactory def. error => " << GogglesDb::ValidationErrorTools.recursive_error_for(built_instance)
-        puts built_instance.inspect
-      end
-    end
   end
 end

@@ -10,18 +10,13 @@ FactoryBot.define do
   end
 
   factory :swimmer, class: 'GogglesDb::Swimmer' do
+    before_create_validate_instance
+
     common_swimmer_fields
     e_mail                  { "#{first_name}.#{last_name}-#{(rand * 1000).to_i}@#{%w[fake.example.com fake.example.org fake.example.net].sample}" }
     nickname                { "#{first_name[0..5]} the #{FFaker::AnimalUS.common_name[0..15]}" }
     associated_user_id      { nil }
     #-- -----------------------------------------------------------------------
     #++
-
-    before(:create) do |built_instance|
-      if built_instance.invalid?
-        puts "\r\nFactory def. error => " << GogglesDb::ValidationErrorTools.recursive_error_for(built_instance)
-        puts built_instance.inspect
-      end
-    end
   end
 end

@@ -87,7 +87,7 @@ CREATE TABLE `api_daily_uses` (
   PRIMARY KEY (`id`),
   UNIQUE KEY `index_api_daily_uses_on_route_and_day` (`route`,`day`),
   KEY `index_api_daily_uses_on_route` (`route`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 DROP TABLE IF EXISTS `app_parameters`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
@@ -290,7 +290,7 @@ CREATE TABLE `category_types` (
   PRIMARY KEY (`id`),
   UNIQUE KEY `season_and_code` (`season_id`,`relay`,`code`),
   KEY `federation_code` (`federation_code`,`relay`)
-) ENGINE=InnoDB AUTO_INCREMENT=1328 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=1456 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 DROP TABLE IF EXISTS `cities`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
@@ -1343,22 +1343,22 @@ CREATE TABLE `import_queues` (
   `id` bigint(20) NOT NULL AUTO_INCREMENT,
   `lock_version` int(11) DEFAULT 0,
   `user_id` bigint(20) NOT NULL,
-  `processed_depth` int(11) DEFAULT 0,
-  `requested_depth` int(11) DEFAULT 0,
-  `solvable_depth` int(11) DEFAULT 0,
+  `process_runs` int(11) DEFAULT 0,
   `request_data` text NOT NULL,
   `solved_data` text NOT NULL,
   `done` tinyint(1) NOT NULL DEFAULT 0,
   `created_at` datetime(6) NOT NULL,
   `updated_at` datetime(6) NOT NULL,
   `uid` varchar(255) DEFAULT NULL,
+  `bindings_left_count` int(11) NOT NULL DEFAULT 0,
+  `bindings_left_list` varchar(255) DEFAULT NULL,
+  `error_messages` text DEFAULT NULL,
+  `import_queue_id` int(11) DEFAULT NULL,
   PRIMARY KEY (`id`),
   KEY `index_import_queues_on_user_id` (`user_id`),
-  KEY `index_import_queues_on_processed_depth` (`processed_depth`),
-  KEY `index_import_queues_on_requested_depth` (`requested_depth`),
-  KEY `index_import_queues_on_solvable_depth` (`solvable_depth`),
   KEY `index_import_queues_on_done` (`done`),
-  KEY `index_import_queues_on_user_id_and_uid` (`user_id`,`uid`)
+  KEY `index_import_queues_on_user_id_and_uid` (`user_id`,`uid`),
+  KEY `index_import_queues_on_import_queue_id` (`import_queue_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 DROP TABLE IF EXISTS `individual_records`;
@@ -2101,7 +2101,7 @@ CREATE TABLE `seasons` (
   KEY `fk_seasons_season_types` (`season_type_id`),
   KEY `fk_seasons_edition_types` (`edition_type_id`),
   KEY `fk_seasons_timing_types` (`timing_type_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=193 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=216 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 DROP TABLE IF EXISTS `sessions`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
@@ -2799,7 +2799,7 @@ CREATE TABLE `users` (
   KEY `idx_users_swimmer` (`swimmer_id`),
   KEY `idx_users_swimmer_level_type` (`swimmer_level_type_id`),
   KEY `idx_users_coach_level_type` (`coach_level_type_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=750 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=752 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 DROP TABLE IF EXISTS `votes`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
@@ -3212,13 +3212,15 @@ INSERT INTO `schema_migrations` (version) VALUES
 ('20210302125701'),
 ('20210302170844'),
 ('20210315110522'),
-('20210429155847'),
 ('20210513113601'),
 ('20210513155157'),
 ('20210513170020'),
 ('20210513170055'),
 ('20210514082612'),
 ('20210514131355'),
-('20210515172357');
+('20210515172357'),
+('20210611120440'),
+('20210614074635'),
+('20210614132647');
 
 

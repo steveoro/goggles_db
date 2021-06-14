@@ -1,5 +1,7 @@
 FactoryBot.define do
   factory :meeting_team_score, class: 'GogglesDb::MeetingTeamScore' do
+    before_create_validate_instance
+
     team_affiliation
     team             { team_affiliation.team }
     season           { team_affiliation.season }
@@ -17,12 +19,5 @@ FactoryBot.define do
     season_team_points    { 1 + (rand * 1000).to_i }
     #-- -----------------------------------------------------------------------
     #++
-
-    before(:create) do |built_instance|
-      if built_instance.invalid?
-        puts "\r\nFactory def. error => " << GogglesDb::ValidationErrorTools.recursive_error_for(built_instance)
-        puts built_instance.inspect
-      end
-    end
   end
 end

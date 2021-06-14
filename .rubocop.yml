@@ -40,7 +40,7 @@ Metrics/AbcSize:
 Metrics/BlockLength:
   Max: 40
   CountAsOne: ['array', 'heredoc']
-  IgnoredMethods: ['describe', 'context', 'define', 'shared_examples_for']
+  IgnoredMethods: ['describe', 'context', 'define', 'factory', 'shared_examples_for']
   Exclude:
     - 'goggles_db.gemspec'
     - 'lib/tasks/*.rake'

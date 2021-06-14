@@ -1,5 +1,7 @@
 FactoryBot.define do
   factory :standard_timing, class: 'GogglesDb::StandardTiming' do
+    before_create_validate_instance
+
     season
     pool_type { GogglesDb::PoolType.all_eventable.sample }
     event_type do
@@ -17,12 +19,5 @@ FactoryBot.define do
     hundredths { ((rand * 100) % 99).to_i }
     #-- -----------------------------------------------------------------------
     #++
-
-    before(:create) do |built_instance|
-      if built_instance.invalid?
-        puts "\r\nFactory def. error => " << GogglesDb::ValidationErrorTools.recursive_error_for(built_instance)
-        puts built_instance.inspect
-      end
-    end
   end
 end

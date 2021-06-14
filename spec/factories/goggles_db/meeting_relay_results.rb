@@ -1,5 +1,7 @@
 FactoryBot.define do
   factory :meeting_relay_result, class: 'GogglesDb::MeetingRelayResult' do
+    before_create_validate_instance
+
     team             { create(:team) }
     meeting_program  { create(:meeting_program_relay) }
     team_affiliation { create(:team_affiliation, team: team, season: meeting_program.season) }
@@ -35,12 +37,5 @@ FactoryBot.define do
     end
     #-- -----------------------------------------------------------------------
     #++
-
-    before(:create) do |built_instance|
-      if built_instance.invalid?
-        puts "\r\nFactory def. error => " << GogglesDb::ValidationErrorTools.recursive_error_for(built_instance)
-        puts built_instance.inspect
-      end
-    end
   end
 end

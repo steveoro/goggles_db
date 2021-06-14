@@ -1,5 +1,7 @@
 FactoryBot.define do
   factory :meeting_program, class: 'GogglesDb::MeetingProgram' do
+    before_create_validate_instance
+
     sequence(:event_order)
 
     meeting_event { create(:meeting_event) }
@@ -19,12 +21,5 @@ FactoryBot.define do
     end
     #-- -----------------------------------------------------------------------
     #++
-
-    before(:create) do |built_instance|
-      if built_instance.invalid?
-        puts "\r\nFactory def. error => " << GogglesDb::ValidationErrorTools.recursive_error_for(built_instance)
-        puts built_instance.inspect
-      end
-    end
   end
 end

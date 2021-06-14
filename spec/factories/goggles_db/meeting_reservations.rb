@@ -2,6 +2,8 @@
 
 FactoryBot.define do
   factory :meeting_reservation, class: 'GogglesDb::MeetingReservation' do
+    before_create_validate_instance
+
     badge                 { create(:badge) }
     meeting               { create(:meeting, season: badge.season) }
     team                  { badge.team }
@@ -12,12 +14,5 @@ FactoryBot.define do
     confirmed             { false }
     #-- -----------------------------------------------------------------------
     #++
-
-    before(:create) do |built_instance|
-      if built_instance.invalid?
-        puts "\r\nFactory def. error => " << GogglesDb::ValidationErrorTools.recursive_error_for(built_instance)
-        puts built_instance.inspect
-      end
-    end
   end
 end

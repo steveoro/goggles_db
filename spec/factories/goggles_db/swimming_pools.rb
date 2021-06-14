@@ -2,6 +2,8 @@
 
 FactoryBot.define do
   factory :swimming_pool, class: 'GogglesDb::SwimmingPool' do
+    before_create_validate_instance
+
     name           { "#{FFaker::Address.street_name} pool" }
     nick_name      { "#{FFaker::Address.street_name.downcase.gsub(' ', '')}-#{pool_type.length_in_meters}-#{(rand * 10_000).to_i}" }
     address        { FFaker::Address.street_address }
@@ -21,12 +23,5 @@ FactoryBot.define do
     hair_dryer_type     { GogglesDb::HairDryerType.all.sample }
     #-- -----------------------------------------------------------------------
     #++
-
-    before(:create) do |built_instance|
-      if built_instance.invalid?
-        puts "\r\nFactory def. error => " << GogglesDb::ValidationErrorTools.recursive_error_for(built_instance)
-        puts built_instance.inspect
-      end
-    end
   end
 end
