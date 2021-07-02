@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    goggles_db (0.3.01)
+    goggles_db (0.3.05)
       acts-as-taggable-on
       acts_as_votable
       carrierwave
@@ -446,7 +446,7 @@ GEM
     uniform_notifier (1.14.2)
     warden (1.2.9)
       rack (>= 2.0.9)
-    websocket-driver (0.7.4)
+    websocket-driver (0.7.5)
       websocket-extensions (>= 0.1.0)
     websocket-extensions (0.1.5)
     yard (0.9.26)
