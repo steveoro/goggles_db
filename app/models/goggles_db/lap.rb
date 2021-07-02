@@ -24,7 +24,8 @@ module GogglesDb
     validates_associated :swimmer
     validates_associated :team
 
-    belongs_to :meeting_individual_result, optional: true
+    belongs_to :meeting_individual_result
+    validates_associated :meeting_individual_result
 
     has_one :meeting,    through: :meeting_program
     has_one :event_type, through: :meeting_program

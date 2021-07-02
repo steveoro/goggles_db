@@ -30,12 +30,14 @@ module GogglesDb
 
     has_many :laps, -> { order('laps.length_in_meters') }
 
-    # These reference fields may be filled-in later (thus not validated upon creation):
+    belongs_to :team
+    belongs_to :swimmer
+    validates_associated :team
+    validates_associated :swimmer
+
+    # These additional reference fields may be filled-in later (thus not validated upon creation):
     belongs_to :team_affiliation, optional: true
-    belongs_to :team,             optional: true
     belongs_to :badge,            optional: true
-    belongs_to :swimmer,          optional: true
-    belongs_to :disqualification_code_type, optional: true
 
     validates :goggle_cup_points, presence: true, numericality: true
     validates :team_points,       presence: true, numericality: true
