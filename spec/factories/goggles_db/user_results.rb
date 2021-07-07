@@ -14,7 +14,8 @@ FactoryBot.define do
       )
     end
 
-    pool_type     { GogglesDb::PoolType.all_eventable.sample }
+    swimming_pool
+    pool_type     { swimming_pool.pool_type }
     category_type { GogglesDb::CategoryType.eventable.individuals.sample }
 
     event_type do

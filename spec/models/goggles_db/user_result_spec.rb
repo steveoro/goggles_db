@@ -23,8 +23,9 @@ module GogglesDb
 
       it_behaves_like(
         'having one or more required associations',
-        %i[user_workshop user swimmer
-           pool_type event_type category_type gender_type stroke_type]
+        %i[user_workshop user swimmer swimming_pool
+           pool_type event_type category_type
+           gender_type stroke_type]
       )
 
       # Presence of fields & requiredness:
@@ -35,7 +36,8 @@ module GogglesDb
 
       it_behaves_like(
         'responding to a list of methods',
-        %i[disqualified? valid_for_ranking? to_timing
+        %i[user_laps laps
+           disqualified? valid_for_ranking? to_timing
            meeting_attributes swimmer_attributes
            minimal_attributes to_json]
       )
@@ -135,7 +137,7 @@ module GogglesDb
       # Required associations:
       it_behaves_like(
         '#to_json when called on a valid instance',
-        %w[pool_type event_type category_type gender_type stroke_type]
+        %w[swimming_pool pool_type event_type category_type gender_type stroke_type]
       )
       it_behaves_like(
         '#to_json when called on a valid instance with a synthetized association',
@@ -149,7 +151,7 @@ module GogglesDb
 
         it_behaves_like(
           '#to_json when the entity contains collection associations with',
-          %w[user_laps]
+          %w[laps]
         )
       end
     end

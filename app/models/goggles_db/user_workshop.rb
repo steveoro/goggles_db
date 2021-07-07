@@ -4,7 +4,7 @@ module GogglesDb
   #
   # = UserWorkshop model
   #
-  #   - version:  7.02.18
+  #   - version:  7.2.18
   #   - author:   Steve A.
   #
   # Allows to manage user-driven or team-driven swimming workshops
@@ -26,6 +26,7 @@ module GogglesDb
     belongs_to :team # Team arraging this Workshop, if none
     validates_associated :user
     validates_associated :team
+    alias home_team team # (new, old)
 
     has_one :season_type, through: :season
     has_one :federation_type, through: :season
@@ -52,7 +53,7 @@ module GogglesDb
     def to_json(options = nil)
       minimal_attributes.merge(
         'user' => user.minimal_attributes,
-        'team' => team.minimal_attributes,
+        'home_team' => team.minimal_attributes,
         'swimming_pool' => swimming_pool&.minimal_attributes
       ).to_json(options)
     end

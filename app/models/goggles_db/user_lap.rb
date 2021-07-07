@@ -4,7 +4,7 @@ module GogglesDb
   #
   # = UserLap model
   #
-  #   - version:  7.02.18
+  #   - version:  7.3.06
   #   - author:   Steve A.
   #
   # User laps refer exclusively to user results (& user workshops)
@@ -43,6 +43,11 @@ module GogglesDb
     alias_attribute :parent_meeting, :user_workshop # (old, new)
     alias_attribute :parent_result_id, :user_result_id
     alias user_workshop_attributes meeting_attributes # (new, old)
+
+    # Returns the correct parent association symbol
+    def self.parent_association_sym
+      :user_result
+    end
 
     # Returns the column symbol used for the parent association with a result row
     def self.parent_result_column_sym

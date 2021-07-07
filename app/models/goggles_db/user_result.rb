@@ -4,7 +4,7 @@ module GogglesDb
   #
   # = UserResult model
   #
-  #   - version:  7.02.18
+  #   - version:  7.3.06
   #   - author:   Steve A.
   #
   # User results are swimming event timings:
@@ -27,6 +27,7 @@ module GogglesDb
     belongs_to :category_type
     belongs_to :pool_type
     belongs_to :event_type
+    belongs_to :swimming_pool
 
     validates_associated :user_workshop
     validates_associated :user
@@ -34,14 +35,15 @@ module GogglesDb
     validates_associated :category_type
     validates_associated :pool_type
     validates_associated :event_type
+    validates_associated :swimming_pool
 
     has_one :gender_type, through: :swimmer
     has_one :stroke_type, through: :event_type
 
-    belongs_to :swimming_pool, optional: true
     belongs_to :disqualification_code_type, optional: true
 
     has_many :user_laps, -> { order('user_laps.length_in_meters') }, dependent: :delete_all
+    alias laps user_laps # (new, old)
 
     # Sorting scopes:
     scope :by_date, ->(dir = :asc) { joins(:user_workshop).order('user_workshops.header_date': dir) }
@@ -68,7 +70,7 @@ module GogglesDb
         'category_type' => category_type.minimal_attributes,
         'gender_type' => gender_type.lookup_attributes,
         'stroke_type' => stroke_type.lookup_attributes,
-        'user_laps' => user_laps&.map(&:minimal_attributes) # (Optional)
+        'laps' => laps&.map(&:minimal_attributes) # (Optional)
       ).merge(
         minimal_associations
       ).to_json(options)
