@@ -6,7 +6,7 @@ module GogglesDb
   #
   # = Lap model
   #
-  #   - version:  7.02.18
+  #   - version:  7.3.06
   #   - author:   Steve A.
   #
   # == Note:
@@ -62,6 +62,11 @@ module GogglesDb
     # AbstractLap overrides:
     alias_attribute :parent_meeting, :meeting
     alias_attribute :parent_result_id, :meeting_individual_result_id
+
+    # Returns the correct parent association symbol
+    def self.parent_association_sym
+      :meeting_individual_result
+    end
 
     # Returns the column symbol used for the parent association with a result row
     def self.parent_result_column_sym

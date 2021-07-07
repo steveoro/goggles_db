@@ -34,7 +34,9 @@ module GogglesDb
 
       it_behaves_like(
         'having one or more required associations',
-        %i[swimmer user_result user_workshop event_type pool_type]
+        %i[swimmer user_result
+           parent_meeting user_workshop
+           event_type pool_type]
       )
 
       # Presence of fields & requiredness:
@@ -46,9 +48,10 @@ module GogglesDb
       it_behaves_like(
         'responding to a list of methods',
         %i[reaction_time position
+           parent_result_id user_result_id
            minutes_from_start seconds_from_start hundredths_from_start
            timing_from_start
-           meeting_attributes
+           user_workshop_attributes meeting_attributes
            to_timing to_json]
       )
     end

@@ -24,7 +24,7 @@ module GogglesDb
 
       it_behaves_like(
         'having one or more required associations',
-        %i[user team season season_type federation_type edition_type timing_type]
+        %i[user team home_team season season_type federation_type edition_type timing_type]
       )
 
       # Presence of fields & requiredness:
@@ -89,7 +89,7 @@ module GogglesDb
       # Required associations:
       it_behaves_like(
         '#to_json when called on a valid instance',
-        %w[user team season edition_type timing_type season_type federation_type]
+        %w[user home_team season edition_type timing_type season_type federation_type]
       )
     end
   end

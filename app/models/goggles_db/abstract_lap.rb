@@ -6,7 +6,7 @@ module GogglesDb
   #
   # Encapsulates common behavior for Laps & User Laps.
   #
-  #   - version:  7.02.18
+  #   - version:  7.3.06
   #   - author:   Steve A.
   #
   class AbstractLap < ApplicationRecord
@@ -93,7 +93,15 @@ module GogglesDb
     protected
 
     class << self
-      # Returns the column symbol used for the parent association with a result row
+      # Returns the parent association symbol.
+      # (either MIR or UserResult, depending on the sibling class)
+      #
+      # ==> OVERRIDE IN SIBLINGS <==
+      def parent_association_sym; end
+    end
+
+    class << self
+      # Returns the column symbol used for the parent association with a result row.
       # (either MIR or UserResult, depending on the sibling class)
       #
       # ==> OVERRIDE IN SIBLINGS <==

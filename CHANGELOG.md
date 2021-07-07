@@ -2,6 +2,7 @@
 
 _Please, add the latest build info on top of the list; use Version::MAJOR only after gold release; keep semantic versioning in line with framework's_
 
+- **0.3.06** [Steve A.] swimming_pool association in UserResult is no longer optional; minor refactorings
 - **0.3.01** [Steve A.] improved structure for import_queues & helpers; data migrations & misc fixes
 - **0.2.18** [Steve A.] upgraded gem set due to security fixes; additional long_label output for #to_json is some models; added User Results (partially modified from legacy structure), User Laps & User Workshop
 - **0.2.09** [Steve A.] added timing.to_s in minimal_attributes for reservations
