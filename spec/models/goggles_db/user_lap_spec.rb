@@ -48,6 +48,7 @@ module GogglesDb
       it_behaves_like(
         'responding to a list of methods',
         %i[reaction_time position
+           parent_result user_result
            parent_result_id user_result_id
            minutes_from_start seconds_from_start hundredths_from_start
            timing_from_start
