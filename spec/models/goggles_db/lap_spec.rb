@@ -31,6 +31,7 @@ module GogglesDb
       it_behaves_like(
         'responding to a list of methods',
         %i[reaction_time stroke_cycles breath_cycles position
+           parent_result meeting_individual_result
            parent_result_id meeting_individual_result_id
            minutes_from_start seconds_from_start hundredths_from_start
            underwater_kicks underwater_seconds underwater_hundredths

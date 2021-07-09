@@ -54,7 +54,7 @@ module GogglesDb
     #++
 
     # Test a bunch of 'IT' cities, which are granted to have regions/subdivisions:
-    City.where(country_code: 'IT').first(50).sample(10).each do |subject_city|
+    City.where(country: 'Italy').first(50).sample(10).each do |subject_city|
       let(:fixture_isos)        { subject_city.to_iso }
       let(:fixture_iso_country) { fixture_isos.first }
       let(:fixture_iso_city)    { fixture_isos.last }
@@ -138,7 +138,7 @@ module GogglesDb
     end
 
     describe '#iso_attributes' do
-      let(:subject_city) { GogglesDb::City.where(country_code: 'IT').limit(50).sample }
+      let(:subject_city) { GogglesDb::City.where(country: 'Italy').limit(50).sample }
       subject { subject_city.iso_attributes }
 
       it 'is a non-empty Hash' do

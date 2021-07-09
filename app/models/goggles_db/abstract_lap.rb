@@ -114,6 +114,12 @@ module GogglesDb
     # ==> OVERRIDE IN SIBLINGS <==
     def parent_meeting; end
 
+    # Returns the actual parent association with a result row
+    # (either MIR or UserResult, depending on the sibling class)
+    #
+    # ==> OVERRIDE IN SIBLINGS <==
+    def parent_result; end
+
     # Returns the column value used for the parent association with a result row
     # (either MIR or UserResult, depending on the sibling class)
     #
