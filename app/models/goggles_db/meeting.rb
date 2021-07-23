@@ -65,7 +65,14 @@ module GogglesDb
     scope :by_season, ->(dir = :asc)  { joins(:season).order('seasons.begin_date': dir) }
 
     # Filtering scopes:
-    scope :for_name, ->(name) { where('MATCH(meetings.description, meetings.code) AGAINST(?)', name) }
+    scope :for_name, lambda { |name|
+      like_query = "%#{name}%"
+      includes([:edition_type])
+        .where('MATCH(meetings.description, meetings.code) AGAINST(?)', name)
+        .or(includes([:edition_type]).where('meetings.description like ?', like_query))
+        .or(includes([:edition_type]).where('meetings.code like ?', like_query))
+        .by_date(:desc)
+    }
 
     # TODO: CLEAR UNUSED
     # scope :only_invitation, -> { where('invitation and not results_acquired') } # invitation = manifest

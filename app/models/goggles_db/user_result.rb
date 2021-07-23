@@ -4,7 +4,7 @@ module GogglesDb
   #
   # = UserResult model
   #
-  #   - version:  7.3.06
+  #   - version:  7.3.10
   #   - author:   Steve A.
   #
   # User results are swimming event timings:
@@ -41,6 +41,9 @@ module GogglesDb
     has_one :stroke_type, through: :event_type
 
     belongs_to :disqualification_code_type, optional: true
+
+    has_one :season,      through: :user_workshop
+    has_one :season_type, through: :season
 
     has_many :user_laps, -> { order('user_laps.length_in_meters') }, dependent: :delete_all
     alias laps user_laps # (new, old)
