@@ -4,7 +4,7 @@ module GogglesDb
   #
   # = Meeting model
   #
-  #   - version:  7.02.18
+  #   - version:  7.3.10
   #   - author:   Steve A.
   #
   class Meeting < AbstractMeeting
