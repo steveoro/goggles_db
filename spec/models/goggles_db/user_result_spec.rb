@@ -37,6 +37,7 @@ module GogglesDb
       it_behaves_like(
         'responding to a list of methods',
         %i[user_laps laps
+           season season_type
            disqualified? valid_for_ranking? to_timing
            meeting_attributes swimmer_attributes
            minimal_attributes to_json]

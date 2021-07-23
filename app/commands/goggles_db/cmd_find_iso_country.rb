@@ -7,7 +7,7 @@ module GogglesDb
   #
   # = "Find ISO3166 Country" command
   #
-  #   - file vers.: 1.01
+  #   - file vers.: 1.03
   #   - author....: Steve A.
   #   - build.....: 20201212
   #
@@ -70,7 +70,8 @@ module GogglesDb
     # Otherwise, sets #result to +nil+ and logs just the country name into the #errors hash.
     # Returns always itself.
     def call
-      coutry_code_alpha_method = "find_country_by_alpha#{@country_code.length < 3 ? 2 : 3}"
+      alpha_length = @country_code && @country_code.length < 3 ? 2 : 3
+      coutry_code_alpha_method = "find_country_by_alpha#{alpha_length}"
 
       result = ISO3166::Country.find_country_by_name(@country_name) ||
                ISO3166::Country.find_country_by_unofficial_names(@country_name) ||
