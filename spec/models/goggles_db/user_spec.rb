@@ -60,12 +60,14 @@ module GogglesDb
       context 'when the user has any association bound by foreign key,' do
         let(:deletable_user) { FactoryBot.create(:user) }
         let(:fixture_reservation) { FactoryBot.create(:meeting_reservation, user: deletable_user) }
+        let(:fixture_managed_affiliation) { FactoryBot.create(:managed_affiliation, manager: deletable_user) }
         let(:fixture_workshop) { FactoryBot.create(:user_workshop, user: deletable_user) }
         let(:fixture_result) { FactoryBot.create(:user_result, user: deletable_user, user_workshop: fixture_workshop) }
         before(:each) do
           # Verify domain:
           expect(deletable_user).to be_a(User).and be_valid
           expect(fixture_reservation).to be_a(MeetingReservation).and be_valid
+          expect(fixture_managed_affiliation).to be_a(ManagedAffiliation).and be_valid
           expect(fixture_workshop).to be_a(UserWorkshop).and be_valid
           expect(fixture_result).to be_a(UserResult).and be_valid
           deletable_user.destroy
@@ -74,9 +76,14 @@ module GogglesDb
         it 'destroys the user' do
           expect(deletable_user).to be_destroyed
         end
+
         it 'destroys also all the associated MeetingReservation(s)' do
           expect { fixture_reservation.reload }.to raise_error(ActiveRecord::RecordNotFound)
         end
+        it 'destroys also all the associated ManagedAffiliation(s)' do
+          expect { fixture_managed_affiliation.reload }.to raise_error(ActiveRecord::RecordNotFound)
+        end
+
         it 'moves any UserWorkshop association to the placeholder user' do
           fixture_workshop.reload
           expect(fixture_workshop.user_id).to eq(User::PLACEHOLDER_ID)
