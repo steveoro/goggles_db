@@ -4,12 +4,15 @@ module GogglesDb
   #
   # = User model
   #
-  #   - version:  7.88
+  #   - version:  7.0.3.12
   #   - author:   Steve A.
   #
   class User < ApplicationRecord
+    PLACEHOLDER_ID = 3
+
     self.table_name = 'users'
 
+    before_destroy :amend_fk_rows!
     after_create :associate_to_swimmer!
     after_save   :validate_swimmer_association
 
@@ -43,6 +46,13 @@ module GogglesDb
     belongs_to :swimmer_level_type, optional: true
     belongs_to :coach_level_type, optional: true
     has_many :managed_affiliations
+
+    # [Steve A.] FKeys are active on the following 3, so any 'dependent:' option won't count
+    # because the callback is yield only *after* the user row is destroyed and the FK in place
+    # will force a rollback before the action is actually carried out.
+    has_many :meeting_reservations, dependent: :destroy
+    has_many :user_workshops, dependent: :destroy
+    has_many :user_results, dependent: :destroy
 
     validates :email, presence: true, uniqueness: { case_sensitive: false, message: :already_exists }
     validates :name, presence: true, uniqueness: { case_sensitive: true, message: :already_exists }
@@ -200,6 +210,20 @@ module GogglesDb
 
       swimmer.associated_user_id = id
       swimmer.save!
+    end
+
+    # Destroys all associated rows bound by foreing keys.
+    # In the case of Users, those models will be:
+    # - MeetingReservation
+    # - UserWorkshop
+    # - UserResult
+    def amend_fk_rows!
+      logger.info("\r\n=> Deleting user #{id}: #{first_name} #{last_name} (#{name} => #{email})")
+      # Delete erasable stuff:
+      GogglesDb::MeetingReservation.where(user_id: id).delete_all
+      # Move children associations to the placeholder User ID:
+      GogglesDb::UserWorkshop.where(user_id: id).update_all(user_id: PLACEHOLDER_ID)
+      GogglesDb::UserResult.where(user_id: id).update_all(user_id: PLACEHOLDER_ID)
     end
   end
 end
