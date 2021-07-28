@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    goggles_db (0.3.20)
+    goggles_db (0.3.21)
       acts-as-taggable-on
       acts_as_votable
       carrierwave
@@ -180,8 +180,8 @@ GEM
     formatador (0.2.5)
     fuzzy-string-match (1.0.1)
       RubyInline (>= 3.8.6)
-    globalid (0.4.2)
-      activesupport (>= 4.2.0)
+    globalid (0.5.1)
+      activesupport (>= 5.0)
     guard (2.16.2)
       formatador (>= 0.2.4)
       listen (>= 2.7, < 4.0)
