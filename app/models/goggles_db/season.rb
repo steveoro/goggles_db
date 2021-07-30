@@ -69,7 +69,7 @@ module GogglesDb
     # - check_date: the date for the check
     #
     def ended?(check_date = Date.today)
-      end_date ? end_date <= check_date : false
+      end_date ? end_date < check_date : false
     end
 
     # Returns if the season has started at a specific date; false otherwise.
