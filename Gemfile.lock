@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    goggles_db (0.3.21)
+    goggles_db (0.3.22)
       acts-as-taggable-on
       acts_as_votable
       carrierwave
@@ -158,7 +158,7 @@ GEM
     factory_bot_rails (6.2.0)
       factory_bot (~> 6.2.0)
       railties (>= 5.0.0)
-    faraday (1.5.1)
+    faraday (1.6.0)
       faraday-em_http (~> 1.0)
       faraday-em_synchrony (~> 1.0)
       faraday-excon (~> 1.1)
@@ -166,6 +166,7 @@ GEM
       faraday-net_http (~> 1.0)
       faraday-net_http_persistent (~> 1.1)
       faraday-patron (~> 1.0)
+      faraday-rack (~> 1.0)
       multipart-post (>= 1.2, < 3)
       ruby2_keywords (>= 0.0.4)
     faraday-em_http (1.0.0)
@@ -175,12 +176,13 @@ GEM
     faraday-net_http (1.0.1)
     faraday-net_http_persistent (1.2.0)
     faraday-patron (1.0.0)
+    faraday-rack (1.0.0)
     ffaker (2.18.0)
     ffi (1.15.0)
     formatador (0.2.5)
     fuzzy-string-match (1.0.1)
       RubyInline (>= 3.8.6)
-    globalid (0.5.1)
+    globalid (0.5.2)
       activesupport (>= 5.0)
     guard (2.16.2)
       formatador (>= 0.2.4)
