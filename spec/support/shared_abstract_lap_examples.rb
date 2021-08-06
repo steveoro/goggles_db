@@ -77,7 +77,12 @@ end
 shared_examples_for 'AbstractLap #timing_from_start' do |sibling_class|
   describe '#timing_from_start' do
     context 'for an instance having the "_from_start" values,' do
-      before(:each) { expect(fixture_row.seconds_from_start).to be_positive }
+      before(:each) do
+        amount = fixture_row.minutes_from_start.to_i +
+                 fixture_row.hundredths_from_start.to_i +
+                 fixture_row.seconds_from_start.to_i
+        expect(amount).to be_positive
+      end
       subject { fixture_row.timing_from_start }
 
       it 'returns the Timing instance computed using the "_from_start" values' do

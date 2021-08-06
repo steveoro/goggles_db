@@ -39,7 +39,9 @@ module GogglesDb
     # If the "_from_start" fields have not been filled with data, the Timing value
     # will be computed.
     def timing_from_start
-      if seconds_from_start.to_i.positive?
+      # Quick way to detect if the timing from start is already set:
+      amount = minutes_from_start.to_i + hundredths_from_start.to_i + seconds_from_start.to_i
+      if amount.positive?
         Timing.new(
           hundredths: hundredths_from_start,
           seconds: seconds_from_start,
