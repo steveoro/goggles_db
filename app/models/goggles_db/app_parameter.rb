@@ -4,7 +4,7 @@ module GogglesDb
   #
   # = AppParameter model
   #
-  #   - version:  7.83
+  #   - version:  7-0.3.25
   #   - author:   Steve A.
   #
   class AppParameter < ApplicationRecord
@@ -13,11 +13,12 @@ module GogglesDb
     VERSIONING_CODE = 1
 
     FULL_VERSION_FIELDNAME = 'a_name'
-    DB_VERSION_FIELDNAME = 'a_string'
-    TOGGLE_FIELDNAME     = 'a_bool'
+    DB_VERSION_FIELDNAME   = 'a_string'
+    TOGGLE_FIELDNAME       = 'a_bool'
+    SETTINGS_GROUPS        = %i[framework_urls framework_emails social_urls app].freeze
 
     # These shall be serialized only for +#versioning_row+:
-    has_settings :framework_urls, :framework_emails, :social_urls
+    has_settings :framework_urls, :framework_emails, :social_urls, :app
 
     # Retrieves the "versioning" parameter row
     def self.versioning_row

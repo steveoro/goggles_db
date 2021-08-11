@@ -31,6 +31,12 @@ module GogglesDb
           expect(subject).to be true
         end
       end
+      context 'when the user is not a valid instance,' do
+        subject { GrantChecker.admin?(nil) }
+        it 'is false' do
+          expect(subject).to be false
+        end
+      end
       context 'when the user does not have generic admin rights (basic user),' do
         subject { GrantChecker.admin?(basic_user) }
         it 'is false' do

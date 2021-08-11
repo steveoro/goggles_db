@@ -19,7 +19,7 @@ module GogglesDb
     devise :database_authenticatable, :registerable,
            :confirmable, :lockable, :trackable,
            :recoverable, :rememberable, :validatable,
-           :omniauthable, omniauth_providers: %i[facebook google_oauth2]
+           :omniauthable, omniauth_providers: %i[facebook]
 
     # Read Settings like this:
     #
