@@ -2,6 +2,7 @@
 
 _Please, add the latest build info on top of the list; use Version::MAJOR only after gold release; keep semantic versioning in line with framework's_
 
+- **0.3.25** [Steve A.] improved GrantChecker a bit + added the list of supported settings group keys to AppParameter
 - **0.3.20** [Steve A.] major data clean-up: laps normalization & old user purge: saying goodbye to 671 old chaps and related reservations; DB vers. 1.92.3
 - **0.3.06** [Steve A.] swimming_pool association in UserResult is no longer optional; minor refactorings
 - **0.3.01** [Steve A.] improved structure for import_queues & helpers; data migrations & misc fixes
