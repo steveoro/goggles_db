@@ -83,11 +83,12 @@ module GogglesDb
 
     describe 'self.by_timing' do
       let(:result) do
-        event_code = %w[S4X50SL S4X50MI].sample # choose one among the most common relays
-        mprg = GogglesDb::MeetingProgram.includes(:event_type, :stroke_type)
-                                        .joins(:event_type, :stroke_type)
+        event_code = %w[S4X50SL S4X50MI S4X100SL].sample # choose one among the most common relays
+        mprg = GogglesDb::MeetingProgram.includes(:event_type, :stroke_type, :meeting_relay_results)
+                                        .joins(:event_type, :stroke_type, :meeting_relay_results)
                                         .where('event_types.code': event_code)
-                                        .last(300).sample
+                                        .where('meeting_relay_results.disqualified != true')
+                                        .first(500).sample
         expect(mprg.meeting_relay_results.count).to be_positive
         # (Note: exclude disqualified results to simplify time comparison)
         mprg.meeting_relay_results.qualifications.by_timing
