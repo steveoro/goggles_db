@@ -27,6 +27,7 @@ global_job_config:
       - chmod +x ./cc-test-reporter
       - cache restore cc-model-goggles_db
       - cache restore cc-command-goggles_db
+      - cache restore cc-decorator-goggles_db
       - cache restore cc-strategy-goggles_db
       - cache restore cc-validator-goggles_db
 

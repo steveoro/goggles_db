@@ -3,7 +3,7 @@
 require 'rails_helper'
 
 module GogglesDb
-  RSpec.describe ImportQueueDecorator do
+  RSpec.describe ImportQueueDecorator, type: :decorator do
     describe '#state_flag' do
       context 'for a row which is done (but not yet deleted),' do
         let(:model_obj) { FactoryBot.create(:import_queue, done: true) }

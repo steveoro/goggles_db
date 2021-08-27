@@ -85,6 +85,13 @@ blocks:
             - ./cc-test-reporter format-coverage -t simplecov -o coverage/cc-command.json
             - cache store cc-command-goggles_db coverage/cc-command.json
 
+        - name: RSpec - decorators
+          commands:
+            - 'bundle exec rspec -t type:decorator'
+            - cache delete cc-decorator-goggles_db
+            - ./cc-test-reporter format-coverage -t simplecov -o coverage/cc-decorator.json
+            - cache store cc-decorator-goggles_db coverage/cc-decorator.json
+
         - name: RSpec - strategies
           commands:
             - 'bundle exec rspec -t type:strategy'
@@ -98,11 +105,6 @@ blocks:
             - cache delete cc-validator-goggles_db
             - ./cc-test-reporter format-coverage -t simplecov -o coverage/cc-validator.json
             - cache store cc-validator-goggles_db coverage/cc-validator.json
-
-        # Not currently used:
-        # - name: RSpec - decorators
-        #   commands:
-        #     - 'bundle exec rspec -t type:decorator'
 
 promotions:
   - name: Code coverage
