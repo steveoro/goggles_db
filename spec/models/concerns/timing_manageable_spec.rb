@@ -24,10 +24,10 @@ describe DummyTimingManageableIncludee do
   let(:hundredths) { ((rand * 100) % 99).to_i }
   let(:seconds) { ((rand * 100) % 59).to_i }
   let(:minutes) { ((rand * 100) % 59).to_i }
-  let(:fixture_row) { DummyTimingManageableIncludee.new(hundredths, seconds, minutes) }
+  let(:fixture_row) { described_class.new(hundredths, seconds, minutes) }
 
   it 'is a DummyTimingManageableIncludee' do
-    expect(fixture_row).to be_a(DummyTimingManageableIncludee)
+    expect(fixture_row).to be_a(described_class)
   end
 
   it_behaves_like 'TimingManageable'

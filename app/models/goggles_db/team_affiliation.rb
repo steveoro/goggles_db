@@ -4,7 +4,7 @@ module GogglesDb
   #
   # = TeamAffiliation model
   #
-  #   - version:  7.061
+  #   - version:  7.0.3.30
   #   - author:   Steve A.
   #
   class TeamAffiliation < ApplicationRecord
@@ -30,9 +30,16 @@ module GogglesDb
     # scope :by_team,   ->(dir = :asc) { joins(:team).order('teams.name': dir) }
 
     # Filtering scopes:
-    scope :for_year,  ->(header_year) { joins(:season).where('seasons.header_year': header_year) }
-    scope :for_years, ->(*year_list)  { joins(:season).where(['seasons.header_year IN (?)', year_list]) }
-    scope :for_name,  ->(name)        { where('MATCH(team_affiliations.name) AGAINST(?)', name) }
+    scope :for_name,  ->(name) { where('MATCH(team_affiliations.name) AGAINST(?)', name) }
+
+    scope :for_years, lambda { |*year_list|
+      condition = year_list.inject([]) { |memo, _e| memo << '(INSTR(seasons.header_year, ?) > 0)' }.join(' OR ')
+      joins(:season).where(condition, *year_list)
+    }
+
+    scope :for_year, lambda { |header_year|
+      joins(:season).where('(INSTR(seasons.header_year, ?) > 0)', header_year)
+    }
     #-- ------------------------------------------------------------------------
     #++
 

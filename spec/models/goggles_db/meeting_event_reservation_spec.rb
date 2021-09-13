@@ -10,7 +10,7 @@ module GogglesDb
   RSpec.describe MeetingEventReservation, type: :model do
     shared_examples_for 'a valid MeetingEventReservation instance' do
       it 'is valid' do
-        expect(subject).to be_a(MeetingEventReservation).and be_valid
+        expect(subject).to be_a(described_class).and be_valid
       end
 
       it_behaves_like(
@@ -29,12 +29,14 @@ module GogglesDb
     end
 
     context 'any pre-seeded instance' do
-      subject { MeetingEventReservation.all.limit(20).sample }
+      subject { described_class.all.limit(20).sample }
+
       it_behaves_like('a valid MeetingEventReservation instance')
     end
 
     context 'when using the factory, the resulting instance' do
       subject { FactoryBot.create(:meeting_event_reservation) }
+
       it_behaves_like('a valid MeetingEventReservation instance')
     end
     #-- ------------------------------------------------------------------------
@@ -43,6 +45,7 @@ module GogglesDb
     # Filtering scopes:
     describe 'self.accepted' do
       let(:result) { subject.class.where(accepted: true).limit(20) }
+
       it 'contains only accepted reservations' do
         expect(result).to all(be_accepted)
       end
@@ -52,18 +55,23 @@ module GogglesDb
 
     describe 'regarding the timing fields,' do
       let(:fixture_row) { FactoryBot.build(:meeting_event_reservation) }
+
       it_behaves_like 'TimingManageable'
     end
 
     describe '#minimal_attributes' do
-      let(:fixture_row) { GogglesDb::MeetingEventReservation.limit(20).sample }
       subject { fixture_row.minimal_attributes }
+
+      let(:fixture_row) { described_class.limit(20).sample }
+
       it 'is an Hash' do
         expect(subject).to be_an(Hash)
       end
+
       it 'includes the timing string' do
         expect(subject['timing']).to eq(fixture_row.to_timing.to_s)
       end
+
       %w[meeting_event].each do |association_name|
         it "includes the #{association_name} association key" do
           expect(subject.keys).to include(association_name)

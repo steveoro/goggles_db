@@ -9,9 +9,14 @@ require 'support/shared_abstract_meeting_examples'
 
 module GogglesDb
   RSpec.describe Meeting, type: :model do
+    #-- ------------------------------------------------------------------------
+    #++
+
+    subject { FactoryBot.create(:meeting) }
+
     shared_examples_for 'a valid Meeting instance' do
       it 'is valid' do
-        expect(subject).to be_a(Meeting).and be_valid
+        expect(subject).to be_a(described_class).and be_valid
       end
 
       it_behaves_like(
@@ -47,48 +52,49 @@ module GogglesDb
     end
 
     context 'any pre-seeded instance' do
-      subject { Meeting.all.limit(20).sample }
+      subject { described_class.all.limit(20).sample }
+
       it_behaves_like('a valid Meeting instance')
     end
 
     context 'when using the factory, the resulting instance' do
       subject { FactoryBot.create(:meeting) }
+
       it_behaves_like('a valid Meeting instance')
     end
-    #-- ------------------------------------------------------------------------
-    #++
-
-    subject { FactoryBot.create(:meeting) }
 
     # Sorting scopes:
     describe 'self.by_date' do
-      it_behaves_like('sorting scope by_<ANY_VALUE_NAME>', Meeting, 'date', 'header_date')
+      it_behaves_like('sorting scope by_<ANY_VALUE_NAME>', described_class, 'date', 'header_date')
     end
+
     describe 'self.by_season' do
-      it_behaves_like('sorting scope by_<ANY_ENTITY_NAME>', Meeting, 'season', 'begin_date')
+      it_behaves_like('sorting scope by_<ANY_ENTITY_NAME>', described_class, 'season', 'begin_date')
     end
 
     # Filtering scopes:
     describe 'self.for_name' do
       context 'when combined with other associations that include same-named columns,' do
         subject do
-          GogglesDb::Meeting.joins(meeting_sessions: :swimming_pool)
-                            .includes(meeting_sessions: :swimming_pool)
-                            .for_name(%w[riccione CSI reggio parma].sample)
+          described_class.joins(meeting_sessions: :swimming_pool)
+                         .includes(meeting_sessions: :swimming_pool)
+                         .for_name(%w[riccione CSI reggio parma].sample)
         end
+
         it 'does not raise errors' do
           expect { subject.count }.not_to raise_error
         end
       end
+
       %w[riccione reggio parma deakker bologna ravenna].each do |filter_text|
-        it_behaves_like('filtering scope FULLTEXT for_...', Meeting, :for_name, %w[description code], filter_text)
+        it_behaves_like('filtering scope FULLTEXT for_...', described_class, :for_name, %w[description code], filter_text)
       end
     end
     #-- ------------------------------------------------------------------------
     #++
 
     it_behaves_like('AbstractMeeting #edition_label', :meeting)
-    it_behaves_like('AbstractMeeting #minimal_attributes', Meeting)
+    it_behaves_like('AbstractMeeting #minimal_attributes', described_class)
 
     describe '#to_json' do
       # Required associations:
@@ -101,9 +107,10 @@ module GogglesDb
         subject do
           # Use existing data to get a Meeting that already has events:
           event = GogglesDb::MeetingEvent.limit(200).sample
-          expect(event.meeting_session.meeting).to be_a(Meeting).and be_valid
+          expect(event.meeting_session.meeting).to be_a(described_class).and be_valid
           event.meeting_session.meeting
         end
+
         let(:json_hash) { JSON.parse(subject.to_json) }
 
         it_behaves_like(

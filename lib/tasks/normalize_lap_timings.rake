@@ -35,7 +35,7 @@ namespace :normalize do
                   .distinct
                   .map(&:meeting_individual_result).each do |mir|
       # 0. RED: Lap associated to a missing MIR?
-      unless mir.present?
+      if mir.blank?
         # (This will happen when a Lap is linked to a MIR that doesn't exist anymore - FK is currently missing)
         orphan_found = true
         $stdout.write("\033[1;33;31mx\033[0m")
@@ -91,7 +91,7 @@ namespace :normalize do
                       .distinct
                       .map(&:user_result).each do |result|
       # 0. RED: Lap associated to a missing parent? ('Shouldn't happen for UserLaps, since FKs are now in place)
-      unless result.present?
+      if result.blank?
         # NOTE: although this shouldn't happen anymore here, we'll keep the code to detect it in case
         # this shows up again when restoring old dumps.
         $stdout.write("\033[1;33;31mx\033[0m")

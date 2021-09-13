@@ -10,7 +10,7 @@ module GogglesDb
   RSpec.describe Team, type: :model do
     shared_examples_for 'a valid Team instance' do
       it 'is valid' do
-        expect(subject).to be_a(Team).and be_valid
+        expect(subject).to be_a(described_class).and be_valid
       end
 
       # Presence of fields & requiredness:
@@ -32,13 +32,20 @@ module GogglesDb
       )
     end
 
+    #-- ------------------------------------------------------------------------
+    #++
+
+    let(:team_with_badges) { FactoryBot.create(:team_with_badges) }
+
     context 'any pre-seeded instance' do
-      subject { Team.all.limit(20).sample }
+      subject { described_class.all.limit(20).sample }
+
       it_behaves_like('a valid Team instance')
     end
 
     context 'when using the factory, the resulting instance' do
       subject { FactoryBot.create(:team) }
+
       it_behaves_like('a valid Team instance')
     end
     #-- ------------------------------------------------------------------------
@@ -46,19 +53,15 @@ module GogglesDb
 
     # Sorting scopes:
     describe 'self.by_name' do
-      it_behaves_like('sorting scope by_<ANY_VALUE_NAME>', Team, 'name', 'name')
+      it_behaves_like('sorting scope by_<ANY_VALUE_NAME>', described_class, 'name', 'name')
     end
 
     # Filtering scopes:
     describe 'self.for_name' do
       %w[ferrari dynamic reggiana].each do |filter_text|
-        it_behaves_like('filtering scope FULLTEXT for_...', Team, :for_name, %w[name editable_name name_variations], filter_text)
+        it_behaves_like('filtering scope FULLTEXT for_...', described_class, :for_name, %w[name editable_name name_variations], filter_text)
       end
     end
-    #-- ------------------------------------------------------------------------
-    #++
-
-    let(:team_with_badges) { FactoryBot.create(:team_with_badges) }
 
     describe '#recent_badges' do
       let(:result) { team_with_badges.recent_badges.limit(10) }
@@ -88,9 +91,11 @@ module GogglesDb
 
     describe '#minimal_attributes' do
       subject { FactoryBot.create(:team, city: GogglesDb::City.limit(20).sample).minimal_attributes }
+
       it 'is an Hash' do
         expect(subject).to be_an(Hash)
       end
+
       %w[city].each do |association_name|
         it "includes the #{association_name} association key" do
           expect(subject.keys).to include(association_name)
@@ -115,6 +120,7 @@ module GogglesDb
       # Optional associations:
       context 'when the entity contains other optional associations,' do
         subject { FactoryBot.create(:team, city: GogglesDb::City.limit(20).sample) }
+
         let(:json_hash) do
           expect(subject.city).to be_a(City).and be_valid
           JSON.parse(subject.to_json)
@@ -128,7 +134,8 @@ module GogglesDb
 
       # Collection associations:
       context 'when the entity contains collection associations,' do
-        subject         { team_with_badges }
+        subject { team_with_badges }
+
         let(:json_hash) { JSON.parse(subject.to_json) }
 
         it_behaves_like(

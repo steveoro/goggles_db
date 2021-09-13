@@ -7,9 +7,11 @@ require 'support/shared_to_json_examples'
 
 module GogglesDb
   RSpec.describe MeetingEvent, type: :model do
+    subject { same_session_events.sample }
+
     shared_examples_for 'a valid MeetingEvent instance' do
       it 'is valid' do
-        expect(subject).to be_a(MeetingEvent).and be_valid
+        expect(subject).to be_a(described_class).and be_valid
       end
 
       it_behaves_like(
@@ -35,15 +37,6 @@ module GogglesDb
       )
     end
 
-    context 'any pre-seeded instance' do
-      subject { MeetingEvent.all.limit(20).sample }
-      it_behaves_like('a valid MeetingEvent instance')
-    end
-
-    context 'when using the factory, the resulting instance' do
-      subject { FactoryBot.create(:meeting_event) }
-      it_behaves_like('a valid MeetingEvent instance')
-    end
     #-- ------------------------------------------------------------------------
     #++
 
@@ -54,11 +47,22 @@ module GogglesDb
       FactoryBot.create_list(:meeting_event_relay, 3, meeting_session: meeting_session)
       meeting_session.meeting_events
     end
-    subject { same_session_events.sample }
+
+    context 'any pre-seeded instance' do
+      subject { described_class.all.limit(20).sample }
+
+      it_behaves_like('a valid MeetingEvent instance')
+    end
+
+    context 'when using the factory, the resulting instance' do
+      subject { FactoryBot.create(:meeting_event) }
+
+      it_behaves_like('a valid MeetingEvent instance')
+    end
 
     # Sorting scopes:
     describe 'self.by_order' do
-      it_behaves_like('sorting scope by_<ANY_VALUE_NAME>', MeetingEvent, 'order', 'event_order')
+      it_behaves_like('sorting scope by_<ANY_VALUE_NAME>', described_class, 'order', 'event_order')
     end
 
     # Filtering scopes:
@@ -67,6 +71,7 @@ module GogglesDb
         expect(same_session_events.relays).to all(be_relay)
       end
     end
+
     describe 'self.individuals' do
       it 'contains only individual events' do
         expect(same_session_events.individuals.map(&:relay?)).to all(be false)
@@ -78,12 +83,15 @@ module GogglesDb
     describe '#eventable?' do
       context 'for an in-race event,' do
         subject { FactoryBot.create(:meeting_event, out_of_race: false) }
+
         it 'returns true' do
           expect(subject.eventable?).to be true
         end
       end
+
       context 'for an out-of-race event,' do
         subject { FactoryBot.create(:meeting_event, out_of_race: true) }
+
         it 'returns false' do
           expect(subject.eventable?).to be false
         end
@@ -91,10 +99,12 @@ module GogglesDb
     end
 
     describe '#minimal_attributes' do
-      subject { GogglesDb::MeetingEvent.limit(200).sample.minimal_attributes }
+      subject { described_class.limit(200).sample.minimal_attributes }
+
       it 'is an Hash' do
         expect(subject).to be_an(Hash)
       end
+
       %w[event_type pool_type stroke_type heat_type].each do |association_name|
         it "includes the #{association_name} association key" do
           expect(subject.keys).to include(association_name)
@@ -112,9 +122,10 @@ module GogglesDb
       context 'when the entity contains collection associations,' do
         subject do
           prg = GogglesDb::MeetingProgram.limit(200).sample
-          expect(prg.meeting_event).to be_a(MeetingEvent).and be_valid
+          expect(prg.meeting_event).to be_a(described_class).and be_valid
           prg.meeting_event
         end
+
         let(:json_hash) { JSON.parse(subject.to_json) }
 
         it_behaves_like(
@@ -130,6 +141,7 @@ module GogglesDb
     # a properly defined callback chain: (was yielding errors in previous versions)
     context 'when deleting a Meeting that is an ancestor of an existing event,' do
       subject { FactoryBot.create(:meeting_event) }
+
       it 'does not yield any error' do
         expect { subject.meeting.destroy }.not_to raise_error
       end

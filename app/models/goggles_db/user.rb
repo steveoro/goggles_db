@@ -12,9 +12,9 @@ module GogglesDb
 
     self.table_name = 'users'
 
-    before_destroy :amend_fk_rows!
     after_create :associate_to_swimmer!
-    after_save   :validate_swimmer_association
+    before_destroy :amend_fk_rows!
+    after_save :validate_swimmer_association
 
     devise :database_authenticatable, :registerable,
            :confirmable, :lockable, :trackable,
@@ -131,7 +131,7 @@ module GogglesDb
     # Returns the list of Swimmers matching this user's name, last name & year of birth.
     # Minimum requirement: last_name must be present to have some results.
     def matching_swimmers
-      return Swimmer.none unless last_name.present?
+      return Swimmer.none if last_name.blank?
 
       # [Steve A.] The following convoluted condition performs better in finding
       # complex western names combinations than most existing FULLTEXT indexes on swimmers. (See specs)

@@ -68,7 +68,7 @@ module GogglesDb
     # == Parameters:
     # - check_date: the date for the check
     #
-    def ended?(check_date = Date.today)
+    def ended?(check_date = Time.zone.today)
       end_date ? end_date < check_date : false
     end
 
@@ -77,7 +77,7 @@ module GogglesDb
     # == Parameters:
     # - check_date: the date for the check
     #
-    def started?(check_date = Date.today)
+    def started?(check_date = Time.zone.today)
       begin_date ? begin_date <= check_date : false
     end
 
@@ -86,7 +86,7 @@ module GogglesDb
     # == Parameters:
     # - check_date: the date for the check
     #
-    def ongoing?(check_date = Date.today)
+    def ongoing?(check_date = Time.zone.today)
       started?(check_date) && !ended?(check_date)
     end
 

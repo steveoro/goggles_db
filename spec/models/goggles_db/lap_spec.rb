@@ -12,7 +12,7 @@ module GogglesDb
   RSpec.describe Lap, type: :model do
     shared_examples_for 'a valid Lap instance' do
       it 'is valid' do
-        expect(subject).to be_a(Lap).and be_valid
+        expect(subject).to be_a(described_class).and be_valid
       end
 
       it_behaves_like(
@@ -41,41 +41,44 @@ module GogglesDb
       )
     end
 
+    #-- ------------------------------------------------------------------------
+    #++
+
+    # TimingManageable:
+    let(:fixture_row) { FactoryBot.create(:lap) }
+    # Filtering scopes:
+    let(:existing_row) do
+      described_class.joins(:meeting_program)
+                     .includes(:meeting_individual_result)
+                     .first(300).sample
+    end
+
     context 'any pre-seeded instance' do
-      subject { Lap.all.limit(20).sample }
+      subject { described_class.all.limit(20).sample }
+
       it_behaves_like('a valid Lap instance')
     end
 
     context 'when using the factory, the resulting instance' do
       subject { FactoryBot.create(:lap) }
+
       it_behaves_like('a valid Lap instance')
     end
     #-- ------------------------------------------------------------------------
     #++
 
     # Sorting scopes:
-    it_behaves_like('AbstractLap sorting scopes', Lap)
+    it_behaves_like('AbstractLap sorting scopes', described_class)
 
-    # Filtering scopes:
-    let(:existing_row) do
-      Lap.joins(:meeting_program)
-         .includes(:meeting_individual_result)
-         .first(300).sample
-    end
-    it_behaves_like('AbstractLap filtering scopes', Lap)
-    #-- ------------------------------------------------------------------------
-    #++
-
-    # TimingManageable:
-    let(:fixture_row) { FactoryBot.create(:lap) }
+    it_behaves_like('AbstractLap filtering scopes', described_class)
 
     describe 'regarding the timing fields,' do
       # subject = fixture_row (can even be just built, not created)
       it_behaves_like('TimingManageable')
     end
 
-    it_behaves_like('AbstractLap #timing_from_start', Lap)
-    it_behaves_like('AbstractLap #minimal_attributes', Lap)
+    it_behaves_like('AbstractLap #timing_from_start', described_class)
+    it_behaves_like('AbstractLap #minimal_attributes', described_class)
     #-- ------------------------------------------------------------------------
     #++
 
@@ -83,9 +86,11 @@ module GogglesDb
       subject { FactoryBot.create(:lap) }
 
       let(:result) { JSON.parse(subject.to_json) }
+
       it 'includes the timing string' do
         expect(result['timing']).to eq(subject.to_timing.to_s)
       end
+
       it 'includes the timing string from the start of the race' do
         expect(result['timing_from_start']).to eq(subject.timing_from_start.to_s)
       end

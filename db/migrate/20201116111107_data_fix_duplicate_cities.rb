@@ -6,21 +6,21 @@ class DataFixDuplicateCities < ActiveRecord::Migration[6.0]
     # Bastia: 102 |=> 96
     GogglesDb::Team.where(city_id: 102).update_all(city_id: 96)
     GogglesDb::SwimmingPool.where(city_id: 102).update_all(city_id: 96)
-    execute <<-SQL
+    execute <<-SQL.squish
       UPDATE data_import_teams SET city_id = 96 WHERE city_id = 102;
     SQL
 
     # San Dona' di Piave: 146 |=> 115
     GogglesDb::Team.where(city_id: 146).update_all(city_id: 115)
     GogglesDb::SwimmingPool.where(city_id: 146).update_all(city_id: 115)
-    execute <<-SQL
+    execute <<-SQL.squish
       UPDATE data_import_teams SET city_id = 115 WHERE city_id = 146;
     SQL
 
     # Canosa di Puglia: 149 |=> 123
     GogglesDb::Team.where(city_id: 123).update_all(city_id: 149)
     GogglesDb::SwimmingPool.where(city_id: 123).update_all(city_id: 149)
-    execute <<-SQL
+    execute <<-SQL.squish
       UPDATE data_import_teams SET city_id = 123 WHERE city_id = 149;
     SQL
 

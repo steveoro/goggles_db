@@ -13,7 +13,6 @@ module GogglesDb
 
     # Actual User row associated with this Swimmer. It can be nil.
     belongs_to :associated_user, class_name: 'User', optional: true,
-                                 foreign_key: 'associated_user_id',
                                  inverse_of: :swimmer
 
     belongs_to            :gender_type

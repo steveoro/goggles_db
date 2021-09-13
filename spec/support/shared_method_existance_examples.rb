@@ -32,6 +32,7 @@ shared_examples_for 'having one or more required & present attributes (invalid i
       expect(subject).to respond_to(member_name)
       expect(subject.send(member_name)).to be_present
     end
+
     it "is not valid without ##{member_name}" do
       subject.send("#{member_name}=", nil)
       expect(subject).not_to be_valid

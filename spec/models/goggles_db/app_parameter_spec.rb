@@ -26,17 +26,20 @@ module GogglesDb
     end
 
     describe 'self.versioning_row' do
-      subject { AppParameter.versioning_row }
+      subject { described_class.versioning_row }
 
       it 'is an instance of AppParameter' do
-        expect(subject).to be_an(AppParameter).and be_valid
+        expect(subject).to be_an(described_class).and be_valid
       end
+
       it 'has a non-empty string for DB versioning' do
         expect(subject.send(AppParameter::DB_VERSION_FIELDNAME)).to be_present
       end
+
       it 'has a non-empty string for full App versioning' do
         expect(subject.send(AppParameter::FULL_VERSION_FIELDNAME)).to be_present
       end
+
       it 'has the maintenance mode flag toggled off' do
         expect(subject.maintenance?).to be false
       end
@@ -45,17 +48,18 @@ module GogglesDb
     describe 'self.maintenance=' do
       it 'changes the value of the maintenance toggle switch' do
         # Make sure default value is correct before testing the method:
-        expect(AppParameter.maintenance?).to be false
-        expect { AppParameter.maintenance = true }.to change(AppParameter, :maintenance?).to true
+        expect(described_class.maintenance?).to be false
+        expect { described_class.maintenance = true }.to change(described_class, :maintenance?).to true
       end
     end
 
     describe 'self.config' do
-      subject { AppParameter.config }
+      subject { described_class.config }
 
       it 'is an instance of AppParameter' do
-        expect(subject).to be_an(AppParameter).and be_valid
+        expect(subject).to be_an(described_class).and be_valid
       end
+
       AppParameter::SETTINGS_GROUPS.each do |setting_key|
         it "includes the :#{setting_key} settings key" do
           expect(subject.settings(setting_key)).to be_a(RailsSettings::SettingObject)

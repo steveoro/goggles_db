@@ -4,7 +4,7 @@ module GogglesDb
   #
   # = Team model
   #
-  #   - version:  7.054
+  #   - version:  7.0.3.30
   #   - author:   Steve A.
   #
   class Team < ApplicationRecord
@@ -59,11 +59,13 @@ module GogglesDb
     end
 
     # Instance scope helper for recent badges, given a list of years
+    # def recent_badges(year_list = [Time.zone.today.year - 1, Time.zone.today.year])
     def recent_badges(year_list = [Time.zone.today.year - 1, Time.zone.today.year])
       badges.for_years(*year_list)
     end
 
     # Instance scope helper for recent team_affiliations, given a list of years
+    # def recent_affiliations(year_list = [Time.zone.today.year - 1, Time.zone.today.year])
     def recent_affiliations(year_list = [Time.zone.today.year - 1, Time.zone.today.year])
       team_affiliations.for_years(*year_list)
     end

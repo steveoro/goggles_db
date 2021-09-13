@@ -9,6 +9,7 @@ shared_examples_for 'sorting scope by_<ANY_VALUE_NAME>' do |subject_class, value
     expect(result).to be_a(ActiveRecord::Relation)
     expect(result).to all be_a(subject_class)
   end
+
   it 'is ordered' do
     expect(result.first.send(comparable_method)).to be <= result.sample.send(comparable_method)
     expect(result.sample.send(comparable_method)).to be <= result.last.send(comparable_method)
@@ -21,6 +22,7 @@ shared_examples_for 'sorting scope by_<ANY_VALUE_NAME> (with prepared result)' d
     expect(result).to be_a(ActiveRecord::Relation)
     expect(result).to all be_a(subject_class)
   end
+
   it 'is ordered' do
     expect(result.first.send(comparable_method)).to be <= result.sample.send(comparable_method)
     expect(result.sample.send(comparable_method)).to be <= result.last.send(comparable_method)
@@ -36,6 +38,7 @@ shared_examples_for 'sorting scope by_<ANY_ENTITY_NAME>' do |subject_class, enti
     expect(result).to be_a(ActiveRecord::Relation)
     expect(result).to all be_a(subject_class)
   end
+
   it 'is ordered' do
     list = result.map { |row| row.send(entity_name).send(comparable_method) }.uniq
     # Compare downcased strings when handling string columns (most have FULLTEXT indexes and ignore case):

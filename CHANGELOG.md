@@ -2,6 +2,7 @@
 
 _Please, add the latest build info on top of the list; use Version::MAJOR only after gold release; keep semantic versioning in line with framework's_
 
+- **0.3.30** [Steve A.] improved flexibility of #for_year(s) filtering scope for badges & team_affiliations
 - **0.3.29** [Steve A.] upgrade to Rails 6.0.4.1 due to security fixes
 - **0.3.27** [Steve A.] moved here ImportQueueDecorator from Main
 - **0.3.25** [Steve A.] improved GrantChecker a bit + added the list of supported settings group keys to AppParameter

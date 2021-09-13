@@ -6,7 +6,7 @@ require 'support/shared_localizable_examples'
 module GogglesDb
   RSpec.describe EntryTimeType, type: :model do
     context 'any pre-seeded instance' do
-      subject { EntryTimeType.all.sample }
+      subject { described_class.all.sample }
 
       it 'is valid' do
         expect(subject).to be_valid
@@ -21,9 +21,11 @@ module GogglesDb
           expect(subject.class.send(word)).to respond_to(:code)
           expect(subject.class.send(word).code).to be_present
         end
+
         it 'is a valid instance of the same class' do
           expect(subject.class.send(word)).to be_a(subject.class).and be_valid
         end
+
         it "has a corresponding (true, for having the same code) ##{word}? helper method" do
           expect(subject.class.send(word).send("#{word}?")).to be true
         end

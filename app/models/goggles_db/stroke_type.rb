@@ -66,7 +66,7 @@ module GogglesDb
       %w[freestyle butterfly backstroke breaststroke intermixed
          exe_starting exe_lapturns exe_power exe_generic rel_intermixed].each do |word|
         code_value = "#{name}::#{word.upcase}_ID".constantize
-        raise "Missing required #{name} row with code #{code_value}" unless instance_variable_get("@#{word}").present?
+        raise "Missing required #{name} row with code #{code_value}" if instance_variable_get("@#{word}").blank?
       end
     end
   end

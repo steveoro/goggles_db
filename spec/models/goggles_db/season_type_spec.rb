@@ -7,7 +7,7 @@ module GogglesDb
   RSpec.describe SeasonType, type: :model do
     %w[mas_fin mas_csi mas_uisp ago_fin ago_csi ago_uisp mas_len mas_fina].each do |word|
       # Redefine the subject on a specific instance in order to use the shared_examples:
-      subject { SeasonType.send(word) }
+      subject { described_class.send(word) }
 
       it_behaves_like(
         'having one or more required associations',
@@ -21,6 +21,7 @@ module GogglesDb
       it 'has a valid FederationType' do
         expect(subject.federation_type).to be_a(FederationType).and be_valid
       end
+
       it 'is has a #code' do
         expect(subject).to respond_to(:code)
         expect(subject.code).to be_present
@@ -28,10 +29,11 @@ module GogglesDb
 
       describe "self.#{word}" do
         it 'is a valid instance of the same class' do
-          expect(SeasonType.send(word)).to be_a(SeasonType).and be_valid
+          expect(described_class.send(word)).to be_a(described_class).and be_valid
         end
+
         it "has a corresponding (true, for having the same code) ##{word}? helper method" do
-          expect(SeasonType.send(word).send("#{word}?")).to be true
+          expect(described_class.send(word).send("#{word}?")).to be true
         end
       end
     end

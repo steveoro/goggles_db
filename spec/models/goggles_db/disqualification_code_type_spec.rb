@@ -7,10 +7,10 @@ require 'support/shared_localizable_examples'
 module GogglesDb
   RSpec.describe DisqualificationCodeType, type: :model do
     context 'any pre-seeded instance' do
-      subject { DisqualificationCodeType.all.sample }
+      subject { described_class.all.sample }
 
       it 'is valid' do
-        expect(subject).to be_a(DisqualificationCodeType).and be_valid
+        expect(subject).to be_a(described_class).and be_valid
       end
 
       it_behaves_like(

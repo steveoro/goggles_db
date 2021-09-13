@@ -21,12 +21,14 @@ module GogglesDb
       #++
 
       it 'is valid' do
-        expect(subject).to be_a(User).and be_valid
+        expect(subject).to be_a(described_class).and be_valid
       end
+
       it 'is has a #name' do
         expect(subject).to respond_to(:name)
         expect(subject.name).to be_present
       end
+
       it 'is has an #email' do
         expect(subject).to respond_to(:email)
         expect(subject.email).to be_present
@@ -36,11 +38,13 @@ module GogglesDb
     #++
 
     context 'base validations: uniqueness' do
-      let(:existing_user) { GogglesDb::User.first(50).sample }
-      before(:each) { expect(existing_user).to be_a(User).and be_valid }
+      let(:existing_user) { described_class.first(50).sample }
+
+      before { expect(existing_user).to be_a(described_class).and be_valid }
 
       context 'an instance with an already existing name' do
         subject { FactoryBot.build(:user, name: existing_user.name) }
+
         it 'is not valid' do
           expect(subject).not_to be_valid
         end
@@ -48,6 +52,7 @@ module GogglesDb
 
       context 'an instance with an already existing email' do
         subject { FactoryBot.build(:user, email: existing_user.email) }
+
         it 'is not valid' do
           expect(subject).not_to be_valid
         end
@@ -63,9 +68,10 @@ module GogglesDb
         let(:fixture_managed_affiliation) { FactoryBot.create(:managed_affiliation, manager: deletable_user) }
         let(:fixture_workshop) { FactoryBot.create(:user_workshop, user: deletable_user) }
         let(:fixture_result) { FactoryBot.create(:user_result, user: deletable_user, user_workshop: fixture_workshop) }
-        before(:each) do
+
+        before do
           # Verify domain:
-          expect(deletable_user).to be_a(User).and be_valid
+          expect(deletable_user).to be_a(described_class).and be_valid
           expect(fixture_reservation).to be_a(MeetingReservation).and be_valid
           expect(fixture_managed_affiliation).to be_a(ManagedAffiliation).and be_valid
           expect(fixture_workshop).to be_a(UserWorkshop).and be_valid
@@ -80,6 +86,7 @@ module GogglesDb
         it 'destroys also all the associated MeetingReservation(s)' do
           expect { fixture_reservation.reload }.to raise_error(ActiveRecord::RecordNotFound)
         end
+
         it 'destroys also all the associated ManagedAffiliation(s)' do
           expect { fixture_managed_affiliation.reload }.to raise_error(ActiveRecord::RecordNotFound)
         end
@@ -88,6 +95,7 @@ module GogglesDb
           fixture_workshop.reload
           expect(fixture_workshop.user_id).to eq(User::PLACEHOLDER_ID)
         end
+
         it 'moves any UserResult association to the placeholder user' do
           fixture_result.reload
           expect(fixture_result.user_id).to eq(User::PLACEHOLDER_ID)
@@ -110,10 +118,11 @@ module GogglesDb
             swimmer_id: nil
           )
         end
-        before(:each) do
+
+        before do
           # Verify domain:
           expect(existing_swimmer).to be_a(Swimmer).and be_valid
-          expect(fixture_user).to be_a(User).and be_valid
+          expect(fixture_user).to be_a(described_class).and be_valid
           # Create the user, then verify after create:
           fixture_user.save!
         end
@@ -143,10 +152,10 @@ module GogglesDb
         end
         let(:another_swimmer) { Swimmer.last(50).sample }
 
-        before(:each) do
+        before do
           # Verify domain:
           expect(fixture_swimmer).to be_a(Swimmer).and be_valid
-          expect(fixture_user).to be_a(User).and be_valid
+          expect(fixture_user).to be_a(described_class).and be_valid
           expect(another_swimmer).to be_a(Swimmer).and be_valid
           expect(fixture_user.swimmer_id).to eq(fixture_swimmer.id)
           # Reload the row updated indipendently:
@@ -170,7 +179,8 @@ module GogglesDb
 
     # Any user settings should have the :prefs key:
     describe '#settings' do
-      subject { GogglesDb::User.limit(20).sample }
+      subject { described_class.limit(20).sample }
+
       it 'includes the :prefs key' do
         expect(subject.settings(:prefs)).to be_a(RailsSettings::SettingObject)
         expect(subject.settings(:prefs).value).to be_an(Hash)
@@ -178,7 +188,6 @@ module GogglesDb
     end
 
     describe '#swimmer' do
-      let(:swimmer) { FactoryBot.create(:swimmer) }
       subject do
         FactoryBot.create(
           :user,
@@ -189,18 +198,22 @@ module GogglesDb
         )
       end
 
-      before(:each) do
+      let(:swimmer) { FactoryBot.create(:swimmer) }
+
+      before do
         expect(swimmer).to be_a(Swimmer).and be_valid
-        expect(subject).to be_a(User).and be_valid
+        expect(subject).to be_a(described_class).and be_valid
       end
 
       context 'when a User is associated to a Swimmer,' do
         it 'does not yield errors' do
           expect { subject.swimmer }.not_to raise_error
         end
+
         it 'is the associated Swimmer' do
           expect(subject.swimmer).to eq(swimmer)
         end
+
         it 'is maps correctly the inverse association' do
           expect(subject.swimmer.associated_user).to eq(subject)
           expect(swimmer.associated_user).to eq(subject)
@@ -217,7 +230,7 @@ module GogglesDb
       let(:provider) { %w[facebook github google_oauth2 twitter].sample }
       let(:uid) { FFaker::SSN.ssn }
 
-      before(:each) do
+      before do
         expect(provider).to be_a(String).and be_present
         expect(uid).to be_a(String).and be_present
       end
@@ -245,27 +258,30 @@ module GogglesDb
 
       # User found, confirmed & ok:
       context 'for an existing, already confirmed user providing valid auth data,' do
-        let(:confirmed_user) { User.where('confirmed_at is not null').limit(50).sample }
+        subject { described_class.from_omniauth(auth_response) }
+
+        let(:confirmed_user) { described_class.where.not(confirmed_at: nil).limit(50).sample }
         let(:auth_response) { valid_auth(provider, uid, confirmed_user) }
 
-        before(:each) do
-          expect(confirmed_user).to be_a(User).and be_valid
+        before do
+          expect(confirmed_user).to be_a(described_class).and be_valid
           expect(confirmed_user).to be_confirmed
           expect(auth_response).to be_an(OmniAuth::AuthHash).and be_valid
           expect(auth_response.info['email']).to eq(confirmed_user.email)
         end
 
-        subject { User.from_omniauth(auth_response) }
-
         it 'is the expected User instance' do
           expect(subject).to eq(confirmed_user)
         end
+
         it 'is persisted' do
           expect(subject).to be_persisted
         end
+
         it 'is confirmed' do
           expect(subject).to be_confirmed
         end
+
         it 'has updated the provider & uid fields' do
           expect(subject.provider).to eq(auth_response.provider)
           expect(subject.provider).to eq(provider)
@@ -276,6 +292,8 @@ module GogglesDb
 
       # User found, unconfirmed but ok:
       context 'for an existing, unconfirmed user providing valid auth data,' do
+        subject { described_class.from_omniauth(auth_response) }
+
         let(:unconfirmed_user) do
           user = FactoryBot.create(:user)
           user.skip_confirmation_notification!
@@ -284,24 +302,25 @@ module GogglesDb
         end
         let(:auth_response) { valid_auth(provider, uid, unconfirmed_user) }
 
-        before(:each) do
-          expect(unconfirmed_user).to be_a(User).and be_valid
+        before do
+          expect(unconfirmed_user).to be_a(described_class).and be_valid
           expect(unconfirmed_user).not_to be_confirmed
           expect(auth_response).to be_an(OmniAuth::AuthHash).and be_valid
           expect(auth_response.info['email']).to eq(unconfirmed_user.email)
         end
 
-        subject { User.from_omniauth(auth_response) }
-
         it 'is the expected User instance' do
           expect(subject).to eq(unconfirmed_user)
         end
+
         it 'is persisted' do
           expect(subject).to be_persisted
         end
+
         it 'is confirmed' do
           expect(subject).to be_confirmed
         end
+
         it 'has updated the provider & uid fields' do
           expect(subject.provider).to eq(auth_response.provider)
           expect(subject.provider).to eq(provider)
@@ -312,34 +331,38 @@ module GogglesDb
 
       # new User Email but existing (conflicting) User name found => error:
       context 'for a new Email but with an already existing user name,' do
-        let(:another_user) { User.where('confirmed_at is not null').first(50).sample }
+        subject { described_class.from_omniauth(auth_response) }
+
+        let(:another_user) { described_class.where.not(confirmed_at: nil).first(50).sample }
         let(:conflicting_user) { FactoryBot.build(:user, name: another_user.name, email: FFaker::Internet.safe_email) }
         let(:auth_response) { valid_auth(provider, uid, conflicting_user) }
 
-        before(:each) do
-          expect(another_user).to be_a(User).and be_valid
-          expect(conflicting_user).to be_a(User)
+        before do
+          expect(another_user).to be_a(described_class).and be_valid
+          expect(conflicting_user).to be_a(described_class)
           expect(auth_response).to be_an(OmniAuth::AuthHash).and be_valid
           expect(auth_response.info['name']).to eq(another_user.name)
           expect(auth_response.info['email']).to eq(conflicting_user.email)
         end
-
-        subject { User.from_omniauth(auth_response) }
 
         it 'includes the user name from the auth response' do
           expect(subject.name).to eq(conflicting_user.name)
           expect(subject.first_name).to eq(conflicting_user.first_name)
           expect(subject.last_name).to eq(conflicting_user.last_name)
         end
+
         it 'includes the user email from the auth response' do
           expect(subject.email).to eq(conflicting_user.email)
         end
+
         it 'is NOT persisted' do
           expect(subject).not_to be_persisted
         end
+
         it 'is confirmed' do
           expect(subject).to be_confirmed
         end
+
         it 'has updated the provider & uid fields' do
           expect(subject.provider).to eq(auth_response.provider)
           expect(subject.provider).to eq(provider)
@@ -350,6 +373,8 @@ module GogglesDb
 
       # New User, ok:
       context 'for a new user providing valid auth data,' do
+        subject { described_class.from_omniauth(auth_response) }
+
         let(:new_user) { FactoryBot.build(:user, first_name: "#{FFaker::Name.first_name} Stewie1", confirmed_at: nil) }
         let(:auth_response) { valid_auth(provider, uid, new_user) }
         # Create an already existing matching swiming for the new user:
@@ -364,8 +389,8 @@ module GogglesDb
           )
         end
 
-        before(:each) do
-          expect(new_user).to be_a(User).and be_valid
+        before do
+          expect(new_user).to be_a(described_class).and be_valid
           expect(new_user).not_to be_confirmed
           expect(auth_response).to be_an(OmniAuth::AuthHash).and be_valid
           expect(auth_response.info['email']).to eq(new_user.email)
@@ -373,20 +398,21 @@ module GogglesDb
           expect(new_user.matching_swimmers).not_to be_empty
         end
 
-        subject { User.from_omniauth(auth_response) }
-
         it 'matches the auth data' do
           expect(subject.email).to eq(auth_response.info['email'])
           expect(subject.name).to eq(auth_response.info['name'])
           expect(subject.first_name).to eq(auth_response.info['first_name'])
           expect(subject.last_name).to eq(auth_response.info['last_name'])
         end
+
         it 'is persisted' do
           expect(subject).to be_persisted
         end
+
         it 'is confirmed' do
           expect(subject).to be_confirmed
         end
+
         it 'has updated the provider & uid fields' do
           expect(subject.provider).to eq(auth_response.provider)
           expect(subject.provider).to eq(provider)
@@ -397,13 +423,15 @@ module GogglesDb
         # [Steve A.] Note that given we are using random names, we cannot assert effectively that:
         #            subject.matching_swimmers.first.id == existing_swimmer.id
         context 'when there\'s an existing, matching (and available) swimmer,' do
-          before(:each) do
+          before do
             # Reload the row updated indipendently:
             subject.reload
           end
+
           it 'is automatically associated to the first matching swimmer by default' do
             expect(subject.swimmer_id).to eq(subject.matching_swimmers.first.id)
           end
+
           it 'binds automatically also the associated swimmer to the user' do
             expect(subject.id).to be_positive
             expect(subject.swimmer.associated_user_id).to eq(subject.id)
@@ -413,7 +441,8 @@ module GogglesDb
 
       # Wrong response/scope parameter: nil
       context 'when providing nil,' do
-        subject { User.from_omniauth(nil) }
+        subject { described_class.from_omniauth(nil) }
+
         it 'is an unfiltered ActiveRecord::Relation' do
           expect(subject).not_to respond_to(:errors)
           expect(subject).to be_a(ActiveRecord::Relation)
@@ -422,13 +451,16 @@ module GogglesDb
 
       # Wrong response/scope parameter: other object than OAuth
       context 'when returning an empty string,' do
-        subject { User.from_omniauth('') }
+        subject { described_class.from_omniauth('') }
+
         it 'is an unfiltered ActiveRecord::Relation' do
           expect(subject).to be_a(ActiveRecord::Relation)
         end
       end
+
       context 'when returning an empty hash,' do
-        subject { User.from_omniauth({}) }
+        subject { described_class.from_omniauth({}) }
+
         it 'is an unfiltered ActiveRecord::Relation' do
           expect(subject).to be_a(ActiveRecord::Relation)
         end
@@ -440,7 +472,10 @@ module GogglesDb
     describe '#matching_swimmers' do
       let(:fixture_swimmer) { FactoryBot.create(:swimmer) }
       # Same year of birth and equal name:
+
       context 'when the user has a matching swimmer' do
+        subject { fixture_user.matching_swimmers }
+
         let(:fixture_user) do
           FactoryBot.create(
             :user,
@@ -452,16 +487,16 @@ module GogglesDb
           )
         end
 
-        before(:each) do
-          expect(fixture_user).to be_a(User).and be_valid
+        before do
+          expect(fixture_user).to be_a(described_class).and be_valid
           expect(fixture_swimmer).to be_a(Swimmer).and be_valid
         end
-        subject { fixture_user.matching_swimmers }
 
         it 'is a non-empty ActiveRecord::Relation' do
           expect(subject).to be_a(ActiveRecord::Relation)
           expect(subject).not_to be_empty
         end
+
         it 'includes the matching swimmer' do
           expect(fixture_user.matching_swimmers).to include(fixture_swimmer)
         end
@@ -469,6 +504,8 @@ module GogglesDb
 
       # Same name but no user's year of birth:
       context 'when the user has a matching swimmer but no birth date' do
+        subject { fixture_user.matching_swimmers }
+
         let(:fixture_swimmer) { FactoryBot.create(:swimmer) }
         let(:fixture_user) do
           FactoryBot.create(
@@ -481,17 +518,17 @@ module GogglesDb
           )
         end
 
-        before(:each) do
-          expect(fixture_user).to be_a(User).and be_valid
+        before do
+          expect(fixture_user).to be_a(described_class).and be_valid
           expect(fixture_swimmer).to be_a(Swimmer).and be_valid
           expect(fixture_user.year_of_birth != fixture_swimmer.year_of_birth).to be true
         end
-        subject { fixture_user.matching_swimmers }
 
         it 'is a non-empty ActiveRecord::Relation' do
           expect(subject).to be_a(ActiveRecord::Relation)
           expect(subject).not_to be_empty
         end
+
         it 'includes the matching swimmer' do
           expect(fixture_user.matching_swimmers).to include(fixture_swimmer)
         end
@@ -508,6 +545,8 @@ module GogglesDb
         { user_first: 'Paola Maria', user_last: 'Mazzanti Vien Dalmare', swimmer_first: 'Paola Maria Lucia', swimmer_last: 'Viendalmare' }
       ].each do |names_hash|
         context 'when the user has a partially-matching swimmer name' do
+          subject { fixture_user1.matching_swimmers }
+
           let(:fixture_swimmer1) do
             FactoryBot.create(
               :swimmer,
@@ -528,16 +567,17 @@ module GogglesDb
               year_of_birth: fixture_swimmer1.year_of_birth
             )
           end
-          before(:each) do
-            expect(fixture_user1).to be_a(User).and be_valid
+
+          before do
+            expect(fixture_user1).to be_a(described_class).and be_valid
             expect(fixture_swimmer1).to be_a(Swimmer).and be_valid
           end
-          subject { fixture_user1.matching_swimmers }
 
           it 'is a non-empty ActiveRecord::Relation' do
             expect(subject).to be_a(ActiveRecord::Relation)
             expect(subject).not_to be_empty
           end
+
           it 'includes the matching swimmer' do
             expect(fixture_user1.matching_swimmers).to include(fixture_swimmer1)
           end
@@ -557,6 +597,7 @@ module GogglesDb
         )
       end
       # Skip whole test if override is not used:
+
       if use_override
         it 'doesn\'t change the Swimmer\'s associated_user_id (as well as the row itself)' do
           expect { fixture_user.associate_to_swimmer!(swimmer_override) }.not_to change(
@@ -575,6 +616,7 @@ module GogglesDb
         fixture_user.associate_to_swimmer!(swimmer_override)
         expect(fixture_user).not_to be_persisted
       end
+
       it 'returns nil' do
         expect(fixture_user.associate_to_swimmer!(swimmer_override)).to be nil
       end
@@ -589,14 +631,17 @@ module GogglesDb
       it 'saves the user instance' do
         expect(fixture_user).to be_persisted
       end
+
       it 'updates the User\'s swimmer_id' do
         expect(fixture_user.swimmer_id).to eq(fixture_swimmer.id)
       end
+
       it 'updates the Swimmer\'s associated_user_id' do
         # Reload the row updated indipendently:
         fixture_swimmer.reload
         expect(fixture_swimmer.associated_user_id).to eq(fixture_user.id)
       end
+
       it 'returns the swimmer associated to the user' do
         expect(fixture_user.associate_to_swimmer!(swimmer_override)).to eq(fixture_swimmer)
       end
@@ -610,10 +655,11 @@ module GogglesDb
       context 'without a swimmer override parameter,' do
         # ** NO UPDATE: new user, invalid **
         context 'when the user instance is new and some required fields are missing' do
-          let(:fixture_user) { User.new }
-          before(:each) do
+          let(:fixture_user) { described_class.new }
+
+          before do
             expect(fixture_swimmer).to be_a(Swimmer).and be_valid
-            expect(fixture_user).to be_a(User)
+            expect(fixture_user).to be_a(described_class)
           end
 
           # (Subject method is invoked in shared examples)
@@ -632,9 +678,10 @@ module GogglesDb
               swimmer_id: nil
             )
           end
-          before(:each) do
+
+          before do
             expect(fixture_swimmer).to be_a(Swimmer).and be_valid
-            expect(fixture_user).to be_a(User).and be_valid
+            expect(fixture_user).to be_a(described_class).and be_valid
           end
 
           # (Subject method is invoked in shared examples)
@@ -652,14 +699,15 @@ module GogglesDb
               swimmer_id: nil
             )
           end
-          before(:each) do
+
+          before do
             expect(fixture_swimmer).to be_a(Swimmer).and be_valid
-            expect(fixture_user).to be_a(User).and be_valid
+            expect(fixture_user).to be_a(described_class).and be_valid
           end
 
           # ** UPDATE: existing user, swimmer is free **
           context 'and the swimmer is available,' do
-            before(:each) do
+            before do
               # We don't care about the user's association over here (could be anything)
               # as it must be overwritten anyway
               fixture_swimmer.reload.associated_user_id = nil
@@ -672,8 +720,9 @@ module GogglesDb
 
           # ** NO UPDATE: existing user, swimmer NOT free **
           context 'and the swimmer is NOT available,' do
-            let(:another_user) { User.first(20).sample }
-            before(:each) do
+            let(:another_user) { described_class.first(20).sample }
+
+            before do
               fixture_swimmer.reload.associated_user_id = another_user.id
               fixture_swimmer.save!
             end
@@ -693,10 +742,11 @@ module GogglesDb
       context 'with a matching_swimmer override parameter,' do
         # ** NO UPDATE: new user, invalid + swimmer override **
         context 'when the user instance is new and some required fields are missing (no filtering possible)' do
-          let(:fixture_user) { User.new }
-          before(:each) do
+          let(:fixture_user) { described_class.new }
+
+          before do
             expect(fixture_swimmer).to be_a(Swimmer).and be_valid
-            expect(fixture_user).to be_a(User)
+            expect(fixture_user).to be_a(described_class)
           end
 
           # (Subject method is invoked in shared examples)
@@ -714,14 +764,15 @@ module GogglesDb
               swimmer_id: nil
             )
           end
-          before(:each) do
+
+          before do
             expect(fixture_swimmer).to be_a(Swimmer).and be_valid
-            expect(fixture_user).to be_a(User).and be_valid
+            expect(fixture_user).to be_a(described_class).and be_valid
           end
 
           # ** UPDATE: new user, valid + swimmer override free **
           context 'and the specified swimmer is available,' do
-            before(:each) do
+            before do
               # We don't care about the user's association over here (could be anything)
               # as it will be overwritten anyway
               fixture_swimmer.reload.associated_user_id = nil
@@ -734,8 +785,9 @@ module GogglesDb
 
           # ** NO UPDATE: new user, valid + swimmer override NOT free **
           context 'and the specified swimmer is NOT available,' do
-            let(:another_user) { User.first(20).sample }
-            before(:each) do
+            let(:another_user) { described_class.first(20).sample }
+
+            before do
               fixture_swimmer.reload.associated_user_id = another_user.id
               fixture_swimmer.save!
             end
@@ -761,15 +813,16 @@ module GogglesDb
               swimmer_id: nil
             )
           end
-          before(:each) do
+
+          before do
             expect(another_swimmer).to be_a(Swimmer).and be_valid
             expect(fixture_swimmer).to be_a(Swimmer).and be_valid
-            expect(fixture_user).to be_a(User).and be_valid
+            expect(fixture_user).to be_a(described_class).and be_valid
           end
 
           # ** UPDATE: valid user + swimmer override free **
           context 'and the specified swimmer is available,' do
-            before(:each) do
+            before do
               # We don't care about the user's association over here (could be anything)
               # as it will be overwritten anyway
               fixture_swimmer.reload.associated_user_id = nil
@@ -782,8 +835,9 @@ module GogglesDb
 
           # ** NO UPDATE: new user, valid + swimmer override NOT free **
           context 'and the specified swimmer is NOT available,' do
-            let(:another_user) { User.first(20).sample }
-            before(:each) do
+            let(:another_user) { described_class.first(20).sample }
+
+            before do
               fixture_swimmer.reload.associated_user_id = another_user.id
               fixture_swimmer.save!
             end

@@ -7,9 +7,14 @@ require 'support/shared_to_json_examples'
 
 module GogglesDb
   RSpec.describe MeetingSession, type: :model do
+    #-- ------------------------------------------------------------------------
+    #++
+
+    subject { FactoryBot.create(:meeting_session) }
+
     shared_examples_for 'a valid MeetingSession instance' do
       it 'is valid' do
-        expect(subject).to be_a(MeetingSession).and be_valid
+        expect(subject).to be_a(described_class).and be_valid
       end
 
       it_behaves_like(
@@ -38,28 +43,28 @@ module GogglesDb
     end
 
     context 'any pre-seeded instance' do
-      subject { MeetingSession.all.limit(20).sample }
+      subject { described_class.all.limit(20).sample }
+
       it_behaves_like('a valid MeetingSession instance')
     end
 
     context 'when using the factory, the resulting instance' do
       subject { FactoryBot.create(:meeting_session) }
+
       it_behaves_like('a valid MeetingSession instance')
     end
-    #-- ------------------------------------------------------------------------
-    #++
-
-    subject { FactoryBot.create(:meeting_session) }
 
     # Sorting scopes:
     describe 'self.by_order' do
-      it_behaves_like('sorting scope by_<ANY_VALUE_NAME>', MeetingSession, 'order', 'session_order')
+      it_behaves_like('sorting scope by_<ANY_VALUE_NAME>', described_class, 'order', 'session_order')
     end
+
     describe 'self.by_date' do
-      it_behaves_like('sorting scope by_<ANY_VALUE_NAME>', MeetingSession, 'date', 'scheduled_date')
+      it_behaves_like('sorting scope by_<ANY_VALUE_NAME>', described_class, 'date', 'scheduled_date')
     end
+
     describe 'self.by_meeting' do
-      it_behaves_like('sorting scope by_<ANY_ENTITY_NAME>', MeetingSession, 'meeting', 'description')
+      it_behaves_like('sorting scope by_<ANY_ENTITY_NAME>', described_class, 'meeting', 'description')
     end
     #-- ------------------------------------------------------------------------
     #++
@@ -85,6 +90,7 @@ module GogglesDb
       # Optional associations:
       context 'when the entity contains other optional associations' do
         subject { FactoryBot.create(:meeting_session) }
+
         let(:json_hash) do
           expect(subject.swimming_pool).to be_a(SwimmingPool).and be_valid
           expect(subject.pool_type).to be_a(PoolType).and be_valid

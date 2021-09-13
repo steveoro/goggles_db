@@ -9,7 +9,7 @@ module GogglesDb
   RSpec.describe MeetingRelayReservation, type: :model do
     shared_examples_for 'a valid MeetingRelayReservation instance' do
       it 'is valid' do
-        expect(subject).to be_a(MeetingRelayReservation).and be_valid
+        expect(subject).to be_a(described_class).and be_valid
       end
 
       it_behaves_like(
@@ -25,12 +25,14 @@ module GogglesDb
     end
 
     context 'any pre-seeded instance' do
-      subject { MeetingRelayReservation.all.limit(20).sample }
+      subject { described_class.all.limit(20).sample }
+
       it_behaves_like('a valid MeetingRelayReservation instance')
     end
 
     context 'when using the factory, the resulting instance' do
       subject { FactoryBot.create(:meeting_relay_reservation) }
+
       it_behaves_like('a valid MeetingRelayReservation instance')
     end
     #-- ------------------------------------------------------------------------
@@ -39,6 +41,7 @@ module GogglesDb
     # Filtering scopes:
     describe 'self.accepted' do
       let(:result) { subject.class.where(accepted: true).limit(20) }
+
       it 'contains only accepted reservations' do
         expect(result).to all(be_accepted)
       end
@@ -47,10 +50,12 @@ module GogglesDb
     #++
 
     describe '#minimal_attributes' do
-      subject { GogglesDb::MeetingRelayReservation.limit(20).sample.minimal_attributes }
+      subject { described_class.limit(20).sample.minimal_attributes }
+
       it 'is an Hash' do
         expect(subject).to be_an(Hash)
       end
+
       %w[meeting_event].each do |association_name|
         it "includes the #{association_name} association key" do
           expect(subject.keys).to include(association_name)

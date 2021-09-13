@@ -12,7 +12,7 @@ module GogglesDb
       subject { FactoryBot.create(:computed_season_ranking) }
 
       it 'is valid' do
-        expect(subject).to be_a(ComputedSeasonRanking).and be_valid
+        expect(subject).to be_a(described_class).and be_valid
       end
 
       it_behaves_like(
@@ -22,6 +22,7 @@ module GogglesDb
       it 'has a valid team' do
         expect(subject.team).to be_a(Team).and be_valid
       end
+
       it 'has a valid season' do
         expect(subject.season).to be_a(Season).and be_valid
       end
@@ -43,15 +44,16 @@ module GogglesDb
 
     # Sorting scopes:
     describe 'self.by_rank' do
-      it_behaves_like('sorting scope by_<ANY_VALUE_NAME>', ComputedSeasonRanking, 'rank', 'rank')
+      it_behaves_like('sorting scope by_<ANY_VALUE_NAME>', described_class, 'rank', 'rank')
     end
 
     # Filtering scopes:
     describe 'self.for_season' do
-      it_behaves_like('filtering scope for_<ANY_ENTITY_NAME>', ComputedSeasonRanking, 'season')
+      it_behaves_like('filtering scope for_<ANY_ENTITY_NAME>', described_class, 'season')
     end
+
     describe 'self.for_team' do
-      it_behaves_like('filtering scope for_<ANY_ENTITY_NAME>', ComputedSeasonRanking, 'team')
+      it_behaves_like('filtering scope for_<ANY_ENTITY_NAME>', described_class, 'team')
     end
     #-- ------------------------------------------------------------------------
     #++

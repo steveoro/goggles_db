@@ -11,7 +11,7 @@ module GogglesDb
   RSpec.describe MeetingEntry, type: :model do
     shared_examples_for 'a valid MeetingEntry instance' do
       it 'is valid' do
-        expect(subject).to be_a(MeetingEntry).and be_valid
+        expect(subject).to be_a(described_class).and be_valid
       end
 
       it_behaves_like(
@@ -38,12 +38,14 @@ module GogglesDb
     context 'any valid, pre-seeded instance' do
       # [Steve A.] Make sure data errors don't create random failures by joining w/ M.Progs:
       # (It may happen w/ older data dumps)
-      subject { MeetingEntry.joins(:meeting_program).last(20).sample }
+      subject { described_class.joins(:meeting_program).last(20).sample }
+
       it_behaves_like('a valid MeetingEntry instance')
     end
 
     context 'when using the factory, the resulting instance' do
       subject { FactoryBot.create(:meeting_entry) }
+
       it_behaves_like('a valid MeetingEntry instance')
     end
     #-- ------------------------------------------------------------------------
@@ -51,7 +53,7 @@ module GogglesDb
 
     # Sorting scopes:
     describe 'self.by_swimmer' do
-      it_behaves_like('sorting scope by_<ANY_ENTITY_NAME>', MeetingEntry, 'swimmer', 'complete_name')
+      it_behaves_like('sorting scope by_<ANY_ENTITY_NAME>', described_class, 'swimmer', 'complete_name')
     end
 
     describe 'self.by_number' do
@@ -63,7 +65,7 @@ module GogglesDb
       end
       let(:result) { fixture_prg.meeting_entries.by_number }
 
-      it_behaves_like('sorting scope by_<ANY_VALUE_NAME> (with prepared result)', MeetingEntry, 'start_list_number')
+      it_behaves_like('sorting scope by_<ANY_VALUE_NAME> (with prepared result)', described_class, 'start_list_number')
     end
 
     describe 'self.by_split_gender' do
@@ -80,11 +82,11 @@ module GogglesDb
       end
       let(:result) { fixture_event.meeting_entries.by_split_gender }
 
-      before(:each) { expect(fixture_event).to be_a(MeetingEvent).and be_valid }
+      before { expect(fixture_event).to be_a(MeetingEvent).and be_valid }
 
       it 'is a MeetingEntry relation' do
         expect(result).to be_a(ActiveRecord::Relation)
-        expect(result).to all be_a(MeetingEntry)
+        expect(result).to all be_a(described_class)
       end
 
       context 'each gender group' do
@@ -95,6 +97,7 @@ module GogglesDb
           expect(female_entries).to all(be_female)
           expect(male_entries).to all(be_male)
         end
+
         it 'is ordered by descending timing in itself' do
           expect(female_entries.first.to_timing).to be >= female_entries.second.to_timing
           expect(female_entries.second.to_timing).to be >= female_entries.third.to_timing
@@ -108,38 +111,46 @@ module GogglesDb
     describe 'self.for_gender_type' do
       it_behaves_like(
         'filtering scope for_<ANY_CHOSEN_FILTER>',
-        MeetingEntry,
+        described_class,
         'for_gender_type',
         'gender_type',
         GogglesDb::GenderType.send(%w[male female].sample)
       )
     end
+
     describe 'self.for_team' do
-      it_behaves_like('filtering scope for_<ANY_ENTITY_NAME>', MeetingEntry, 'team')
+      it_behaves_like('filtering scope for_<ANY_ENTITY_NAME>', described_class, 'team')
     end
+
     describe 'self.for_category_type' do
-      it_behaves_like('filtering scope for_<ANY_ENTITY_NAME>', MeetingEntry, 'category_type')
+      it_behaves_like('filtering scope for_<ANY_ENTITY_NAME>', described_class, 'category_type')
     end
+
     describe 'self.for_event_type' do
-      it_behaves_like('filtering scope for_<ANY_ENTITY_NAME>', MeetingEntry, 'event_type')
+      it_behaves_like('filtering scope for_<ANY_ENTITY_NAME>', described_class, 'event_type')
     end
     #-- ------------------------------------------------------------------------
     #++
 
     describe 'regarding the timing fields,' do
       let(:fixture_row) { FactoryBot.build(:meeting_entry) }
+
       it_behaves_like 'TimingManageable'
     end
 
     describe '#minimal_attributes' do
-      let(:existing_row) { GogglesDb::MeetingEntry.limit(100).sample }
       subject { existing_row.minimal_attributes }
+
+      let(:existing_row) { described_class.limit(100).sample }
+
       it 'is an Hash' do
         expect(subject).to be_an(Hash)
       end
+
       it 'includes the timing string' do
         expect(subject['timing']).to eq(existing_row.to_timing.to_s)
       end
+
       %w[team team_affiliation swimmer pool_type event_type category_type gender_type].each do |association_name|
         it "includes the #{association_name} association key" do
           expect(subject.keys).to include(association_name)
