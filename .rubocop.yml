@@ -68,20 +68,20 @@ Naming/VariableNumber:
     - 'db/migrate/20201121173221_rename_bool_fields_for_mevents_plus_more.rb'
     - 'db/migrate/20210130164719_rename_under_25_to_under25.rb'
 
-RSpec/ExpectInHook:
-  Enabled: false
+# RSpec/ExpectInHook:
+#   Enabled: false
 
-RSpec/ExampleLength:
-  Max: 20
+# RSpec/ExampleLength:
+#   Max: 20
 
-RSpec/MultipleExpectations:
-  Enabled: false
+# RSpec/MultipleExpectations:
+#   Enabled: false
 
-RSpec/MultipleMemoizedHelpers:
-  Max: 18
+# RSpec/MultipleMemoizedHelpers:
+#   Max: 18
 
-RSpec/NestedGroups:
-  Max: 5
+# RSpec/NestedGroups:
+#   Max: 5
 
 Style/Documentation:
   Exclude:
