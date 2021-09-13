@@ -52,7 +52,7 @@ blocks:
             - sem-version ruby 2.7
             - bundle config set path 'vendor/bundle'
             - bundle install
-            - spec/dummy/bin/rubocop
+            - bundle exec rubocop
             - bundle exec brakeman -A6q -p spec/dummy
 
   - name: RSpec tests
