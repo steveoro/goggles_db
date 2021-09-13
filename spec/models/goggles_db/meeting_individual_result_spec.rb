@@ -12,7 +12,7 @@ module GogglesDb
   RSpec.describe MeetingIndividualResult, type: :model do
     shared_examples_for 'a valid MeetingIndividualResult instance' do
       it 'is valid' do
-        expect(subject).to be_a(MeetingIndividualResult).and be_valid
+        expect(subject).to be_a(described_class).and be_valid
       end
 
       it_behaves_like(
@@ -38,12 +38,14 @@ module GogglesDb
     end
 
     context 'any pre-seeded instance' do
-      subject { MeetingIndividualResult.all.limit(20).sample }
+      subject { described_class.all.limit(20).sample }
+
       it_behaves_like('a valid MeetingIndividualResult instance')
     end
 
     context 'when using the factory, the resulting instance' do
       subject { FactoryBot.create(:meeting_individual_result) }
+
       it_behaves_like('a valid MeetingIndividualResult instance')
     end
     #-- ------------------------------------------------------------------------
@@ -60,19 +62,22 @@ module GogglesDb
         expect(mprg.meeting_individual_results.count).to be_positive
         mprg.meeting_individual_results.by_rank
       end
-      it_behaves_like('sorting scope by_<ANY_VALUE_NAME> (with prepared result)', MeetingIndividualResult, 'rank')
+
+      it_behaves_like('sorting scope by_<ANY_VALUE_NAME> (with prepared result)', described_class, 'rank')
     end
 
     describe 'self.by_date' do
       let(:result) do
-        mirs = GogglesDb::MeetingIndividualResult.where(swimmer_id: 142).by_date
+        mirs = described_class.where(swimmer_id: 142).by_date
         expect(mirs.count).to be > 300
         mirs
       end
+
       it 'is a MeetingIndividualResult relation' do
         expect(result).to be_a(ActiveRecord::Relation)
-        expect(result).to all be_a(MeetingIndividualResult)
+        expect(result).to all be_a(described_class)
       end
+
       it 'is ordered' do
         expect(result.first.meeting_session.scheduled_date).to be <= result.sample.meeting_session.scheduled_date
         expect(result.sample.meeting_session.scheduled_date).to be <= result.last.meeting_session.scheduled_date
@@ -89,12 +94,14 @@ module GogglesDb
         # (Note: exclude disqualified results to simplify time comparison)
         mprg.meeting_individual_results.qualifications.by_timing
       end
-      it_behaves_like('sorting scope by_<ANY_VALUE_NAME> (with prepared result)', MeetingIndividualResult, 'to_timing')
+
+      it_behaves_like('sorting scope by_<ANY_VALUE_NAME> (with prepared result)', described_class, 'to_timing')
     end
 
     # Filtering scopes:
     describe 'self.valid_for_ranking' do
       let(:result) { subject.class.valid_for_ranking.order('out_of_race DESC, disqualified DESC').limit(20) }
+
       it 'contains only results valid for ranking' do
         expect(result).to all(be_valid_for_ranking)
       end
@@ -102,6 +109,7 @@ module GogglesDb
 
     describe 'self.personal_bests' do
       let(:result) { subject.class.personal_bests.limit(20) }
+
       it 'contains only personal-best timing results' do
         expect(result).to all(be_personal_best)
       end
@@ -113,11 +121,11 @@ module GogglesDb
         meeting_id = Meeting.joins(meeting_events: :meeting_individual_results).select(:id).distinct.limit(20).sample.id
         Meeting.find(meeting_id)
       end
-      let(:result) { MeetingIndividualResult.for_meeting_code(meeting_filter).limit(20) }
+      let(:result) { described_class.for_meeting_code(meeting_filter).limit(20) }
 
       it 'is a relation containing only MeetingIndividualResults associated to the filter' do
         expect(result).to be_a(ActiveRecord::Relation)
-        expect(result).to all be_a(MeetingIndividualResult)
+        expect(result).to all be_a(described_class)
         list_of_meeting_codes = result.map { |mir| mir.meeting.code }.uniq.sort
         expect(list_of_meeting_codes).to eq([meeting_filter.code])
       end
@@ -127,15 +135,20 @@ module GogglesDb
 
     describe '#valid_for_ranking?' do
       context 'for any MIR concurring in-race and not disqualified' do
-        let(:mir_fixture) { FactoryBot.build(:meeting_individual_result, out_of_race: false, disqualified: false) }
         subject { mir_fixture.valid_for_ranking? }
+
+        let(:mir_fixture) { FactoryBot.build(:meeting_individual_result, out_of_race: false, disqualified: false) }
+
         it 'is true' do
           expect(subject).to be true
         end
       end
+
       context 'for any MIR either off-race or disqualified' do
-        let(:mir_fixture) { FactoryBot.build(:meeting_individual_result, out_of_race: true, disqualified: [false, true].sample) }
         subject { mir_fixture.valid_for_ranking? }
+
+        let(:mir_fixture) { FactoryBot.build(:meeting_individual_result, out_of_race: true, disqualified: [false, true].sample) }
+
         it 'is false' do
           expect(subject).to be false
         end
@@ -144,6 +157,7 @@ module GogglesDb
 
     describe 'regarding the timing fields,' do
       let(:fixture_row) { FactoryBot.build(:meeting_individual_result) }
+
       it_behaves_like 'TimingManageable'
     end
     #-- ------------------------------------------------------------------------
@@ -151,7 +165,7 @@ module GogglesDb
 
     it_behaves_like(
       'AbstractResult #minimal_attributes',
-      MeetingIndividualResult,
+      described_class,
       %w[swimmer team_affiliation disqualification_code_type]
     )
 
@@ -175,6 +189,7 @@ module GogglesDb
       # Collection associations:
       context 'when the entity contains collection associations,' do
         subject         { FactoryBot.create(:meeting_individual_result_with_laps) }
+
         let(:json_hash) { JSON.parse(subject.to_json) }
 
         it_behaves_like(

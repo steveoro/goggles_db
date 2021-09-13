@@ -26,7 +26,7 @@ FactoryBot.define do
                                  .event_type
     end
 
-    event_date      { Date.today }
+    event_date      { Time.zone.today }
     description     { "#{swimmer.complete_name}, #{event_type.code}" }
     reaction_time   { rand.round(2) }
     minutes         { 0 }

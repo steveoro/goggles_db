@@ -6,7 +6,7 @@ require 'support/shared_localizable_examples'
 module GogglesDb
   RSpec.describe RecordType, type: :model do
     context 'any pre-seeded instance' do
-      subject { RecordType.all.sample }
+      subject { described_class.all.sample }
 
       it 'is valid' do
         expect(subject).to be_valid

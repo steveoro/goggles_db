@@ -17,7 +17,7 @@ end
 #++
 
 describe DummyLocalizableIncludee do
-  subject { DummyLocalizableIncludee.new(code: 'any_code') }
+  subject { described_class.new(code: 'any_code') }
 
   it_behaves_like 'Localizable'
 end

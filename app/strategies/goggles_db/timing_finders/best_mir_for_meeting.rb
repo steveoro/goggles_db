@@ -24,7 +24,7 @@ module GogglesDb
       #
       def search_by(swimmer, meeting, event_type, pool_type)
         result = super(swimmer, meeting, event_type, pool_type).for_meeting_code(meeting)
-        return GoggleCupForEvent.new.search_by(swimmer, meeting, event_type, pool_type) unless result.present?
+        return GoggleCupForEvent.new.search_by(swimmer, meeting, event_type, pool_type) if result.blank?
 
         result.by_timing(:asc).first
       end

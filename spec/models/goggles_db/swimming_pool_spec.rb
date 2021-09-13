@@ -8,9 +8,14 @@ require 'support/shared_to_json_examples'
 
 module GogglesDb
   RSpec.describe SwimmingPool, type: :model do
+    #-- ------------------------------------------------------------------------
+    #++
+
+    subject { FactoryBot.create(:swimming_pool) }
+
     shared_examples_for 'a valid SwimmingPool instance' do
       it 'is valid' do
-        expect(subject).to be_a(SwimmingPool).and be_valid
+        expect(subject).to be_a(described_class).and be_valid
       end
 
       it_behaves_like(
@@ -39,34 +44,34 @@ module GogglesDb
     end
 
     context 'any pre-seeded instance' do
-      subject { SwimmingPool.all.sample }
+      subject { described_class.all.sample }
+
       it_behaves_like('a valid SwimmingPool instance')
     end
 
     context 'when using the factory, the resulting instance' do
       subject { FactoryBot.create(:swimming_pool) }
+
       it_behaves_like('a valid SwimmingPool instance')
     end
-    #-- ------------------------------------------------------------------------
-    #++
-
-    subject { FactoryBot.create(:swimming_pool) }
 
     # Sorting scopes:
     describe 'self.by_name' do
-      it_behaves_like('sorting scope by_<ANY_VALUE_NAME>', SwimmingPool, 'name', 'name')
+      it_behaves_like('sorting scope by_<ANY_VALUE_NAME>', described_class, 'name', 'name')
     end
+
     describe 'self.by_city' do
-      it_behaves_like('sorting scope by_<ANY_ENTITY_NAME>', SwimmingPool, 'city', 'name')
+      it_behaves_like('sorting scope by_<ANY_ENTITY_NAME>', described_class, 'city', 'name')
     end
+
     describe 'self.by_type' do
-      it_behaves_like('sorting scope by_<ANY_ENTITY_NAME>', SwimmingPool, 'pool_type', 'code')
+      it_behaves_like('sorting scope by_<ANY_ENTITY_NAME>', described_class, 'pool_type', 'code')
     end
 
     # Filtering scopes:
     describe 'self.for_name' do
       %w[ferrari ferretti comunale].each do |filter_text|
-        it_behaves_like('filtering scope FULLTEXT for_...', SwimmingPool, :for_name, %w[name], filter_text)
+        it_behaves_like('filtering scope FULLTEXT for_...', described_class, :for_name, %w[name], filter_text)
       end
     end
     #-- ------------------------------------------------------------------------
@@ -74,9 +79,11 @@ module GogglesDb
 
     describe '#minimal_attributes' do
       subject { FactoryBot.create(:swimming_pool, city: GogglesDb::City.limit(20).sample).minimal_attributes }
+
       it 'is an Hash' do
         expect(subject).to be_an(Hash)
       end
+
       %w[city pool_type shower_type hair_dryer_type locker_cabinet_type].each do |association_name|
         it "includes the #{association_name} association key" do
           expect(subject.keys).to include(association_name)
@@ -109,6 +116,7 @@ module GogglesDb
       # Optional associations:
       context 'when the entity contains other optional associations' do
         subject { FactoryBot.create(:swimming_pool) }
+
         let(:json_hash) do
           expect(subject.shower_type).to be_a(ShowerType).and be_valid
           expect(subject.hair_dryer_type).to be_a(HairDryerType).and be_valid

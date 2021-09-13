@@ -4,7 +4,7 @@ module GogglesDb
   #
   # = Badge model
   #
-  #   - version:  7.063
+  #   - version:  7.0.3.30
   #   - author:   Steve A.
   #
   class Badge < ApplicationRecord
@@ -57,8 +57,16 @@ module GogglesDb
     scope :for_season,        ->(season)        { where(season_id: season.id) }
     scope :for_team,          ->(team)          { where(team_id: team.id) }
     scope :for_swimmer,       ->(swimmer)       { where(swimmer_id: swimmer.id) }
-    scope :for_years,         ->(*year_list)    { joins(:season).where(['seasons.header_year IN (?)', year_list]) }
-    scope :for_year,          ->(header_year)   { joins(:season).where('seasons.header_year': header_year) }
+
+    scope :for_years, lambda { |*year_list|
+      condition = year_list.inject([]) { |memo, _e| memo << '(INSTR(seasons.header_year, ?) > 0)' }.join(' OR ')
+      joins(:season).where(condition, *year_list)
+    }
+
+    scope :for_year, lambda { |header_year|
+      joins(:season).where('(INSTR(seasons.header_year, ?) > 0)', header_year)
+    }
+
     # TODO: unused yet
     # scope :for_final_rank,       ->(final_rank = 1)   { where(['final_rank = ?', final_rank]) }
     # scope :for_team_affiliation, ->(team_affiliation) { where(team_affiliation_id: team_affiliation.id) }

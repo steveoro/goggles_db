@@ -8,7 +8,7 @@ module GogglesDb
     let(:fixture_country) { ISO3166::Country.new('IT') }
 
     describe 'any instance' do
-      subject { CmdFindIsoCity.new(fixture_country, 'Albinea') }
+      subject { described_class.new(fixture_country, 'Albinea') }
 
       it_behaves_like(
         'responding to a list of methods',
@@ -20,23 +20,28 @@ module GogglesDb
 
     shared_examples_for 'CmdFindIsoCity successful #call' do |fixture_name|
       it 'returns itself' do
-        expect(subject).to be_a(CmdFindIsoCity)
+        expect(subject).to be_a(described_class)
       end
+
       it 'is successful' do
         expect(subject).to be_successful
       end
+
       it 'has a blank #errors list' do
         expect(subject.errors).to be_blank
       end
+
       it 'has a valid Cities::City #result' do
         expect(subject.result).to be_a(Cities::City).and be_present
         # DEBUG output for tested substitutions: just specify actual fixture_name in shared group call to enable it
         puts "\r\n- #{fixture_name} => #{subject.result.name}" if fixture_name && fixture_name != subject.result.name
       end
+
       describe '#matches' do
         it 'is an array of OpenStruct, each with a candidate and a weight' do
           expect(subject.matches).to all respond_to(:candidate).and respond_to(:weight)
         end
+
         it 'includes the #result in the #matches candidates list' do
           expect(subject.matches.map(&:candidate)).to include(subject.result)
         end
@@ -45,7 +50,7 @@ module GogglesDb
 
     context 'when using valid parameters' do
       context 'which matches a custom country,' do
-        subject { CmdFindIsoCity.call(ISO3166::Country.new('SE'), 'Stockholm') }
+        subject { described_class.call(ISO3166::Country.new('SE'), 'Stockholm') }
 
         it_behaves_like('CmdFindIsoCity successful #call', nil)
 
@@ -76,7 +81,7 @@ module GogglesDb
           'GIUGLIANO CAMPANIA'
         ].each do |fixture_name|
           describe "#call ('#{fixture_name}')" do
-            subject { CmdFindIsoCity.call(fixture_country, fixture_name) }
+            subject { described_class.call(fixture_country, fixture_name) }
 
             it_behaves_like('CmdFindIsoCity successful #call', nil)
 
@@ -103,7 +108,7 @@ module GogglesDb
           'PINARELLA', 'SPRESIANO'
         ].each do |fixture_name|
           describe "#call ('#{fixture_name}')" do
-            subject { CmdFindIsoCity.call(fixture_country, fixture_name) }
+            subject { described_class.call(fixture_country, fixture_name) }
 
             it_behaves_like('CmdFindIsoCity successful #call', nil)
 
@@ -120,11 +125,13 @@ module GogglesDb
     context 'when using invalid parameters,' do
       shared_examples_for 'CmdFindIsoCity failing' do
         it 'returns itself' do
-          expect(subject).to be_a(CmdFindIsoCity)
+          expect(subject).to be_a(described_class)
         end
+
         it 'fails' do
           expect(subject).to be_a_failure
         end
+
         it 'has a nil #result' do
           expect(subject.result).to be nil
         end

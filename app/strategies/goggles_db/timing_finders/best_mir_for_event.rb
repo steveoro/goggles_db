@@ -38,7 +38,7 @@ module GogglesDb
       #
       def search_by(swimmer, meeting, event_type, pool_type)
         result = super(swimmer, meeting, event_type, pool_type)
-        return NoTimeForEvent.new.search_by(swimmer, meeting, event_type, pool_type) unless result.present?
+        return NoTimeForEvent.new.search_by(swimmer, meeting, event_type, pool_type) if result.blank?
 
         result.by_timing(:asc).first
       end

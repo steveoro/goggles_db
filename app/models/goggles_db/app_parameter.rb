@@ -23,7 +23,7 @@ module GogglesDb
     # Retrieves the "versioning" parameter row
     def self.versioning_row
       record = find_by(code: VERSIONING_CODE)
-      raise "Missing required parameter row with code #{VERSIONING_CODE}" unless record.present?
+      raise "Missing required parameter row with code #{VERSIONING_CODE}" if record.blank?
 
       record
     end

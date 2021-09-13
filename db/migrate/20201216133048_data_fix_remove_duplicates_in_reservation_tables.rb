@@ -2,7 +2,7 @@
 
 class DataFixRemoveDuplicatesInReservationTables < ActiveRecord::Migration[6.0]
   def self.up
-    puts "\r\n--> Updating associations to MeetingReservation (tot.: #{GogglesDb::MeetingReservation.count}; '.' = x10):"
+    Rails.logger.debug { "\r\n--> Updating associations to MeetingReservation (tot.: #{GogglesDb::MeetingReservation.count}; '.' = x10):" }
     GogglesDb::MeetingReservation.all.each_with_index do |mres, index|
       GogglesDb::MeetingEventReservation.where(meeting_id: mres.meeting_id, badge_id: mres.badge_id)
                                         .update_all(meeting_reservation_id: mres.id)
@@ -10,7 +10,7 @@ class DataFixRemoveDuplicatesInReservationTables < ActiveRecord::Migration[6.0]
       GogglesDb::MeetingRelayReservation.where(meeting_id: mres.meeting_id, badge_id: mres.badge_id)
                                         .update_all(meeting_reservation_id: mres.id)
 
-      $stdout.write("\033[1;33;32m.\033[0m") if (index % 10).zero?
+      Rails.logger.debug("\033[1;33;32m.\033[0m") if (index % 10).zero?
     end
 
     remove_duplicates(GogglesDb::MeetingEventReservation)
@@ -32,7 +32,7 @@ class DataFixRemoveDuplicatesInReservationTables < ActiveRecord::Migration[6.0]
                               .count(:meeting_event_id)
                               .map { |grp| grp.first if grp.last > 1 }
                               .compact
-    puts "\r\n--> Found #{dup_event_res_list.count} groups with #{klass} duplicates; deleting:"
+    Rails.logger.debug { "\r\n--> Found #{dup_event_res_list.count} groups with #{klass} duplicates; deleting:" }
     dup_event_res_list.each do |tuple|
       badge_id, meeting_event_id = tuple
       duplicate_ids = klass.select(:id)
@@ -43,7 +43,7 @@ class DataFixRemoveDuplicatesInReservationTables < ActiveRecord::Migration[6.0]
       # (hopefully, the last one will be the one updated more recently - but most duplicates have the same timestamps)
       duplicate_ids.pop
       klass.where(id: duplicate_ids).delete_all
-      $stdout.write("\033[1;33;32m.\033[0m")
+      Rails.logger.debug("\033[1;33;32m.\033[0m")
     end
   end
 end

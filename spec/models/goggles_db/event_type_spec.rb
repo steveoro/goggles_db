@@ -7,10 +7,10 @@ require 'support/shared_localizable_examples'
 module GogglesDb
   RSpec.describe EventType, type: :model do
     context 'any pre-seeded instance' do
-      subject { (EventType.all_individuals + EventType.all_relays).sample }
+      subject { (described_class.all_individuals + described_class.all_relays).sample }
 
       it 'is valid' do
-        expect(subject).to be_an(EventType).and be_valid
+        expect(subject).to be_an(described_class).and be_valid
       end
 
       it_behaves_like(
@@ -41,6 +41,7 @@ module GogglesDb
     # Scopes & virtual scopes:
     describe 'self.all_relays' do
       let(:result) { subject.class.all_relays }
+
       it 'is an array of relay-only event types' do
         expect(result).to be_an(Array)
         expect(result).to all(be_relay)
@@ -49,6 +50,7 @@ module GogglesDb
 
     describe 'self.all_individuals' do
       let(:result) { subject.class.all_individuals }
+
       it 'is an array of individual-only event types' do
         expect(result).to be_an(Array)
         result.each do |row|
@@ -59,6 +61,7 @@ module GogglesDb
 
     describe 'self.all_eventable' do
       let(:result) { subject.class.all_eventable }
+
       it 'is an array of event types based on an actual eventable stroke type' do
         expect(result).to be_an(Array)
         result.each do |row|

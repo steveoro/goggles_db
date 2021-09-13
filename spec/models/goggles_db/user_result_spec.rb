@@ -12,13 +12,13 @@ module GogglesDb
       FactoryBot.create_list(:user_result_with_laps, 3, disqualified: true)
       FactoryBot.create_list(:user_result_with_laps, 5, disqualified: false)
       expect(GogglesDb::UserWorkshop.count).to be_positive
-      expect(GogglesDb::UserResult.count).to be_positive
+      expect(described_class.count).to be_positive
       expect(GogglesDb::UserLap.count).to be_positive
     end
 
     shared_examples_for 'a valid UserResult instance' do
       it 'is valid' do
-        expect(subject).to be_a(UserResult).and be_valid
+        expect(subject).to be_a(described_class).and be_valid
       end
 
       it_behaves_like(
@@ -45,12 +45,14 @@ module GogglesDb
     end
 
     context 'any pre-seeded instance' do
-      subject { UserResult.all.limit(10).sample }
+      subject { described_class.all.limit(10).sample }
+
       it_behaves_like('a valid UserResult instance')
     end
 
     context 'when using the factory, the resulting instance' do
       subject { FactoryBot.create(:user_result) }
+
       it_behaves_like('a valid UserResult instance')
     end
     #-- ------------------------------------------------------------------------
@@ -58,16 +60,19 @@ module GogglesDb
 
     # Sorting scopes:
     describe 'self.by_rank' do
-      let(:result) { GogglesDb::UserResult.by_rank.limit(20) }
-      it_behaves_like('sorting scope by_<ANY_VALUE_NAME> (with prepared result)', UserResult, 'rank')
+      let(:result) { described_class.by_rank.limit(20) }
+
+      it_behaves_like('sorting scope by_<ANY_VALUE_NAME> (with prepared result)', described_class, 'rank')
     end
 
     describe 'self.by_date' do
-      let(:result) { GogglesDb::UserResult.by_date.limit(20) }
+      let(:result) { described_class.by_date.limit(20) }
+
       it 'is a UserResult relation' do
         expect(result).to be_a(ActiveRecord::Relation)
-        expect(result).to all be_a(UserResult)
+        expect(result).to all be_a(described_class)
       end
+
       it 'is ordered' do
         expect(result.first.user_workshop.header_date).to be <= result.sample.user_workshop.header_date
         expect(result.sample.user_workshop.header_date).to be <= result.last.user_workshop.header_date
@@ -75,20 +80,21 @@ module GogglesDb
     end
 
     describe 'self.by_timing' do
-      let(:result) { GogglesDb::UserResult.by_timing.limit(20) }
-      it_behaves_like('sorting scope by_<ANY_VALUE_NAME> (with prepared result)', UserResult, 'to_timing')
+      let(:result) { described_class.by_timing.limit(20) }
+
+      it_behaves_like('sorting scope by_<ANY_VALUE_NAME> (with prepared result)', described_class, 'to_timing')
     end
 
     # Filtering scopes:
-    it_behaves_like('AbstractResult filtering scopes', UserResult)
+    it_behaves_like('AbstractResult filtering scopes', described_class)
 
     describe 'self.for_workshop_code' do
       let(:workshop_filter) { UserWorkshop.all.sample }
-      let(:result) { UserResult.for_workshop_code(workshop_filter).limit(10) }
+      let(:result) { described_class.for_workshop_code(workshop_filter).limit(10) }
 
       it 'is a relation containing only MeetingIndividualResults associated to the filter' do
         expect(result).to be_a(ActiveRecord::Relation)
-        expect(result).to all be_a(UserResult)
+        expect(result).to all be_a(described_class)
         list_of_codes = result.map { |row| row.user_workshop.code }.uniq.sort
         expect(list_of_codes).to eq([workshop_filter.code])
       end
@@ -98,15 +104,20 @@ module GogglesDb
 
     describe '#valid_for_ranking?' do
       context 'for any valid result (not disqualified)' do
-        let(:fixture_row) { FactoryBot.build(:user_result, disqualified: false) }
         subject { fixture_row.valid_for_ranking? }
+
+        let(:fixture_row) { FactoryBot.build(:user_result, disqualified: false) }
+
         it 'is true' do
           expect(subject).to be true
         end
       end
+
       context 'for any disqualified result' do
-        let(:fixture_row) { FactoryBot.build(:user_result, disqualified: true) }
         subject { fixture_row.valid_for_ranking? }
+
+        let(:fixture_row) { FactoryBot.build(:user_result, disqualified: true) }
+
         it 'is false' do
           expect(subject).to be false
         end
@@ -115,6 +126,7 @@ module GogglesDb
 
     describe 'regarding the timing fields,' do
       let(:fixture_row) { FactoryBot.build(:user_result) }
+
       it_behaves_like 'TimingManageable'
     end
     #-- ------------------------------------------------------------------------
@@ -122,7 +134,7 @@ module GogglesDb
 
     it_behaves_like(
       'AbstractResult #minimal_attributes',
-      UserResult,
+      described_class,
       %w[swimmer swimming_pool disqualification_code_type]
     )
     #-- -----------------------------------------------------------------------
@@ -148,6 +160,7 @@ module GogglesDb
       # Collection associations:
       context 'when the entity contains collection associations,' do
         subject         { FactoryBot.create(:user_result_with_laps) }
+
         let(:json_hash) { JSON.parse(subject.to_json) }
 
         it_behaves_like(

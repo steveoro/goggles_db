@@ -10,16 +10,21 @@ require 'support/shared_abstract_meeting_examples'
 module GogglesDb
   RSpec.describe UserWorkshop, type: :model do
     # Make sure UserWorkshop have some fixtures too:
+    #-- ------------------------------------------------------------------------
+    #++
+
+    subject { FactoryBot.create(:user_workshop) }
+
     before(:all) do
       FactoryBot.create_list(:workshop_with_results_and_laps, 5)
-      expect(GogglesDb::UserWorkshop.count).to be_positive
+      expect(described_class.count).to be_positive
       expect(GogglesDb::UserResult.count).to be_positive
       expect(GogglesDb::UserLap.count).to be_positive
     end
 
     shared_examples_for 'a valid UserWorkshop instance' do
       it 'is valid' do
-        expect(subject).to be_a(UserWorkshop).and be_valid
+        expect(subject).to be_a(described_class).and be_valid
       end
 
       it_behaves_like(
@@ -48,42 +53,43 @@ module GogglesDb
     end
 
     context 'any pre-seeded instance' do
-      subject { UserWorkshop.all.limit(20).sample }
+      subject { described_class.all.limit(20).sample }
+
       it_behaves_like('a valid UserWorkshop instance')
     end
 
     context 'when using the factory, the resulting instance' do
       subject { FactoryBot.create(:user_workshop) }
+
       it_behaves_like('a valid UserWorkshop instance')
     end
-    #-- ------------------------------------------------------------------------
-    #++
-
-    subject { FactoryBot.create(:user_workshop) }
 
     # Sorting scopes:
     describe 'self.by_date' do
-      it_behaves_like('sorting scope by_<ANY_VALUE_NAME>', UserWorkshop, 'date', 'header_date')
+      it_behaves_like('sorting scope by_<ANY_VALUE_NAME>', described_class, 'date', 'header_date')
     end
+
     describe 'self.by_season' do
-      it_behaves_like('sorting scope by_<ANY_ENTITY_NAME>', UserWorkshop, 'season', 'begin_date')
+      it_behaves_like('sorting scope by_<ANY_ENTITY_NAME>', described_class, 'season', 'begin_date')
     end
 
     # Filtering scopes:
     describe 'self.for_name' do
       context 'when combined with other associations that include same-named columns,' do
-        subject { GogglesDb::UserWorkshop.for_name('workshop-') }
+        subject { described_class.for_name('workshop-') }
+
         it 'does not raise errors' do
           expect { subject.count }.not_to raise_error
         end
       end
-      it_behaves_like('filtering scope FULLTEXT for_...', UserWorkshop, :for_name, %w[description code], 'workshop-')
+
+      it_behaves_like('filtering scope FULLTEXT for_...', described_class, :for_name, %w[description code], 'workshop-')
     end
     #-- ------------------------------------------------------------------------
     #++
 
     it_behaves_like('AbstractMeeting #edition_label', :user_workshop)
-    it_behaves_like('AbstractMeeting #minimal_attributes', UserWorkshop)
+    it_behaves_like('AbstractMeeting #minimal_attributes', described_class)
 
     describe '#to_json' do
       # Required associations:

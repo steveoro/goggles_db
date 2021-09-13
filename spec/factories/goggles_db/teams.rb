@@ -3,7 +3,7 @@ FactoryBot.define do
     before_create_validate_instance
 
     city
-    name          { "#{city ? city.name : FFaker::Address.city} Swimming Club #{Time.now.year}" }
+    name          { "#{city ? city.name : FFaker::Address.city} Swimming Club #{Time.zone.now.year}" }
     editable_name { name }
     address       { FFaker::Address.street_address }
     zip           { format('%<number>06d', number: (rand * 100_000).to_i) }

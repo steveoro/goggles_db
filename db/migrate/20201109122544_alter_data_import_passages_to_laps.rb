@@ -11,7 +11,7 @@ class AlterDataImportPassagesToLaps < ActiveRecord::Migration[6.0]
     remove_index :data_import_laps, name: :idx_di_passages_passage_type
     rename_column :data_import_laps, :passage_type_id, :length_in_meters
     # DataImportLaps model is still WIP, so we proceed with low-level SQL here:
-    execute <<-SQL
+    execute <<-SQL.squish
       UPDATE data_import_laps SET length_in_meters = length_in_meters * 25
     SQL
     add_index :data_import_laps, :length_in_meters

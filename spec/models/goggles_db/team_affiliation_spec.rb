@@ -7,11 +7,22 @@ require 'support/shared_to_json_examples'
 
 module GogglesDb
   RSpec.describe TeamAffiliation, type: :model do
+    let(:fixture_manager) do
+      manager = FactoryBot.create(:user)
+      FactoryBot.create(:managed_affiliation, team_affiliation: affiliation_with_badges, manager: manager)
+      affiliation_with_badges.reload
+      manager
+    end
+    #-- ------------------------------------------------------------------------
+    #++
+
+    let(:affiliation_with_badges) { FactoryBot.create(:affiliation_with_badges) }
+
     context 'when using the factory, the resulting instance' do
       subject { FactoryBot.create(:team_affiliation) }
 
       it 'is valid' do
-        expect(subject).to be_a(TeamAffiliation).and be_valid
+        expect(subject).to be_a(described_class).and be_valid
       end
 
       it_behaves_like(
@@ -21,6 +32,7 @@ module GogglesDb
       it 'has a valid Season' do
         expect(subject.season).to be_a(Season).and be_valid
       end
+
       it 'has a valid Team' do
         expect(subject.team).to be_a(Team).and be_valid
       end
@@ -50,35 +62,29 @@ module GogglesDb
 
     # Filtering scopes:
     describe 'self.for_years' do
-      it_behaves_like('filtering scope for_years', TeamAffiliation)
+      it_behaves_like('filtering scope for_years', described_class)
     end
+
     describe 'self.for_year' do
-      it_behaves_like('filtering scope for_year', TeamAffiliation)
+      it_behaves_like('filtering scope for_year', described_class)
     end
+
     describe 'self.for_name' do
       context 'when combined with other associations that include same-named columns,' do
         subject do
-          GogglesDb::TeamAffiliation.joins(:team)
-                                    .includes(:team)
-                                    .for_name(%w[ferrari dynamic reggiana].sample)
+          described_class.joins(:team)
+                         .includes(:team)
+                         .for_name(%w[ferrari dynamic reggiana].sample)
         end
+
         it 'does not raise errors' do
           expect { subject.count }.not_to raise_error
         end
       end
-      %w[ferrari dynamic reggiana].each do |filter_text|
-        it_behaves_like('filtering scope FULLTEXT for_...', TeamAffiliation, :for_name, %w[name], filter_text)
-      end
-    end
-    #-- ------------------------------------------------------------------------
-    #++
 
-    let(:affiliation_with_badges) { FactoryBot.create(:affiliation_with_badges) }
-    let(:fixture_manager) do
-      manager = FactoryBot.create(:user)
-      FactoryBot.create(:managed_affiliation, team_affiliation: affiliation_with_badges, manager: manager)
-      affiliation_with_badges.reload
-      manager
+      %w[ferrari dynamic reggiana].each do |filter_text|
+        it_behaves_like('filtering scope FULLTEXT for_...', described_class, :for_name, %w[name], filter_text)
+      end
     end
 
     describe '#recent_badges' do
@@ -123,6 +129,7 @@ module GogglesDb
           expect(fixture_manager).to be_a(User)
           affiliation_with_badges
         end
+
         let(:json_hash) { JSON.parse(subject.to_json) }
 
         it_behaves_like(

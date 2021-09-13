@@ -45,13 +45,11 @@ module GogglesDb
     # Returns +true+ if the standard time for a given season, pool_type, event_type,
     # gender_type & category_type exists.
     def self.exists_for?(season, pool_type, event_type, gender_type, category_type)
-      StandardTiming.where(
-        season_id: season.id,
-        pool_type_id: pool_type.id,
-        event_type_id: event_type.id,
-        gender_type_id: gender_type.id,
-        category_type_id: category_type.id
-      ).exists?
+      StandardTiming.exists?(season_id: season.id,
+                             pool_type_id: pool_type.id,
+                             event_type_id: event_type.id,
+                             gender_type_id: gender_type.id,
+                             category_type_id: category_type.id)
     end
 
     # Returns the first standard time found for a given season, pool_type, event_type,

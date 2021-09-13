@@ -23,7 +23,7 @@ module GogglesDb
     scope :by_date, ->(dir = :asc) { order(day: dir) }
 
     # Filtering scopes:
-    scope :for_date,  ->(date = Date.today) { where(day: date).order(:route) }
+    scope :for_date,  ->(date = Time.zone.today) { where(day: date).order(:route) }
     scope :for_route, ->(route) { where(route: route).order(:day) }
     #-- ------------------------------------------------------------------------
     #++
@@ -42,7 +42,7 @@ module GogglesDb
     # 'route' does not need to correspond to an actual API route; it can be
     # any valid string.
     #
-    def self.increase_for!(route, day = Date.today)
+    def self.increase_for!(route, day = Time.zone.today)
       counter_row = APIDailyUse.create_or_find_by!(route: route, day: day)
       counter_row.increment!(:count)
     end

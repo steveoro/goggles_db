@@ -10,7 +10,7 @@ module GogglesDb
   RSpec.describe StandardTiming, type: :model do
     shared_examples_for 'a valid StandardTiming instance' do
       it 'is valid' do
-        expect(subject).to be_a(StandardTiming).and be_valid
+        expect(subject).to be_a(described_class).and be_valid
       end
 
       it_behaves_like(
@@ -25,12 +25,14 @@ module GogglesDb
     end
 
     context 'any pre-seeded instance' do
-      subject { StandardTiming.all.limit(20).sample }
+      subject { described_class.all.limit(20).sample }
+
       it_behaves_like('a valid StandardTiming instance')
     end
 
     context 'when using the factory, the resulting instance' do
       subject { FactoryBot.create(:standard_timing) }
+
       it_behaves_like('a valid StandardTiming instance')
     end
     #-- ------------------------------------------------------------------------
@@ -38,47 +40,52 @@ module GogglesDb
 
     # Sorting scopes:
     describe 'self.by_season' do
-      it_behaves_like('sorting scope by_<ANY_ENTITY_NAME>', StandardTiming, 'season', 'header_year')
+      it_behaves_like('sorting scope by_<ANY_ENTITY_NAME>', described_class, 'season', 'header_year')
     end
+
     describe 'self.by_event_type' do
-      it_behaves_like('sorting scope by_<ANY_ENTITY_NAME>', StandardTiming, 'event_type', 'code')
+      it_behaves_like('sorting scope by_<ANY_ENTITY_NAME>', described_class, 'event_type', 'code')
     end
 
     # Filtering scopes:
     describe 'self.for_season' do
-      it_behaves_like('filtering scope for_<ANY_ENTITY_NAME>', StandardTiming, 'season')
+      it_behaves_like('filtering scope for_<ANY_ENTITY_NAME>', described_class, 'season')
     end
+
     describe 'self.for_pool_type' do
-      it_behaves_like('filtering scope for_<ANY_ENTITY_NAME>', StandardTiming, 'pool_type')
+      it_behaves_like('filtering scope for_<ANY_ENTITY_NAME>', described_class, 'pool_type')
     end
+
     describe 'self.by_event_type' do
-      it_behaves_like('filtering scope for_<ANY_ENTITY_NAME>', StandardTiming, 'event_type')
+      it_behaves_like('filtering scope for_<ANY_ENTITY_NAME>', described_class, 'event_type')
     end
+
     describe 'self.for_gender_type' do
       it_behaves_like(
         'filtering scope for_<ANY_CHOSEN_FILTER>',
-        StandardTiming,
+        described_class,
         'for_gender_type',
         'gender_type',
         GogglesDb::GenderType.send(%w[male female].sample)
       )
     end
+
     describe 'self.for_category_type' do
-      it_behaves_like('filtering scope for_<ANY_ENTITY_NAME>', StandardTiming, 'category_type')
+      it_behaves_like('filtering scope for_<ANY_ENTITY_NAME>', described_class, 'category_type')
     end
     #-- ------------------------------------------------------------------------
     #++
 
     describe 'regarding the timing fields,' do
       let(:fixture_row) { FactoryBot.build(:standard_timing) }
+
       it_behaves_like 'TimingManageable'
     end
 
     describe 'self.exists_for?' do
       context 'when there are matching rows for the specified parameters,' do
-        let(:fixture_row) { FactoryBot.create(:standard_timing) }
         subject do
-          StandardTiming.exists_for?(
+          described_class.exists_for?(
             fixture_row.season,
             fixture_row.pool_type,
             fixture_row.event_type,
@@ -86,15 +93,20 @@ module GogglesDb
             fixture_row.category_type
           )
         end
+
+        let(:fixture_row) { FactoryBot.create(:standard_timing) }
+
         it 'is true' do
-          expect(fixture_row).to be_a(StandardTiming).and be_valid
+          expect(fixture_row).to be_a(described_class).and be_valid
           expect(subject).to be true
         end
       end
 
       context 'when no matches are found for the specified parameters,' do
+        subject { described_class.exists_for?(empty_season, PoolType.first, EventType.first, GenderType.first, CategoryType.first) }
+
         let(:empty_season) { FactoryBot.create(:season) }
-        subject { StandardTiming.exists_for?(empty_season, PoolType.first, EventType.first, GenderType.first, CategoryType.first) }
+
         it 'is false' do
           expect(empty_season).to be_a(Season).and be_valid
           expect(subject).to be false
@@ -104,9 +116,8 @@ module GogglesDb
 
     describe 'self.find_first' do
       context 'when there are matching rows for the specified parameters,' do
-        let(:fixture_row) { FactoryBot.create(:standard_timing) }
         subject do
-          StandardTiming.find_first(
+          described_class.find_first(
             fixture_row.season,
             fixture_row.pool_type,
             fixture_row.event_type,
@@ -114,17 +125,23 @@ module GogglesDb
             fixture_row.category_type
           )
         end
+
+        let(:fixture_row) { FactoryBot.create(:standard_timing) }
+
         it 'is an instance of StandardTiming' do
-          expect(subject).to be_a(StandardTiming).and be_valid
+          expect(subject).to be_a(described_class).and be_valid
         end
+
         it 'matches the filtering parameters' do
           expect(subject).to eq(fixture_row)
         end
       end
 
       context 'when no matches are found for the specified parameters,' do
+        subject { described_class.find_first(empty_season, PoolType.first, EventType.first, GenderType.first, CategoryType.first) }
+
         let(:empty_season) { FactoryBot.create(:season) }
-        subject { StandardTiming.find_first(empty_season, PoolType.first, EventType.first, GenderType.first, CategoryType.first) }
+
         it 'is nil' do
           expect(subject).to be nil
         end

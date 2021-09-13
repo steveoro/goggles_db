@@ -26,7 +26,8 @@ module GogglesDb
       )
     end
     # Make sure domain is coherent with expected context:
-    before(:each) do
+
+    before do
       expect(fixture_user).to be_a(GogglesDb::User).and be_valid
       expect(fixture_meeting).to be_a(GogglesDb::Meeting).and be_valid
       expect(fixture_meeting.meeting_events.count).to be_positive
@@ -40,20 +41,24 @@ module GogglesDb
     context 'when using valid parameters (including a Meeting w/ events),' do
       describe '#call' do
         # This will select one of the already populated Meetings (with events & categories):
-        subject { CmdCreateReservation.call(fixture_badge, fixture_meeting, fixture_user) }
+        subject { described_class.call(fixture_badge, fixture_meeting, fixture_user) }
 
         it 'returns itself' do
-          expect(subject).to be_a(CmdCreateReservation)
+          expect(subject).to be_a(described_class)
         end
+
         it 'is successful' do
           expect(subject).to be_successful
         end
+
         it 'has a blank #errors list' do
           expect(subject.errors).to be_blank
         end
+
         it 'has a valid MeetingReservation #result' do
           expect(subject.result).to be_a(GogglesDb::MeetingReservation).and be_valid
         end
+
         it 'creates the same number of event rows as the specified Meeting' do
           expect(
             subject.result.meeting_event_reservations.count +
@@ -67,19 +72,23 @@ module GogglesDb
 
     context 'when using valid constructor parameters but that would yield a duplicated MeetingReservation,' do
       describe '#call' do
+        subject { described_class.call(existing_row.badge, existing_row.meeting, existing_row.user) }
+
         let(:existing_row) { GogglesDb::MeetingReservation.limit(30).sample }
-        subject { CmdCreateReservation.call(existing_row.badge, existing_row.meeting, existing_row.user) }
 
         it 'returns itself' do
-          expect(subject).to be_a(CmdCreateReservation)
+          expect(subject).to be_a(described_class)
         end
+
         it 'fails' do
           expect(subject).to be_a_failure
         end
+
         it 'has a non-empty #errors list displaying a error message about header creation failure' do
           expect(subject.errors).to be_present
           expect(subject.errors[:msg]).to eq(['Duplicate master MeetingReservation: not saved'])
         end
+
         it 'has a nil #result' do
           expect(subject.result).to be nil
         end
@@ -100,13 +109,16 @@ module GogglesDb
         it 'returns itself' do
           expect(subject).to be_a(described_class)
         end
+
         it 'fails' do
           expect(subject).to be_a_failure
         end
+
         it 'has a non-empty #errors list displaying a error message about constructor parameters' do
           expect(subject.errors).to be_present
           expect(subject.errors[:msg]).to eq(['Invalid constructor parameters'])
         end
+
         it 'has a nil #result' do
           expect(subject.result).to be nil
         end

@@ -9,7 +9,7 @@ module GogglesDb
   RSpec.describe MeetingReservation, type: :model do
     shared_examples_for 'a valid MeetingReservation instance' do
       it 'is valid' do
-        expect(subject).to be_a(MeetingReservation).and be_valid
+        expect(subject).to be_a(described_class).and be_valid
       end
 
       it_behaves_like(
@@ -28,12 +28,14 @@ module GogglesDb
     end
 
     context 'any pre-seeded instance' do
-      subject { MeetingReservation.all.limit(20).sample }
+      subject { described_class.all.limit(20).sample }
+
       it_behaves_like('a valid MeetingReservation instance')
     end
 
     context 'when using the factory, the resulting instance' do
       subject { FactoryBot.create(:meeting_reservation) }
+
       it_behaves_like('a valid MeetingReservation instance')
     end
     #-- ------------------------------------------------------------------------
@@ -42,6 +44,7 @@ module GogglesDb
     # Filtering scopes:
     describe 'self.coming' do
       let(:result) { subject.class.where(not_coming: false).limit(20) }
+
       it "contains only athlete reservations that haven't been flagged as 'not coming'" do
         expect(result).to all(be_coming)
       end
@@ -51,15 +54,20 @@ module GogglesDb
 
     describe '#coming?' do
       context 'for reservations that are not flagged for skipping' do
-        let(:fixture_row) { FactoryBot.build(:meeting_reservation, not_coming: false) }
         subject { fixture_row.coming? }
+
+        let(:fixture_row) { FactoryBot.build(:meeting_reservation, not_coming: false) }
+
         it 'is true' do
           expect(subject).to be true
         end
       end
+
       context 'for reservations that are flagged for skipping' do
-        let(:fixture_row) { FactoryBot.build(:meeting_reservation, not_coming: true) }
         subject { fixture_row.coming? }
+
+        let(:fixture_row) { FactoryBot.build(:meeting_reservation, not_coming: true) }
+
         it 'is false' do
           expect(subject).to be false
         end
@@ -67,10 +75,12 @@ module GogglesDb
     end
 
     describe '#minimal_attributes' do
-      subject { GogglesDb::MeetingReservation.limit(200).sample.minimal_attributes }
+      subject { described_class.limit(200).sample.minimal_attributes }
+
       it 'is an Hash' do
         expect(subject).to be_an(Hash)
       end
+
       %w[badge team swimmer].each do |association_name|
         it "includes the #{association_name} association key" do
           expect(subject.keys).to include(association_name)
@@ -98,9 +108,10 @@ module GogglesDb
         context 'when the entity has MERes,' do
           subject do
             mer = GogglesDb::MeetingEventReservation.limit(100).sample
-            expect(mer.meeting_reservation).to be_a(MeetingReservation).and be_valid
+            expect(mer.meeting_reservation).to be_a(described_class).and be_valid
             mer.meeting_reservation
           end
+
           let(:json_hash) { JSON.parse(subject.to_json) }
 
           it_behaves_like(
@@ -112,9 +123,10 @@ module GogglesDb
         context 'when the entity has MRRes,' do
           subject do
             mrr = GogglesDb::MeetingRelayReservation.limit(100).sample
-            expect(mrr.meeting_reservation).to be_a(MeetingReservation).and be_valid
+            expect(mrr.meeting_reservation).to be_a(described_class).and be_valid
             mrr.meeting_reservation
           end
+
           let(:json_hash) { JSON.parse(subject.to_json) }
 
           it_behaves_like(

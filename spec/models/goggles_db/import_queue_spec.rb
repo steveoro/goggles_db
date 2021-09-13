@@ -8,7 +8,7 @@ module GogglesDb
   RSpec.describe ImportQueue, type: :model do
     shared_examples_for 'a valid ImportQueue instance' do
       it 'is valid' do
-        expect(subject).to be_an(ImportQueue).and be_valid
+        expect(subject).to be_an(described_class).and be_valid
       end
 
       it_behaves_like(
@@ -34,10 +34,8 @@ module GogglesDb
       )
     end
 
-    context 'when using the factory, the resulting instance' do
-      subject { FactoryBot.create(:import_queue) }
-      it_behaves_like('a valid ImportQueue instance')
-    end
+    before { expect(minimum_domain.count).to be_positive }
+
     #-- ------------------------------------------------------------------------
     #++
 
@@ -45,31 +43,38 @@ module GogglesDb
       FactoryBot.create_list(:import_queue_existing_swimmer, 3, uid: 'FAKE-1')
       FactoryBot.create_list(:import_queue_existing_team, 3, process_runs: 1)
       FactoryBot.create_list(:import_queue_existing_team, 2, process_runs: 1, done: true)
-      ImportQueue.all
+      described_class.all
     end
 
-    before(:each) { expect(minimum_domain.count).to be_positive }
+    context 'when using the factory, the resulting instance' do
+      subject { FactoryBot.create(:import_queue) }
+
+      it_behaves_like('a valid ImportQueue instance')
+    end
 
     # Filtering scopes:
     describe 'self.deletable' do
       it_behaves_like(
         'filtering scope <ANY_FILTER_NAME> on a field with implicit value',
-        ImportQueue, 'deletable', 'done', true
+        described_class, 'deletable', 'done', true
       )
     end
+
     describe 'self.for_user' do
-      it_behaves_like('filtering scope for_<ANY_ENTITY_NAME>', ImportQueue, 'user')
+      it_behaves_like('filtering scope for_<ANY_ENTITY_NAME>', described_class, 'user')
     end
+
     describe 'self.for_uid' do
-      it_behaves_like('filtering scope for_<ANY_CHOSEN_FILTER>', ImportQueue, 'for_uid', 'uid', 'FAKE-1')
+      it_behaves_like('filtering scope for_<ANY_CHOSEN_FILTER>', described_class, 'for_uid', 'uid', 'FAKE-1')
     end
 
     describe '#sibling_rows' do
       context 'when deleting a parent row' do
-        let(:parent_row) { ImportQueue.all.sample }
-        before(:each) do
+        let(:parent_row) { described_class.all.sample }
+
+        before do
           expect(minimum_domain.count).to be_positive
-          expect(parent_row).to be_a(GogglesDb::ImportQueue).and be_valid
+          expect(parent_row).to be_a(described_class).and be_valid
           FactoryBot.create_list(:import_queue_existing_swimmer, 3, import_queue_id: parent_row.id, uid: 'FAKE-2')
           parent_row.reload
           expect(parent_row.sibling_rows.count).to eq(3)
@@ -78,7 +83,7 @@ module GogglesDb
         # This is mainly because each IQ row may be solved at a different time,
         # asynchronously from each other, even the dependent ones:
         it 'does not destroy the associated import_queues' do
-          expect { parent_row.delete }.to change(ImportQueue, :count).by(-1)
+          expect { parent_row.delete }.to change(described_class, :count).by(-1)
         end
       end
     end
@@ -86,13 +91,6 @@ module GogglesDb
     #++
 
     context 'for a row with valid request_data,' do
-      let(:minutes) { (rand * 5).to_i }
-      let(:seconds) { (rand * 59).to_i }
-      let(:hundredths) { (rand * 99).to_i }
-      let(:meters) { 50 + (rand * 8).to_i * 50 }
-      let(:fixture_swimmer) { GogglesDb::Swimmer.first(150).sample }
-      let(:fixture_event_type) { GogglesDb::EventType.all.sample }
-
       subject do
         FactoryBot.create(
           :import_queue,
@@ -112,10 +110,18 @@ module GogglesDb
         )
       end
 
+      let(:minutes) { (rand * 5).to_i }
+      let(:seconds) { (rand * 59).to_i }
+      let(:hundredths) { (rand * 99).to_i }
+      let(:meters) { 50 + (rand * 8).to_i * 50 }
+      let(:fixture_swimmer) { GogglesDb::Swimmer.first(150).sample }
+      let(:fixture_event_type) { GogglesDb::EventType.all.sample }
+
       describe '#req' do
         it 'is a non-empty Hash' do
           expect(subject.req).to be_an(Hash).and be_present
         end
+
         it 'includes the target_entity and the root_key' do
           expect(subject.req.keys).to include('target_entity').and include('lap')
         end
@@ -155,6 +161,7 @@ module GogglesDb
         it 'is an EventType' do
           expect(subject.req_event_type).to be_an(GogglesDb::EventType).and be_valid
         end
+
         it 'is the corresponding EventType for the ID set in the request data' do
           expect(subject.req_event_type.id).to eq(fixture_event_type.id)
         end
@@ -164,6 +171,7 @@ module GogglesDb
         it 'is a Timing instance' do
           expect(subject.req_timing).to be_a(Timing)
         end
+
         it 'has the values set in the request data' do
           expect(subject.req_timing).to eq(
             Timing.new(

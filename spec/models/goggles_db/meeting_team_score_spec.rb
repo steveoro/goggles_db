@@ -8,7 +8,7 @@ module GogglesDb
   RSpec.describe MeetingTeamScore, type: :model do
     shared_examples_for 'a valid MeetingTeamScore instance' do
       it 'is valid' do
-        expect(subject).to be_a(MeetingTeamScore).and be_valid
+        expect(subject).to be_a(described_class).and be_valid
       end
 
       it_behaves_like(
@@ -26,12 +26,14 @@ module GogglesDb
     end
 
     context 'any valid, pre-seeded instance' do
-      subject { MeetingTeamScore.last(20).sample }
+      subject { described_class.last(20).sample }
+
       it_behaves_like('a valid MeetingTeamScore instance')
     end
 
     context 'when using the factory, the resulting instance' do
       subject { FactoryBot.create(:meeting_team_score) }
+
       it_behaves_like('a valid MeetingTeamScore instance')
     end
     #-- ------------------------------------------------------------------------
@@ -53,16 +55,17 @@ module GogglesDb
 
       it 'is a relation containing only positive MeetingTeamScores' do
         expect(result).to be_a(ActiveRecord::Relation)
-        expect(result).to all be_a(MeetingTeamScore)
+        expect(result).to all be_a(described_class)
         expect(result.sum { |row| row.season_points + row.season_relay_points + row.season_team_points }).to be_positive
       end
     end
 
     describe 'self.for_team' do
-      it_behaves_like('filtering scope for_<ANY_ENTITY_NAME>', MeetingTeamScore, 'team')
+      it_behaves_like('filtering scope for_<ANY_ENTITY_NAME>', described_class, 'team')
     end
+
     describe 'self.for_meeting' do
-      it_behaves_like('filtering scope for_<ANY_ENTITY_NAME>', MeetingTeamScore, 'meeting')
+      it_behaves_like('filtering scope for_<ANY_ENTITY_NAME>', described_class, 'meeting')
     end
   end
 end

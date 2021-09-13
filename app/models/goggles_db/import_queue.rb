@@ -171,7 +171,7 @@ module GogglesDb
     # Returns the associated EventType at root-key depth of the request, if any, or +nil+ when not set.
     def req_event_type
       event_type_id = req&.fetch(root_key, nil)&.fetch(result_parent_key, nil)&.fetch('event_type_id', nil)
-      @req_event_type ||= GogglesDb::EventType.find_by_id(event_type_id)
+      @req_event_type ||= GogglesDb::EventType.find_by(id: event_type_id)
     end
 
     # Returns a Timing instance set with any timing data stored at root-key depth of the request,

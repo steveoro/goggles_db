@@ -35,7 +35,7 @@ Rake.application.remove_task 'db:reset'
 Rake.application.remove_task 'db:test:prepare'
 
 desc 'Check and creates missing directories needed by the structure assumed by some of the maintenance tasks.'
-task(:check_needed_dirs) do
+task(check_needed_dirs: :environment) do
   [
     DB_DUMP_DIR
     # (add here any other needed folder)
@@ -51,7 +51,7 @@ end
 namespace :db do
   namespace :test do
     desc 'NO-OP task: not needed for this project (always safe to run, shouldn\'t affect the DB dump)'
-    task :prepare do |_t|
+    task prepare: :environment do |_t|
       # (Rewrite the task to *not* do anything you don't want)
       puts 'Nothing to prepare, moving on...'
     end
@@ -66,7 +66,7 @@ namespace :db do
     Options: [Rails.env=#{Rails.env}]
 
   DESC
-  task :reset do |_t|
+  task reset: :environment do |_t|
     puts '*** Task: Custom DB RESET ***'
     rails_config  = Rails.configuration # Prepare & check configuration:
     db_name       = rails_config.database_configuration[Rails.env]['database']

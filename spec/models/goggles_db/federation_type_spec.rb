@@ -9,6 +9,7 @@ module GogglesDb
         it 'is has a #code' do
           expect(subject.class.send(word).code).to be_present
         end
+
         it "is an instance of the same class with a #{word} code ID" do
           expect(subject.class.send(word)).to be_a(subject.class).and be_valid
         end

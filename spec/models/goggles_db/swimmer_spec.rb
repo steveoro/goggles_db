@@ -30,19 +30,23 @@ module GogglesDb
       #++
 
       it 'is valid' do
-        expect(subject).to be_a(Swimmer).and be_valid
+        expect(subject).to be_a(described_class).and be_valid
       end
+
       it 'has a valid GenderType' do
         expect(subject.gender_type).to be_a(GenderType).and be_valid
       end
+
       it 'is does not have an associated user yet' do
         expect(subject).to respond_to(:associated_user)
         expect(subject.associated_user).to be nil
       end
+
       it 'is has a #complete_name' do
         expect(subject).to respond_to(:complete_name)
         expect(subject.complete_name).to be_present
       end
+
       it 'is has a #year_of_birth' do
         expect(subject).to respond_to(:year_of_birth)
         expect(subject.year_of_birth).to be_present
@@ -54,25 +58,25 @@ module GogglesDb
     # Filtering scopes:
     describe 'self.for_name' do
       %w[john steve nicolas nicole serena].each do |filter_text|
-        it_behaves_like('filtering scope FULLTEXT for_...', Swimmer, :for_name, %w[last_name first_name complete_name], filter_text)
+        it_behaves_like('filtering scope FULLTEXT for_...', described_class, :for_name, %w[last_name first_name complete_name], filter_text)
       end
     end
 
     describe 'self.for_first_name' do
       %w[john steve nicolas nicole serena].each do |filter_text|
-        it_behaves_like('filtering scope FULLTEXT for_...', Swimmer, :for_first_name, %w[first_name], filter_text)
+        it_behaves_like('filtering scope FULLTEXT for_...', described_class, :for_first_name, %w[first_name], filter_text)
       end
     end
 
     describe 'self.for_last_name' do
       %w[Alloro Jenkins Ligabue Smith].each do |filter_text|
-        it_behaves_like('filtering scope FULLTEXT for_...', Swimmer, :for_last_name, %w[last_name], filter_text)
+        it_behaves_like('filtering scope FULLTEXT for_...', described_class, :for_last_name, %w[last_name], filter_text)
       end
     end
 
     describe 'self.for_complete_name' do
       ['Alloro Stefano', 'Jenkins', 'Ligabue', 'Smith'].each do |filter_text|
-        it_behaves_like('filtering scope FULLTEXT for_...', Swimmer, :for_complete_name, %w[complete_name], filter_text)
+        it_behaves_like('filtering scope FULLTEXT for_...', described_class, :for_complete_name, %w[complete_name], filter_text)
       end
     end
     #-- ------------------------------------------------------------------------
@@ -80,9 +84,11 @@ module GogglesDb
 
     describe '#minimal_attributes' do
       subject { FactoryBot.create(:swimmer).minimal_attributes }
+
       it 'is an Hash' do
         expect(subject).to be_an(Hash)
       end
+
       %w[long_label associated_user gender_type].each do |member_name|
         it "includes the #{member_name} member key" do
           expect(subject.keys).to include(member_name)
@@ -110,9 +116,9 @@ module GogglesDb
 
       # Optional associations:
       context 'when the entity contains other optional associations' do
-        let(:fixture_user) { FactoryBot.create(:user) }
         subject            { FactoryBot.create(:swimmer, associated_user: fixture_user) }
 
+        let(:fixture_user) { FactoryBot.create(:user) }
         let(:json_hash) do
           expect(subject.associated_user).to be_a(User).and be_valid
           expect(subject.associated_user_id).to eq(fixture_user.id)

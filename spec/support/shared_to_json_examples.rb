@@ -20,12 +20,14 @@ shared_examples_for '#to_json when called on a valid instance' do |required_asso
   it 'is a String' do
     expect(subject.to_json).to be_a(String).and be_present
   end
+
   it 'can be parsed without errors' do
     expect { JSON.parse(subject.to_json) }.not_to raise_error
   end
 
   describe 'the 1st-level required association' do
     let(:json_hash) { JSON.parse(subject.to_json) }
+
     required_associations.each do |association_name|
       it "contains the JSON details of its #{association_name}" do
         expect(json_hash[association_name]).to be_an(Hash).and be_present
@@ -42,12 +44,14 @@ shared_examples_for '#to_json when called on a valid instance with a synthetized
   it 'is a String' do
     expect(subject.to_json).to be_a(String).and be_present
   end
+
   it 'can be parsed without errors' do
     expect { JSON.parse(subject.to_json) }.not_to raise_error
   end
 
   describe 'the required but synthetized association' do
     let(:json_hash) { JSON.parse(subject.to_json) }
+
     synth_associations.each do |association_name|
       it "contains the JSON details of its #{association_name}" do
         expect(json_hash[association_name]).to be_an(Hash).and be_present
@@ -61,12 +65,14 @@ shared_examples_for '#to_json when called with unset optional associations' do |
   it 'is a String' do
     expect(subject.to_json).to be_a(String).and be_present
   end
+
   it 'can be parsed without errors' do
     expect { JSON.parse(subject.to_json) }.not_to raise_error
   end
 
   describe 'the optional association' do
     let(:json_hash) { JSON.parse(subject.to_json) }
+
     optional_associations.each do |association_name|
       it "contains just the key of the JSON details of its #{association_name}" do
         expect(json_hash[association_name]).to be nil
@@ -79,6 +85,7 @@ shared_examples_for '#to_json when the entity contains other optional associatio
   it 'is a String' do
     expect(subject.to_json).to be_a(String).and be_present
   end
+
   it 'can be parsed without errors' do
     expect { JSON.parse(subject.to_json) }.not_to raise_error
   end

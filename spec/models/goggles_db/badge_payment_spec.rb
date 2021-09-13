@@ -12,7 +12,7 @@ module GogglesDb
       subject { FactoryBot.create(:badge_payment) }
 
       it 'is valid' do
-        expect(subject).to be_a(BadgePayment).and be_valid
+        expect(subject).to be_a(described_class).and be_valid
       end
 
       it_behaves_like(
@@ -41,21 +41,24 @@ module GogglesDb
 
     # Sorting scopes:
     describe 'self.by_date' do
-      it_behaves_like('sorting scope by_<ANY_VALUE_NAME>', BadgePayment, 'date', 'payment_date')
+      it_behaves_like('sorting scope by_<ANY_VALUE_NAME>', described_class, 'date', 'payment_date')
     end
 
     # Filtering scopes:
     describe 'self.for_badge' do
-      it_behaves_like('filtering scope for_<ANY_ENTITY_NAME>', BadgePayment, 'badge')
+      it_behaves_like('filtering scope for_<ANY_ENTITY_NAME>', described_class, 'badge')
     end
+
     describe 'self.for_badges' do
-      it_behaves_like('filtering scope for_<PLURAL_ENTITY_NAME>', BadgePayment, 'badge')
+      it_behaves_like('filtering scope for_<PLURAL_ENTITY_NAME>', described_class, 'badge')
     end
+
     describe 'self.for_swimmer' do
-      it_behaves_like('filtering scope for_<ANY_ENTITY_NAME>', BadgePayment, 'swimmer')
+      it_behaves_like('filtering scope for_<ANY_ENTITY_NAME>', described_class, 'swimmer')
     end
+
     describe 'self.for_team' do
-      it_behaves_like('filtering scope for_<ANY_ENTITY_NAME>', BadgePayment, 'team')
+      it_behaves_like('filtering scope for_<ANY_ENTITY_NAME>', described_class, 'team')
     end
     #-- ------------------------------------------------------------------------
     #++

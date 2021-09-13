@@ -8,7 +8,7 @@ module GogglesDb
   RSpec.describe City, type: :model do
     shared_examples_for 'a valid City instance' do
       it 'is valid' do
-        expect(subject).to be_a(City).and be_valid
+        expect(subject).to be_a(described_class).and be_valid
       end
 
       # Presence of fields & requiredness:
@@ -33,12 +33,14 @@ module GogglesDb
     end
 
     context 'any pre-seeded instance' do
-      subject { City.all.limit(50).sample }
+      subject { described_class.all.limit(50).sample }
+
       it_behaves_like('a valid City instance')
     end
 
     context 'when using the factory, the resulting instance' do
       subject { FactoryBot.create(:city) }
+
       it_behaves_like('a valid City instance')
     end
     #-- ------------------------------------------------------------------------
@@ -47,14 +49,14 @@ module GogglesDb
     # Filtering scopes:
     describe 'self.for_name' do
       %w[forl albinea bologna carpi emilia modena reggio].each do |filter_text|
-        it_behaves_like('filtering scope FULLTEXT for_...', City, :for_name, %w[name area], filter_text)
+        it_behaves_like('filtering scope FULLTEXT for_...', described_class, :for_name, %w[name area], filter_text)
       end
     end
     #-- ------------------------------------------------------------------------
     #++
 
     # Test a bunch of 'IT' cities, which are granted to have regions/subdivisions:
-    City.where(country: 'Italy').first(50).sample(10).each do |subject_city|
+    described_class.where(country: 'Italy').first(50).sample(10).each do |subject_city|
       let(:fixture_isos)        { subject_city.to_iso }
       let(:fixture_iso_country) { fixture_isos.first }
       let(:fixture_iso_city)    { fixture_isos.last }
@@ -64,73 +66,95 @@ module GogglesDb
         it 'is a non-empty Array' do
           expect(fixture_isos).to be_an(Array).and be_present
         end
+
         it 'contains as 1st member an ISO3166::Country' do
           expect(fixture_isos.first).to be_a(ISO3166::Country)
         end
+
         it 'contains as 2nd member a Cities::City' do
           expect(fixture_isos.last).to be_a(Cities::City)
         end
       end
+
       describe '#iso_subdivision' do
         it 'is a non-empty Array' do
           expect(fixture_subdivision).to be_an(Array).and be_present
         end
+
         it 'contains as 1st member an alpha-2 subdivision code' do
           expect(fixture_subdivision.first).to be_a(String)
           expect(fixture_subdivision.first.length).to eq(2)
         end
+
         it 'contains as 2nd member a subdivision Struct responding to \'name\'' do
           expect(fixture_subdivision.last).to be_a(Struct).and respond_to('name')
         end
       end
+
       describe '#iso_name' do
         subject { subject_city.iso_name(fixture_iso_city) }
+
         it 'is a non-empty String' do
           expect(subject).to be_a(String).and be_present
         end
       end
+
       describe '#iso_latitude' do
         subject { subject_city.iso_latitude(fixture_iso_city) }
+
         it 'is a non-empty String' do
           expect(subject).to be_a(String).and be_present
         end
       end
+
       describe '#iso_longitude' do
         subject { subject_city.iso_longitude(fixture_iso_city) }
+
         it 'is a non-empty String' do
           expect(subject).to be_a(String).and be_present
         end
       end
+
       describe '#iso_region' do
         subject { subject_city.iso_region(fixture_iso_city, fixture_iso_country) }
+
         it 'is a non-empty String' do
           expect(subject).to be_a(String).and be_present
         end
       end
+
       describe '#localized_country_name' do
         subject { subject_city.localized_country_name(fixture_iso_country) }
+
         it 'is a non-empty String' do
           expect(subject).to be_a(String).and be_present
         end
+
         it 'allows locale override for a chosen country name translation' do
           expect(subject_city.localized_country_name(fixture_iso_country, 'en')).to eq('Italy')
           expect(subject_city.localized_country_name(fixture_iso_country, 'it')).to eq('Italia')
         end
       end
+
       describe '#iso_country_code' do
         subject { subject_city.iso_country_code(fixture_iso_country) }
+
         it 'is a non-empty String' do
           expect(subject).to be_a(String).and be_present
         end
       end
+
       describe '#iso_area' do
         subject { subject_city.iso_area(fixture_subdivision) }
+
         it 'is a non-empty String' do
           expect(subject).to be_a(String).and be_present
         end
       end
+
       describe '#iso_area_code' do
         subject { subject_city.iso_area_code(fixture_subdivision) }
+
         it 'is a non-empty String' do
           expect(subject).to be_a(String).and be_present
         end
@@ -138,16 +162,19 @@ module GogglesDb
     end
 
     describe '#iso_attributes' do
-      let(:subject_city) { GogglesDb::City.where(country: 'Italy').limit(50).sample }
       subject { subject_city.iso_attributes }
+
+      let(:subject_city) { described_class.where(country: 'Italy').limit(50).sample }
 
       it 'is a non-empty Hash' do
         expect(subject).to be_an(Hash).and be_present
       end
+
       it 'includes all the legacy customizable City attributes plus the additional ISO attributes' do
         expect(subject.keys).to include('id', 'name', 'latitude', 'longitude', 'country', 'country_code', 'region', 'area', 'area_code', 'zip')
       end
       # Just a couple of quick checks to verify supported locales are actually there:
+
       it 'allows locale override for a chosen country name translation' do
         en_attributes = subject_city.iso_attributes('en')
         it_attributes = subject_city.iso_attributes('it')
@@ -157,15 +184,18 @@ module GogglesDb
     end
 
     describe '#to_json' do
-      let(:subject_city) { City.all.limit(50).sample }
       subject { subject_city.to_json }
+
+      let(:subject_city) { described_class.all.limit(50).sample }
 
       it 'is a String' do
         expect(subject).to be_a(String).and be_present
       end
+
       it 'can be parsed without errors' do
         expect { JSON.parse(subject) }.not_to raise_error
       end
+
       it 'includes all the #iso_attributes' do
         expect(JSON.parse(subject).keys).to match_array(subject_city.iso_attributes.keys)
       end

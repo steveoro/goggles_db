@@ -11,7 +11,7 @@ module GogglesDb
       subject { FactoryBot.create(:season) }
 
       it 'is valid' do
-        expect(subject).to be_a(Season).and be_valid
+        expect(subject).to be_a(described_class).and be_valid
       end
 
       it_behaves_like(
@@ -21,12 +21,15 @@ module GogglesDb
       it 'has a valid SeasonType' do
         expect(subject.season_type).to be_a(SeasonType).and be_valid
       end
+
       it 'has a valid EditionType' do
         expect(subject.edition_type).to be_a(EditionType).and be_valid
       end
+
       it 'has a valid TimingType' do
         expect(subject.timing_type).to be_a(TimingType).and be_valid
       end
+
       it 'has a valid FederationType' do
         expect(subject.federation_type).to be_a(FederationType).and be_valid
       end
@@ -60,6 +63,7 @@ module GogglesDb
             expect(subject.send(method_name, subject.end_date - 365.days)).to be false
           end
         end
+
         context 'when the subject has invalid dates,' do
           it 'returns always false' do
             subject.send(member_name, nil)
@@ -75,12 +79,12 @@ module GogglesDb
 
         context 'when moving or extending the subject dates,' do
           it 'evaluates the given date returning true or false accordingly' do
-            subject.begin_date = Date.today - 465.days
-            subject.end_date = Date.today - 100.days
+            subject.begin_date = Time.zone.today - 465.days
+            subject.end_date = Time.zone.today - 100.days
             expect(subject.ended?).to be true
 
-            subject.begin_date = Date.today - 265.days
-            subject.end_date = Date.today + 100.days
+            subject.begin_date = Time.zone.today - 265.days
+            subject.end_date = Time.zone.today + 100.days
             expect(subject.ended?).to be false
           end
         end
@@ -91,10 +95,10 @@ module GogglesDb
 
         context 'when moving or extending the subject dates,' do
           it 'evaluates the given date returning true or false accordingly' do
-            subject.begin_date = Date.today - 200.days
+            subject.begin_date = Time.zone.today - 200.days
             expect(subject.started?).to be true
 
-            subject.begin_date = Date.today + 100.days
+            subject.begin_date = Time.zone.today + 100.days
             expect(subject.started?).to be false
           end
         end
@@ -107,17 +111,20 @@ module GogglesDb
             expect(subject.ongoing?(subject.begin_date - 365.days)).to be false
           end
         end
+
         context 'when checking dates inside the season definition,' do
           it 'is always true' do
             expect(subject.ongoing?).to be true # (Default seasons created by the factory will always be ongoing)
           end
         end
+
         context 'when checking a not-yet started season,' do
           it 'is always false' do
-            subject.begin_date = Time.zone.today + 1.months
+            subject.begin_date = Time.zone.today + 1.month
             expect(subject.ongoing?).to be false
           end
         end
+
         context 'when checking an already ended season,' do
           it 'is always false' do
             subject.end_date = Time.zone.today - 1.week
@@ -131,7 +138,7 @@ module GogglesDb
 
     # Scopes & "virtual" scopes:
     describe 'self.for_season_type' do
-      it_behaves_like('filtering scope for_<ANY_CHOSEN_FILTER>', Season, 'for_season_type', 'season_type', GogglesDb::SeasonType.all_masters.sample)
+      it_behaves_like('filtering scope for_<ANY_CHOSEN_FILTER>', described_class, 'for_season_type', 'season_type', GogglesDb::SeasonType.all_masters.sample)
     end
 
     describe 'self.ongoing' do
@@ -139,10 +146,11 @@ module GogglesDb
         # The subject instance created with the factory is assumed to be ongoing by default,
         # so the result shall never be an empty relation
         let(:result) { subject.class.ongoing }
+
         it 'is a list of started, ongoing Seasons' do
           expect(result).to be_a(ActiveRecord::Relation)
-          expect(result).to all be_a(Season).and be_ongoing
-          expect(result).to all be_a(Season).and be_started
+          expect(result).to all be_a(described_class).and be_ongoing
+          expect(result).to all be_a(described_class).and be_started
           expect(result.none?(&:ended?)).to be true
         end
       end
@@ -151,9 +159,10 @@ module GogglesDb
     describe 'self.ended' do
       context 'given existing ended Seasons,' do
         let(:result) { subject.class.ended }
+
         it 'is a list of started, ended Seasons' do
           expect(result).to be_a(ActiveRecord::Relation)
-          expect(result).to all be_a(Season).and be_ended
+          expect(result).to all be_a(described_class).and be_ended
         end
       end
     end
@@ -162,17 +171,21 @@ module GogglesDb
       context 'given existing Seasons ended before the limit date,' do
         let(:limit_date) { subject.class.ended.sample.end_date }
         let(:result)     { subject.class.ended_before(limit_date) }
+
         it 'returns a list of started, ended Seasons' do
           expect(result).to be_a(ActiveRecord::Relation)
-          expect(result).to all be_a(Season).and be_ended
+          expect(result).to all be_a(described_class).and be_ended
         end
+
         it 'is an actual subset of the overall ended Seasons' do
           expect(result.count).to be < subject.class.ended.count
         end
       end
+
       context 'when there are no existing Seasons ended before the limit date,' do
         let(:limit_date) { subject.class.ended.by_end_date.first.end_date - 1.month }
         let(:result)     { subject.class.ended_before(limit_date) }
+
         it 'returns an empty relation' do
           expect(result).to be_a(ActiveRecord::Relation).and be_empty
         end
@@ -184,18 +197,22 @@ module GogglesDb
         let(:from_date) { subject.class.by_begin_date.sample.begin_date - 1.month }
         let(:to_date)   { from_date + 1.year }
         let(:result)    { subject.class.in_range(from_date, to_date) }
+
         it 'returns a list of existing Seasons' do
           expect(result).to be_a(ActiveRecord::Relation)
-          expect(result).to all be_a(Season)
+          expect(result).to all be_a(described_class)
         end
+
         it 'is an actual subset of the overall ended Seasons' do
           expect(result.count).to be < subject.class.count
         end
       end
+
       context 'when there are no existing Seasons within date range,' do
         let(:from_date) { subject.class.by_begin_date.first.begin_date - 1.year }
         let(:to_date)   { from_date + 1.month }
         let(:result)    { subject.class.in_range(from_date, to_date) }
+
         it 'returns an empty relation' do
           expect(result).to be_a(ActiveRecord::Relation).and be_empty
         end

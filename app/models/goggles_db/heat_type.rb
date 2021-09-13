@@ -41,7 +41,7 @@ module GogglesDb
     def self.validate_cached_rows
       %w[heat semifinals finals].each do |word|
         code_value = "#{name}::#{word.upcase}_ID".constantize
-        raise "Missing required #{name} row with code #{code_value}" unless instance_variable_get("@#{word}").present?
+        raise "Missing required #{name} row with code #{code_value}" if instance_variable_get("@#{word}").blank?
       end
     end
   end

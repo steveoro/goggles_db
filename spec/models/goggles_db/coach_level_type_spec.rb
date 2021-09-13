@@ -6,7 +6,7 @@ require 'support/shared_localizable_examples'
 module GogglesDb
   RSpec.describe CoachLevelType, type: :model do
     context 'any pre-seeded instance' do
-      subject { CoachLevelType.all.sample }
+      subject { described_class.all.sample }
 
       it 'is valid' do
         expect(subject).to be_valid
@@ -18,10 +18,12 @@ module GogglesDb
     (CoachLevelType::MIN_LEVEL_ID..CoachLevelType::MAX_LEVEL_ID).each do |level_id|
       describe "self.level_#{level_id}" do
         let(:method_name) { "level_#{level_id}" }
+
         it 'is has a #code' do
           expect(subject.class.send(method_name)).to respond_to(:code)
           expect(subject.class.send(method_name).code).to be_present
         end
+
         it 'is a valid instance of the same class' do
           expect(subject.class.send(method_name)).to be_a(subject.class).and be_valid
         end

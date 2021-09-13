@@ -20,7 +20,7 @@ end
 # - existing_row...: fixture instance of the sibling class used, with a valid
 #                    parent association. (MIR => Lap, UserResult => UserLap)
 shared_examples_for 'filtering scope for the same group of laps' do |sibling_class|
-  before(:each) { expect(existing_row).to be_a(sibling_class).and be_valid }
+  before { expect(existing_row).to be_a(sibling_class).and be_valid }
 
   it 'is a relation containing only laps belonging to the same parent result' do
     expect(result).to be_a(ActiveRecord::Relation)
@@ -29,9 +29,11 @@ shared_examples_for 'filtering scope for the same group of laps' do |sibling_cla
     expect(result.map { |row| row.send(sibling_class.parent_result_column_sym) }.uniq)
       .to all eq(parent_result_id)
   end
+
   it 'has a positive number of items' do
     expect(result.count).to be_positive
   end
+
   it 'includes the specified Lap' do
     expect(result.map(&:id).uniq).to include(existing_row.id)
   end
@@ -44,6 +46,7 @@ shared_examples_for 'AbstractLap filtering scopes' do |sibling_class|
   describe 'self.with_time' do
     it_behaves_like('filtering scope with_time', sibling_class)
   end
+
   describe 'self.with_no_time' do
     it_behaves_like('filtering scope with_no_time', sibling_class)
   end
@@ -51,6 +54,7 @@ shared_examples_for 'AbstractLap filtering scopes' do |sibling_class|
   describe 'self.related_laps' do
     context 'given a Lap with a valid parent result association,' do
       let(:result) { sibling_class.related_laps(existing_row) }
+
       it_behaves_like('filtering scope for the same group of laps', sibling_class)
     end
   end
@@ -58,6 +62,7 @@ shared_examples_for 'AbstractLap filtering scopes' do |sibling_class|
   describe 'self.summing_laps' do
     context 'given a lap with a valid parent result association,' do
       let(:result) { sibling_class.summing_laps(existing_row) }
+
       it_behaves_like('filtering scope for the same group of laps', sibling_class)
 
       it 'contains only preceding laps plus the current one' do
@@ -77,13 +82,14 @@ end
 shared_examples_for 'AbstractLap #timing_from_start' do |sibling_class|
   describe '#timing_from_start' do
     context 'for an instance having the "_from_start" values,' do
-      before(:each) do
+      subject { fixture_row.timing_from_start }
+
+      before do
         amount = fixture_row.minutes_from_start.to_i +
                  fixture_row.hundredths_from_start.to_i +
                  fixture_row.seconds_from_start.to_i
         expect(amount).to be_positive
       end
-      subject { fixture_row.timing_from_start }
 
       it 'returns the Timing instance computed using the "_from_start" values' do
         expect(subject).to eq(
@@ -97,16 +103,18 @@ shared_examples_for 'AbstractLap #timing_from_start' do |sibling_class|
     end
 
     context 'for an instance without the "_from_start" values,' do
+      subject { existing_row.timing_from_start }
+
       let(:existing_row) do
         sibling_class.where(hundredths_from_start: 0, seconds_from_start: 0, minutes_from_start: 0)
                      .first(100)
                      .sample
       end
-      before(:each) do
+
+      before do
         expect(existing_row).to be_a(sibling_class).and be_valid
         expect(existing_row.seconds_from_start).to be_zero
       end
-      subject { existing_row.timing_from_start }
 
       it 'computes the correct Timing instance using all involved previous laps' do
         involved_laps = sibling_class.summing_laps(existing_row)
@@ -132,6 +140,7 @@ shared_examples_for 'AbstractLap #minimal_attributes' do
   it 'is an Hash' do
     expect(subject).to be_an(Hash)
   end
+
   %w[gender_type].each do |association_name|
     it "includes the #{association_name} association key" do
       expect(subject.keys).to include(association_name)
@@ -140,9 +149,11 @@ shared_examples_for 'AbstractLap #minimal_attributes' do
   it 'includes the timing string' do
     expect(subject['timing']).to eq(fixture_row.to_timing.to_s)
   end
+
   it 'includes the timing string from the start of the race' do
     expect(subject['timing_from_start']).to eq(fixture_row.timing_from_start.to_s)
   end
+
   it "contains the 'synthetized' swimmer details" do
     expect(subject['swimmer']).to be_an(Hash).and be_present
     expect(subject['swimmer']).to eq(fixture_row.swimmer_attributes)

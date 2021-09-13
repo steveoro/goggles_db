@@ -17,12 +17,14 @@ module GogglesDb
         expect(subject.fetch(0)).to eq('?')
       end
     end
+
     context 'when fetching an invalid index' do
       it 'is unknown (\'?\')' do
         expect(subject.fetch(30)).to eq('?')
         expect(subject.fetch(100)).to eq('?')
       end
     end
+
     context 'when fetching a known index' do
       it 'returns the expected name' do
         expect(subject.fetch('5')).to eq('Emilia-Romagna')
@@ -44,11 +46,13 @@ module GogglesDb
   describe '#fetch' do
     context 'for the default country_code,' do
       subject { IsoRegionList.new }
+
       it_behaves_like 'IsoRegionList properly defined'
     end
 
     context 'for a known existing country_code,' do
       subject { IsoRegionList.new('IT') }
+
       it_behaves_like 'IsoRegionList properly defined'
     end
   end

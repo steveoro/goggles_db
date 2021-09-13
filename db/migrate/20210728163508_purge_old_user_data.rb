@@ -4,9 +4,9 @@ require 'goggles_db/version'
 
 class PurgeOldUserData < ActiveRecord::Migration[6.0]
   def self.up
-    puts "\r\n--> Destroing all users except first 4 (tot.: 671)..."
+    Rails.logger.debug "\r\n--> Destroing all users except first 4 (tot.: 671)..."
     GogglesDb::User.where('id > 4').destroy_all
-    puts 'Done.'
+    Rails.logger.debug 'Done.'
 
     # --- Update DB structure versioning:
     GogglesDb::AppParameter.versioning_row.update(

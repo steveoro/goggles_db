@@ -11,7 +11,7 @@ module GogglesDb
   RSpec.describe MeetingRelaySwimmer, type: :model do
     shared_examples_for 'a valid MeetingRelaySwimmer instance' do
       it 'is valid' do
-        expect(subject).to be_a(MeetingRelaySwimmer).and be_valid
+        expect(subject).to be_a(described_class).and be_valid
       end
 
       it_behaves_like(
@@ -34,13 +34,20 @@ module GogglesDb
       )
     end
 
+    #-- ------------------------------------------------------------------------
+    #++
+
+    let(:fixture_row) { FactoryBot.create(:meeting_relay_swimmer) }
+
     context 'any pre-seeded instance' do
-      subject { MeetingRelaySwimmer.all.limit(20).sample }
+      subject { described_class.all.limit(20).sample }
+
       it_behaves_like('a valid MeetingRelaySwimmer instance')
     end
 
     context 'when using the factory, the resulting instance' do
       subject { FactoryBot.create(:meeting_relay_swimmer) }
+
       it_behaves_like('a valid MeetingRelaySwimmer instance')
     end
     #-- ------------------------------------------------------------------------
@@ -51,20 +58,17 @@ module GogglesDb
       let(:fixture_row) { FactoryBot.create(:meeting_relay_result_with_swimmers) }
       let(:result) { fixture_row.meeting_relay_swimmers.by_order }
 
-      it_behaves_like('sorting scope by_<ANY_VALUE_NAME> (with prepared result)', MeetingRelaySwimmer, 'relay_order')
+      it_behaves_like('sorting scope by_<ANY_VALUE_NAME> (with prepared result)', described_class, 'relay_order')
     end
 
     # Filtering scopes:
     describe 'self.with_time' do
-      it_behaves_like('filtering scope with_time', MeetingRelaySwimmer)
+      it_behaves_like('filtering scope with_time', described_class)
     end
-    describe 'self.with_no_time' do
-      it_behaves_like('filtering scope with_no_time', MeetingRelaySwimmer)
-    end
-    #-- ------------------------------------------------------------------------
-    #++
 
-    let(:fixture_row) { FactoryBot.create(:meeting_relay_swimmer) }
+    describe 'self.with_no_time' do
+      it_behaves_like('filtering scope with_no_time', described_class)
+    end
 
     describe 'regarding the timing fields,' do
       # subject = fixture_row (can even be just built, not created)
@@ -77,9 +81,11 @@ module GogglesDb
       it 'is an Hash' do
         expect(subject).to be_an(Hash)
       end
+
       it 'includes the timing string' do
         expect(subject['timing']).to eq(fixture_row.to_timing.to_s)
       end
+
       %w[gender_type stroke_type].each do |association_name|
         it "includes the #{association_name} association key" do
           expect(subject.keys).to include(association_name)
