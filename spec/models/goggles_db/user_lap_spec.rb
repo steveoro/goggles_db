@@ -10,18 +10,23 @@ require 'support/shared_abstract_lap_examples'
 
 module GogglesDb
   RSpec.describe UserLap, type: :model do
-    # Make sure UserLaps have some fixtures too:
+    # Make sure UserLaps have some permanent fixtures:
+    # (These are supposed to remain there, and this is why an "after(:all)" clearing block
+    # is totally missing here)
     before(:all) do
-      FactoryBot.create_list(:user_result_with_laps, 4)
-      # Create also some fixtures with the timing from start zeroed out:
-      # (needed as part of the domain by some of the tests below)
-      FactoryBot.create_list(
-        :user_lap, 8,
-        user_result: FactoryBot.create(:user_result),
-        hundredths_from_start: 0,
-        seconds_from_start: 0,
-        minutes_from_start: 0
-      )
+      if (GogglesDb::UserWorkshop.count < 10) || (GogglesDb::UserResult.count < 40) ||
+         (described_class.count < 80)
+        FactoryBot.create_list(:user_result_with_laps, 4)
+        # Create also some fixtures with the timing from start zeroed out:
+        # (needed as part of the domain by some of the tests below)
+        FactoryBot.create_list(
+          :user_lap, 8,
+          user_result: FactoryBot.create(:user_result),
+          hundredths_from_start: 0,
+          seconds_from_start: 0,
+          minutes_from_start: 0
+        )
+      end
       expect(GogglesDb::UserWorkshop.count).to be_positive
       expect(GogglesDb::UserResult.count).to be_positive
       expect(described_class.count).to be_positive

@@ -4,7 +4,7 @@ module GogglesDb
   #
   # = UserResult model
   #
-  #   - version:  7.3.10
+  #   - version:  7-0.3.31
   #   - author:   Steve A.
   #
   # User results are swimming event timings:

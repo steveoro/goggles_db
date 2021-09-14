@@ -4,7 +4,7 @@ module GogglesDb
   #
   # = Season model
   #
-  #   - version:  7.058
+  #   - version:  7-0.3.31
   #   - author:   Steve A.
   #
   class Season < ApplicationRecord
@@ -19,16 +19,16 @@ module GogglesDb
 
     has_one :federation_type, through: :season_type
 
-    has_many :category_types
-    has_many :badges
+    has_many :category_types, dependent: :delete_all
+    has_many :badges, dependent: :delete_all
     has_many :swimmers, through: :badges
-    has_many :team_affiliations
+    has_many :team_affiliations, dependent: :delete_all
     has_many :teams, through: :team_affiliations
 
-    has_many :meetings
-    has_many :meeting_team_scores
-    has_many :computed_season_rankings
-    has_many :standard_timings
+    has_many :meetings, dependent: :delete_all
+    has_many :meeting_team_scores, dependent: :delete_all
+    has_many :computed_season_rankings, dependent: :delete_all
+    has_many :standard_timings, dependent: :delete_all
     # has_many :goggle_cup_definitions
 
     # Not needed right now:

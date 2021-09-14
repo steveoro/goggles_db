@@ -4,7 +4,7 @@ module GogglesDb
   #
   # = ImportQueue model
   #
-  #   - version:  7.02.18
+  #   - version:  7-0.3.31
   #   - author:   Steve A.
   #
   # Stores '/import' API requests and generic import microtransactions steps.
@@ -104,7 +104,8 @@ module GogglesDb
     # Optional self-association for sibling rows:
     # (cannot enforce integrity given that the foreign key is lacking)
     belongs_to :import_queue, optional: true
-    has_many :import_queues
+    has_many :import_queues, dependent: :destroy
+
     alias parent import_queue # (new, old)
     alias sibling_rows import_queues # (new, old)
 

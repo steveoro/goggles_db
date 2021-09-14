@@ -4,7 +4,7 @@ module GogglesDb
   #
   # = MeetingProgram model
   #
-  #   - version:  7.061
+  #   - version:  7-0.3.31
   #   - author:   Steve A.
   #
   class MeetingProgram < ApplicationRecord
@@ -19,7 +19,7 @@ module GogglesDb
     validates_associated :category_type
     validates_associated :gender_type
 
-    belongs_to :time_standard, optional: true
+    belongs_to :standard_timing, optional: true
 
     has_one :meeting_session, through: :meeting_event
     has_one :meeting,         through: :meeting_session
@@ -34,7 +34,7 @@ module GogglesDb
     has_many :meeting_entries, dependent: :delete_all
 
     # Laps are usually added before the actual final result is available:
-    has_many :laps, -> { joins(:laps).order('laps.length_in_meters') }
+    has_many :laps, -> { joins(:laps).order('laps.length_in_meters') }, dependent: :delete_all
 
     validates :event_order, presence: { length: { within: 1..3, allow_nil: false } }
 

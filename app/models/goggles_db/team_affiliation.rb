@@ -4,7 +4,7 @@ module GogglesDb
   #
   # = TeamAffiliation model
   #
-  #   - version:  7.0.3.30
+  #   - version:  7-0.3.31
   #   - author:   Steve A.
   #
   class TeamAffiliation < ApplicationRecord
@@ -16,8 +16,8 @@ module GogglesDb
     validates_associated :season
 
     has_one :season_type, through: :season
-    has_many :badges
-    has_many :managed_affiliations
+    has_many :badges, dependent: :delete_all
+    has_many :managed_affiliations, dependent: :delete_all
 
     validates :name, presence: { length: { within: 1..100, allow_nil: false } }
     validates :number, length: { maximum: 20 }

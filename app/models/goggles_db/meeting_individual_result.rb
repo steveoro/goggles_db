@@ -6,7 +6,7 @@ module GogglesDb
   #
   # = MeetingIndividualResult model
   #
-  #   - version:  7.02.18
+  #   - version:  7-0.3.31
   #   - author:   Steve A.
   #
   class MeetingIndividualResult < AbstractResult
@@ -28,7 +28,7 @@ module GogglesDb
     has_one :federation_type, through: :season_type
     has_one :stroke_type,     through: :event_type
 
-    has_many :laps, -> { order('laps.length_in_meters') }
+    has_many :laps, -> { order('laps.length_in_meters') }, dependent: :delete_all
 
     belongs_to :team
     belongs_to :swimmer

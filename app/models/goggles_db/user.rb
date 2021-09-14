@@ -4,7 +4,7 @@ module GogglesDb
   #
   # = User model
   #
-  #   - version:  7.0.3.21
+  #   - version:  7-0.3.21
   #   - author:   Steve A.
   #
   class User < ApplicationRecord
@@ -135,29 +135,22 @@ module GogglesDb
 
       # [Steve A.] The following convoluted condition performs better in finding
       # complex western names combinations than most existing FULLTEXT indexes on swimmers. (See specs)
-
-      or_condition = []
-      last_name.to_s.split.each do |name_token|
-        or_condition << "swimmers.last_name like \"%#{name_token}%\""
-      end
+      or_conditions = prepare_matching_or_condition(last_name, 'last_name')
 
       # Add year_of_birth only when set:
-      where_condition = if year_of_birth.to_i > 1900
-                          "(swimmers.year_of_birth = #{year_of_birth}) AND (#{or_condition.join(' OR ')})"
-                        else
-                          "(#{or_condition.join(' OR ')})"
-                        end
+      where_conditions = if year_of_birth.to_i > 1900
+                           "(swimmers.year_of_birth = #{year_of_birth}) AND (#{or_conditions.join(' OR ')})"
+                         else
+                           "(#{or_conditions.join(' OR ')})"
+                         end
 
       # Add first_name only when set:
       if first_name.present?
-        or_condition = []
-        first_name.to_s.split.each do |name_token|
-          or_condition << "swimmers.first_name like \"%#{name_token}%\""
-        end
-        where_condition = "#{where_condition} AND (#{or_condition.join(' OR ')})"
+        or_conditions = prepare_matching_or_condition(first_name, 'first_name')
+        where_conditions = "#{where_conditions} AND (#{or_conditions.join(' OR ')})"
       end
 
-      Swimmer.where(ActiveRecord::Base.sanitize_sql_for_conditions(where_condition))
+      Swimmer.where(ActiveRecord::Base.sanitize_sql_for_conditions(where_conditions))
     end
     #-- ------------------------------------------------------------------------
     #++
@@ -229,6 +222,17 @@ module GogglesDb
       # Move children associations to the placeholder User ID:
       GogglesDb::UserWorkshop.where(user_id: id).update_all(user_id: PLACEHOLDER_ID)
       GogglesDb::UserResult.where(user_id: id).update_all(user_id: PLACEHOLDER_ID)
+    end
+
+    # Returns an Array of SQL "LIKE" String conditions, one for each name "particle" extracted by splitting
+    # the given name by spaces.
+    def prepare_matching_or_condition(first_or_last_name, column_name)
+      or_condition = []
+      first_or_last_name.to_s.split.each do |name_token|
+        or_condition << ActiveRecord::Base.sanitize_sql_for_conditions(["swimmers.#{column_name} LIKE ?", "%#{name_token}%"])
+      end
+
+      or_condition
     end
   end
 end
