@@ -4,7 +4,7 @@ module GogglesDb
   #
   # = Swimmer model
   #
-  #   - version:  7.3.10
+  #   - version:  7-0.3.31
   #   - author:   Steve A.
   #   - build:    20210512
   #
@@ -18,7 +18,7 @@ module GogglesDb
     belongs_to            :gender_type
     validates_associated  :gender_type
 
-    has_many :badges
+    has_many :badges, dependent: :delete_all
     has_many :teams,          through: :badges
     has_many :category_types, through: :badges
     has_many :seasons,        through: :badges

@@ -4,7 +4,7 @@ module GogglesDb
   #
   # = UserWorkshop model
   #
-  #   - version:  7.3.10
+  #   - version:  7-0.3.31
   #   - author:   Steve A.
   #
   # Allows to manage user-driven or team-driven swimming workshops

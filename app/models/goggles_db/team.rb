@@ -4,7 +4,7 @@ module GogglesDb
   #
   # = Team model
   #
-  #   - version:  7.0.3.30
+  #   - version:  7-0.3.31
   #   - author:   Steve A.
   #
   class Team < ApplicationRecord
@@ -12,9 +12,9 @@ module GogglesDb
 
     belongs_to :city, optional: true
 
-    has_many :badges
-    has_many :swimmers, through: :badges # May used with uniq
-    has_many :team_affiliations
+    has_many :badges, dependent: :delete_all
+    has_many :swimmers, through: :badges # May be used with uniq
+    has_many :team_affiliations, dependent: :delete_all
     has_many :seasons, through: :team_affiliations
     has_many :season_types, through: :team_affiliations
 

@@ -26,7 +26,7 @@ module GogglesDb
 
       it_behaves_like(
         'responding to a list of methods',
-        %i[time_standard meeting_individual_results meeting_relay_results meeting_relay_swimmers
+        %i[standard_timing meeting_individual_results meeting_relay_results meeting_relay_swimmers
            meeting_entries laps
            relay? scheduled_date
            begin_time autofilled? out_of_race?

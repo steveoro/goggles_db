@@ -6,11 +6,16 @@ require 'support/shared_abstract_result_examples'
 
 module GogglesDb
   RSpec.describe UserResult, type: :model do
-    # Make sure UserResult have some fixtures too:
+    # Make sure UserResult have some permanent fixtures:
+    # (These are supposed to remain there, and this is why an "after(:all)" clearing block
+    # is totally missing here)
     before(:all) do
-      FactoryBot.create_list(:workshop_with_results_and_laps, 3)
-      FactoryBot.create_list(:user_result_with_laps, 3, disqualified: true)
-      FactoryBot.create_list(:user_result_with_laps, 5, disqualified: false)
+      if (GogglesDb::UserWorkshop.count < 10) || (described_class.count < 40) ||
+         (GogglesDb::UserLap.count < 80)
+        FactoryBot.create_list(:workshop_with_results_and_laps, 3)
+        FactoryBot.create_list(:user_result_with_laps, 3, disqualified: true)
+        FactoryBot.create_list(:user_result_with_laps, 5, disqualified: false)
+      end
       expect(GogglesDb::UserWorkshop.count).to be_positive
       expect(described_class.count).to be_positive
       expect(GogglesDb::UserLap.count).to be_positive

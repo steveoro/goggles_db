@@ -9,14 +9,16 @@ require 'support/shared_abstract_meeting_examples'
 
 module GogglesDb
   RSpec.describe UserWorkshop, type: :model do
-    # Make sure UserWorkshop have some fixtures too:
-    #-- ------------------------------------------------------------------------
-    #++
-
     subject { FactoryBot.create(:user_workshop) }
 
+    # Make sure UserWorkshop have some permanent fixtures:
+    # (These are supposed to remain there, and this is why an "after(:all)" clearing block
+    # is totally missing here)
     before(:all) do
-      FactoryBot.create_list(:workshop_with_results_and_laps, 5)
+      if (described_class.count < 10) || (GogglesDb::UserResult.count < 40) ||
+         (GogglesDb::UserLap.count < 80)
+        FactoryBot.create_list(:workshop_with_results_and_laps, 5)
+      end
       expect(described_class.count).to be_positive
       expect(GogglesDb::UserResult.count).to be_positive
       expect(GogglesDb::UserLap.count).to be_positive

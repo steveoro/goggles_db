@@ -7,7 +7,7 @@ module GogglesDb
   # This entity is assumed to be pre-seeded on the database.
   # Due to the low number of entity values, all rows have been Memoized.
   #
-  #   - version:  7.035
+  #   - version:  7-0.3.31
   #   - author:   Steve A.
   #
   class PoolType < AbstractLookupEntity
@@ -27,7 +27,7 @@ module GogglesDb
     validates :length_in_meters, presence: { length: { within: 1..3, allow_nil: false } },
                                  numericality: true
 
-    has_many :events_by_pool_types
+    has_many :events_by_pool_types, dependent: :delete_all
     has_many :event_types, through: :events_by_pool_types
     #-- ------------------------------------------------------------------------
     #++

@@ -4,7 +4,7 @@ module GogglesDb
   #
   # = MeetingSession model
   #
-  #   - version:  7.047
+  #   - version:  7-0.3.31
   #   - author:   Steve A.
   #
   class MeetingSession < ApplicationRecord
