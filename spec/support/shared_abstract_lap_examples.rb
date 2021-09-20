@@ -81,7 +81,7 @@ end
 # - the existance of some rows with the timing from start values zeroed out
 shared_examples_for 'AbstractLap #timing_from_start' do |sibling_class|
   describe '#timing_from_start' do
-    context 'for an instance having the "_from_start" values,' do
+    context 'with an instance having the "_from_start" values,' do
       subject { fixture_row.timing_from_start }
 
       before do
@@ -102,7 +102,7 @@ shared_examples_for 'AbstractLap #timing_from_start' do |sibling_class|
       end
     end
 
-    context 'for an instance without the "_from_start" values,' do
+    context 'with an instance without the "_from_start" values,' do
       subject { existing_row.timing_from_start }
 
       let(:existing_row) do

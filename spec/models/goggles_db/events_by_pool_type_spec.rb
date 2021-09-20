@@ -27,14 +27,14 @@ module GogglesDb
       )
 
       describe '#eventable?' do
-        context 'for an Event/Pool type combination valid for a MeetingEvent,' do
+        context 'with an Event/Pool type combination valid for a MeetingEvent,' do
           it 'returns true' do
             eventable_row = described_class.all_eventable.sample
             expect(eventable_row).to be_eventable
           end
         end
 
-        context 'for an Event/Pool type combination not valid for any MeetingEvent,' do
+        context 'with an Event/Pool type combination not valid for any MeetingEvent,' do
           it 'returns false ' do
             uneventable_row = (full_cached_table - described_class.all_eventable).sample
             expect(uneventable_row.nil? || !uneventable_row&.eventable?).to be true

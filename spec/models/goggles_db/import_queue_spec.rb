@@ -90,7 +90,7 @@ module GogglesDb
     #-- ------------------------------------------------------------------------
     #++
 
-    context 'for a row with valid request_data,' do
+    context 'with a row with valid request_data,' do
       subject do
         FactoryBot.create(
           :import_queue,

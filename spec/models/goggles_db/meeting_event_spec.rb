@@ -81,7 +81,7 @@ module GogglesDb
     #++
 
     describe '#eventable?' do
-      context 'for an in-race event,' do
+      context 'with an in-race event,' do
         subject { FactoryBot.create(:meeting_event, out_of_race: false) }
 
         it 'returns true' do
@@ -89,7 +89,7 @@ module GogglesDb
         end
       end
 
-      context 'for an out-of-race event,' do
+      context 'with an out-of-race event,' do
         subject { FactoryBot.create(:meeting_event, out_of_race: true) }
 
         it 'returns false' do
