@@ -50,7 +50,7 @@ module GogglesDb
       it_behaves_like 'IsoRegionList properly defined'
     end
 
-    context 'for a known existing country_code,' do
+    context 'with a known existing country_code,' do
       subject { IsoRegionList.new('IT') }
 
       it_behaves_like 'IsoRegionList properly defined'

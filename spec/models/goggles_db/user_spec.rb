@@ -257,7 +257,7 @@ module GogglesDb
       end
 
       # User found, confirmed & ok:
-      context 'for an existing, already confirmed user providing valid auth data,' do
+      context 'with an existing, already confirmed user providing valid auth data,' do
         subject { described_class.from_omniauth(auth_response) }
 
         let(:confirmed_user) { described_class.where.not(confirmed_at: nil).limit(50).sample }
@@ -291,7 +291,7 @@ module GogglesDb
       end
 
       # User found, unconfirmed but ok:
-      context 'for an existing, unconfirmed user providing valid auth data,' do
+      context 'with an existing, unconfirmed user providing valid auth data,' do
         subject { described_class.from_omniauth(auth_response) }
 
         let(:unconfirmed_user) do
@@ -330,7 +330,7 @@ module GogglesDb
       end
 
       # new User Email but existing (conflicting) User name found => error:
-      context 'for a new Email but with an already existing user name,' do
+      context 'with a new Email but with an already existing user name,' do
         subject { described_class.from_omniauth(auth_response) }
 
         let(:another_user) { described_class.where.not(confirmed_at: nil).first(50).sample }
@@ -372,7 +372,7 @@ module GogglesDb
       end
 
       # New User, ok:
-      context 'for a new user providing valid auth data,' do
+      context 'with a new user providing valid auth data,' do
         subject { described_class.from_omniauth(auth_response) }
 
         let(:new_user) { FactoryBot.build(:user, first_name: "#{FFaker::Name.first_name} Stewie1", confirmed_at: nil) }

@@ -11,7 +11,7 @@ module GogglesDb
     let(:fixture_swimmer) { FactoryBot.build(:swimmer) }
 
     describe '#state_flag' do
-      context 'for a row which is done (but not yet deleted),' do
+      context 'with a row which is done (but not yet deleted),' do
         subject { described_class.decorate(model_obj) }
 
         let(:model_obj) { FactoryBot.create(:import_queue, done: true) }
@@ -31,7 +31,7 @@ module GogglesDb
         end
       end
 
-      context 'for a row that has already been processed at least once,' do
+      context 'with a row that has already been processed at least once,' do
         subject { described_class.decorate(model_obj) }
 
         let(:model_obj) { FactoryBot.create(:import_queue, process_runs: 1) }
@@ -69,7 +69,7 @@ module GogglesDb
         expect(timing_request_data).to be_a(String).and be_present
       end
 
-      context 'for a row that contains a valid parent chrono timing,' do
+      context 'with a row that contains a valid parent chrono timing,' do
         subject { described_class.decorate(fixture_row) }
 
         let(:fixture_row) { FactoryBot.create(:import_queue, uid: 'chrono', request_data: timing_request_data) }
@@ -91,7 +91,7 @@ module GogglesDb
         end
       end
 
-      context 'for a row that contains a valid sibling chrono timing,' do
+      context 'with a row that contains a valid sibling chrono timing,' do
         subject { described_class.decorate(fixture_row) }
 
         let(:fixture_row) { FactoryBot.create(:import_queue, uid: 'chrono-1', request_data: timing_request_data) }
@@ -109,7 +109,7 @@ module GogglesDb
         end
       end
 
-      context 'for a row that contains valid meeting reservation data,' do
+      context 'with a row that contains valid meeting reservation data,' do
         subject { described_class.decorate(fixture_row) }
 
         let(:fixture_row) { FactoryBot.create(:import_queue, uid: 'res', request_data: timing_request_data) }
@@ -135,7 +135,7 @@ module GogglesDb
         end
       end
 
-      context 'for a generic row that contains any other entity data,' do
+      context 'with a generic row that contains any other entity data,' do
         subject { described_class.decorate(fixture_row) }
 
         let(:fixture_row) { FactoryBot.create(:import_queue, request_data: timing_request_data) }
@@ -158,7 +158,7 @@ module GogglesDb
         expect(fixture_event_type).to be_a(GogglesDb::EventType).and be_valid
       end
 
-      context 'for a row that contains birth year data nested under a Swimmer node at depth 1,' do
+      context 'with a row that contains birth year data nested under a Swimmer node at depth 1,' do
         subject { described_class.decorate(fixture_row) }
 
         let(:fixture_request_data) do
@@ -179,7 +179,7 @@ module GogglesDb
         end
       end
 
-      context 'for a row that contains birth year data nested at root level,' do
+      context 'with a row that contains birth year data nested at root level,' do
         subject { described_class.decorate(fixture_row) }
 
         let(:fixture_request_data) do

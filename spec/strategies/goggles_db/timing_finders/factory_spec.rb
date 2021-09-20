@@ -10,7 +10,7 @@ module GogglesDb
     end
 
     describe 'self.for' do
-      context 'for an invalid parameter' do
+      context 'with an invalid parameter' do
         subject { described_class.for(nil) }
 
         it 'raises an ArgumentError' do
@@ -18,7 +18,7 @@ module GogglesDb
         end
       end
 
-      context 'for an empty or unsupported EntryTimeType' do
+      context 'with an empty or unsupported EntryTimeType' do
         subject { described_class.for(GogglesDb::EntryTimeType.new(code: '')) }
 
         it 'raises an ArgumentError' do
