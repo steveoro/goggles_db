@@ -64,6 +64,8 @@ module GogglesDb
     def swimmer_attributes
       {
         'id' => swimmer.id,
+        'display_label' => swimmer.decorate.display_label,
+        'short_label' => swimmer.decorate.short_label,
         'complete_name' => swimmer.complete_name,
         'last_name' => swimmer.last_name,
         'first_name' => swimmer.first_name,

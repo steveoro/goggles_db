@@ -4,7 +4,7 @@ module GogglesDb
   #
   # = MeetingRelayReservation model
   #
-  #   - version:  7.02.09
+  #   - version:  7-0.3.33
   #   - author:   Steve A.
   #
   # Same properties and methods as MeetingEventReservation, with just a different table name
@@ -57,6 +57,8 @@ module GogglesDb
         'id' => meeting.id,
         'code' => meeting.code,
         'header_year' => meeting.header_year,
+        'display_label' => meeting.decorate.display_label,
+        'short_label' => meeting.decorate.short_label,
         'edition_label' => meeting.edition_label
       }
     end
@@ -64,6 +66,8 @@ module GogglesDb
     # Override: includes most relevant data for its 1st-level associations
     def to_json(options = nil)
       attributes.merge(
+        'display_label' => decorate.display_label,
+        'short_label' => decorate.short_label,
         'meeting' => meeting_attributes,
         'meeting_event' => meeting_event.minimal_attributes,
         'event_type' => event_type.lookup_attributes,

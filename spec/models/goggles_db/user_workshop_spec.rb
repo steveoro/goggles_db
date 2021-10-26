@@ -76,6 +76,21 @@ module GogglesDb
     end
 
     # Filtering scopes:
+    describe 'self.not_cancelled' do
+      it_behaves_like('filtering scope for_<ANY_CHOSEN_FILTER> with no parameters', described_class, 'not_cancelled',
+                      'cancelled', false)
+    end
+
+    describe 'self.for_season_type' do
+      it_behaves_like('filtering scope for_<ANY_CHOSEN_FILTER>', described_class, 'for_season_type', 'season_type',
+                      GogglesDb::SeasonType.all_masters.sample)
+    end
+
+    describe 'self.for_code' do
+      it_behaves_like('filtering scope for_<ANY_CHOSEN_FILTER>', described_class, 'for_code', 'code',
+                      %w[workshop-1 workshop-2 workshop-3 workshop-4 workshop-5].sample)
+    end
+
     describe 'self.for_name' do
       context 'when combined with other associations that include same-named columns,' do
         subject { described_class.for_name('workshop-') }
@@ -91,13 +106,31 @@ module GogglesDb
     #++
 
     it_behaves_like('AbstractMeeting #edition_label', :user_workshop)
+    it_behaves_like('AbstractMeeting #name_without_edition', :user_workshop)
+    it_behaves_like('AbstractMeeting #name_with_edition', :user_workshop)
+    it_behaves_like('AbstractMeeting #condensed_name', :user_workshop)
+
     it_behaves_like('AbstractMeeting #minimal_attributes', described_class)
 
     describe '#to_json' do
+      # Required keys:
+      %w[
+        display_label short_label edition_label
+        user home_team
+        season edition_type timing_type season_type federation_type
+      ].each do |member_name|
+        it "includes the #{member_name} member key" do
+          expect(subject.to_json[member_name]).to be_present
+        end
+      end
+
       # Required associations:
       it_behaves_like(
         '#to_json when called on a valid instance',
-        %w[user home_team season edition_type timing_type season_type federation_type]
+        %w[
+          user home_team
+          season edition_type timing_type season_type federation_type
+        ]
       )
     end
   end

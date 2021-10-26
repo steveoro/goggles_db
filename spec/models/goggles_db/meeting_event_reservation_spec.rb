@@ -86,6 +86,16 @@ module GogglesDb
         expect(JSON.parse(subject.to_json)['timing']).to eq(subject.to_timing.to_s)
       end
 
+      # Required keys:
+      %w[
+        timing display_label short_label
+        meeting meeting_event event_type badge team swimmer
+      ].each do |member_name|
+        it "includes the #{member_name} member key" do
+          expect(subject.to_json[member_name]).to be_present
+        end
+      end
+
       # Required associations:
       it_behaves_like(
         '#to_json when called on a valid instance',

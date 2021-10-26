@@ -2,7 +2,9 @@
 
 require 'rails_helper'
 require 'support/shared_method_existance_examples'
+require 'support/shared_sorting_scopes_examples'
 require 'support/shared_filtering_scopes_examples'
+require 'support/shared_to_json_examples'
 
 module GogglesDb
   RSpec.describe CategoryType, type: :model do
@@ -35,7 +37,7 @@ module GogglesDb
       it_behaves_like(
         'responding to a list of methods',
         %i[code federation_code description short_name group_name age_begin age_end
-           eventable? relay? out_of_race? undivided?]
+           eventable? relay? out_of_race? undivided? minimal_attributes to_json]
       )
 
       # Presence of fields & requiredness:
@@ -60,6 +62,11 @@ module GogglesDb
     end
     #-- ------------------------------------------------------------------------
     #++
+
+    # Sorting scopes:
+    describe 'self.by_age' do
+      it_behaves_like('sorting scope by_<ANY_VALUE_NAME>', described_class, 'age', 'age_begin')
+    end
 
     # Filtering scopes:
     describe 'self.eventable' do
@@ -117,6 +124,57 @@ module GogglesDb
 
     describe 'self.for_season' do
       it_behaves_like('filtering scope for_<ANY_ENTITY_NAME>', described_class, 'season')
+    end
+    #-- ------------------------------------------------------------------------
+    #++
+
+    describe '#eventable?' do
+      context 'with an in-race event,' do
+        subject { described_class.where(out_of_race: false).sample }
+
+        it 'returns true' do
+          expect(subject.eventable?).to be true
+        end
+      end
+
+      context 'with an out-of-race event,' do
+        subject { described_class.where(out_of_race: true).sample }
+
+        it 'returns false' do
+          expect(subject.eventable?).to be false
+        end
+      end
+    end
+
+    describe '#minimal_attributes' do
+      subject { described_class.limit(200).sample.minimal_attributes }
+
+      it 'is an Hash' do
+        expect(subject).to be_an(Hash)
+      end
+
+      %w[display_label short_label season].each do |association_name|
+        it "includes the #{association_name} association key" do
+          expect(subject.keys).to include(association_name)
+        end
+      end
+    end
+
+    describe '#to_json' do
+      subject { described_class.limit(200).sample }
+
+      # Required keys:
+      %w[display_label short_label season].each do |member_name|
+        it "includes the #{member_name} member key" do
+          expect(subject.to_json[member_name]).to be_present
+        end
+      end
+
+      # Required associations:
+      it_behaves_like(
+        '#to_json when called on a valid instance',
+        %w[season]
+      )
     end
     #-- ------------------------------------------------------------------------
     #++

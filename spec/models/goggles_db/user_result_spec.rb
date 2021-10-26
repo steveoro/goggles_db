@@ -44,7 +44,7 @@ module GogglesDb
         %i[user_laps laps
            season season_type
            disqualified? valid_for_ranking? to_timing
-           meeting_attributes swimmer_attributes
+           standard_timing meeting_attributes swimmer_attributes
            minimal_attributes to_json]
       )
     end

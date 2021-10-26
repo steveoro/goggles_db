@@ -4,7 +4,7 @@ module GogglesDb
   #
   # = MeetingReservation model
   #
-  #   - version:  7.02.09
+  #   - version:  7-0.3.33
   #   - author:   Steve A.
   #
   # Reservations are individual Meeting registrations, associated just to a specific
@@ -71,6 +71,8 @@ module GogglesDb
         'id' => meeting.id,
         'code' => meeting.code,
         'header_year' => meeting.header_year,
+        'display_label' => meeting.decorate.display_label,
+        'short_label' => meeting.decorate.short_label,
         'edition_label' => meeting.edition_label
       }
     end
@@ -90,6 +92,8 @@ module GogglesDb
     # Returns the "minimum required" hash of associations.
     def minimal_associations
       {
+        'display_label' => decorate.display_label,
+        'short_label' => decorate.short_label,
         'badge' => badge.minimal_attributes,
         # (^^ This includes: gender_type, category_type & entry_time_type)
         'team' => team.minimal_attributes,

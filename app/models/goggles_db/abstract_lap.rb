@@ -6,7 +6,7 @@ module GogglesDb
   #
   # Encapsulates common behavior for Laps & User Laps.
   #
-  #   - version:  7.3.06
+  #   - version:  7-0.3.33
   #   - author:   Steve A.
   #
   class AbstractLap < ApplicationRecord
@@ -70,14 +70,18 @@ module GogglesDb
 
     # Returns a commodity Hash wrapping the essential data that summarizes the Meeting
     # associated to this row.
+    # rubocop:disable Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
     def meeting_attributes
       {
         'id' => parent_meeting&.id,
         'code' => parent_meeting&.code,
         'header_year' => parent_meeting&.header_year,
+        'display_label' => parent_meeting&.decorate&.display_label,
+        'short_label' => parent_meeting&.decorate&.short_label,
         'edition_label' => parent_meeting&.edition_label
       }
     end
+    # rubocop:enable Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
 
     # Returns a commodity Hash wrapping the essential data that summarizes the Swimmer
     # associated to this row.

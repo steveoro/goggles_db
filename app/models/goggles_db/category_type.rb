@@ -4,7 +4,7 @@ module GogglesDb
   #
   # = CategoryType model
   #
-  #   - version:  7.035
+  #   - version:  7-0.3.33
   #   - author:   Steve A.
   #
   class CategoryType < ApplicationRecord
@@ -42,6 +42,28 @@ module GogglesDb
     # Returns +true+ if this category type will count for the overall rankings in an event
     def eventable?
       !out_of_race
+    end
+
+    # Override: include the minimum required 1st-level attributes & associations.
+    #
+    def minimal_attributes
+      super.merge(minimal_associations)
+    end
+
+    # Override: includes all 1st-level associations into the typical to_json output.
+    def to_json(options = nil)
+      attributes.merge(minimal_associations).to_json(options)
+    end
+
+    private
+
+    # Returns the "minimum required" hash of associations.
+    def minimal_associations
+      {
+        'display_label' => decorate.display_label,
+        'short_label' => decorate.short_label,
+        'season' => season.minimal_attributes
+      }
     end
   end
 end

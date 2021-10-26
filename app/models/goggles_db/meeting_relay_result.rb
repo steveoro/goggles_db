@@ -6,7 +6,7 @@ module GogglesDb
   #
   # = MeetingRelayResult model
   #
-  #   - version:  7.02.09
+  #   - version:  7-0.3.33
   #   - author:   Steve A.
   #
   class MeetingRelayResult < ApplicationRecord
@@ -96,6 +96,8 @@ module GogglesDb
         'id' => meeting.id,
         'code' => meeting.code,
         'header_year' => meeting.header_year,
+        'display_label' => meeting.decorate.display_label,
+        'short_label' => meeting.decorate.short_label,
         'edition_label' => meeting.edition_label
       }
     end

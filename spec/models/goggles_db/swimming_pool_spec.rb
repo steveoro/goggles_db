@@ -103,17 +103,28 @@ module GogglesDb
         )
       end
 
+      # Required keys:
+      %w[
+        display_label short_label
+        city pool_type shower_type hair_dryer_type locker_cabinet_type
+      ].each do |member_name|
+        it "includes the #{member_name} member key" do
+          expect(subject.to_json[member_name]).to be_present
+        end
+      end
+
       # Required associations:
       it_behaves_like(
         '#to_json when called on a valid instance',
         %w[city pool_type]
       )
+
+      # Optional associations:
       it_behaves_like(
         '#to_json when called with unset optional associations',
         %w[shower_type hair_dryer_type locker_cabinet_type]
       )
 
-      # Optional associations:
       context 'when the entity contains other optional associations' do
         subject { FactoryBot.create(:swimming_pool) }
 

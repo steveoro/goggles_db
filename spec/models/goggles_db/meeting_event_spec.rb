@@ -113,11 +113,22 @@ module GogglesDb
     end
 
     describe '#to_json' do
+      # Required keys:
+      %w[
+        display_label short_label
+        meeting_session event_type pool_type stroke_type heat_type season season_type
+      ].each do |member_name|
+        it "includes the #{member_name} member key" do
+          expect(subject.to_json[member_name]).to be_present
+        end
+      end
+
       # Required associations:
       it_behaves_like(
         '#to_json when called on a valid instance',
         %w[meeting_session event_type pool_type stroke_type heat_type season season_type]
       )
+
       # Collection associations:
       context 'when the entity contains collection associations,' do
         subject do

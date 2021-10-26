@@ -4,7 +4,7 @@ module GogglesDb
   #
   # = Badge model
   #
-  #   - version:  7.0.3.30
+  #   - version:  7-0.3.33
   #   - author:   Steve A.
   #
   class Badge < ApplicationRecord
@@ -84,6 +84,8 @@ module GogglesDb
     def swimmer_attributes
       {
         'id' => swimmer.id,
+        'display_label' => swimmer.decorate.display_label,
+        'short_label' => swimmer.decorate.short_label,
         'complete_name' => swimmer.complete_name,
         'last_name' => swimmer.last_name,
         'first_name' => swimmer.first_name,
@@ -95,6 +97,8 @@ module GogglesDb
     # Override: includes all 1st-level associations into the typical to_json output.
     def to_json(options = nil)
       attributes.merge(
+        'display_label' => decorate.display_label,
+        'short_label' => decorate.short_label,
         'swimmer' => swimmer.minimal_attributes,
         'gender_type' => swimmer.gender_type.lookup_attributes,
         'team_affiliation' => team_affiliation.minimal_attributes,

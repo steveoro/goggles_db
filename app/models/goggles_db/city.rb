@@ -4,7 +4,7 @@ module GogglesDb
   #
   # = City model
   #
-  #   - version:  7.051
+  #   - version:  7-0.3.33
   #   - author:   Steve A.
   #
   # Check out:
@@ -128,6 +128,9 @@ module GogglesDb
       iso_country, iso_city = to_iso
       subdivision = iso_subdivision(iso_country)
       minimal_attributes.merge(
+        'display_label' => decorate.display_label,
+        'short_label' => decorate.short_label
+      ).merge(
         prepare_iso_attributes(iso_city, iso_country, subdivision, locale_override)
       )
     end

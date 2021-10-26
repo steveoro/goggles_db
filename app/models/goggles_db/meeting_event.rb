@@ -4,7 +4,7 @@ module GogglesDb
   #
   # = MeetingEvent model
   #
-  #   - version:  7.02.09
+  #   - version:  7-0.3.33
   #   - author:   Steve A.
   #
   class MeetingEvent < ApplicationRecord
@@ -83,6 +83,8 @@ module GogglesDb
     # Returns the "minimum required" hash of associations.
     def minimal_associations
       {
+        'display_label' => decorate.display_label,
+        'short_label' => decorate.short_label,
         'event_type' => event_type.lookup_attributes,
         'pool_type' => pool_type.lookup_attributes,
         'stroke_type' => stroke_type.lookup_attributes,

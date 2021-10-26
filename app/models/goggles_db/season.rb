@@ -4,7 +4,7 @@ module GogglesDb
   #
   # = Season model
   #
-  #   - version:  7-0.3.31
+  #   - version:  7-0.3.33
   #   - author:   Steve A.
   #
   class Season < ApplicationRecord
@@ -63,6 +63,21 @@ module GogglesDb
     #-- ------------------------------------------------------------------------
     #++
 
+    # Generic Season helper.
+    # Returns the last Season that has been defined given its specified type;
+    # +nil+ otherwise.
+    #
+    # == Params
+    # - <tt>season_type</tt>: the filtering <tt>GogglesDb::SeasonType</tt> instance (with no defaults).
+    #
+    def self.last_season_by_type(season_type)
+      GogglesDb::Season.joins(:season_type).includes(:season_type)
+                       .for_season_type(season_type)
+                       .by_begin_date.last
+    end
+    #-- ------------------------------------------------------------------------
+    #++
+
     # Returns if the season has ended at a specific date; false otherwise.
     #
     # == Parameters:
@@ -89,10 +104,14 @@ module GogglesDb
     def ongoing?(check_date = Time.zone.today)
       started?(check_date) && !ended?(check_date)
     end
+    #-- ------------------------------------------------------------------------
+    #++
 
     # Override: includes all 1st-level associations into the typical to_json output.
     def to_json(options = nil)
       attributes.merge(
+        'display_label' => decorate.display_label,
+        'short_label' => decorate.short_label,
         'season_type' => season_type.minimal_attributes,
         'edition_type' => edition_type.lookup_attributes,
         'timing_type' => timing_type.lookup_attributes,

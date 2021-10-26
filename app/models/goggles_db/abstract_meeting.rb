@@ -6,7 +6,7 @@ module GogglesDb
   #
   # Encapsulates common behavior for Meetings & User Workshops.
   #
-  #   - version:  7.02.18
+  #   - version:  7-0.3.33
   #   - author:   Steve A.
   #
   class AbstractMeeting < ApplicationRecord
@@ -25,22 +25,74 @@ module GogglesDb
     validates :description, presence: { length: { maximum: 100 }, allow_nil: false }
 
     # Sorting scopes:
+    scope :by_date,   ->(dir = :asc)  { order(header_date: dir) }
+    scope :by_season, ->(dir = :asc)  { joins(:season).order('seasons.begin_date': dir) }
 
     # Filtering scopes:
+    scope :not_cancelled,   -> { where(cancelled: false) }
+    scope :for_season_type, ->(season_type) { joins(:season_type).where(season_types: { id: season_type.id }) }
+    scope :for_code,        ->(code)        { where(code: code) }
     #-- -----------------------------------------------------------------------
     #++
 
-    # Returns the verbose edition label based on the current edition value & type.
+    # Returns just the verbose edition label based on the current edition value & type.
     # Returns a safe empty string otherwise.
     #
     def edition_label
-      return edition.to_s if edition_type.ordinal?
-
+      return "#{edition}°" if edition_type.ordinal?
       return edition.to_i.to_roman if edition_type.roman?
-
       return header_year if edition_type.seasonal? || edition_type.yearly?
 
       ''
+    end
+
+    # Meeting name stripped of any edition label.
+    #
+    # == Params:
+    # - <tt>meeting_name</tt>: the meeting name to be processed;
+    #   defaults to +description+.
+    #
+    # == Returns:
+    # the Meeting name as a +String+, stripped of any edition label.
+    #
+    def name_without_edition(meeting_name = description)
+      tokens = if edition_label.present?
+                 meeting_name.split(/#{edition_label}|#{edition}°/)
+               else
+                 meeting_name.split(/#{edition}°/)
+               end
+      tokens.reject(&:empty?)
+            .last.strip
+            .split(/(#{header_year})/)
+            .reject(&:empty?)
+            .first.strip
+    end
+
+    # Meeting name prefixed or appended with proper edition label, depending on edition type.
+    #
+    # == Params:
+    # - <tt>meeting_name</tt>: the meeting name to be processed;
+    #   defaults to +description+.
+    #
+    # == Returns:
+    # the Meeting name as a +String+, composed with the actual displayable edition label.
+    #
+    def name_with_edition(meeting_name = description)
+      return "#{edition_label} #{name_without_edition(meeting_name)}" if edition_type.ordinal? || edition_type.roman?
+      return "#{name_without_edition(meeting_name)} #{header_year}" if edition_type.seasonal? || edition_type.yearly?
+
+      meeting_name
+    end
+
+    # Returns the shortest possible name for this meeting as a String.
+    # Assumes the most significant part of the name is the ending (name, city name, ...)
+    def condensed_name
+      # Remove spaces, split in tokens, delete empty tokens and take just the first 3:
+      description.split(/trofeo|meeting|collegiale|workshop|campionato|raduno/i)
+                 .last.titleize
+                 .strip.split(/\s|,/)
+                 .reject(&:empty?)[0..2]
+                 .join(' ')
     end
     #-- ------------------------------------------------------------------------
     #++
@@ -49,6 +101,8 @@ module GogglesDb
     #
     def minimal_attributes
       super.merge(
+        'display_label' => decorate.display_label,
+        'short_label' => decorate.short_label,
         'edition_label' => edition_label,
         'season' => season.minimal_attributes,
         'edition_type' => edition_type.lookup_attributes,

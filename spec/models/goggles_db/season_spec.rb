@@ -56,6 +56,24 @@ module GogglesDb
       #-- ----------------------------------------------------------------------
       #++
 
+      describe 'self.last_season_by_type' do
+        GogglesDb::SeasonType.all_masters.each do |fixture_season_type|
+          context "with a #{fixture_season_type.code} season type," do
+            let(:result) { described_class.last_season_by_type(fixture_season_type) }
+
+            it 'returns a valid Season' do
+              expect(result).to be_a(described_class).and be_valid
+            end
+
+            it 'belongs to the specified SeasonType' do
+              expect(result.season_type_id).to eq(fixture_season_type.id)
+            end
+          end
+        end
+      end
+      #-- ----------------------------------------------------------------------
+      #++
+
       shared_examples_for 'Season date range checking methods evaluating a custom date' do |method_name, member_name|
         context 'when checking specific dates,' do
           it 'evaluates the given date returning true or false accordingly' do
@@ -221,14 +239,54 @@ module GogglesDb
     #-- ------------------------------------------------------------------------
     #++
 
+    describe 'self.last_season_by_type' do
+      GogglesDb::SeasonType.all_masters.each do |season_type|
+        context "for a valid SeasonType '#{season_type.code}' for which exists at least a Season," do
+          subject { described_class.last_season_by_type(season_type) }
+
+          it 'returns a valid instance of Season' do
+            expect(subject).to be_a(described_class).and be_valid
+          end
+        end
+      end
+    end
+    #-- ------------------------------------------------------------------------
+    #++
+
     describe '#to_json' do
       subject { FactoryBot.create(:season) }
+
+      # Required keys:
+      %w[
+        display_label short_label
+        season_type edition_type timing_type category_types
+      ].each do |member_name|
+        it "includes the #{member_name} member key" do
+          expect(subject.to_json[member_name]).to be_present
+        end
+      end
 
       # Required associations:
       it_behaves_like(
         '#to_json when called on a valid instance',
         %w[season_type edition_type timing_type]
       )
+
+      # Collection associations:
+      context 'when the entity contains collection associations,' do
+        subject do
+          category = GogglesDb::CategoryType.joins(:season).limit(300).sample
+          expect(category.season).to be_a(described_class).and be_valid
+          category.season
+        end
+
+        let(:json_hash) { JSON.parse(subject.to_json) }
+
+        it_behaves_like(
+          '#to_json when the entity contains collection associations with',
+          %w[category_types]
+        )
+      end
     end
   end
 end
