@@ -4,7 +4,7 @@ module GogglesDb
   #
   # = Meeting model
   #
-  #   - version:  7-0.3.31
+  #   - version:  7-0.3.33
   #   - author:   Steve A.
   #
   class Meeting < AbstractMeeting
@@ -60,9 +60,7 @@ module GogglesDb
     validates :max_individual_events, length: { maximum: 2 }
     validates :max_individual_events_per_session, length: { maximum: 1 }
 
-    # Sorting scopes:
-    scope :by_date,   ->(dir = :asc)  { order(header_date: dir) }
-    scope :by_season, ->(dir = :asc)  { joins(:season).order('seasons.begin_date': dir) }
+    # (For sorting scopes: see AbstractMeeting)
 
     # Filtering scopes:
     scope :for_name, lambda { |name|
@@ -74,30 +72,11 @@ module GogglesDb
         .by_date(:desc)
     }
 
-    # TODO: CLEAR UNUSED
-    # scope :only_invitation, -> { where('invitation and not results_acquired') } # invitation = manifest
-    # scope :only_start_list, -> { where('startlist and not results_acquired') }
-    # scope :results,         -> { where('are_results_acquired') }
-    # scope :no_results,      -> { where('not are_results_acquired') }
-    # scope :not_closed,      -> { where('(not are_results_acquired) and (header_date >= curdate())') }
-    # scope :not_cancelled,   -> { where('(not is_cancelled)') }
-    # scope :for_season_type, ->(season_type) { joins(:season_type).where(['season_types.id = ?', season_type.id]) }
-    # scope :for_code,        ->(code)        { where(['code = ?', code]) }
-    #-- ------------------------------------------------------------------------
-    #++
-
-    # # Retrieves the first scheduled date for this meeting; nil when not found
-    # def scheduled_date
-    #   ms = meeting_sessions.sort_by_order.first
-    #   ms ? Format.a_date(ms.scheduled_date) : nil
-    # end
-
-    # # Retrieves the date for this meeting.
-    # # Return the first session one if set,
-    # # or the general meeting scheduled date if not
-    # def meeting_date
-    #   scheduled_date || Format.a_date(header_date)
-    # end
+    scope :only_manifest,   -> { where(manifest: true, results_acquired: false) } # legacy "invitation" => manifest
+    scope :only_startlist,  -> { where(startlist: true, results_acquired: false) }
+    scope :with_results,    -> { where(results_acquired: true) }
+    scope :without_results, -> { where(results_acquired: false) }
+    scope :not_closed,      -> { where(results_acquired: false).where('header_date > ?', Time.zone.today) }
     #-- ------------------------------------------------------------------------
     #++
 

@@ -14,6 +14,18 @@ shared_examples_for 'filtering scope for_<ANY_CHOSEN_FILTER>' do |subject_class,
   end
 end
 
+shared_examples_for 'filtering scope for_<ANY_CHOSEN_FILTER> with no parameters' do |subject_class, full_scope_name, comparable_name, expected_value|
+  context "given the chosen '#{comparable_name}' (= #{expected_value}) has any matching #{subject_class.to_s.pluralize} for it," do
+    let(:result) { subject_class.send(full_scope_name).limit(10) }
+
+    it "is a relation containing only #{subject_class}s matching the #{comparable_name} filter" do
+      expect(result).to be_a(ActiveRecord::Relation)
+      expect(result).to all be_a(subject_class)
+      expect(result.map(&comparable_name.to_sym).uniq).to all eq(expected_value)
+    end
+  end
+end
+
 shared_examples_for 'filtering scope <ANY_FILTER_NAME> on a field with implicit value' do |subject_class, full_scope_name, field_name, implicit_value|
   context "given there are #{subject_class.to_s.pluralize} with #{field_name} = #{implicit_value}," do
     let(:result) { subject_class.send(full_scope_name).limit(10) }

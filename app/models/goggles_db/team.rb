@@ -4,7 +4,7 @@ module GogglesDb
   #
   # = Team model
   #
-  #   - version:  7-0.3.31
+  #   - version:  7-0.3.33
   #   - author:   Steve A.
   #
   class Team < ApplicationRecord
@@ -49,7 +49,7 @@ module GogglesDb
     # scope :with_min_results, lambda(how_many = 20) {
     #   where(['(SELECT count(id) from meeting_individual_results where not is_disqualified and team_id = teams.id) > ?', how_many])
     # }
-    #-- ------------------------------------------------------------------------
+    #-- -----------------------------------------------------------------------
     #++
 
     # Override: include the minimum required 1st-level associations.
@@ -73,6 +73,8 @@ module GogglesDb
     # Override: includes *most* of its 1st-level associations into the typical to_json output.
     def to_json(options = nil)
       attributes.merge(
+        'display_label' => decorate.display_label,
+        'short_label' => decorate.short_label,
         'city' => city&.iso_attributes(options&.fetch(:locale, nil)), # (optional, may override locale w/ options)
         'badges' => recent_badges.map(&:minimal_attributes),
         'team_affiliations' => recent_affiliations.map(&:minimal_attributes)

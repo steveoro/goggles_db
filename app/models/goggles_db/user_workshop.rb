@@ -4,7 +4,7 @@ module GogglesDb
   #
   # = UserWorkshop model
   #
-  #   - version:  7-0.3.31
+  #   - version:  7-0.3.33
   #   - author:   Steve A.
   #
   # Allows to manage user-driven or team-driven swimming workshops
@@ -40,9 +40,7 @@ module GogglesDb
 
     validates :header_date, presence: true
 
-    # Sorting scopes:
-    scope :by_date,   ->(dir = :asc)  { order(header_date: dir) }
-    scope :by_season, ->(dir = :asc)  { joins(:season).order('seasons.begin_date': dir) }
+    # (For sorting scopes: see AbstractMeeting)
 
     # Filtering scopes:
     scope :for_name, lambda { |name|

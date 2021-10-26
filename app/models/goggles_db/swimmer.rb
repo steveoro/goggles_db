@@ -4,9 +4,9 @@ module GogglesDb
   #
   # = Swimmer model
   #
-  #   - version:  7-0.3.31
+  #   - version:  7-0.3.33
   #   - author:   Steve A.
-  #   - build:    20210512
+  #   - build:    20211019
   #
   class Swimmer < ApplicationRecord
     self.table_name = 'swimmers'
@@ -43,6 +43,65 @@ module GogglesDb
     #-- ------------------------------------------------------------------------
     #++
 
+    # Returns the swimmer age (as a numeric value) for a given +date+.
+    #
+    # == Params
+    # - <tt>date</tt>: the date for which the age must be computed; default: +today+.
+    def age(date = Time.zone.today)
+      date.year - year_of_birth
+    end
+
+    # Returns the array list of all the distinct team IDs associated
+    # to the object row through the available Badges.
+    # Returns an empty array when nothing is found.
+    #
+    # The result is memoized on the current instance (reload the instance to refresh).
+    def associated_team_ids
+      @associated_team_ids ||= GogglesDb::Badge.for_swimmer(self).select(:team_id).distinct.map(&:team_id)
+    end
+
+    # Returns the ActiveRecord Team association of teams that have a badge belonging to this Swimmer.
+    # Returns an empty association when nothing is found.
+    #
+    # The result is memoized on the current instance (reload the instance to refresh).
+    def associated_teams
+      @associated_teams ||= GogglesDb::Team.where(id: associated_team_ids)
+    end
+
+    # Returns the last category type code found given for this swimmer,
+    # assuming at least 1 associated badge exists.
+    #
+    # The result is memoized on the current instance (reload the instance to refresh).
+    #
+    def last_category_type_by_badge
+      @last_category_type_by_badge ||= GogglesDb::Badge.for_swimmer(self).by_season
+                                                       .includes(:category_type)
+                                                       .last&.category_type
+    end
+
+    # Returns the latest available (defined) <tt>CategoryType</tt> for the given <tt>SeasonType</tt>,
+    # regardless the actual existance of a badge for this swimmer.
+    #
+    # == Params
+    # - <tt>season_type</tt>: chosen <tt>GogglesDb::SeasonType</tt>; default: +mas_fin+.
+    #
+    def latest_category_type(season_type = GogglesDb::SeasonType.mas_fin)
+      # Retrieve the last available FIN Season that *includes* a CategoryType which has
+      # the swimmer age in range:
+      last_fin_season = GogglesDb::Season.joins(:category_types)
+                                         .for_season_type(season_type)
+                                         .where('(age_end >= ?) AND (age_begin <= ?)', age, age)
+                                         .last
+      return nil unless last_fin_season
+
+      # Use the "full" FIN season to get the actual (first) available type code for the category:
+      GogglesDb::CategoryType.for_season(last_fin_season)
+                             .where('(age_end >= ?) AND (age_begin <= ?)', age, age)
+                             .first
+    end
+    #-- ------------------------------------------------------------------------
+    #++
+
     # Override: include the minimum required 1st-level associations.
     #
     def minimal_attributes
@@ -60,7 +119,9 @@ module GogglesDb
     # The result Hash will be used in both #minimal_attributes & #to_json.
     def minimal_associations
       {
-        'long_label' => "#{complete_name} (#{year_of_birth})",
+        'long_label' => decorate.display_label, # Alias only for Swimmer
+        'display_label' => decorate.display_label,
+        'short_label' => decorate.short_label,
         'associated_user' => associated_user&.minimal_attributes,
         'gender_type' => gender_type.lookup_attributes
       }

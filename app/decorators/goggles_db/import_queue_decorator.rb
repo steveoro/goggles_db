@@ -31,6 +31,9 @@ module GogglesDb
       end
     end
 
+    alias display_label text_label # (new, old)
+    alias short_label text_label # (new, old)
+
     # Returns the associated Swimmer <tt>year_of_birth</tt> found by searching at a maximum
     # depth of 1, starting at the root-key depth (0) of the request, or +nil+ when
     # not found.

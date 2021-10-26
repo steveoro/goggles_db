@@ -4,7 +4,7 @@ module GogglesDb
   #
   # = SwimmingPool model
   #
-  #   - version:  7.075
+  #   - version:  7-0.3.33
   #   - author:   Steve A.
   #
   class SwimmingPool < ApplicationRecord
@@ -89,6 +89,8 @@ module GogglesDb
     # higher level entity.
     def minimal_associations
       {
+        'display_label' => decorate.display_label,
+        'short_label' => decorate.short_label,
         'city' => city&.iso_attributes, # (optional, always uses current locale)
         'pool_type' => pool_type.lookup_attributes,
         # Optional:

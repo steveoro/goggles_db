@@ -107,6 +107,16 @@ module GogglesDb
       # Test a minimalistic instance first:
       subject { FactoryBot.create(:team, city: nil) }
 
+      # Required keys:
+      %w[
+        display_label short_label
+        city badges team_affiliations
+      ].each do |member_name|
+        it "includes the #{member_name} member key" do
+          expect(subject.to_json[member_name]).to be_present
+        end
+      end
+
       # Required associations:
       it_behaves_like(
         '#to_json when called on a valid instance',

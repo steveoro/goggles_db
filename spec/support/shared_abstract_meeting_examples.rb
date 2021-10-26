@@ -8,14 +8,14 @@ require 'support/shared_timing_manageable_examples'
 require 'support/shared_to_json_examples'
 
 # REQUIRES/ASSUMES:
-# - the existance of some fixture rows
+# (none)
 shared_examples_for 'AbstractMeeting #edition_label' do |factory_name_sym|
   describe 'for a valid instance' do
     context 'with an ordinal edition type,' do
       subject { FactoryBot.build(factory_name_sym, edition_type: GogglesDb::EditionType.ordinal) }
 
       it 'returns the label as a numeric string' do
-        expect(subject.edition_label).to eq(subject.edition.to_s)
+        expect(subject.edition_label).to eq("#{subject.edition}°")
       end
     end
 
@@ -48,6 +48,139 @@ end
 #++
 
 # REQUIRES/ASSUMES:
+# (none)
+shared_examples_for 'AbstractMeeting #name_without_edition' do |factory_name_sym|
+  describe 'for a valid instance' do
+    context 'with the default description parameter,' do
+      subject do
+        FactoryBot.build(
+          factory_name_sym,
+          edition_type: GogglesDb::EditionType.send(%i[ordinal roman none yearly seasonal].sample)
+        )
+      end
+
+      it 'does not include the edition_label' do
+        expect(subject.name_without_edition).not_to include(subject.edition_label.to_s) if subject.edition_label.present?
+      end
+
+      it 'does not include the header_year' do
+        expect(subject.name_without_edition).not_to include(subject.header_year.to_s)
+      end
+    end
+
+    context 'with a custom name parameter that does not include any edition label,' do
+      subject do
+        FactoryBot.build(
+          factory_name_sym,
+          edition_type: GogglesDb::EditionType.send(%i[ordinal roman none yearly seasonal].sample)
+        )
+      end
+
+      let(:fixture_name) { 'Fake static name without edition' }
+
+      it 'is the same custom name' do
+        expect(subject.name_without_edition(fixture_name)).to eq(fixture_name)
+      end
+    end
+
+    context 'with a custom name parameter that includes an edition label,' do
+      subject do
+        FactoryBot.build(
+          factory_name_sym,
+          edition_type: GogglesDb::EditionType.send(%i[ordinal roman yearly seasonal].sample)
+        )
+      end
+
+      let(:base_name) { 'Fake static name' }
+
+      it 'is just the base name without the edition label' do
+        if subject.edition_label.present?
+          expect(
+            subject.name_without_edition("#{base_name} #{subject.edition_label}")
+          ).to eq(base_name)
+        end
+      end
+    end
+  end
+end
+
+# REQUIRES/ASSUMES:
+# (none)
+shared_examples_for 'AbstractMeeting #name_with_edition' do |factory_name_sym|
+  describe 'for a valid instance' do
+    context 'with ordinal or roman edition type (prefix),' do
+      subject do
+        FactoryBot.build(
+          factory_name_sym,
+          edition_type: GogglesDb::EditionType.send(%i[ordinal roman].sample)
+        )
+      end
+
+      it 'includes the edition_label' do
+        expect(subject.name_with_edition).to include(subject.edition_label.to_s)
+      end
+
+      it 'includes the base name without its edition (if already present in the description)' do
+        expect(subject.name_with_edition).to include(subject.name_without_edition.to_s)
+      end
+    end
+
+    context 'with seasonal or yearly edition type (postfix),' do
+      subject do
+        FactoryBot.build(
+          factory_name_sym,
+          edition_type: GogglesDb::EditionType.send(%i[seasonal yearly].sample)
+        )
+      end
+
+      it 'includes the header_year' do
+        expect(subject.name_with_edition).to include(subject.header_year.to_s)
+      end
+
+      it 'includes the base name without its edition (if already present in the description)' do
+        expect(subject.name_with_edition).to include(subject.name_without_edition.to_s)
+      end
+    end
+
+    context 'with no edition type set,' do
+      subject { FactoryBot.build(factory_name_sym, edition_type: GogglesDb::EditionType.none) }
+
+      it 'is the default meeting name' do
+        expect(subject.name_with_edition).to eq(subject.description)
+      end
+    end
+  end
+end
+
+# REQUIRES/ASSUMES:
+# (none)
+shared_examples_for 'AbstractMeeting #condensed_name' do |factory_name_sym|
+  describe 'for a valid instance' do
+    context 'with a description that includes a common prefix,' do
+      subject do
+        FactoryBot.build(
+          factory_name_sym,
+          description: "#{common_prefix} #{base_tokens.join(' ')}"
+        )
+      end
+
+      let(:common_prefix) { %w[Trofeo Meeting Collegiale Workshop Campionato Raduno].sample }
+      let(:base_tokens) { FFaker::Lorem.words(5) }
+
+      it 'does not include the common prefix' do
+        expect(subject.condensed_name).not_to include(common_prefix)
+      end
+
+      it 'reduces the name to just the last 3 base tokens of the name' do
+        expect(subject.condensed_name).to eq(base_tokens.first(3).join(' ').titleize)
+      end
+    end
+  end
+end
+#-- ---------------------------------------------------------------------------
+#++
+
+# REQUIRES/ASSUMES:
 # - the existance of some fixture rows
 shared_examples_for 'AbstractMeeting #minimal_attributes' do |sibling_class|
   subject { fixture_row.minimal_attributes }
@@ -59,11 +192,19 @@ shared_examples_for 'AbstractMeeting #minimal_attributes' do |sibling_class|
     expect(subject).to be_an(Hash)
   end
 
+  it 'includes the display_label (from the decorator)' do
+    expect(subject['display_label']).to eq(fixture_row.decorate.display_label)
+  end
+
+  it 'includes the short_label (from the decorator)' do
+    expect(subject['short_label']).to eq(fixture_row.decorate.short_label)
+  end
+
   it 'includes the edition_label' do
     expect(subject['edition_label']).to eq(fixture_row.edition_label.to_s)
   end
 
-  %w[edition_label season edition_type timing_type season_type federation_type].each do |member_name|
+  %w[season edition_type timing_type season_type federation_type].each do |member_name|
     it "includes the #{member_name} association key" do
       # Don't check nil association links: (it may happen)
       expect(subject.keys).to include(member_name) if fixture_row.send(member_name).present?

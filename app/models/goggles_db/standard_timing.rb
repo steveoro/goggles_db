@@ -6,7 +6,7 @@ module GogglesDb
   #
   # = StandardTiming model
   #
-  #   - version:  7.036
+  #   - version:  7-0.3.35
   #   - author:   Steve A.
   #
   # Standard timings used to compute event scores during a specific season for all

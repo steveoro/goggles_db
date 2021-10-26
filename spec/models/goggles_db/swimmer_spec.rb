@@ -7,9 +7,12 @@ require 'support/shared_to_json_examples'
 
 module GogglesDb
   RSpec.describe Swimmer, type: :model do
-    context 'when using the factory, the resulting instance' do
-      subject { FactoryBot.create(:swimmer) }
+    subject(:new_swimmer) { FactoryBot.create(:swimmer) }
 
+    let(:new_badge) { FactoryBot.create(:badge) }
+    let(:swimmer_with_badge) { new_badge.swimmer }
+
+    context 'when using the factory, the resulting instance' do
       it_behaves_like(
         'having one or more required associations',
         %i[gender_type]
@@ -23,6 +26,8 @@ module GogglesDb
         'responding to a list of methods',
         %i[
           associated_user male? female? intermixed? year_guessed?
+          age associated_team_ids associated_teams
+          last_category_type_by_badge latest_category_type
           minimal_attributes to_json
         ]
       )
@@ -30,26 +35,157 @@ module GogglesDb
       #++
 
       it 'is valid' do
-        expect(subject).to be_a(described_class).and be_valid
+        expect(new_swimmer).to be_a(described_class).and be_valid
       end
 
       it 'has a valid GenderType' do
-        expect(subject.gender_type).to be_a(GenderType).and be_valid
+        expect(new_swimmer.gender_type).to be_a(GenderType).and be_valid
       end
 
       it 'is does not have an associated user yet' do
-        expect(subject).to respond_to(:associated_user)
-        expect(subject.associated_user).to be nil
+        expect(new_swimmer).to respond_to(:associated_user)
+        expect(new_swimmer.associated_user).to be nil
       end
 
       it 'is has a #complete_name' do
-        expect(subject).to respond_to(:complete_name)
-        expect(subject.complete_name).to be_present
+        expect(new_swimmer).to respond_to(:complete_name)
+        expect(new_swimmer.complete_name).to be_present
       end
 
       it 'is has a #year_of_birth' do
-        expect(subject).to respond_to(:year_of_birth)
-        expect(subject.year_of_birth).to be_present
+        expect(new_swimmer).to respond_to(:year_of_birth)
+        expect(new_swimmer.year_of_birth).to be_present
+      end
+    end
+
+    describe '#age' do
+      context 'with no parameters,' do
+        it 'returns the current age of the swimmer' do
+          expect(new_swimmer.age).to eq(Time.zone.today.year - new_swimmer.year_of_birth)
+        end
+      end
+
+      context 'with a given date,' do
+        it 'returns the age of the swimmer during that date\'s year' do
+          sample_date = Time.zone.today + (rand * 30 - rand * 15).to_i.years
+          expect(new_swimmer.age(sample_date)).to eq(sample_date.year - new_swimmer.year_of_birth)
+        end
+      end
+    end
+
+    describe '#associated_team_ids' do
+      context 'with a swimmer having existing badges,' do
+        let(:result) { swimmer_with_badge.associated_team_ids }
+
+        it 'is a non-empty Array' do
+          expect(result).to be_an(Array)
+          expect(result.count).to be_positive
+        end
+
+        it 'contains only valid associations with Teams' do
+          expect(GogglesDb::Team.where(id: result)).to all be_a(GogglesDb::Team)
+        end
+      end
+
+      context 'with a swimmer having no badge,' do
+        let(:result) { new_swimmer.associated_team_ids }
+
+        it 'is an empty Array' do
+          expect(result).to be_an(Array).and be_empty
+        end
+      end
+    end
+
+    describe '#associated_teams' do
+      context 'with a swimmer having existing badges,' do
+        let(:result) { swimmer_with_badge.associated_teams }
+
+        it 'contains only Teams associated with the swimmer throught one badge or more' do
+          expect(result).to be_a(ActiveRecord::Relation)
+          expect(result).to all be_a(GogglesDb::Team)
+          result.each do |team|
+            expect(GogglesDb::Badge.exists?(swimmer_id: swimmer_with_badge.id, team_id: team.id)).to be true
+          end
+        end
+
+        it 'is a non-empty relation' do
+          expect(result.count).to be_positive
+        end
+      end
+
+      context 'with a swimmer having no badge,' do
+        let(:result) { new_swimmer.associated_teams }
+
+        it 'is an empty relation' do
+          expect(result.count).to be_zero
+        end
+      end
+    end
+
+    describe '#last_category_type_by_badge' do
+      context 'with a swimmer having existing badges,' do
+        let(:result) { swimmer_with_badge.last_category_type_by_badge }
+
+        it 'returns a valid CategoryType' do
+          expect(result).to be_a(GogglesDb::CategoryType).and be_valid
+        end
+
+        it 'corresponds to the CategoryType for the latest associated badge' do
+          latest_badge = GogglesDb::Badge.for_swimmer(swimmer_with_badge)
+                                         .by_season
+                                         .includes(:category_type)
+                                         .last
+          expect(result.code).to eq(latest_badge.category_type.code)
+        end
+      end
+
+      context 'with a swimmer having no badge,' do
+        let(:result) { new_swimmer.last_category_type_by_badge }
+
+        it 'returns nil' do
+          expect(result).to be_nil
+        end
+      end
+    end
+    #-- ------------------------------------------------------------------------
+    #++
+
+    describe '#latest_category_type' do
+      GogglesDb::SeasonType.all_masters.each do |fixture_season_type|
+        context "with a #{fixture_season_type.code} season type," do
+          # ASSUMES:
+          # - fixture_season_type: SeasonType used as parameter
+          # - fixture_swimmer: Swimmer instance used to compute #latest_category_type
+          # - result: CategoryType resulted from #latest_category_type
+          shared_examples_for '#latest_category_type for any kind of valid Swimmer' do
+            it 'returns a valid CategoryType' do
+              expect(result).to be_a(GogglesDb::CategoryType).and be_valid
+            end
+
+            it 'belongs to the specified SeasonType' do
+              expect(result.season.season_type_id).to eq(fixture_season_type.id)
+            end
+
+            it 'is in range with the swimmer age' do
+              expect(fixture_swimmer.age).to be >= result.age_begin
+              expect(fixture_swimmer.age).to be <= result.age_end
+            end
+          end
+
+          context 'with a swimmer having existing badges,' do
+            let(:fixture_swimmer) { swimmer_with_badge }
+            let(:result) { fixture_swimmer.latest_category_type(fixture_season_type) }
+
+            it_behaves_like('#latest_category_type for any kind of valid Swimmer')
+          end
+
+          context 'with a swimmer having no badge,' do
+            let(:fixture_swimmer) { new_swimmer }
+            let(:result) { new_swimmer.latest_category_type(fixture_season_type) }
+
+            it_behaves_like('#latest_category_type for any kind of valid Swimmer')
+          end
+        end
       end
     end
     #-- ------------------------------------------------------------------------
@@ -83,15 +219,15 @@ module GogglesDb
     #++
 
     describe '#minimal_attributes' do
-      subject { FactoryBot.create(:swimmer).minimal_attributes }
+      subject(:result) { FactoryBot.create(:swimmer).minimal_attributes }
 
       it 'is an Hash' do
-        expect(subject).to be_an(Hash)
+        expect(result).to be_an(Hash)
       end
 
-      %w[long_label associated_user gender_type].each do |member_name|
+      %w[long_label display_label short_label associated_user gender_type].each do |member_name|
         it "includes the #{member_name} member key" do
-          expect(subject.keys).to include(member_name)
+          expect(result.keys).to include(member_name)
         end
       end
     end
@@ -99,24 +235,30 @@ module GogglesDb
     describe '#to_json' do
       subject { FactoryBot.create(:swimmer) }
 
-      # Required associations & members:
-      %w[long_label].each do |member_name|
+      # Required keys:
+      %w[
+        long_label display_label short_label
+        gender_type associated_user
+      ].each do |member_name|
         it "includes the #{member_name} member key" do
           expect(subject.to_json[member_name]).to be_present
         end
       end
+
+      # Required associations:
       it_behaves_like(
         '#to_json when called on a valid instance',
         %w[gender_type]
       )
+
+      # Optional associations:
       it_behaves_like(
         '#to_json when called with unset optional associations',
         %w[associated_user]
       )
 
-      # Optional associations:
       context 'when the entity contains other optional associations' do
-        subject            { FactoryBot.create(:swimmer, associated_user: fixture_user) }
+        subject { FactoryBot.create(:swimmer, associated_user: fixture_user) }
 
         let(:fixture_user) { FactoryBot.create(:user) }
         let(:json_hash) do

@@ -4,7 +4,7 @@ module GogglesDb
   #
   # = MeetingProgram model
   #
-  #   - version:  7-0.3.31
+  #   - version:  7-0.3.35
   #   - author:   Steve A.
   #
   class MeetingProgram < ApplicationRecord

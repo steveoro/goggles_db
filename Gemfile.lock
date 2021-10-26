@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    goggles_db (0.3.31)
+    goggles_db (0.3.35)
       acts-as-taggable-on
       acts_as_votable
       carrierwave

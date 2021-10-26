@@ -56,7 +56,7 @@ module GogglesDb
       context 'for reservations that are not flagged for skipping' do
         subject { fixture_row.coming? }
 
-        let(:fixture_row) { FactoryBot.build(:meeting_reservation, not_coming: false) }
+        let(:fixture_row) { FactoryBot.create(:meeting_reservation, not_coming: false) }
 
         it 'is true' do
           expect(subject).to be true
@@ -66,7 +66,7 @@ module GogglesDb
       context 'for reservations that are flagged for skipping' do
         subject { fixture_row.coming? }
 
-        let(:fixture_row) { FactoryBot.build(:meeting_reservation, not_coming: true) }
+        let(:fixture_row) { FactoryBot.create(:meeting_reservation, not_coming: true) }
 
         it 'is false' do
           expect(subject).to be false
@@ -92,6 +92,12 @@ module GogglesDb
       # Required associations:
       context 'for required associations,' do
         subject { FactoryBot.create(:meeting_reservation) }
+
+        %w[display_label short_label].each do |member_name|
+          it "includes the #{member_name} member key" do
+            expect(subject.to_json[member_name]).to be_present
+          end
+        end
 
         it_behaves_like(
           '#to_json when called on a valid instance',
