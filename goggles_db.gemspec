@@ -50,6 +50,7 @@ Gem::Specification.new do |spec|
   spec.add_dependency 'ledermann-rails-settings' # https://github.com/ledermann/rails-settings
   spec.add_dependency 'loofah', '>= 2.2'
   spec.add_dependency 'mini_magick'
+  spec.add_dependency 'nokogiri', '>= 1.12.5'
   spec.add_dependency 'omniauth-facebook'
   # Subseeded by google_sign_in used by goggles_main (no Devise/Omniauth dependencies)
   # spec.add_dependency 'omniauth-google-oauth2'

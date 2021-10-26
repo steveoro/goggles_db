@@ -20,6 +20,7 @@ PATH
       ledermann-rails-settings
       loofah (>= 2.2)
       mini_magick
+      nokogiri (>= 1.12.5)
       omniauth-facebook
       omniauth-rails_csrf_protection
       plus_codes
