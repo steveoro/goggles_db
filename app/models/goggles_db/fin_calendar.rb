@@ -2,12 +2,12 @@
 
 module GogglesDb
   #
-  # = FinCalendar model
+  # = FINCalendar model
   #
-  #   - version:  7.030
+  #   - version:  7.0.3.37
   #   - author:   Steve A.
   #
-  class FinCalendar < ApplicationRecord
+  class FINCalendar < ApplicationRecord
     self.table_name = 'fin_calendars'
 
     # TODO
