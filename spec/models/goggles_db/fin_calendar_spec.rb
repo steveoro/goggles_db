@@ -3,7 +3,7 @@
 require 'rails_helper'
 
 module GogglesDb
-  RSpec.describe FinCalendar, type: :model do
+  RSpec.describe FINCalendar, type: :model do
     pending "add some examples to (or delete) #{__FILE__}"
   end
 end
