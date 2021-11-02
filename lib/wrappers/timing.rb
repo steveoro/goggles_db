@@ -2,7 +2,8 @@
 
 #
 # = Timing
-#   - Goggles framework vers.:  7.075
+#
+#   - Goggles framework vers.:  7-0.3.36
 #   - author: Steve A.
 #
 #  Utility class to store timing data and to allow simple mathematical operations
@@ -57,6 +58,11 @@ class Timing
     @hundredths + @seconds * 100 + @minutes * 6000 +
       @hours * 360_000 + @days * 8_640_000
   end
+
+  # Checks if the current instance is zero.
+  delegate :zero?, to: :to_hundredths
+
+  alias empty? zero? # (new, old)
 
   # Sets the current instance value according to the total Number value of hundredths of a second
   # specified as a parameter.
@@ -116,7 +122,7 @@ class Timing
     )
   end
 
-  # Returns a new instance containing as member values the differemce between
+  # Returns a new instance containing as member values the difference between
   # the current instance and the one specified as a parameter.
   #
   # == Params:
@@ -130,6 +136,20 @@ class Timing
       hours: @hours - other.hours,
       days: @days - other.days
     )
+  end
+
+  # Returns a new instance with the overall timing value multipled by the
+  # scalar number specified as a parameter.
+  #
+  # == Params:
+  # - +other+: an Integer-only value used for the multiplication; fractional
+  #   numbers cannot be used due to approximation in to_hundredths / from_hundredths
+  #   conversion.
+  #
+  def *(other)
+    raise(ArgumentError, 'Argument number must be of a Numeric kind.') unless other.is_a?(Integer)
+
+    Timing.new.from_hundredths(to_hundredths * other)
   end
 
   # Equals operator. Returns true if the two Timing objects have the same

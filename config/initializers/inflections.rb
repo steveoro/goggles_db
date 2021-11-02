@@ -18,4 +18,10 @@ ActiveSupport::Inflector.inflections(:en) do |inflect|
   inflect.acronym 'JWT'
   inflect.acronym 'MIR'
   inflect.acronym 'MRR'
+
+  inflect.acronym 'FIN'
+  inflect.acronym 'FINA'
+  inflect.acronym 'LEN'
+  inflect.acronym 'CSI'
+  inflect.acronym 'UISP'
 end

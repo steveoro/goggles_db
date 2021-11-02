@@ -55,6 +55,11 @@ Metrics/ClassLength:
   Exclude:
     - 'lib/wrappers/timing.rb'
 
+Metrics/CyclomaticComplexity:
+  Exclude:
+    - 'app/strategies/goggles_db/calculators/base_strategy.rb'
+    - 'app/strategies/goggles_db/calculators/factory.rb'
+
 Metrics/MethodLength:
   Max: 40
   CountAsOne: ['array', 'heredoc']
@@ -68,6 +73,7 @@ Metrics/ModuleLength:
     - 'spec/models/goggles_db/season_spec.rb'
     - 'spec/models/goggles_db/swimmer_spec.rb'
     - 'spec/models/goggles_db/user_spec.rb'
+    - 'spec/support/shared_calculators_examples.rb'
 
 Naming/VariableNumber:
   Exclude:
