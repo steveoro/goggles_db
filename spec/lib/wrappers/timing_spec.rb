@@ -43,7 +43,7 @@ describe Timing, type: :model do
 
     it_behaves_like(
       'responding to a list of methods',
-      %i[clear from_hundredths + - == <=> to_hundredths to_s to_compact_s]
+      %i[clear from_hundredths + - * == <=> to_hundredths zero? empty? to_s to_compact_s]
     )
     it_behaves_like(
       'responding to a list of class methods',
@@ -104,6 +104,20 @@ describe Timing, type: :model do
       expect(subject.to_hundredths).to eq(fix1_hours * 360_000 + fix1_mins * 6000 + fix1_secs * 100 + fix1_hundredths)
     end
   end
+
+  describe '#zero? / #empty?' do
+    let(:fixture) { described_class.new(hundredths: rand * 100, seconds: rand * 60, minutes: rand * 60, hours: rand * 24) }
+
+    it 'is false for a non-zero timing' do
+      expect(fixture.zero?).to be false
+      expect(fixture.empty?).to be false
+    end
+
+    it 'is true for a zeroed timing' do
+      expect(described_class.new.zero?).to be true
+      expect(described_class.new.empty?).to be true
+    end
+  end
   #-- -------------------------------------------------------------------------
   #++
 
@@ -134,6 +148,25 @@ describe Timing, type: :model do
 
     it 'corresponds to the sum of the two objects in hundredths' do
       expect(subject.to_hundredths).to eq(fixture1.to_hundredths - fixture2.to_hundredths)
+    end
+  end
+
+  describe '#*' do
+    subject { fixture1 * int_number }
+
+    let(:fixture1) { described_class.new(hundredths: rand * 100, seconds: 1 + rand * 60, minutes: rand * 60, hours: rand * 24) }
+    let(:int_number) { (1 + rand * 100).to_i }
+
+    it 'raises an ArgumentError when no valid integer value is specified' do
+      expect { fixture1 * [nil, 'not-a-number', 2.5].sample }.to raise_error(ArgumentError)
+    end
+
+    it 'returns a Timing object' do
+      expect(subject).to be_an_instance_of(described_class)
+    end
+
+    it 'is the value in hundredths multiplied by the numeric value' do
+      expect(subject.to_hundredths).to eq(fixture1.to_hundredths * int_number)
     end
   end
 
