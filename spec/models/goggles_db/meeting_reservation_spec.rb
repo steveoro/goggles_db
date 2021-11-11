@@ -81,7 +81,10 @@ module GogglesDb
         expect(subject).to be_an(Hash)
       end
 
-      %w[badge team swimmer].each do |association_name|
+      %w[
+        display_label short_label
+        badge team swimmer
+      ].each do |association_name|
         it "includes the #{association_name} association key" do
           expect(subject.keys).to include(association_name)
         end
@@ -93,9 +96,11 @@ module GogglesDb
       context 'for required associations,' do
         subject { FactoryBot.create(:meeting_reservation) }
 
-        %w[display_label short_label].each do |member_name|
-          it "includes the #{member_name} member key" do
-            expect(subject.to_json[member_name]).to be_present
+        let(:json_hash) { JSON.parse(subject.to_json) }
+
+        %w[display_label short_label].each do |method_name|
+          it "includes the decorated '#{method_name}'" do
+            expect(json_hash[method_name]).to eq(subject.decorate.send(method_name))
           end
         end
 

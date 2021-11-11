@@ -6,9 +6,9 @@ module GogglesDb
   #
   # = Meeting structure cloner
   #
-  #   - file vers.: 7.03.01
+  #   - file vers.: 7.03.38
   #   - author....: Steve A.
-  #   - build.....: 20210107
+  #   - build.....: 20211104
   #
   # Copies the structure of a given Meeting up to its MeetingProgram rows.
   #
@@ -19,8 +19,13 @@ module GogglesDb
 
     # Creates a new command object given the parameters.
     #
-    def initialize(meeting)
+    # == Parameters:
+    # - +meeting+: the source +Meeting+ to clone.
+    # - +dest_season+: the +Season+ to clone the +Meeting+ into; defaults to the same season as the source meeting.
+    #
+    def initialize(meeting, dest_season = nil)
       @meeting = meeting
+      @dest_season = dest_season || (meeting.respond_to?(:season) ? meeting.season : nil)
     end
 
     # Sets #result to the newly created Meeting when successful.
@@ -39,7 +44,8 @@ module GogglesDb
 
     # Checks validity of the constructor parameters; returns +false+ in case of error.
     def internal_members_valid?
-      return true if @meeting.instance_of?(GogglesDb::Meeting) && @meeting.valid?
+      return true if @meeting.instance_of?(GogglesDb::Meeting) && @meeting.valid? &&
+                     @dest_season.instance_of?(GogglesDb::Season) && @dest_season.valid?
 
       errors.add(:msg, 'Invalid constructor parameters')
       false
@@ -80,7 +86,7 @@ module GogglesDb
 
     # Filters out ID, timestamps, lock columns...
     def reject_common_columns(attribute_hash)
-      attribute_hash.reject { |key, _value| %w[id lock_version created_at updated_at].include?(key) }
+      attribute_hash.reject { |key, _value| %w[id lock_version created_at updated_at season_id].include?(key) }
     end
 
     # Clones the Meeting master row, clearing out some of its attributes.
@@ -92,6 +98,7 @@ module GogglesDb
             entry_deadline: nil,
             header_date: @meeting.header_date + date_diff_in_years_from_today,
             header_year: @meeting.header_year.to_s.size < 5 ? updated_header_year_short : updated_header_year_long,
+            season_id: @dest_season.id,
             manifest_body: nil,
             manifest: false,
             startlist: false,

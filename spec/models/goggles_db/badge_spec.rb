@@ -134,6 +134,8 @@ module GogglesDb
     describe '#to_json' do
       subject { FactoryBot.create(:badge) }
 
+      let(:json_hash) { JSON.parse(subject.to_json) }
+
       # Required keys:
       %w[
         display_label short_label
@@ -141,7 +143,13 @@ module GogglesDb
         category_type entry_time_type
       ].each do |member_name|
         it "includes the #{member_name} member key" do
-          expect(subject.to_json[member_name]).to be_present
+          expect(json_hash[member_name]).to be_present
+        end
+      end
+
+      %w[display_label short_label].each do |method_name|
+        it "includes the decorated '#{method_name}'" do
+          expect(json_hash[method_name]).to eq(subject.decorate.send(method_name))
         end
       end
 

@@ -2,6 +2,7 @@
 
 _Please, add the latest build info on top of the list; use Version::MAJOR only after gold release; keep semantic versioning in line with framework's_
 
+- **0.3.38** [Steve A.] improved to_json output & specs for all models with a decorator
 - **0.3.36** [Steve A.] score calculator strategies, with dedicated factory & selector command
 - **0.3.35** [Steve A.] migrations from standard_timings in MeetingProgram & UserResult
 - **0.3.33** [Steve A.] additional decorators

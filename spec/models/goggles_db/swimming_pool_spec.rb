@@ -78,15 +78,23 @@ module GogglesDb
     #++
 
     describe '#minimal_attributes' do
-      subject { FactoryBot.create(:swimming_pool, city: GogglesDb::City.limit(20).sample).minimal_attributes }
+      subject(:result) { fixture_row.minimal_attributes }
+
+      let(:fixture_row) { FactoryBot.create(:swimming_pool, city: GogglesDb::City.limit(20).sample) }
 
       it 'is an Hash' do
-        expect(subject).to be_an(Hash)
+        expect(result).to be_an(Hash)
       end
 
       %w[city pool_type shower_type hair_dryer_type locker_cabinet_type].each do |association_name|
         it "includes the #{association_name} association key" do
-          expect(subject.keys).to include(association_name)
+          expect(result.keys).to include(association_name)
+        end
+      end
+
+      %w[display_label short_label].each do |method_name|
+        it "includes the decorated '#{method_name}'" do
+          expect(result[method_name]).to eq(fixture_row.decorate.send(method_name))
         end
       end
     end
@@ -103,13 +111,21 @@ module GogglesDb
         )
       end
 
+      let(:json_hash) { JSON.parse(subject.to_json) }
+
       # Required keys:
       %w[
         display_label short_label
-        city pool_type shower_type hair_dryer_type locker_cabinet_type
+        city pool_type
       ].each do |member_name|
         it "includes the #{member_name} member key" do
-          expect(subject.to_json[member_name]).to be_present
+          expect(json_hash[member_name]).to be_present
+        end
+      end
+
+      %w[display_label short_label].each do |method_name|
+        it "includes the decorated '#{method_name}'" do
+          expect(json_hash[method_name]).to eq(subject.decorate.send(method_name))
         end
       end
 

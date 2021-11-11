@@ -4,7 +4,7 @@ module GogglesDb
   #
   # = Team model
   #
-  #   - version:  7-0.3.33
+  #   - version:  7-0.3.38
   #   - author:   Steve A.
   #
   class Team < ApplicationRecord
@@ -90,6 +90,8 @@ module GogglesDb
     # higher level entity.
     def minimal_associations
       {
+        'display_label' => decorate.display_label,
+        'short_label' => decorate.short_label,
         'city' => city&.iso_attributes # (optional, always uses current locale)
       }
     end
