@@ -55,5 +55,44 @@ module GogglesDb
         expect { subject.class.validate_cached_rows }.not_to raise_error
       end
     end
+    #-- ------------------------------------------------------------------------
+    #++
+
+    describe '#minimal_attributes' do
+      subject { existing_row.minimal_attributes }
+
+      let(:existing_row) { described_class.limit(50).sample }
+
+      it 'is an Hash' do
+        expect(subject).to be_an(Hash)
+      end
+
+      it 'includes the federation_type association key' do
+        expect(subject.keys).to include('federation_type')
+      end
+    end
+
+    describe '#to_json' do
+      subject { described_class.limit(50).sample }
+
+      it 'is a String' do
+        expect(subject.to_json).to be_a(String).and be_present
+      end
+
+      it 'can be parsed without errors' do
+        expect { JSON.parse(subject.to_json) }.not_to raise_error
+      end
+
+      describe 'the 1st-level required association' do
+        let(:json_hash) { JSON.parse(subject.to_json) }
+
+        it 'contains the JSON details of its federation_type' do
+          expect(json_hash['federation_type']).to be_an(Hash).and be_present
+          expect(json_hash['federation_type']).to eq(
+            JSON.parse(subject.federation_type.attributes.to_json)
+          )
+        end
+      end
+    end
   end
 end

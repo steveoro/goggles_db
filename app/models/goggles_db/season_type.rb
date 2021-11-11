@@ -7,7 +7,7 @@ module GogglesDb
   # This entity is assumed to be pre-seeded on the database.
   # Due to the low number of entity values, all rows have been Memoized.
   #
-  #   - version:  7.000
+  #   - version:  7-0.3.38
   #   - author:   Steve A.
   #
   class SeasonType < ApplicationRecord
@@ -83,6 +83,28 @@ module GogglesDb
         code_value = "#{name}::#{word.upcase}_ID".constantize
         raise "Missing required #{name} row with code #{code_value}" if instance_variable_get("@#{word}").blank?
       end
+    end
+    #-- ------------------------------------------------------------------------
+    #++
+
+    # Override: include the minimum required 1st-level attributes & associations.
+    #
+    def minimal_attributes
+      super.merge(minimal_associations)
+    end
+
+    # Override: includes all 1st-level associations into the typical to_json output.
+    def to_json(options = nil)
+      attributes.merge(minimal_associations).to_json(options)
+    end
+
+    private
+
+    # Returns the "minimum required" hash of associations.
+    def minimal_associations
+      {
+        'federation_type' => federation_type.attributes
+      }
     end
   end
 end

@@ -117,6 +117,14 @@ module GogglesDb
     describe '#to_json' do
       subject { FactoryBot.create(:team_affiliation) }
 
+      let(:json_hash) { JSON.parse(subject.to_json) }
+
+      %w[display_label short_label].each do |method_name|
+        it "includes the decorated '#{method_name}'" do
+          expect(json_hash[method_name]).to eq(subject.decorate.send(method_name))
+        end
+      end
+
       # Required associations:
       it_behaves_like(
         '#to_json when called on a valid instance',

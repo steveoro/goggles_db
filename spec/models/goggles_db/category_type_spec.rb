@@ -147,15 +147,23 @@ module GogglesDb
     end
 
     describe '#minimal_attributes' do
-      subject { described_class.limit(200).sample.minimal_attributes }
+      subject(:result) { existing_row.minimal_attributes }
+
+      let(:existing_row) { described_class.limit(200).sample }
 
       it 'is an Hash' do
-        expect(subject).to be_an(Hash)
+        expect(result).to be_an(Hash)
       end
 
       %w[display_label short_label season].each do |association_name|
         it "includes the #{association_name} association key" do
-          expect(subject.keys).to include(association_name)
+          expect(result.keys).to include(association_name)
+        end
+      end
+
+      %w[display_label short_label].each do |method_name|
+        it "includes the decorated '#{method_name}'" do
+          expect(result[method_name]).to eq(existing_row.decorate.send(method_name))
         end
       end
     end
@@ -163,10 +171,18 @@ module GogglesDb
     describe '#to_json' do
       subject { described_class.limit(200).sample }
 
+      let(:json_hash) { JSON.parse(subject.to_json) }
+
       # Required keys:
       %w[display_label short_label season].each do |member_name|
         it "includes the #{member_name} member key" do
-          expect(subject.to_json[member_name]).to be_present
+          expect(json_hash[member_name]).to be_present
+        end
+      end
+
+      %w[display_label short_label].each do |method_name|
+        it "includes the decorated '#{method_name}'" do
+          expect(json_hash[method_name]).to eq(subject.decorate.send(method_name))
         end
       end
 

@@ -5,14 +5,18 @@ require 'rails_helper'
 module GogglesDb
   RSpec.describe CmdCloneMeetingStructure, type: :command do
     let(:meeting_source) { GogglesDb::Meeting.limit(200).sample }
+    let(:season_dest) { FactoryBot.create(:season) }
 
     before do
       expect(meeting_source).to be_a(GogglesDb::Meeting).and be_valid
+      expect(season_dest).to be_a(GogglesDb::Season).and be_valid
     end
 
     context 'when using valid parameters,' do
       describe '#call' do
-        subject { described_class.call(meeting_source) }
+        subject { described_class.call(meeting_source, actual_dest_season) }
+
+        let(:actual_dest_season) { [season_dest, nil].sample }
 
         it 'returns itself' do
           expect(subject).to be_a(described_class)
@@ -28,6 +32,14 @@ module GogglesDb
 
         it 'has a valid Meeting #result' do
           expect(subject.result).to be_a(GogglesDb::Meeting).and be_valid
+        end
+
+        it 'creates the new Meeting for the actual destination season (depending on supplied parameter)' do
+          if actual_dest_season.nil?
+            expect(subject.result.season_id).to eq(meeting_source.season_id)
+          else
+            expect(subject.result.season_id).to eq(actual_dest_season.id)
+          end
         end
 
         it 'creates the new Meeting with an increased edition number' do
@@ -116,7 +128,7 @@ module GogglesDb
     context 'when using invalid constructor parameters,' do
       describe '#call' do
         subject do
-          described_class.call('')
+          described_class.call(GogglesDb::User.first(50).sample)
         end
 
         it 'returns itself' do

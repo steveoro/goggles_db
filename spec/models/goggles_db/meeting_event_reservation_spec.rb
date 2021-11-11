@@ -82,8 +82,10 @@ module GogglesDb
     describe '#to_json' do
       subject { FactoryBot.create(:meeting_event_reservation) }
 
+      let(:json_hash) { JSON.parse(subject.to_json) }
+
       it 'includes the timing string' do
-        expect(JSON.parse(subject.to_json)['timing']).to eq(subject.to_timing.to_s)
+        expect(json_hash['timing']).to eq(subject.to_timing.to_s)
       end
 
       # Required keys:
@@ -92,7 +94,13 @@ module GogglesDb
         meeting meeting_event event_type badge team swimmer
       ].each do |member_name|
         it "includes the #{member_name} member key" do
-          expect(subject.to_json[member_name]).to be_present
+          expect(json_hash[member_name]).to be_present
+        end
+      end
+
+      %w[display_label short_label].each do |method_name|
+        it "includes the decorated '#{method_name}'" do
+          expect(json_hash[method_name]).to eq(subject.decorate.send(method_name))
         end
       end
 
