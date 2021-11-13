@@ -23,7 +23,8 @@ module GogglesDb
           import_queue parent
           import_queues sibling_rows
           req solved target_entity root_key result_parent_key
-          req_swimmer_name req_event_type req_timing req_length_in_meters
+          req_swimmer_name req_event_type
+          req_timing req_delta_timing req_length_in_meters
         ]
       )
 
@@ -102,9 +103,12 @@ module GogglesDb
                 'event_type_id' => fixture_event_type.id
               },
               'length_in_meters' => meters,
-              'minutes' => minutes,
-              'seconds' => seconds,
-              'hundredths' => hundredths
+              'minutes' => 0,
+              'seconds' => seconds / 2,
+              'hundredths' => hundredths / 2,
+              'minutes_from_start' => minutes,
+              'seconds_from_start' => seconds,
+              'hundredths_from_start' => hundredths
             }
           }.to_json
         )
@@ -178,6 +182,22 @@ module GogglesDb
               minutes: minutes,
               seconds: seconds,
               hundredths: hundredths
+            )
+          )
+        end
+      end
+
+      describe '#req_delta_timing' do
+        it 'is a Timing instance' do
+          expect(subject.req_timing).to be_a(Timing)
+        end
+
+        it 'has the values set in the request data' do
+          expect(subject.req_delta_timing).to eq(
+            Timing.new(
+              minutes: 0,
+              seconds: seconds / 2,
+              hundredths: hundredths / 2
             )
           )
         end

@@ -4,7 +4,7 @@ module GogglesDb
   #
   # = ImportQueue model
   #
-  #   - version:  7-0.3.31
+  #   - version:  7-0.3.39
   #   - author:   Steve A.
   #
   # Stores '/import' API requests and generic import microtransactions steps.
@@ -95,6 +95,8 @@ module GogglesDb
   #       }
   #     }
   #
+  # @see 'spec/fixtures' for some actual requests examples.
+  #
   class ImportQueue < ApplicationRecord
     self.table_name = 'import_queues'
 
@@ -177,8 +179,23 @@ module GogglesDb
 
     # Returns a Timing instance set with any timing data stored at root-key depth of the request,
     # or zeroed out when not found.
+    #
+    # This is based on the timing recorded from the event start (fields <tt>'XXX_from_start'</tt>),
+    # so the resulting value will be the *overall* recorded at about <tt>req_length_in_meters</tt>.
     def req_timing
       @req_timing ||= Timing.new(
+        minutes: fetch_root_int_value('minutes_from_start'),
+        seconds: fetch_root_int_value('seconds_from_start'),
+        hundredths: fetch_root_int_value('hundredths_from_start')
+      )
+    end
+
+    # Returns a Timing instance set with any timing data stored at root-key depth of the request,
+    # or zeroed out when not found.
+    #
+    # This is based on the *delta-timing* recorded during the event (if available).
+    def req_delta_timing
+      @req_delta_timing ||= Timing.new(
         minutes: fetch_root_int_value('minutes'),
         seconds: fetch_root_int_value('seconds'),
         hundredths: fetch_root_int_value('hundredths')
