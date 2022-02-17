@@ -4,7 +4,7 @@ module GogglesDb
   #
   # = TeamAffiliation model
   #
-  #   - version:  7-0.3.38
+  #   - version:  7-0.3.44
   #   - author:   Steve A.
   #
   class TeamAffiliation < ApplicationRecord
@@ -14,6 +14,8 @@ module GogglesDb
     belongs_to :season
     validates_associated :team
     validates_associated :season
+
+    default_scope { includes(:team, :season) }
 
     has_one :season_type, through: :season
     has_many :badges, dependent: :delete_all

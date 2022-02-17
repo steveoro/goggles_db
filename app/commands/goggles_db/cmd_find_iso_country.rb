@@ -73,7 +73,7 @@ module GogglesDb
       alpha_length = @country_code && @country_code.length < 3 ? 2 : 3
       coutry_code_alpha_method = "find_country_by_alpha#{alpha_length}"
 
-      result = ISO3166::Country.find_country_by_name(@country_name) ||
+      result = ISO3166::Country.find_country_by_iso_short_name(@country_name) ||
                ISO3166::Country.find_country_by_unofficial_names(@country_name) ||
                ISO3166::Country.send(coutry_code_alpha_method, @country_code)
 

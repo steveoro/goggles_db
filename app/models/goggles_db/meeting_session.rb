@@ -4,7 +4,7 @@ module GogglesDb
   #
   # = MeetingSession model
   #
-  #   - version:  7-0.3.33
+  #   - version:  7-0.3.44
   #   - author:   Steve A.
   #
   class MeetingSession < ApplicationRecord
@@ -15,6 +15,8 @@ module GogglesDb
     belongs_to :day_part_type, optional: true # (can be set later on)
 
     validates_associated :meeting
+
+    default_scope { includes(:meeting) }
 
     has_one  :season,      through: :meeting
     has_one  :season_type, through: :meeting

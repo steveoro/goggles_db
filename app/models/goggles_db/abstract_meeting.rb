@@ -6,7 +6,7 @@ module GogglesDb
   #
   # Encapsulates common behavior for Meetings & User Workshops.
   #
-  #   - version:  7-0.3.33
+  #   - version:  7-0.3.44
   #   - author:   Steve A.
   #
   class AbstractMeeting < ApplicationRecord
@@ -18,6 +18,8 @@ module GogglesDb
     validates_associated :season
     validates_associated :edition_type
     validates_associated :timing_type
+
+    default_scope { includes(:edition_type, :timing_type, season: [:season_type]) }
 
     validates :code,        presence: { length: { within: 1..50 }, allow_nil: false }
     validates :header_year, presence: { length: { within: 1..9 }, allow_nil: false }
@@ -56,10 +58,12 @@ module GogglesDb
     # the Meeting name as a +String+, stripped of any edition label.
     #
     def name_without_edition(meeting_name = description)
-      tokens = if edition_label.present?
-                 meeting_name.split(/#{edition_label}|#{edition}°/)
+      tokens = if edition_label.present? && meeting_name.starts_with?(/#{edition_label}\s|#{edition}°/)
+                 condensed_name(meeting_name).split(/#{edition_label}\s|#{edition}°/)
+               elsif meeting_name.starts_with?(/#{edition}°/)
+                 condensed_name(meeting_name).split(/#{edition}°/)
                else
-                 meeting_name.split(/#{edition}°/)
+                 [condensed_name(meeting_name)]
                end
       tokens.reject(&:empty?)
             .last.strip
@@ -86,13 +90,18 @@ module GogglesDb
 
     # Returns the shortest possible name for this meeting as a String.
     # Assumes the most significant part of the name is the ending (name, city name, ...)
-    def condensed_name
+    #
+    # == Params:
+    # - <tt>meeting_name</tt>: the meeting name to be processed;
+    #   defaults to +description+.
+    #
+    def condensed_name(meeting_name = description)
       # Remove spaces, split in tokens, delete empty tokens and take just the first 3:
-      description.split(/trofeo|meeting|collegiale|workshop|campionato|raduno/i)
-                 .last.titleize
-                 .strip.split(/\s|,/)
-                 .reject(&:empty?)[0..2]
-                 .join(' ')
+      meeting_name.split(/trofeo|meeting|collegiale|workshop|campionato|raduno/i)
+                  .last.titleize
+                  .strip.split(/\s|,/)
+                  .reject(&:empty?)[0..3]
+                  .join(' ')
     end
     #-- ------------------------------------------------------------------------
     #++
