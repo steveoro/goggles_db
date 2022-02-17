@@ -104,7 +104,7 @@ shared_examples_for 'filtering scope for_<ANY_ENTITY_NAME>' do |subject_class, e
     # the inner join with the source rows themselves:
     let(:chosen_filter) do
       subject_class.includes(entity_name.to_sym).joins(entity_name.to_sym)
-                   .select("#{entity_name}_id").distinct
+                   .select("#{entity_name.pluralize}.id").distinct
                    .limit(20).sample
                    .send(entity_name)
     end

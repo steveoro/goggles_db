@@ -6,7 +6,7 @@ module GogglesDb
   #
   # (previously known as "Admins")
   #
-  #   - version:  7.038
+  #   - version:  7-0.3.44
   #   - author:   Steve A.
   #
   # To check if a user has generic admin grants, simply use:
@@ -22,6 +22,8 @@ module GogglesDb
 
     belongs_to :user
     validates_associated :user
+
+    default_scope { includes(:user) }
 
     delegate :name, to: :user, prefix: false
   end

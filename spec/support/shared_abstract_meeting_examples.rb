@@ -76,28 +76,62 @@ shared_examples_for 'AbstractMeeting #name_without_edition' do |factory_name_sym
         )
       end
 
-      let(:fixture_name) { 'Fake static name without edition' }
-
-      it 'is the same custom name' do
-        expect(subject.name_without_edition(fixture_name)).to eq(fixture_name)
+      [
+        'Long static name with no edition', 'Città di Riccione', 'Master Torino',
+        'Città di Reggio Emilia'
+      ].each do |fixture_name|
+        it 'is the same custom name, titleized and shortened if it is too long' do
+          expect(subject.name_without_edition(fixture_name))
+            .to eq(
+              fixture_name.titleize
+                          .split(/\s|,/)
+                          .reject(&:empty?)[0..3]
+                          .join(' ')
+            )
+        end
       end
     end
 
-    context 'with a custom name parameter that includes an edition label,' do
+    context 'with a custom name parameter that includes an edition label at the front,' do
       subject do
         FactoryBot.build(
           factory_name_sym,
-          edition_type: GogglesDb::EditionType.send(%i[ordinal roman yearly seasonal].sample)
+          edition_type: GogglesDb::EditionType.send(%i[ordinal roman].sample)
         )
       end
 
-      let(:base_name) { 'Fake static name' }
+      [
+        'Fake short name', 'Città di Riccione', 'Master Torino',
+        'Città di Reggio Emilia'
+      ].each do |base_name|
+        it "is just the base name without the edition label (base name: '#{base_name}')" do
+          if subject.edition_label.present?
+            expect(
+              subject.name_without_edition("#{subject.edition_label} Trofeo #{base_name}")
+            ).to eq(base_name.titleize)
+          end
+        end
+      end
+    end
 
-      it 'is just the base name without the edition label' do
-        if subject.edition_label.present?
-          expect(
-            subject.name_without_edition("#{base_name} #{subject.edition_label}")
-          ).to eq(base_name)
+    context 'with a custom name parameter that includes an edition label at the end,' do
+      subject do
+        FactoryBot.build(
+          factory_name_sym,
+          edition_type: GogglesDb::EditionType.send(%i[yearly seasonal].sample)
+        )
+      end
+
+      [
+        'Fake short name', 'Città di Riccione', 'Master Torino',
+        'Città di Reggio Emilia'
+      ].each do |base_name|
+        it "is just the base name without the edition label (base name: '#{base_name}')" do
+          if subject.edition_label.present?
+            expect(
+              subject.name_without_edition("Trofeo #{base_name} #{subject.edition_label}")
+            ).to eq(base_name.titleize)
+          end
         end
       end
     end
@@ -165,14 +199,14 @@ shared_examples_for 'AbstractMeeting #condensed_name' do |factory_name_sym|
       end
 
       let(:common_prefix) { %w[Trofeo Meeting Collegiale Workshop Campionato Raduno].sample }
-      let(:base_tokens) { FFaker::Lorem.words(5) }
+      let(:base_tokens) { FFaker::Lorem.words(6) }
 
       it 'does not include the common prefix' do
         expect(subject.condensed_name).not_to include(common_prefix)
       end
 
-      it 'reduces the name to just the last 3 base tokens of the name' do
-        expect(subject.condensed_name).to eq(base_tokens.first(3).join(' ').titleize)
+      it 'reduces the name to just the last 4 base tokens of the name' do
+        expect(subject.condensed_name).to eq(base_tokens.first(4).join(' ').titleize)
       end
     end
   end

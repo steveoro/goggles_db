@@ -4,7 +4,7 @@ module GogglesDb
   #
   # = Team model
   #
-  #   - version:  7-0.3.38
+  #   - version:  7-0.3.44
   #   - author:   Steve A.
   #
   class Team < ApplicationRecord

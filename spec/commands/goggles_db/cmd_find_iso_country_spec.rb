@@ -33,7 +33,7 @@ module GogglesDb
 
           it 'has a valid Country #result' do
             expect(subject.result).to be_a(ISO3166::Country).and be_present
-            expect(fixture_name).to eq(subject.result.name)
+            expect(fixture_name).to eq(subject.result.iso_short_name)
               .or eq(subject.result.unofficial_names.first)
             expect(subject.result.alpha2).to eq(fixture_alpha2)
           end

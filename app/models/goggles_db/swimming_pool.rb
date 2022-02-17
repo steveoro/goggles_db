@@ -4,7 +4,7 @@ module GogglesDb
   #
   # = SwimmingPool model
   #
-  #   - version:  7-0.3.33
+  #   - version:  7-0.3.44
   #   - author:   Steve A.
   #
   class SwimmingPool < ApplicationRecord
@@ -19,6 +19,8 @@ module GogglesDb
 
     validates_associated :city
     validates_associated :pool_type
+
+    default_scope { includes(:city, :pool_type) }
 
     validates :name,          presence: { length: { within: 1..100, allow_nil: false } }
     validates :nick_name,     presence: { length: { within: 1..100, allow_nil: false } }

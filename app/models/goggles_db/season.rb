@@ -4,7 +4,7 @@ module GogglesDb
   #
   # = Season model
   #
-  #   - version:  7-0.3.33
+  #   - version:  7-0.3.44
   #   - author:   Steve A.
   #
   class Season < ApplicationRecord
@@ -16,6 +16,8 @@ module GogglesDb
     validates_associated :season_type
     validates_associated :edition_type
     validates_associated :timing_type
+
+    default_scope { includes(:season_type, :edition_type, :timing_type) }
 
     has_one :federation_type, through: :season_type
 

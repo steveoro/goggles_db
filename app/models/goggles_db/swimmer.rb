@@ -4,9 +4,9 @@ module GogglesDb
   #
   # = Swimmer model
   #
-  #   - version:  7-0.3.33
+  #   - version:  7-0.3.44
   #   - author:   Steve A.
-  #   - build:    20211019
+  #   - build:    20220217
   #
   class Swimmer < ApplicationRecord
     self.table_name = 'swimmers'
@@ -18,11 +18,22 @@ module GogglesDb
     belongs_to            :gender_type
     validates_associated  :gender_type
 
+    default_scope { includes(:gender_type) }
+
     has_many :badges, dependent: :delete_all
-    has_many :teams,          through: :badges
-    has_many :category_types, through: :badges
-    has_many :seasons,        through: :badges
-    has_many :season_types,   through: :badges
+    has_many :team_affiliations, through: :badges
+    has_many :teams,             through: :badges
+    has_many :category_types,    through: :badges
+    has_many :seasons,           through: :badges
+    has_many :season_types,      through: :badges
+
+    has_many :meeting_entries, dependent: :delete_all
+    has_many :meeting_individual_results, dependent: :delete_all
+    has_many :laps, dependent: :delete_all
+    has_many :meeting_relay_swimmers, dependent: :delete_all
+    has_many :meeting_relay_results, through: :meeting_relay_swimmers
+    has_many :user_results, dependent: :delete_all
+    has_many :user_laps, dependent: :delete_all
 
     validates :complete_name, presence: { length: { within: 1..100, allow_nil: false } }
     validates :last_name, length: { maximum: 50 }

@@ -4,7 +4,7 @@ module GogglesDb
   #
   # = Badge payment model
   #
-  #   - version:  7.047
+  #   - version:  7-0.3.44
   #   - authors:  Leega, Steve A.
   #
   class BadgePayment < ApplicationRecord
@@ -19,6 +19,8 @@ module GogglesDb
 
     validates :payment_date, presence: { allow_nil: false }
     validates :amount, presence: { allow_nil: false }
+
+    default_scope { includes(:badge) }
 
     # Sorting scopes:
     scope :by_date, ->(dir = :asc) { order('badge_payments.payment_date': dir) }

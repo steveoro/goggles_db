@@ -49,7 +49,7 @@ module GogglesDb
     end
 
     context 'when using valid parameters' do
-      context 'which matches a custom country,' do
+      context 'matching a custom country,' do
         subject { described_class.call(ISO3166::Country.new('SE'), 'Stockholm') }
 
         it_behaves_like('CmdFindIsoCity successful #call', nil)
@@ -59,7 +59,7 @@ module GogglesDb
         end
       end
 
-      context 'which matches a single result (1:1),' do
+      context 'matching a single result (1:1),' do
         [
           # 1:1 matches: (these are strictly dependent on current BIAS_MATCH value)
           "L`Aquila'", 'Bologna',
@@ -92,7 +92,7 @@ module GogglesDb
         end
       end
 
-      context 'which matches multiple results (1:N),' do
+      context 'matching multiple results (1:N),' do
         [
           # 1:N matches:
           'Cento',
@@ -137,30 +137,31 @@ module GogglesDb
         end
       end
 
-      # describe '#call' do
-      #   context 'without a valid ISO3166::Country parameter,' do
-      #     subject { CmdFindIsoCity.call(nil, 'Reggio Emilia') }
+      describe '#call' do
+        context 'without a valid ISO3166::Country parameter,' do
+          subject { described_class.call(nil, 'Reggio Emilia') }
 
-      #     it_behaves_like 'CmdFindIsoCity failing'
+          it_behaves_like 'CmdFindIsoCity failing'
 
-      #     it 'has a non-empty #errors list' do
-      #       expect(subject.errors).to be_present
-      #       expect(subject.errors[:msg]).to eq(['Invalid iso_country parameter'])
-      #     end
-      #   end
+          it 'has a non-empty #errors list' do
+            expect(subject.errors).to be_present
+            expect(subject.errors[:msg]).to eq(['Invalid iso_country parameter'])
+          end
+        end
 
-      #   context 'with a non-existing city name,' do
-      #     let(:impossible_name) { %w[Kqwxy Ykqxz Z1wq Xhk67 ZZZwy9].sample }
-      #     subject { CmdFindIsoCity.call(fixture_country, impossible_name) }
+        context 'with a non-existing city name,' do
+          subject { described_class.call(fixture_country, impossible_name) }
 
-      #     it_behaves_like 'CmdFindIsoCity failing'
+          let(:impossible_name) { %w[Kqwxy Ykqxz Z1wq Xhk67 ZZZwy9].sample }
 
-      #     it 'has a non-empty #errors list' do
-      #       expect(subject.errors).to be_present
-      #       expect(subject.errors[:name]).to eq([impossible_name])
-      #     end
-      #   end
-      # end
+          it_behaves_like 'CmdFindIsoCity failing'
+
+          it 'has a non-empty #errors list' do
+            expect(subject.errors).to be_present
+            expect(subject.errors[:name]).to eq([impossible_name])
+          end
+        end
+      end
     end
     #-- --------------------------------------------------------------------------
     #++
