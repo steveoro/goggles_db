@@ -49,6 +49,14 @@ module GogglesDb
         expect(result).to all(be_coming)
       end
     end
+
+    describe 'self.unpayed' do
+      let(:result) { subject.class.where(payed: false).limit(20) }
+
+      it "contains only athlete reservations that haven't been flagged as 'payed'" do
+        result.all? { |res| expect(res.payed?).to be false }
+      end
+    end
     #-- ------------------------------------------------------------------------
     #++
 
