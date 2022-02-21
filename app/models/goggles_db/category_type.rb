@@ -11,7 +11,6 @@ module GogglesDb
     self.table_name = 'category_types'
 
     belongs_to :season
-    validates :season, presence: true
     validates_associated :season
 
     has_one :season_type, through: :season

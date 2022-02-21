@@ -11,7 +11,6 @@ module GogglesDb
     self.table_name = 'event_types'
 
     belongs_to :stroke_type
-    validates :stroke_type, presence: true
     validates_associated :stroke_type
 
     validates :code, presence: { length: { within: 1..10 }, allow_nil: false },

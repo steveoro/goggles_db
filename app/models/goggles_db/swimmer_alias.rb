@@ -14,7 +14,6 @@ module GogglesDb
     self.table_name = 'swimmer_aliases'
 
     belongs_to :swimmer
-    validates :swimmer, presence: true
     validates_associated :swimmer
 
     validates :complete_name, presence: { length: { within: 1..100 }, allow_nil: false },

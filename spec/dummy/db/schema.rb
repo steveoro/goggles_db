@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2022_02_21_104613) do
+ActiveRecord::Schema.define(version: 2022_02_21_114745) do
 
   create_table "achievement_rows", id: :integer, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
     t.integer "lock_version", default: 0
@@ -193,6 +193,36 @@ ActiveRecord::Schema.define(version: 2022_02_21_104613) do
     t.index ["movement_scope_type_id"], name: "fk_base_movements_movement_scope_types"
     t.index ["movement_type_id"], name: "fk_base_movements_movement_types"
     t.index ["stroke_type_id"], name: "fk_base_movements_stroke_types"
+  end
+
+  create_table "calendars", id: :integer, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
+    t.integer "lock_version", default: 0
+    t.string "scheduled_date"
+    t.string "meeting_name"
+    t.string "meeting_place"
+    t.string "manifest_code"
+    t.string "startlist_code"
+    t.string "results_code"
+    t.string "meeting_code"
+    t.integer "season_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.string "year", limit: 4
+    t.string "month", limit: 20
+    t.string "results_link"
+    t.string "startlist_link"
+    t.string "manifest_link"
+    t.text "manifest"
+    t.text "name_import_text"
+    t.text "organization_import_text"
+    t.text "place_import_text"
+    t.text "dates_import_text"
+    t.text "program_import_text"
+    t.integer "meeting_id"
+    t.boolean "read_only", default: false, null: false
+    t.index ["meeting_code"], name: "index_calendars_on_meeting_code"
+    t.index ["meeting_id"], name: "index_calendars_on_meeting_id"
+    t.index ["season_id"], name: "index_calendars_on_season_id"
   end
 
   create_table "category_types", id: :integer, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
@@ -399,36 +429,6 @@ ActiveRecord::Schema.define(version: 2022_02_21_104613) do
     t.datetime "created_at"
     t.datetime "updated_at"
     t.index ["code"], name: "index_federation_types_on_code", unique: true
-  end
-
-  create_table "fin_calendars", id: :integer, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
-    t.integer "lock_version", default: 0
-    t.string "calendar_date"
-    t.string "calendar_name"
-    t.string "calendar_place"
-    t.string "fin_manifest_code"
-    t.string "fin_startlist_code"
-    t.string "fin_results_code"
-    t.string "goggles_meeting_code"
-    t.integer "season_id"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.string "calendar_year", limit: 4
-    t.string "calendar_month", limit: 20
-    t.string "results_link"
-    t.string "startlist_link"
-    t.string "manifest_link"
-    t.text "manifest"
-    t.text "name_import_text"
-    t.text "organization_import_text"
-    t.text "place_import_text"
-    t.text "dates_import_text"
-    t.text "program_import_text"
-    t.integer "meeting_id"
-    t.boolean "do_not_update", default: false, null: false
-    t.index ["goggles_meeting_code"], name: "index_fin_calendars_on_goggles_meeting_code"
-    t.index ["meeting_id"], name: "index_fin_calendars_on_meeting_id"
-    t.index ["season_id"], name: "index_fin_calendars_on_season_id"
   end
 
   create_table "friendships", id: :integer, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|

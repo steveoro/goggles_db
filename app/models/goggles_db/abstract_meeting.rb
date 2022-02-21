@@ -6,7 +6,7 @@ module GogglesDb
   #
   # Encapsulates common behavior for Meetings & User Workshops.
   #
-  #   - version:  7-0.3.44
+  #   - version:  7-0.3.45
   #   - author:   Steve A.
   #
   class AbstractMeeting < ApplicationRecord
@@ -33,7 +33,8 @@ module GogglesDb
     # Filtering scopes:
     scope :not_cancelled,   -> { where(cancelled: false) }
     scope :for_season_type, ->(season_type) { joins(:season_type).where(season_types: { id: season_type.id }) }
-    scope :for_code,        ->(code)        { where(code: code) }
+    scope :for_season,      ->(season) { joins(:season).where(season_id: season.id) }
+    scope :for_code,        ->(code) { where(code: code) }
     #-- -----------------------------------------------------------------------
     #++
 
