@@ -24,7 +24,6 @@ module GogglesDb
     MAS_FINA_ID = 8
 
     belongs_to :federation_type
-    validates :federation_type, presence: true
     validates_associated :federation_type
 
     validates :code, presence: { length: { within: 1..10 }, allow_nil: false },

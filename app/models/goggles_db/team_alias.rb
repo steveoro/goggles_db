@@ -14,7 +14,6 @@ module GogglesDb
     self.table_name = 'team_aliases'
 
     belongs_to :team
-    validates :team, presence: true
     validates_associated :team
 
     validates :name, presence: { length: { within: 1..60 }, allow_nil: false },

@@ -13,11 +13,9 @@ module GogglesDb
     self.table_name = 'events_by_pool_types'
 
     belongs_to :pool_type
-    validates :pool_type, presence: true
     validates_associated :pool_type
 
     belongs_to :event_type
-    validates :event_type, presence: true
     validates_associated :event_type
 
     has_one :stroke_type, through: :event_type
