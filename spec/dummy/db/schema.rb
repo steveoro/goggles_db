@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_10_26_101919) do
+ActiveRecord::Schema.define(version: 2022_02_21_104613) do
 
   create_table "achievement_rows", id: :integer, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
     t.integer "lock_version", default: 0
@@ -837,9 +837,11 @@ ActiveRecord::Schema.define(version: 2021_10_26_101919) do
     t.boolean "confirmed"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.boolean "payed", default: false, null: false
     t.index ["badge_id"], name: "index_meeting_reservations_on_badge_id"
     t.index ["meeting_id", "badge_id"], name: "idx_unique_reservation", unique: true
     t.index ["meeting_id"], name: "index_meeting_reservations_on_meeting_id"
+    t.index ["payed"], name: "index_meeting_reservations_on_payed"
     t.index ["swimmer_id"], name: "index_meeting_reservations_on_swimmer_id"
     t.index ["team_id"], name: "index_meeting_reservations_on_team_id"
     t.index ["user_id"], name: "index_meeting_reservations_on_user_id"

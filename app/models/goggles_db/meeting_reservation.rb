@@ -35,9 +35,11 @@ module GogglesDb
 
     validates :not_coming, inclusion: { in: [true, false] }
     validates :confirmed, inclusion: { in: [true, false] }
+    validates :payed, inclusion: { in: [true, false] }
 
     # Filtering scopes:
     scope :coming, -> { where(not_coming: false) }
+    scope :unpayed, -> { where(payed: false) }
     #-- ------------------------------------------------------------------------
     #++
 
