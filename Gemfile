@@ -4,6 +4,8 @@ source 'https://rubygems.org'
 git_source(:github) { |repo| "https://github.com/#{repo}.git" }
 
 gem 'devise'
+gem 'devise-i18n'
+gem 'scenic'
 
 # Declare your gem's dependencies in goggles_db.gemspec.
 # Bundler will treat runtime dependencies like base dependencies, and

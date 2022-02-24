@@ -60,7 +60,6 @@ Gem::Specification.new do |spec|
   # spec.add_dependency 'omniauth-twitter'
   spec.add_dependency 'plus_codes' # https://github.com/google/open-location-code/tree/master/ruby
   spec.add_dependency 'scenic'
-  spec.add_dependency 'scenic-mysql_adapter'
   spec.add_dependency 'simple_command'
   spec.add_dependency 'tzinfo'
 
@@ -70,4 +69,5 @@ Gem::Specification.new do |spec|
   # fixture creation even on staging/production environments
 
   spec.add_development_dependency 'mysql2'
+  spec.add_development_dependency 'scenic-mysql_adapter'
 end
