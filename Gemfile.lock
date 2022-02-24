@@ -27,7 +27,6 @@ PATH
       rails (>= 6.0.4.6, < 6.1.0)
       rails-i18n (~> 6.0)
       scenic
-      scenic-mysql_adapter
       simple_command
       tzinfo
 
@@ -464,6 +463,7 @@ DEPENDENCIES
   bullet
   codecov
   devise
+  devise-i18n
   ffaker
   goggles_db!
   guard
@@ -485,6 +485,8 @@ DEPENDENCIES
   rubocop (= 1.8.1)
   rubocop-rails
   rubocop-rspec
+  scenic
+  scenic-mysql_adapter
   simplecov (= 0.13.0)
   spring
   spring-commands-rspec
