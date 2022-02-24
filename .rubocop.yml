@@ -70,6 +70,7 @@ Metrics/ModuleLength:
   # If Rubocop whines too much for a spec length, exclude the individual files:
   Exclude:
     - 'spec/models/goggles_db/meeting_individual_result_spec.rb'
+    - 'spec/models/goggles_db/meeting_spec.rb'
     - 'spec/models/goggles_db/season_spec.rb'
     - 'spec/models/goggles_db/swimmer_spec.rb'
     - 'spec/models/goggles_db/user_spec.rb'

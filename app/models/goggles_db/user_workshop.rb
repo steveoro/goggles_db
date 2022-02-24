@@ -4,7 +4,7 @@ module GogglesDb
   #
   # = UserWorkshop model
   #
-  #   - version:  7-0.3.33
+  #   - version:  7-0.3.45
   #   - author:   Steve A.
   #
   # Allows to manage user-driven or team-driven swimming workshops
@@ -28,6 +28,8 @@ module GogglesDb
     validates_associated :team
     alias home_team team # (new, old)
 
+    default_scope { includes(:user, :team) }
+
     has_one :season_type, through: :season
     has_one :federation_type, through: :season
 
@@ -37,6 +39,7 @@ module GogglesDb
     has_many :user_results, -> { order(:event_date) }, dependent: :delete_all
     has_many :pool_types,   through: :user_results
     has_many :event_types,  through: :user_results
+    has_many :swimmers,     through: :user_results
 
     validates :header_date, presence: true
 
@@ -51,6 +54,20 @@ module GogglesDb
         .or(includes([:edition_type]).where('user_workshops.code like ?', like_query))
         .by_date(:desc)
     }
+
+    scope :for_user, ->(user) { joins(:user).where(user_id: user.id) }
+    scope :for_team, ->(team) { joins(:team).where(team_id: team.id) }
+    scope :for_swimmer, lambda { |swimmer|
+      ids = includes(:swimmers).joins(:swimmers).where('swimmers.id': swimmer.id).distinct.pluck(:id)
+      ids.uniq!
+      where(id: ids).by_date(:desc)
+    }
+
+    # Returns +true+ if the specified +workshop+ has registered any kind of attendance or presence for the specified +swimmer+;
+    # +false+ otherwise.
+    def self.swimmer_presence?(workshop, swimmer)
+      GogglesDb::UserResult.includes(:user_workshop).joins(:user_workshop).exists?('user_workshops.id': workshop.id, swimmer_id: swimmer.id)
+    end
     #-- ------------------------------------------------------------------------
     #++
 

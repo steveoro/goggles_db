@@ -29,7 +29,8 @@ module GogglesDb
 
       it_behaves_like(
         'responding to a list of class methods',
-        %i[by_date by_season for_name]
+        %i[by_date by_season for_name
+           team_presence? swimmer_presence?]
       )
       it_behaves_like(
         'responding to a list of methods',
@@ -44,6 +45,7 @@ module GogglesDb
            warm_up_pool? allows_under25? manifest? startlist? off_season? confirmed? cancelled?
            tweeted? posted?
            results_acquired? autofilled? read_only? pb_acquired?
+           tags_by_user_list tags_by_team_list
            edition_label minimal_attributes
            to_json]
       )
@@ -116,6 +118,16 @@ module GogglesDb
       end
     end
 
+    describe 'self.with_results' do
+      it_behaves_like('filtering scope for_<ANY_CHOSEN_FILTER> with no parameters', described_class, 'with_results',
+                      'results_acquired', true)
+    end
+
+    describe 'self.without_results' do
+      it_behaves_like('filtering scope for_<ANY_CHOSEN_FILTER> with no parameters', described_class, 'without_results',
+                      'results_acquired', false)
+    end
+
     describe 'self.not_closed' do
       context 'when there are Meeting rows having the header_date set in the future,' do
         before { FactoryBot.create_list(:meeting, 5, header_date: Time.zone.today + 2.months, results_acquired: false) }
@@ -133,15 +145,24 @@ module GogglesDb
       end
     end
 
-    describe 'self.with_results' do
-      it_behaves_like('filtering scope for_<ANY_CHOSEN_FILTER> with no parameters', described_class, 'with_results',
-                      'results_acquired', true)
-    end
+    describe 'self.still_open_at(date)' do
+      context 'when there are Meeting rows having the header_date AND the entry_deadline set in the future,' do
+        before { FactoryBot.create_list(:meeting, 5, header_date: Time.zone.today + 2.months) }
 
-    describe 'self.without_results' do
-      it_behaves_like('filtering scope for_<ANY_CHOSEN_FILTER> with no parameters', described_class, 'without_results',
-                      'results_acquired', false)
+        let(:result) { described_class.still_open_at(Time.zone.today).limit(10) }
+
+        it 'is a relation containing only Meetings having the header_date set in the future' do
+          expect(result).to be_a(ActiveRecord::Relation)
+          expect(result).to all be_a(described_class)
+          expect(
+            result.map(&:header_date).uniq
+          ).to all be > Time.zone.today
+          expect(result.map(&:results_acquired).uniq).to all be false
+        end
+      end
     end
+    #-- ------------------------------------------------------------------------
+    #++
 
     describe 'self.for_name' do
       context 'when combined with other associations that include same-named columns,' do
@@ -158,6 +179,133 @@ module GogglesDb
 
       %w[riccione reggio parma deakker bologna ravenna].each do |filter_text|
         it_behaves_like('filtering scope FULLTEXT for_...', described_class, :for_name, %w[description code], filter_text)
+      end
+    end
+
+    describe 'self.for_team' do
+      let(:chosen_filter) do
+        described_class.includes(:meeting_individual_results).joins(:meeting_individual_results)
+                       .select(:team_id).distinct
+                       .limit(20).sample
+                       .meeting_individual_results.first
+                       .team
+      end
+
+      context 'when combined with other associations that include same-named columns,' do
+        subject do
+          described_class.joins(:meeting_team_scores, :meeting_reservations)
+                         .includes(:meeting_team_scores, :meeting_reservations)
+                         .for_team(chosen_filter)
+        end
+
+        it 'does not raise errors' do
+          expect { subject.count }.not_to raise_error
+        end
+      end
+
+      context "given the chosen Team has any #{described_class.to_s.pluralize} associated to it," do
+        let(:result) { described_class.for_team(chosen_filter).limit(10) }
+
+        it 'is a relation containing only Meetings attended by the specified Team' do
+          expect(result).to be_a(ActiveRecord::Relation)
+          expect(result).to all be_a(described_class)
+
+          all_rows_have_same_team = result.all? do |meeting|
+            GogglesDb::MeetingIndividualResult.includes(:meeting).joins(:meeting)
+                                              .exists?('meetings.id': meeting.id, team_id: chosen_filter.id) ||
+              GogglesDb::MeetingRelayResult.includes(:meeting).joins(:meeting)
+                                           .exists?('meetings.id': meeting.id, team_id: chosen_filter.id)
+          end
+          expect(all_rows_have_same_team).to be true
+        end
+      end
+    end
+
+    describe 'self.for_swimmer' do
+      let(:chosen_filter) do
+        described_class.includes(:meeting_relay_swimmers).joins(:meeting_relay_swimmers)
+                       .select(:swimmer_id).distinct
+                       .limit(20).sample
+                       .meeting_relay_swimmers.first
+                       .swimmer
+      end
+
+      context 'when combined with other associations that include same-named columns,' do
+        subject do
+          described_class.joins(:meeting_relay_swimmers).includes(:meeting_relay_swimmers)
+                         .for_swimmer(chosen_filter)
+        end
+
+        it 'does not raise errors' do
+          expect { subject.count }.not_to raise_error
+        end
+      end
+
+      context "given the chosen Swimmer has any #{described_class.to_s.pluralize} associated to it," do
+        let(:result) { described_class.send('for_swimmer', chosen_filter).limit(10) }
+
+        it 'is a relation containing only Meetings attended by the specified Swimmer' do
+          expect(result).to be_a(ActiveRecord::Relation)
+          expect(result).to all be_a(described_class)
+
+          all_rows_have_same_swimmer = result.all? do |meeting|
+            GogglesDb::MeetingIndividualResult.includes(:meeting).joins(:meeting)
+                                              .exists?('meetings.id': meeting.id, swimmer_id: chosen_filter.id) ||
+              GogglesDb::MeetingRelaySwimmer.includes(:meeting).joins(:meeting)
+                                            .exists?('meetings.id': meeting.id, swimmer_id: chosen_filter.id)
+          end
+          expect(all_rows_have_same_swimmer).to be true
+        end
+      end
+    end
+    #-- ------------------------------------------------------------------------
+    #++
+
+    describe 'self.team_presence?' do
+      let(:chosen_result) do
+        described_class.includes(:meeting_individual_results).joins(:meeting_individual_results)
+                       .select(:team_id).distinct
+                       .limit(20).sample
+                       .meeting_individual_results.sample
+      end
+      let(:chosen_meeting) { chosen_result.meeting }
+      let(:chosen_team) { chosen_result.team }
+      let(:fixture_team) { FactoryBot.create(:team) }
+
+      context 'when the chosen meeting has any results or presence of the chosen team,' do
+        it 'returns true' do
+          expect(described_class.team_presence?(chosen_meeting, chosen_team)).to be true
+        end
+      end
+
+      context 'when the chosen meeting does NOT have any results or presence of the chosen team,' do
+        it 'returns false' do
+          expect(described_class.team_presence?(chosen_meeting, fixture_team)).to be false
+        end
+      end
+    end
+
+    describe 'self.swimmer_presence?' do
+      let(:chosen_result) do
+        described_class.includes(:meeting_individual_results).joins(:meeting_individual_results)
+                       .select(:swimmer_id).distinct
+                       .limit(20).sample
+                       .meeting_individual_results.sample
+      end
+      let(:chosen_meeting) { chosen_result.meeting }
+      let(:chosen_swimmer) { chosen_result.swimmer }
+      let(:fixture_swimmer) { FactoryBot.create(:swimmer) }
+
+      context 'when the chosen meeting has any results or presence of the chosen swimmer,' do
+        it 'returns true' do
+          expect(described_class.swimmer_presence?(chosen_meeting, chosen_swimmer)).to be true
+        end
+      end
+
+      context 'when the chosen meeting does NOT have any results or presence of the chosen swimmer,' do
+        it 'returns false' do
+          expect(described_class.swimmer_presence?(chosen_meeting, fixture_swimmer)).to be false
+        end
       end
     end
     #-- ------------------------------------------------------------------------
