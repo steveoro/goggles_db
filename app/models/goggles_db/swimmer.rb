@@ -4,9 +4,9 @@ module GogglesDb
   #
   # = Swimmer model
   #
-  #   - version:  7-0.3.44
+  #   - version:  7-0.3.45
   #   - author:   Steve A.
-  #   - build:    20220217
+  #   - build:    20220222
   #
   class Swimmer < ApplicationRecord
     self.table_name = 'swimmers'
@@ -68,7 +68,7 @@ module GogglesDb
     #
     # The result is memoized on the current instance (reload the instance to refresh).
     def associated_team_ids
-      @associated_team_ids ||= GogglesDb::Badge.for_swimmer(self).select(:team_id).distinct.map(&:team_id)
+      @associated_team_ids ||= GogglesDb::Badge.for_swimmer(self).distinct(:team_id).pluck(:team_id)
     end
 
     # Returns the ActiveRecord Team association of teams that have a badge belonging to this Swimmer.

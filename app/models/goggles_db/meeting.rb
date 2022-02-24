@@ -4,7 +4,7 @@ module GogglesDb
   #
   # = Meeting model
   #
-  #   - version:  7-0.3.33
+  #   - version:  7-0.3.45
   #   - author:   Steve A.
   #
   class Meeting < AbstractMeeting
@@ -33,14 +33,11 @@ module GogglesDb
     has_many :meeting_entries,            through: :meeting_programs
     has_many :meeting_individual_results, through: :meeting_programs
     has_many :meeting_relay_results,      through: :meeting_programs
+    has_many :meeting_relay_swimmers,     through: :meeting_relay_results
+    has_many :laps,                       through: :meeting_programs
+    has_many :category_types,             through: :meeting_programs
 
-    # WIP:
-    # has_many :laps,                       through: :meeting_programs
-    # has_many :swimmers,                   through: :meeting_individual_results
-    # has_many :teams,                      through: :meeting_individual_results
-    # has_many :category_types,             through: :meeting_programs
-    # has_many :meeting_relay_swimmers,     through: :meeting_relay_results
-
+    # TODO: (FIX)
     # belongs_to :individual_score_computation_type, class_name: 'ScoreComputationType',
     #            foreign_key: 'individual_score_computation_type_id'
     # belongs_to :relay_score_computation_type, class_name: 'ScoreComputationType',
@@ -50,8 +47,8 @@ module GogglesDb
     # belongs_to :meeting_score_computation_type, class_name: 'ScoreComputationType',
     #            foreign_key: 'meeting_score_computation_type_id'
 
-    # acts_as_taggable_on :tags_by_users
-    # acts_as_taggable_on :tags_by_teams
+    acts_as_taggable_on :tags_by_users
+    acts_as_taggable_on :tags_by_teams
 
     validates :reference_phone, length: { maximum: 40 }
     validates :reference_e_mail, length: { maximum: 50 }
@@ -65,11 +62,25 @@ module GogglesDb
     # Filtering scopes:
     scope :for_name, lambda { |name|
       like_query = "%#{name}%"
-      includes([:edition_type])
+      includes(:edition_type)
         .where('MATCH(meetings.description, meetings.code) AGAINST(?)', name)
         .or(includes([:edition_type]).where('meetings.description like ?', like_query))
         .or(includes([:edition_type]).where('meetings.code like ?', like_query))
         .by_date(:desc)
+    }
+    scope :for_team, lambda { |team|
+      # Results only (not reservations or entries):
+      ids = includes(:meeting_individual_results).where('meeting_individual_results.team_id': team.id).distinct.pluck(:id)
+      ids << includes(:meeting_relay_results).where('meeting_relay_results.team_id': team.id).distinct.pluck(:id)
+      ids.uniq!
+      where(id: ids).by_date(:desc)
+    }
+    scope :for_swimmer, lambda { |swimmer|
+      # Results only (not reservations or entries):
+      ids = includes(:meeting_individual_results).where('meeting_individual_results.swimmer_id': swimmer.id).distinct.pluck(:id)
+      ids << includes(:meeting_relay_swimmers).where('meeting_relay_swimmers.swimmer_id': swimmer.id).distinct.pluck(:id)
+      ids.uniq!
+      where(id: ids).by_date(:desc)
     }
 
     scope :only_manifest,   -> { where(manifest: true, results_acquired: false) } # legacy "invitation" => manifest
@@ -77,6 +88,28 @@ module GogglesDb
     scope :with_results,    -> { where(results_acquired: true) }
     scope :without_results, -> { where(results_acquired: false) }
     scope :not_closed,      -> { where(results_acquired: false).where('header_date > ?', Time.zone.today) }
+    scope :still_open_at,   ->(date) { where('header_date >= ?', date).where('(entry_deadline >= ?) OR (entry_deadline IS NULL)', date) }
+
+    # Returns +true+ if the specified +meeting+ has registered any kind of attendance or presence for the specified +team+;
+    # +false+ otherwise.
+    # This method checks results, reservations, entries and team scores.
+    def self.team_presence?(meeting, team)
+      GogglesDb::MeetingIndividualResult.includes(:meeting).joins(:meeting).exists?('meetings.id': meeting.id, team_id: team.id) ||
+        GogglesDb::MeetingRelayResult.includes(:meeting).joins(:meeting).exists?('meetings.id': meeting.id, team_id: team.id) ||
+        GogglesDb::MeetingTeamScore.includes(:meeting).joins(:meeting).exists?('meetings.id': meeting.id, team_id: team.id) ||
+        GogglesDb::MeetingReservation.includes(:meeting).joins(:meeting).exists?('meetings.id': meeting.id, team_id: team.id) ||
+        GogglesDb::MeetingEntry.includes(:meeting).joins(:meeting).exists?('meetings.id': meeting.id, team_id: team.id)
+    end
+
+    # Returns +true+ if the specified +meeting+ has registered any kind of attendance or presence for the specified +swimmer+;
+    # +false+ otherwise.
+    # This method checks results, reservations & entries.
+    def self.swimmer_presence?(meeting, swimmer)
+      GogglesDb::MeetingIndividualResult.includes(:meeting).joins(:meeting).exists?('meetings.id': meeting.id, swimmer_id: swimmer.id) ||
+        GogglesDb::MeetingRelaySwimmer.includes(:meeting).joins(:meeting).exists?('meetings.id': meeting.id, swimmer_id: swimmer.id) ||
+        GogglesDb::MeetingReservation.includes(:meeting).joins(:meeting).exists?('meetings.id': meeting.id, swimmer_id: swimmer.id) ||
+        GogglesDb::MeetingEntry.includes(:meeting).joins(:meeting).exists?('meetings.id': meeting.id, swimmer_id: swimmer.id)
+    end
     #-- ------------------------------------------------------------------------
     #++
 
