@@ -6,7 +6,7 @@ FactoryBot.define do
     season { meeting.season }
     meeting_code { meeting.code }
     meeting_name { meeting.description }
-    scheduled_date { meeting.header_date }
+    scheduled_date { meeting.header_date.day }
     year { meeting.header_date.year }
     month { I18n.t('date.abbr_month_names').fetch(meeting.header_date.month) }
   end

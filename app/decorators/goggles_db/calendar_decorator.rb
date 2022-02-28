@@ -11,7 +11,7 @@ module GogglesDb
     def display_label
       return meeting.decorate.display_label if meeting
 
-      "#{season_type.short_name}, #{scheduled_date}: #{meeting_name || '?'}"
+      "#{season_type.short_name}, #{scheduled_date} #{month}: #{meeting_name || '?'}"
     end
 
     # Alternative label method for displaying a shorter version of the data available
@@ -20,7 +20,7 @@ module GogglesDb
     def short_label
       return meeting.decorate.short_label if meeting
 
-      "#{season_type.short_name} (#{year}): #{meeting_name || '?'}"
+      "#{season_type.short_name} (#{year}, #{month}): #{meeting_name || '?'}"
     end
     #-- -----------------------------------------------------------------------
     #++
@@ -30,7 +30,7 @@ module GogglesDb
     def meeting_date
       return meeting.decorate.meeting_date.to_s if meeting
 
-      scheduled_date.to_s
+      "#{scheduled_date} #{month} #{year}"
     end
     #-- -----------------------------------------------------------------------
     #++

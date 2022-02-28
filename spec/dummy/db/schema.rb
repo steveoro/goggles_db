@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2022_02_21_114745) do
+ActiveRecord::Schema.define(version: 2022_02_28_141224) do
 
   create_table "achievement_rows", id: :integer, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
     t.integer "lock_version", default: 0
@@ -220,6 +220,8 @@ ActiveRecord::Schema.define(version: 2022_02_21_114745) do
     t.text "program_import_text"
     t.integer "meeting_id"
     t.boolean "read_only", default: false, null: false
+    t.boolean "cancelled", default: false
+    t.index ["cancelled"], name: "index_calendars_on_cancelled"
     t.index ["meeting_code"], name: "index_calendars_on_meeting_code"
     t.index ["meeting_id"], name: "index_calendars_on_meeting_id"
     t.index ["season_id"], name: "index_calendars_on_season_id"

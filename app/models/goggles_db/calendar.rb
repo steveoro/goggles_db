@@ -34,6 +34,16 @@ module GogglesDb
     scope :for_season_type, ->(season_type) { joins(:season_type).where(season_types: { id: season_type.id }) }
     scope :for_season,      ->(season) { joins(:season).where(season_id: season.id) }
     scope :for_code,        ->(code) { where(meeting_code: code) }
+    scope :not_cancelled,   -> { where(cancelled: false) }
+
+    scope :still_open_at, lambda { |date = Time.zone.today|
+      ids = where(cancelled: false).joins(:meeting).includes(:meeting)
+                                   .where('(meetings.cancelled = false) AND (meetings.header_date > ?)', date)
+                                   .pluck(:id)
+      ids << where(cancelled: false, meeting: nil).pluck(:id)
+      ids.uniq!
+      where(id: ids).by_date(:desc)
+    }
     #-- ------------------------------------------------------------------------
     #++
 

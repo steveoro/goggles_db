@@ -88,7 +88,7 @@ module GogglesDb
     scope :with_results,    -> { where(results_acquired: true) }
     scope :without_results, -> { where(results_acquired: false) }
     scope :not_closed,      -> { where(results_acquired: false).where('header_date > ?', Time.zone.today) }
-    scope :still_open_at,   ->(date) { where('header_date >= ?', date).where('(entry_deadline >= ?) OR (entry_deadline IS NULL)', date) }
+    scope :still_open_at,   ->(date = Time.zone.today) { where('header_date >= ?', date).where('(entry_deadline >= ?) OR (entry_deadline IS NULL)', date) }
 
     # Returns +true+ if the specified +meeting+ has registered any kind of attendance or presence for the specified +team+;
     # +false+ otherwise.
