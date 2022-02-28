@@ -56,6 +56,11 @@ module GogglesDb
     end
 
     # Filtering scopes:
+    describe 'self.not_cancelled' do
+      it_behaves_like('filtering scope for_<ANY_CHOSEN_FILTER> with no parameters', described_class, 'not_cancelled',
+                      'cancelled', false)
+    end
+
     describe 'self.for_season_type' do
       it_behaves_like('filtering scope for_<ANY_CHOSEN_FILTER>', described_class, 'for_season_type', 'season_type',
                       described_class.includes(:season_type).joins(:season_type).last(300).sample.season_type)
@@ -69,6 +74,24 @@ module GogglesDb
     describe 'self.for_code' do
       it_behaves_like('filtering scope for_<ANY_CHOSEN_FILTER>', described_class, 'for_code', 'meeting_code',
                       described_class.last(300).pluck(:meeting_code).uniq.sample)
+    end
+
+    describe 'self.still_open_at(date)' do
+      context 'when there are Calendar rows having the scheduled_date set in the future,' do
+        before do
+          future_meetings = FactoryBot.create_list(:meeting, 5, header_date: Time.zone.today + 2.months)
+          future_meetings.each { |meeting| FactoryBot.create(:calendar, meeting: meeting) }
+        end
+
+        let(:result) { described_class.still_open_at.limit(10) } # (default params: Time.zone.today)
+
+        it 'is a relation containing only Calendar rows having the either the meeting unset or with an header_date set in the future' do
+          expect(result).to be_a(ActiveRecord::Relation)
+          expect(result).to all be_a(described_class)
+          all_calendar_meetings = result.map(&:meeting).compact.uniq
+          expect(all_calendar_meetings.map(&:header_date)).to all be > Time.zone.today
+        end
+      end
     end
     #-- ------------------------------------------------------------------------
     #++

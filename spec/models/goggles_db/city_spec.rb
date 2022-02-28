@@ -56,11 +56,10 @@ module GogglesDb
     #++
 
     # Test a bunch of 'IT' cities, which are granted to have regions/subdivisions:
-    described_class.where(country: 'Italy').first(50).sample(10).each do |subject_city|
+    described_class.where(country: 'Italy').first(20).each do |subject_city|
       let(:fixture_isos)        { subject_city.to_iso }
       let(:fixture_iso_country) { fixture_isos.first }
       let(:fixture_iso_city)    { fixture_isos.last }
-      let(:fixture_subdivision) { subject_city.iso_subdivision(fixture_iso_country) }
 
       describe '#to_iso' do
         it 'is a non-empty Array' do
@@ -77,17 +76,19 @@ module GogglesDb
       end
 
       describe '#iso_subdivision' do
+        subject { subject_city.iso_subdivision(fixture_iso_country) }
+
         it 'is a non-empty Array' do
-          expect(fixture_subdivision).to be_an(Array).and be_present
+          expect(subject).to be_an(Array).and be_present
         end
 
         it 'contains as 1st member an alpha-2 subdivision code' do
-          expect(fixture_subdivision.first).to be_a(String)
-          expect(fixture_subdivision.first.length).to eq(2)
+          expect(subject.first).to be_a(String)
+          expect(subject.first.length).to eq(2)
         end
 
         it 'contains as 2nd member a subdivision Struct responding to \'name\'' do
-          expect(fixture_subdivision.last).to be_a(Struct).and respond_to('name')
+          expect(subject.last).to be_a(Struct).and respond_to('name')
         end
       end
 
@@ -147,6 +148,8 @@ module GogglesDb
       describe '#iso_area' do
         subject { subject_city.iso_area(fixture_subdivision) }
 
+        let(:fixture_subdivision) { subject_city.iso_subdivision(fixture_iso_country) }
+
         it 'is a non-empty String' do
           expect(subject).to be_a(String).and be_present
         end
@@ -154,6 +157,8 @@ module GogglesDb
 
       describe '#iso_area_code' do
         subject { subject_city.iso_area_code(fixture_subdivision) }
+
+        let(:fixture_subdivision) { subject_city.iso_subdivision(fixture_iso_country) }
 
         it 'is a non-empty String' do
           expect(subject).to be_a(String).and be_present

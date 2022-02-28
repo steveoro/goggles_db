@@ -2,7 +2,7 @@
 
 _Please, add the latest build info on top of the list; use Version::MAJOR only after gold release; keep semantic versioning in line with framework's_
 
-- **0.3.45** [Steve A.] added 'payed' to meeting reservations; renamed fin_calendars to simply 'calendars', with basic implementation & decorator
+- **0.3.45** [Steve A.] added 'payed' to meeting reservations; renamed fin_calendars to simply 'calendars', with basic implementation & decorator; minor data-fix for existing reservations
 - **0.3.44** [Steve A.] updated country gem; improved AbstractMeeting helper methods; added eager loading for Swimmer, Meeting, UserWorkshop and others as default scopes
 - **0.3.42** [Steve A.] upgrade to Rails 6.0.4.6 due to security fixes
 - **0.3.38** [Steve A.] improved to_json output & specs for all models with a decorator
