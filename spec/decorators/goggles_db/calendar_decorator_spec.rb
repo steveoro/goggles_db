@@ -118,8 +118,16 @@ RSpec.describe GogglesDb::CalendarDecorator, type: :decorator do
         expect(result).to be_a(String).and be_present
       end
 
-      it 'is the scheduled date from the calendar' do
-        expect(result).to eq(fixture_row.scheduled_date)
+      it 'includes the scheduled date from the calendar' do
+        expect(result).to include(fixture_row.scheduled_date)
+      end
+
+      it 'includes the scheduled month from the calendar' do
+        expect(result).to include(fixture_row.month)
+      end
+
+      it 'includes the scheduled year from the calendar' do
+        expect(result).to include(fixture_row.year)
       end
     end
   end
