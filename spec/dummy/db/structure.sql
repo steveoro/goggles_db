@@ -297,10 +297,12 @@ CREATE TABLE `calendars` (
   `program_import_text` text DEFAULT NULL,
   `meeting_id` int(11) DEFAULT NULL,
   `read_only` tinyint(1) NOT NULL DEFAULT 0,
+  `cancelled` tinyint(1) DEFAULT 0,
   PRIMARY KEY (`id`),
   KEY `index_calendars_on_season_id` (`season_id`),
   KEY `index_calendars_on_meeting_id` (`meeting_id`),
-  KEY `index_calendars_on_meeting_code` (`meeting_code`)
+  KEY `index_calendars_on_meeting_code` (`meeting_code`),
+  KEY `index_calendars_on_cancelled` (`cancelled`)
 ) ENGINE=InnoDB AUTO_INCREMENT=829 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 DROP TABLE IF EXISTS `category_types`;
@@ -2654,6 +2656,11 @@ INSERT INTO `schema_migrations` (version) VALUES
 ('20211026094021'),
 ('20211026101919'),
 ('20220221104613'),
-('20220221114745');
+('20220221114745'),
+('20220228100056'),
+('20220228101325'),
+('20220228114607'),
+('20220228141224'),
+('20220228161427');
 
 
