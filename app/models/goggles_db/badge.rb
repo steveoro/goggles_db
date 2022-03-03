@@ -102,12 +102,12 @@ module GogglesDb
         'display_label' => decorate.display_label,
         'short_label' => decorate.short_label,
         'swimmer' => swimmer.minimal_attributes,
-        'gender_type' => swimmer.gender_type.lookup_attributes,
+        'gender_type' => swimmer.gender_type&.lookup_attributes,
         'team_affiliation' => team_affiliation.minimal_attributes,
         'season' => season.minimal_attributes,
         'team' => team.minimal_attributes,
-        'category_type' => category_type.minimal_attributes,
-        'entry_time_type' => entry_time_type.lookup_attributes
+        'category_type' => category_type&.minimal_attributes,
+        'entry_time_type' => entry_time_type&.lookup_attributes
       ).to_json(options)
     end
 
@@ -127,9 +127,9 @@ module GogglesDb
     def minimal_associations
       {
         'swimmer' => swimmer_attributes,
-        'gender_type' => swimmer.gender_type.lookup_attributes,
-        'category_type' => category_type.minimal_attributes,
-        'entry_time_type' => entry_time_type.lookup_attributes
+        'gender_type' => swimmer.gender_type&.lookup_attributes,
+        'category_type' => category_type&.minimal_attributes,
+        'entry_time_type' => entry_time_type&.lookup_attributes
       }
     end
   end
