@@ -21,7 +21,7 @@ module GogglesDb
     CORE  = 'C7'
     MAJOR = '0'
     MINOR = '3'
-    PATCH = '47'
+    PATCH = '48'
     BUILD = '20220307'
 
     # Full label

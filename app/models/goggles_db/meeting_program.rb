@@ -4,7 +4,7 @@ module GogglesDb
   #
   # = MeetingProgram model
   #
-  #   - version:  7-0.3.35
+  #   - version:  7-0.3.48
   #   - author:   Steve A.
   #
   class MeetingProgram < ApplicationRecord
@@ -33,8 +33,8 @@ module GogglesDb
     has_many :meeting_relay_swimmers,     through: :meeting_relay_results
     has_many :meeting_entries, dependent: :delete_all
 
-    # Laps are usually added before the actual final result is available:
-    has_many :laps, -> { joins(:laps).order('laps.length_in_meters') }, dependent: :delete_all
+    # Allow laps to be retrieved even if they are added before the final result is available:
+    has_many :laps
 
     validates :event_order, presence: { length: { within: 1..3, allow_nil: false } }
 
