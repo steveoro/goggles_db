@@ -3,12 +3,12 @@
 #
 # = Version module
 #
-#   - version:  7-0.3.47
+#   - version:  7-0.3.48
 #   - author:   Steve A.
 #
 module GogglesDb
   # Public gem version (uses Semantic versioning)
-  VERSION = '0.3.47'
+  VERSION = '0.3.48'
 
   # == Versioning codes
   #
