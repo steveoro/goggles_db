@@ -4,7 +4,7 @@ module GogglesDb
   #
   # = MeetingEvent model
   #
-  #   - version:  7-0.3.33
+  #   - version:  7-0.3.47
   #   - author:   Steve A.
   #
   class MeetingEvent < ApplicationRecord
@@ -29,7 +29,6 @@ module GogglesDb
     has_many :meeting_entries,            through: :meeting_programs
     has_many :category_types,             through: :meeting_programs
 
-    has_many :meeting_reservations, dependent: :delete_all
     has_many :meeting_event_reservations, dependent: :delete_all
     has_many :meeting_relay_reservations, dependent: :delete_all
 
