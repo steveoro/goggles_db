@@ -20,10 +20,10 @@ module GogglesDb
     #
     # == Usage examples:
     # > stats = GogglesDb::SwimmerStat.new(swimmer)
-    # > stats.results.count
-    # => 1
+    # > stats.result.class
+    # => Hash
     #
-    # > ap stats.results
+    # > ap stats.result
     # {
     #                   "meetings_count" => 177,
     #                 "individual_count" => 368,
