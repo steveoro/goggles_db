@@ -80,11 +80,10 @@ shared_examples_for 'AbstractMeeting #name_without_edition' do |factory_name_sym
         'Long static name with no edition', 'Città di Riccione', 'Master Torino',
         'Città di Reggio Emilia'
       ].each do |fixture_name|
-        it 'is the same custom name, titleized and shortened if it is too long' do
+        it 'is the same custom name but shortened if it is too long' do
           expect(subject.name_without_edition(fixture_name))
             .to eq(
-              fixture_name.titleize
-                          .split(/\s|,/)
+              fixture_name.split(/\s|,/)
                           .reject(&:empty?)[0..3]
                           .join(' ')
             )
@@ -108,7 +107,7 @@ shared_examples_for 'AbstractMeeting #name_without_edition' do |factory_name_sym
           if subject.edition_label.present?
             expect(
               subject.name_without_edition("#{subject.edition_label} Trofeo #{base_name}")
-            ).to eq(base_name.titleize)
+            ).to eq(base_name)
           end
         end
       end
@@ -130,7 +129,7 @@ shared_examples_for 'AbstractMeeting #name_without_edition' do |factory_name_sym
           if subject.edition_label.present?
             expect(
               subject.name_without_edition("Trofeo #{base_name} #{subject.edition_label}")
-            ).to eq(base_name.titleize)
+            ).to eq(base_name)
           end
         end
       end
@@ -206,7 +205,7 @@ shared_examples_for 'AbstractMeeting #condensed_name' do |factory_name_sym|
       end
 
       it 'reduces the name to just the last 4 base tokens of the name' do
-        expect(subject.condensed_name).to eq(base_tokens.first(4).join(' ').titleize)
+        expect(subject.condensed_name).to eq(base_tokens.first(4).join(' '))
       end
     end
   end
