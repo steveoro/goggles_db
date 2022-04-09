@@ -99,7 +99,7 @@ module GogglesDb
     def condensed_name(meeting_name = description)
       # Remove spaces, split in tokens, delete empty tokens and take just the first 3:
       meeting_name.split(/trofeo|meeting|collegiale|workshop|campionato|raduno/i)
-                  .last.titleize
+                  .last
                   .strip.split(/\s|,/)
                   .reject(&:empty?)[0..3]
                   .join(' ')

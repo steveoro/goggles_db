@@ -19,7 +19,7 @@ Official Framework Wiki, [here](https://github.com/steveoro/goggles_db/wiki) (v.
 ## Requires
 
 - Ruby 2.7.2
-- Rails 6.0.4.1
+- Rails 6.0.4+
 - MariaDb 10.3.25+ or any other MySql equivalent version
 
 
@@ -63,10 +63,7 @@ $> guard
 
 Whenever you want to run the full test suite just hit Enter on the Guard console.
 
-As of Rails 6.0.3, most probably there are issues with the combined usage of Guard & Spring together with the new memory management modes in Rails during the Brakeman checks. So sometimes class reloading does not work as expected and the `brakeman` plugin for Guard fails to actually notice changes in the source code which could have fixed a previously found issue. The checks get a re-run but the result doesn't change (if you have actually fixed the issue).
-This could be just a simple mis-configuration or a peculiar use-case in this namespaced Engine: we'll see how this goes as we'll update to future versions of Rails.
-
-In any case, although the Guard plugin for Brakeman runs correctly at start, it's always better to re-run a `brakeman` full check before pushing the changes to the repository:
+Just to be sure, although the Guard plugin for Brakeman runs correctly at start, it's always better to re-run a `brakeman` full check before pushing the changes to the repository:
 
 ```bash
 $> bundle exec brakeman -Aq
