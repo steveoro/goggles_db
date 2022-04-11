@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require 'goggles_db/version'
+
 class DataFixAddCategoryTypes < ActiveRecord::Migration[6.0]
   def self.up
     Rails.logger.debug "\r\n--> Adding category types for new seasons..."

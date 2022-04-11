@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require 'goggles_db/version'
+
 class UpdateDbVersionTo150 < ActiveRecord::Migration[6.0]
   def self.up
     # --- Update DB structure versioning:

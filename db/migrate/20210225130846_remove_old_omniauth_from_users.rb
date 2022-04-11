@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require 'goggles_db/version'
+
 class RemoveOldOmniauthFromUsers < ActiveRecord::Migration[6.0]
   def self.up
     remove_column :users, :facebook_uid

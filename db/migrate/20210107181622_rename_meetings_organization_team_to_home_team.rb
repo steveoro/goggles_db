@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require 'goggles_db/version'
+
 class RenameMeetingsOrganizationTeamToHomeTeam < ActiveRecord::Migration[6.0]
   def self.up
     rename_column :meetings, :organization_team_id, :home_team_id
