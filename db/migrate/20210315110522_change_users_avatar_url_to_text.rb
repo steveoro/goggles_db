@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require 'goggles_db/version'
+
 class ChangeUsersAvatarUrlToText < ActiveRecord::Migration[6.0]
   def self.up
     change_column :users, :avatar_url, :text

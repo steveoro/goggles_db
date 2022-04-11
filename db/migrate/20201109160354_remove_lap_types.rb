@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require 'goggles_db/version'
+
 class RemoveLapTypes < ActiveRecord::Migration[6.0]
   def self.up
     # --- Final clean-up:

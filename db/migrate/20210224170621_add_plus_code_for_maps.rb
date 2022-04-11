@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require 'goggles_db/version'
+
 class AddPlusCodeForMaps < ActiveRecord::Migration[6.0]
   def self.up
     change_table :cities do |t|

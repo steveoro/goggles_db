@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require 'goggles_db/version'
+
 class FixCanosadipugliaSwimmingPools < ActiveRecord::Migration[6.0]
   def self.up
     # Base seed data for SwimmingPools & Cities is equal among the 3 DB dumps,
