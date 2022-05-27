@@ -7,9 +7,9 @@ module GogglesDb
     #
     # = TimingFinders singleton factory
     #
-    #   - file vers.: 1.58
-    #   - author....: Steve A.
-    #   - build.....: 20210106
+    #   - version:  7-0.1.58
+    #   - author:   Steve A.
+    #   - build:    20210106
     #
     # Allows to create a plug-in strategy object for finding a valid timing
     # for any Meeting entry, according the specified parameters.

@@ -3,11 +3,11 @@
 module GogglesDb
   module TimingFinders
     #
-    # = GoggleCupForEvent strategy object
+    # = BestMIRForMeeting strategy object
     #
-    #   - file vers.: 0.1.91
-    #   - author....: Steve A.
-    #   - build.....: 20210330
+    #   - version:  7-0.1.91
+    #   - author:   Steve A.
+    #   - build:    20210330
     #
     class BestMIRForMeeting < BaseStrategy
       # Finds the "relative best" MeetingIndividualResult row for the specified event, pool type

@@ -23,7 +23,7 @@ module GogglesDb
   #
   #                                      - o -
   #
-  # === ISO3166::Country & usage examples:
+  # == ISO3166::Country & usage examples:
   #
   #   > c = GogglesDb::CmdFindIsoCountry.call('United States', 'USA').result
   #    => #<ISO3166::Country:0x000056454c7d34e8 @country_data_or_code="US", [...]

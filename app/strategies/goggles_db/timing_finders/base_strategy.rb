@@ -14,9 +14,9 @@ module GogglesDb
     #
     # = BaseStrategy parent object
     #
-    #   - file vers.: 1.58
-    #   - author....: Steve A.
-    #   - build.....: 20210106
+    #   - version:  7-0.1.58
+    #   - author:   Steve A.
+    #   - build:    20210106
     #
     # Encapsulates the base interface for its siblings.
     #

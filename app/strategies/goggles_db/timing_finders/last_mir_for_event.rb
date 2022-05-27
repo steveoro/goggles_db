@@ -2,12 +2,12 @@
 
 module GogglesDb
   module TimingFinders
-    #
+    # LastMIRForEvent
     # = GoggleCupForEvent strategy object
     #
-    #   - file vers.: 0.1.91
-    #   - author....: Steve A.
-    #   - build.....: 20210330
+    #   - version:  7-0.1.91
+    #   - author:   Steve A.
+    #   - build:    20210330
     #
     class LastMIRForEvent < BaseStrategy
       # Finds the generic, last MeetingIndividualResult row for the specified event and pool type.
