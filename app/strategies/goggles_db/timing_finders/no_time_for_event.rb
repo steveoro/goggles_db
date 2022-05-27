@@ -5,9 +5,9 @@ module GogglesDb
     #
     # = NoTimeForEvent strategy object
     #
-    #   - file vers.: 1.58
-    #   - author....: Steve A.
-    #   - build.....: 20210106
+    #   - version:  7-0.1.58
+    #   - author:   Steve A.
+    #   - build:    20210106
     #
     # Dummy strategy that returns an empty MIR (which corresponds to a zeroed
     # timing instance).

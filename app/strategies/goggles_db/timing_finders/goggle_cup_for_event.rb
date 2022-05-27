@@ -5,9 +5,9 @@ module GogglesDb
     #
     # = GoggleCupForEvent strategy object
     #
-    #   - file vers.: 1.58
-    #   - author....: Steve A.
-    #   - build.....: 20210106
+    #   - version:  7-0.1.58
+    #   - author:   Steve A.
+    #   - build:    20210106
     #
     class GoggleCupForEvent < BaseStrategy
       # Given a current GoggleCup definition exists (and the swimmer is enrolled in it with any Badge),

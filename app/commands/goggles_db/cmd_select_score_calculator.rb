@@ -13,9 +13,9 @@ module GogglesDb
   #
   # Returns a dedicated calculator score strategy (depending on parameters) that:
   #
-  # - stores the associated StandardTiming if available;
-  # - enables to compute the result score for a timing;
-  # - enables to reverse-compute the target timing for a desired result score.
+  # - retrieves & uses the associated StandardTiming if available;
+  # - enables computing the result score for a timing;
+  # - enables to reverse-computing the target timing for a desired result score.
   #
   # StandardTiming values for the specified Season are (usually) required in order for this
   # to function properly.
