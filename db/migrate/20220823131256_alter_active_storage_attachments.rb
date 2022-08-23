@@ -3,7 +3,7 @@
 require 'goggles_db/version'
 
 class AlterActiveStorageAttachments < ActiveRecord::Migration[6.0]
-  def change
+  def self.up
     # NOTE: using default utf8mb4 will yield errors during build pipeline, complaining about the
     # DB rebuild from dump having a too long key (based on 4x 255 bytes in attachment #name)
     execute <<-SQL.squish
@@ -19,5 +19,9 @@ class AlterActiveStorageAttachments < ActiveRecord::Migration[6.0]
       GogglesDb::AppParameter::FULL_VERSION_FIELDNAME => GogglesDb::Version::FULL,
       GogglesDb::AppParameter::DB_VERSION_FIELDNAME => GogglesDb::Version::DB
     )
+  end
+
+  def self.down
+    # (no-op)
   end
 end
