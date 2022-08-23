@@ -105,7 +105,7 @@ module GogglesDb
             'Va Finale di ChiNonSaScrivereINumeriRomani',
             'VI Memorial dei miei Scatoloni',
             'VII° Campionato MaAncheNo',
-            'IIX Meeting SiamoPazzi 2002',
+            'VIII Meeting SiamoPazzi 2002', # NOTE: IIX won't be correctly parsed as "8" but as "2"
 
             # Ordinal
             '9a Prova Camp. Regionale CSI',
