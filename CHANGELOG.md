@@ -2,6 +2,7 @@
 
 _Please, add the latest build info on top of the list; use Version::MAJOR only after gold release; keep semantic versioning in line with framework's_
 
+- **0.4.01** [Steve A.] support push batch SQL import data to dedicated API endpoint directly into ImportQueues as file attachments; improvements to for_name scopes & GogglesDb::DbFinders::BaseStrategy; refactored & moved name Parser::CodedName normalizer from Admin2 so that it can be shared among projects; several data-fix migrations & additional strategy classes; improved fuzzy finders & ISO city finder with refactored code and data normalization tasks; DB normalized & re-dumped.
 - **0.3.53** [Steve A.] bump Rails to 6.0.5 + minor security fixes for Nokogiri & Rack; added db finder command with custom (fuzzy) strategies for swimmer, team, meeting, pool & city
 - **0.3.51** [Steve A.] removed titleize from AbstractMeeting#condensed_name
 - **0.3.50** [Steve A.] bump Rails to 6.0.4.7 for security fixes

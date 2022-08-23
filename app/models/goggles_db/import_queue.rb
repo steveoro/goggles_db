@@ -4,18 +4,29 @@ module GogglesDb
   #
   # = ImportQueue model
   #
-  #   - version:  7-0.3.39
+  #   - version:  7-0.4.01
   #   - author:   Steve A.
   #
-  # Stores '/import' API requests and generic import microtransactions steps.
+  # Stores '/import' API requests and generic import micro- & macro- transactions steps.
+  #
+  # *MacroTransactions* are single rows with an ActiveStorage SQL batch file attached that
+  # will be run and consumed directly on the remote main app. These are primarily used by
+  # the Admin app to perform complex data import batches of operations (like importing whole
+  # Meetings with their results).
+  #
+  # *MicroTransactions* are a kind of "atomic" change requested on the database and are
+  # primarily used to store new Chrono recordings coming from user input through the main app itself.
+  # (Thus these need to be "solved" first, somehow.)
   #
   #
-  # == How it works
+  # == MicroTransactions: How they work
   #
-  # Each data-import request maps to a single entity, either for the creation of a new row or the update
-  # of an existing one; in other words, each request maps to a single-entity transaction.
+  # Each data-import micro-transaction request resolves to a single entity, either for the creation of a
+  # new row or the update of an existing one.
+  # In other words, each request maps to a single-entity transaction.
   #
-  # Table-wise, each row in this table represents a single transaction "step", a.k.a. "microtransaction".
+  # Table-wise, each row in this table represents a single transaction "step" (here, interchangeably called
+  # "micro-transaction").
   #
   # Each microtransaction step implies knowning (and assigning) the correct values for all subentity IDs
   # that have to be associated with the requested entity record creation or update.
@@ -103,6 +114,11 @@ module GogglesDb
     belongs_to :user
     validates_associated :user
 
+    # == Note: remember to set <tt>batch_sql = true</tt> whenever a data file needs to be attached,
+    # or the ImportProcessorJob will ignore the attachment (because it filters out the rows using the
+    # column value without instantiating the class first).
+    has_one_attached :data_file # (only for batch-SQL macro transaction direct exec)
+
     # Optional self-association for sibling rows:
     # (cannot enforce integrity given that the foreign key is lacking)
     belongs_to :import_queue, optional: true
@@ -125,34 +141,52 @@ module GogglesDb
     validates :done, inclusion: { in: [true, false] }
 
     # Filtering scopes:
-    scope :deletable, -> { where(done: true) }
-    scope :for_user,  ->(user) { where(user_id: user.id) }
-    scope :for_uid,   ->(uid) { where(uid: uid) }
+    scope :deletable,         -> { where(done: true) }
+    scope :with_batch_sql,    -> { where(batch_sql: true) }
+    scope :without_batch_sql, -> { where(batch_sql: false) }
+    scope :for_user,          ->(user) { where(user_id: user.id) }
+    scope :for_uid,           ->(uid) { where(uid: uid) }
     #-- ------------------------------------------------------------------------
     #++
 
+    # == MacroTransaction helper.
+    # Returns the attachment contents as a string by reading the attached local file;
+    # returns an empty string otherwise.
+    def data_file_contents
+      return '' if data_file.blank?
+
+      data_file.open { |file| File.read(file) }
+    end
+    #-- ------------------------------------------------------------------------
+    #++
+
+    # == Microtransaction management field.
     # Returns the parsed request_data Hash
     def req
       parse_data if @req.nil?
       @req
     end
 
+    # == Microtransaction management field.
     # Returns the parsed solved_data Hash
     def solved
       parse_data if @solved.nil?
       @solved
     end
 
+    # == Microtransaction management field.
     # Returns the target entity name from the original request
     def target_entity
       req['target_entity']
     end
 
+    # == Microtransaction management field.
     # Returns the root-level key of the request hash, according to the 'target_entity' value.
     def root_key
       target_entity&.tableize&.singularize
     end
 
+    # == Microtransaction management field.
     # Similarly to root_key, returns the expected first-depth parent key of the request hash
     # according to the value of 'target_entity'.
     def result_parent_key
@@ -165,18 +199,21 @@ module GogglesDb
     #-- ------------------------------------------------------------------------
     #++
 
+    # == Microtransaction management helper.
     # Returns the associated Swimmer complete name at root-key depth of the request, if any,
     # or +nil+ when not set.
     def req_swimmer_name
       req&.fetch(root_key, nil)&.fetch('swimmer', nil)&.fetch('complete_name', nil)
     end
 
+    # == Microtransaction management helper.
     # Returns the associated EventType at root-key depth of the request, if any, or +nil+ when not set.
     def req_event_type
       event_type_id = req&.fetch(root_key, nil)&.fetch(result_parent_key, nil)&.fetch('event_type_id', nil)
       @req_event_type ||= GogglesDb::EventType.find_by(id: event_type_id)
     end
 
+    # == Microtransaction management helper.
     # Returns a Timing instance set with any timing data stored at root-key depth of the request,
     # or zeroed out when not found.
     #
@@ -190,6 +227,7 @@ module GogglesDb
       )
     end
 
+    # == Microtransaction management helper.
     # Returns a Timing instance set with any timing data stored at root-key depth of the request,
     # or zeroed out when not found.
     #
@@ -202,6 +240,7 @@ module GogglesDb
       )
     end
 
+    # == Microtransaction management helper.
     # Returns the associated 'length_in_meters' at root-key depth of the request, if any,
     # or +nil+ when not set.
     def req_length_in_meters
@@ -210,6 +249,7 @@ module GogglesDb
 
     protected
 
+    # == Microtransaction management helper.
     # Returns an integer value stored as a root sibling at depth 1, using +key+.
     # Defaults to 0 if not found.
     def fetch_root_int_value(key)
@@ -218,6 +258,7 @@ module GogglesDb
 
     private
 
+    # == Microtransaction management helper.
     # Parses the JSON data stored in this instance and sets the #req & #solved members.
     def parse_data
       @req, @solved = begin

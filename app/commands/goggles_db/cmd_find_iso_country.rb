@@ -7,9 +7,8 @@ module GogglesDb
   #
   # = "Find ISO3166 Country" command
   #
-  #   - file vers.: 1.03
+  #   - file vers.: 0.4.01
   #   - author....: Steve A.
-  #   - build.....: 20201212
   #
   # Uses the countries gem (https://github.com/hexorx/countries) to seek for a matching
   # ISO3166 Country definition, given either (FIFO: whatever matches first in the

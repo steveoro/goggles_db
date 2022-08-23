@@ -12,6 +12,9 @@ module GogglesDb
     class FuzzyCity < BaseStrategy
       # Creates a new search strategy instance given the parameters.
       #
+      # While CmdFindIsoCity works on the in-memory ISO database list, this strategy works only
+      # on actual, serialized, database rows.
+      #
       # == Options:
       # - <tt>search_terms</tt>: a *required* +Hash+ of search terms having the
       #   form: <tt>{ column_name1 => "target value", ... }</tt>, with the column names as symbols;

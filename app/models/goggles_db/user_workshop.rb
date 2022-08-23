@@ -4,7 +4,7 @@ module GogglesDb
   #
   # = UserWorkshop model
   #
-  #   - version:  7-0.3.45
+  #   - version:  7-0.4.01
   #   - author:   Steve A.
   #
   # Allows to manage user-driven or team-driven swimming workshops
@@ -45,7 +45,12 @@ module GogglesDb
 
     # (For sorting scopes: see AbstractMeeting)
 
-    # Filtering scopes:
+    #-- ------------------------------------------------------------------------
+    #   Filtering scopes:
+    #-- ------------------------------------------------------------------------
+    #++
+
+    # Fulltext search with additional domain inclusion by using standard "LIKE"s
     scope :for_name, lambda { |name|
       like_query = "%#{name}%"
       includes([:edition_type])

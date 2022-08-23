@@ -4,7 +4,7 @@ module GogglesDb
   #
   # = TeamAffiliation model
   #
-  #   - version:  7-0.3.44
+  #   - version:  7-0.4.01
   #   - author:   Steve A.
   #
   class TeamAffiliation < ApplicationRecord
@@ -31,8 +31,16 @@ module GogglesDb
     # scope :by_season, ->(dir = :asc) { joins(:season).order('seasons.begin_date': dir, 'team_affiliations.name': dir) }
     # scope :by_team,   ->(dir = :asc) { joins(:team).order('teams.name': dir) }
 
-    # Filtering scopes:
-    scope :for_name,  ->(name) { where('MATCH(team_affiliations.name) AGAINST(?)', name) }
+    #-- ------------------------------------------------------------------------
+    #   Filtering scopes:
+    #-- ------------------------------------------------------------------------
+    #++
+
+    # Fulltext search with additional domain inclusion by using standard "LIKE"s
+    scope :for_name, lambda { |name|
+      like_query = "%#{name}%"
+      where('(MATCH(team_affiliations.name) AGAINST(?)) OR (team_affiliations.name LIKE ?)', name, like_query)
+    }
 
     scope :for_years, lambda { |*year_list|
       condition = year_list.inject([]) { |memo, _e| memo << '(INSTR(seasons.header_year, ?) > 0)' }.join(' OR ')

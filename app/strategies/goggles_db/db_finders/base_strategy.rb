@@ -17,9 +17,9 @@ module GogglesDb
     #
     # = BaseStrategy parent object
     #
-    #   - version:  7-0.3.53
+    #   - version:  7-0.4.01
     #   - author:   Steve A.
-    #   - build:    20220526
+    #   - build:    20220804
     #
     # Encapsulates the base interface for its siblings.
     #
@@ -34,6 +34,18 @@ module GogglesDb
 
       # Creates a new base strategy instance.
       #
+      # The base strategy works by searching on a specific model domain using the search terms
+      # and using any search scope (typically a custom scope on the model).
+      #
+      # Then, each row on this scoped domain is given a match score using a fuzzy-string matching
+      # algorithm: if the score passes the bias, the row is kept, otherwise it's discarded from
+      # the results.
+      #
+      # == Notes on the matching strategies:
+      # - equal matches will be assigned a perfect score;
+      # - sub-strings matching the search term, if discarded by the fuzzy-logic will be reinstated
+      #   with a minimum bias score (this helps getting results even by typing a few keystrokes for the search)
+      #
       # == Options:
       # - <tt>:model_klass</tt>: *required* target model class for the search
       #
@@ -47,12 +59,16 @@ module GogglesDb
       #   === NOTE:
       #   The first column name specified in the search terms is the one assumed to be the main target
       #   of the search and will also be:
-      #   - the only parameter for the search method that willin turn build up the domain;
+      #   - the main and only parameter for the search method that will in turn build up the domain;
       #   - the main column used for debug output.
-      #   The remaining other search fields will be used to further filter down the domain.
+      #   The remaining other search fields will be used to further filter down the initial base domain.
+      #
+      #   === Example:
+      #   - model_klass: Team, search_terms: { editable_name: "<whatever>", city_id: 39 }
+      #     => will filter the base domain returned by the for_name() scope with only the rows matching the city_id
       #
       # - <tt>:search_method</tt>: search method called on the model class to
-      #   build up the base domain (default: <tt>:for_name</tt> scope).
+      #   build up the base domain (default: <tt>:for_name</tt> scope, which usually is a FULL-TEXT search).
       #
       # - <tt>:bias</tt>: override for the <tt>DEFAULT_MATCH_BIAS</tt> used to decide
       #   if a resulting weight is a match (">=").
@@ -98,6 +114,7 @@ module GogglesDb
           Rails.logger.debug { "DbFinders::BaseStrategy(#{@model_klass})" }
           Rails.logger.debug { "- tot. domain rows: #{domain.count}" }
         end
+
         domain.each do |candidate_row|
           Rails.logger.debug { "=> '#{candidate_row.send(@target_key)}'" } if @toggle_debug.present?
           # Precedence to the exact matches - move fwd if there are obvious differences
@@ -113,10 +130,16 @@ module GogglesDb
             break
           end
 
-          # Store candidate only if it seems to be a match:
           weight = compute_best_weight(candidate_row)
           Rails.logger.debug { "   result weight = #{weight} (vs. >= #{@bias})" } if @toggle_debug.present?
-          @matches << OpenStruct.new(candidate: candidate_row, weight: weight) if weight >= @bias
+          # Store candidate if it seems to be a match but also if it's a substring (possibly returned by LIKEs):
+          # (this allows returning results even when the search contains just a few typed chars)
+          if weight >= @bias
+            @matches << OpenStruct.new(candidate: candidate_row, weight: weight)
+          elsif candidate_row.send(@target_key).to_s.include?(@target_value.to_s)
+            # Give substrings a "political" weight equal to the bias, because the metric score possibly will be very low:
+            @matches << OpenStruct.new(candidate: candidate_row, weight: @bias)
+          end
         end
       end
       # rubocop:enable Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity

@@ -5,9 +5,9 @@ module GogglesDb
     #
     # = FuzzyTeam finder strategy
     #
-    #   - version:  7-0.3.53
+    #   - version:  7-0.4.01
     #   - author:   Steve A.
-    #   - build:    20220526
+    #   - build:    20220823
     #
     class FuzzyTeam < BaseStrategy
       # Creates a new search strategy instance given the parameters.
@@ -30,9 +30,7 @@ module GogglesDb
       # Returns a stripped-down, pure ASCII 7-bit version of the specified name/value,
       # removing also the most common words.
       def normalize_value(value)
-        super(value).gsub(/\bswimming\b|\bswim\b|\bclub\b|\bASD\b|\bnuoto\b|\bnuotatori\b/i, '')
-                    .gsub(/\s+/, ' ').strip
-                    .downcase
+        GogglesDb::Normalizers::CodedName.normalize(value.downcase)
       end
       #-- --------------------------------------------------------------------------
       #++

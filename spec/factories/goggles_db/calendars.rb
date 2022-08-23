@@ -2,12 +2,40 @@
 
 FactoryBot.define do
   factory :calendar, class: 'GogglesDb::Calendar' do
+    before_create_validate_instance
+
     meeting
-    season { meeting.season }
-    meeting_code { meeting.code }
-    meeting_name { meeting.description }
+    season         { meeting.season }
+    meeting_code   { meeting.code }
+    meeting_name   { meeting.description }
     scheduled_date { meeting.header_date.day }
-    year { meeting.header_date.year }
-    month { I18n.t('date.abbr_month_names').fetch(meeting.header_date.month) }
+    year           { meeting.header_date.year }
+    month          { I18n.t('date.abbr_month_names').fetch(meeting.header_date.month) }
+
+    # == Note: this factory will generate a random data file that needs to be purged
+    #          manually afterwards.
+    factory :calendar_with_manifest_file do
+      # Attach a sample text file as instance's #manifest_file:
+      after(:create) do |saved_instance|
+        text_contents = "TEST Manifest for '#{saved_instance.meeting_name}'\r\nImagine a list of events here...\r\n"
+        file_path = Rails.root.join('tmp', 'storage', "test-manifest-#{saved_instance.id}.txt")
+        File.open(file_path, 'w') { |f| f.write(text_contents) }
+
+        saved_instance.manifest_file.attach(
+          io: File.open(file_path),
+          filename: File.basename(file_path)
+        )
+      end
+    end
+
+    factory :calendar_with_blank_meeting do
+      meeting_id     { nil }
+      season         { build(:meeting).season }
+      meeting_code   { build(:meeting).code }
+      meeting_name   { build(:meeting).description }
+      scheduled_date { build(:meeting).header_date.day }
+      year           { build(:meeting).header_date.year }
+      month          { I18n.t('date.abbr_month_names').fetch(meeting.header_date.month) }
+    end
   end
 end

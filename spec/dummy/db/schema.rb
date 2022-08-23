@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2022_02_28_161427) do
+ActiveRecord::Schema.define(version: 2022_08_08_140700) do
 
   create_table "achievement_rows", id: :integer, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
     t.integer "lock_version", default: 0
@@ -43,6 +43,27 @@ ActiveRecord::Schema.define(version: 2022_02_28_161427) do
     t.string "code", limit: 10
     t.integer "user_id"
     t.index ["code"], name: "index_achievements_on_code", unique: true
+  end
+
+  create_table "active_storage_attachments", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4", force: :cascade do |t|
+    t.string "name", null: false
+    t.string "record_type", null: false
+    t.bigint "record_id", null: false
+    t.bigint "blob_id", null: false
+    t.datetime "created_at", null: false
+    t.index ["blob_id"], name: "index_active_storage_attachments_on_blob_id"
+    t.index ["record_type", "record_id", "name", "blob_id"], name: "index_active_storage_attachments_uniqueness", unique: true
+  end
+
+  create_table "active_storage_blobs", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4", force: :cascade do |t|
+    t.string "key", null: false
+    t.string "filename", null: false
+    t.string "content_type"
+    t.text "metadata"
+    t.bigint "byte_size", null: false
+    t.string "checksum", null: false
+    t.datetime "created_at", null: false
+    t.index ["key"], name: "index_active_storage_blobs_on_key", unique: true
   end
 
   create_table "admin_grants", options: "ENGINE=InnoDB DEFAULT CHARSET=latin1", force: :cascade do |t|
@@ -538,6 +559,8 @@ ActiveRecord::Schema.define(version: 2022_02_28_161427) do
     t.string "bindings_left_list"
     t.text "error_messages"
     t.integer "import_queue_id"
+    t.boolean "batch_sql", default: false
+    t.index ["batch_sql"], name: "index_import_queues_on_batch_sql"
     t.index ["done"], name: "index_import_queues_on_done"
     t.index ["import_queue_id"], name: "index_import_queues_on_import_queue_id"
     t.index ["user_id", "uid"], name: "index_import_queues_on_user_id_and_uid"
@@ -1186,7 +1209,6 @@ ActiveRecord::Schema.define(version: 2022_02_28_161427) do
     t.datetime "updated_at"
     t.string "complete_name", limit: 100
     t.integer "swimmer_id"
-    t.index ["swimmer_id", "complete_name"], name: "idx_swimmer_id_complete_name", unique: true
   end
 
   create_table "swimmer_level_types", id: :integer, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
@@ -1682,6 +1704,7 @@ ActiveRecord::Schema.define(version: 2022_02_28_161427) do
     t.index ["voter_id", "voter_type"], name: "index_votes_on_voter_id_and_voter_type"
   end
 
+  add_foreign_key "active_storage_attachments", "active_storage_blobs", column: "blob_id"
   add_foreign_key "laps", "meeting_individual_results"
   add_foreign_key "laps", "swimmers"
   add_foreign_key "laps", "teams"

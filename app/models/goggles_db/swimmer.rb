@@ -4,9 +4,9 @@ module GogglesDb
   #
   # = Swimmer model
   #
-  #   - version:  7-0.3.45
+  #   - version:  7-0.4.01
   #   - author:   Steve A.
-  #   - build:    20220222
+  #   - build:    20220804
   #
   class Swimmer < ApplicationRecord
     self.table_name = 'swimmers'
@@ -43,13 +43,22 @@ module GogglesDb
 
     delegate :male?, :female?, :intermixed?, to: :gender_type
 
-    # Filtering scopes:
+    #-- ------------------------------------------------------------------------
+    #   Filtering scopes:
+    #-- ------------------------------------------------------------------------
+    #++
+
+    # Fulltext search with additional domain inclusion by using standard "LIKE"s
     scope :for_name, lambda { |name|
-      where('MATCH(swimmers.last_name, swimmers.first_name, swimmers.complete_name) AGAINST(?)', name)
-        .order(:complete_name, :year_of_birth)
+      like_query = "%#{name}%"
+      where(
+        '(MATCH(swimmers.last_name, swimmers.first_name, swimmers.complete_name) AGAINST(?)) OR ' \
+        '(swimmers.last_name LIKE ?) OR (swimmers.first_name LIKE ?) OR (swimmers.complete_name LIKE ?)',
+        name, like_query, like_query, like_query
+      ).order(:complete_name, :year_of_birth)
     }
-    scope :for_first_name,    ->(name) { where('swimmers.first_name like ?', "%#{name}%") } # { where('MATCH(swimmers.first_name) AGAINST(?)', name) }
-    scope :for_last_name,     ->(name) { where('swimmers.last_name like ?', "%#{name}%") } # { where('MATCH(swimmers.last_name) AGAINST(?)', name) }
+    scope :for_first_name,    ->(name) { where('swimmers.first_name like ?', "%#{name}%") }
+    scope :for_last_name,     ->(name) { where('swimmers.last_name like ?', "%#{name}%") }
     scope :for_complete_name, ->(name) { where('MATCH(swimmers.complete_name) AGAINST(?)', name) }
     #-- ------------------------------------------------------------------------
     #++

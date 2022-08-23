@@ -54,15 +54,24 @@ module GogglesDb
 
         it_behaves_like('CmdFindIsoCity successful #call', nil)
 
-        it 'has multiple #matches' do
-          expect(subject.matches.count).to be > 1
+        it 'has a single-item #matches list' do
+          expect(subject.matches.count).to eq(1)
         end
       end
 
       context 'matching a single result (1:1),' do
         [
           # 1:1 matches: (these are strictly dependent on current BIAS_MATCH value)
+          'Cento',
+          'Reggio Emilia', 'Parma',
+          'Riccione', 'Carpi', 'Ferrara', 'Milano',
+          'Bibbiano', 'Modena', 'Sassuolo',
+
           "L`Aquila'", 'Bologna',
+          'Lamezia',
+          'Città di Castello',
+          'CANOSA PUGLIA',
+          'PINARELLA', 'SPRESIANO',
 
           # "Saint"-prefix removed:
           'S.LAZZARO DI SAVENA', 'San LAZZARO di SAVENA',
@@ -72,9 +81,11 @@ module GogglesDb
           'S..Agata di Militello',
 
           # Wrong or problematic data: (bypassed using J-W fuzzy distance)
-          'LAMEZIA TERME', 'Citta di Castello',
+          'Citta di Castello',
           'MASSA LUBRENSE',
-          'BASTIA UMBRA', 'SCANZANO JONICO',
+          'LAMEZIA',
+          'BASTIA',
+          'SCANZANO',
 
           # Fixed with data migrations:
           'Monastier Treviso',
@@ -92,28 +103,27 @@ module GogglesDb
         end
       end
 
-      context 'matching multiple results (1:N),' do
+      context 'enabling the country guess,' do
         [
-          # 1:N matches:
-          'Cento',
-          'Reggio Emilia', 'Parma',
-          'Riccione', 'Carpi', 'Ferrara', 'Milano',
-          'Bibbiano', 'Modena', 'Sassuolo',
-
-          # Fixed with data migrations:
-          'Lamezia',
-          'Città di Castello',
-          # Fixed with data migrations:
-          'CANOSA PUGLIA',
-          'PINARELLA', 'SPRESIANO'
-        ].each do |fixture_name|
+          %w[Stanford US],
+          %w[Innsbruck AT],
+          %w[Kazan RU],
+          %w[Stockholm SE],
+          %w[Bibbiano IT],
+          %w[Roma IT]
+        ].each do |fixture_name, expected_country_code|
           describe "#call ('#{fixture_name}')" do
-            subject { described_class.call(fixture_country, fixture_name) }
+            # Use a nil country to enable the educated 'country guess' list usage:
+            subject { described_class.call(nil, fixture_name) }
 
             it_behaves_like('CmdFindIsoCity successful #call', nil)
 
-            it 'has multiple #matches' do
-              expect(subject.matches.count).to be > 1
+            it 'has a single-item #matches list' do
+              expect(subject.matches.count).to eq(1)
+            end
+
+            it 'has the expected country_code' do
+              expect(subject.iso_country.alpha2).to eq(expected_country_code)
             end
           end
         end
@@ -138,14 +148,17 @@ module GogglesDb
       end
 
       describe '#call' do
-        context 'without a valid ISO3166::Country parameter,' do
+        context 'when toggling the educated country guess on (blank Country param),' do
           subject { described_class.call(nil, 'Reggio Emilia') }
 
-          it_behaves_like 'CmdFindIsoCity failing'
+          it_behaves_like('CmdFindIsoCity successful #call', nil)
 
-          it 'has a non-empty #errors list' do
-            expect(subject.errors).to be_present
-            expect(subject.errors[:msg]).to eq(['Invalid iso_country parameter'])
+          it 'has a single-item #matches list' do
+            expect(subject.matches.count).to eq(1)
+          end
+
+          it 'has the expected country_code' do
+            expect(subject.iso_country.alpha2).to eq('IT')
           end
         end
 

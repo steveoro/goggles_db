@@ -9,9 +9,8 @@ module GogglesDb
   #
   # = "Find ISO3166 Cities" command
   #
-  #   - file vers.: 1.56
+  #   - file vers.: 0.4.01
   #   - author....: Steve A.
-  #   - build.....: 20201230
   #
   # === Dependencies:
   #
@@ -73,14 +72,18 @@ module GogglesDb
   class CmdFindIsoCity
     prepend SimpleCommand
 
-    attr_reader :matches
+    attr_reader :matches, :iso_country
 
     # Creates a new command object given the parameters for the search.
     #
     # === Parameters:
-    # - iso_country: a valid ISO3166::Country instance
-    # - city_name: the City name to be searched
-    # - toggle_debug: any non-nil value will toggle verbose output to the console with the sorting weights
+    # - <tt>iso_country</tt>: a valid ISO3166::Country instance; use +nil+ to toggle the *search* mode ON;
+    #   if search mode is ON, a list of most-probable countries will be used to search for the city name;
+    #   the list uses an educated-guess of priorities of most common countries for the current domain.
+    #
+    # - <tt>city_name</tt>: the City name to be searched
+    #
+    # - <tt>toggle_debug</tt>: any non-nil value will toggle verbose output to the console with the sorting weights
     #
     def initialize(iso_country, city_name, toggle_debug = nil)
       @iso_country = iso_country
@@ -92,15 +95,22 @@ module GogglesDb
     # Sets the result to the best corresponding Cities::City instance (when at least a candidate is found).
     # While searching, updates the #matches array with a list of possible alternative candidates, sorted in descending order.
     #
-    # Otherwise, sets #result to +nil+ and logs just the requested city name into the #errors hash.
+    # If the "search mode" is enabled (by not setting the ISO country in the constructor), an opinionated
+    # list of possible countries is scanned one by one, searching for the same city name.
+    # The first country having a matching city will be considered a valid result. (So the priority in the search list
+    # matters in this case.)
+    #
+    # When no matches at all are found, this sets #result to +nil+ and logs the requested city name into the #errors hash.
     # Always returns itself.
     def call
-      unless @iso_country.instance_of?(ISO3166::Country)
-        errors.add(:msg, 'Invalid iso_country parameter')
-        return
-      end
+      iso_countries = @iso_country.instance_of?(ISO3166::Country) ? [@iso_country] : opinionated_country_search_list
 
-      scan_iso_cities_for_candidates_matching(prepare_tokenized_reg_expression)
+      iso_countries.each do |iso_country|
+        scan_iso_cities_for_candidates_matching(iso_country, prepare_tokenized_reg_expression)
+        # Set the resulting country with the last one used:
+        @iso_country = iso_country
+        break if @matches.present?
+      end
 
       errors.add(:name, @city_name) if @matches.empty?
       sort_matches
@@ -115,19 +125,43 @@ module GogglesDb
     METRIC = FuzzyStringMatch::JaroWinkler.create(:native)
 
     # Any text distance >= MATCH_BIAS will be considered viable as a match
-    MATCH_BIAS = 0.89
+    MATCH_BIAS = 0.98
+
+    # Returns the array of ISO3166::Country instances used for the "search mode".
+    def opinionated_country_search_list
+      [
+        ISO3166::Country.new('IT'),
+        ISO3166::Country.new('NL'),
+        ISO3166::Country.find_country_by_iso_short_name('Sweden'),
+        ISO3166::Country.find_country_by_iso_short_name('Austria'),
+        ISO3166::Country.new('US'),
+        ISO3166::Country.new('GB'),
+        ISO3166::Country.new('CZ'),
+        ISO3166::Country.new('RU'),
+        ISO3166::Country.new('DK'),
+        ISO3166::Country.new('DE'),
+        ISO3166::Country.new('CH'),
+        ISO3166::Country.new('ES'),
+        ISO3166::Country.new('FR'),
+        ISO3166::Country.new('BE'),
+        ISO3166::Country.new('JP')
+      ]
+    end
 
     # Loops on the defined Cities names collecting a @matches list with the candidates and their
     # best weight if the weight reaches at least the MATCH_BIAS.
     #
     # Updates directly the internal @matches list.
+    # Returns the best or last weight found.
     #
-    def scan_iso_cities_for_candidates_matching(regexp)
-      @iso_country.cities.each do |key_name, city|
+    def scan_iso_cities_for_candidates_matching(iso_country, regexp)
+      weight = 0.0
+      iso_country.cities.each do |key_name, city|
         # Precendence to the Regexp match:
         regexp_match = key_name =~ regexp
         if regexp_match
-          @matches << OpenStruct.new(candidate: city, weight: 1.0)
+          weight = 1.0
+          @matches << OpenStruct.new(candidate: city, weight: weight)
           break
         end
 
@@ -135,6 +169,7 @@ module GogglesDb
         weight = compute_best_weight(key_name, city)
         @matches << OpenStruct.new(candidate: city, weight: weight) if weight >= MATCH_BIAS
       end
+      weight
     end
 
     # Removes common conjunctions in names to build up a "tokenized" Regexp able to

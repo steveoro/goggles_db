@@ -102,7 +102,7 @@ module GogglesDb
     # Returns the "minimum required" hash of associations.
     def minimal_associations
       {
-        'federation_type' => federation_type.attributes
+        'federation_type' => federation_type&.attributes
       }
     end
   end

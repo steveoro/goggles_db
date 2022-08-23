@@ -31,11 +31,12 @@ module GogglesDb
       describe '#scan_for_matches finding a single result (1:1),' do
         [
           # 1:1 matches:
-          'West Concetta Swimming Club 2022', 'Framistad Swimming Club 2021',
-          'Ogaberg Swimming Club ASD'
-        ].each do |fixture_value|
+          ['Lake Ramiro', 37],
+          ['East Minbury', 27],
+          ['Kautzertown', 9]
+        ].each do |fixture_value, filter_city_id|
           describe "#call ('#{fixture_value}')" do
-            subject { described_class.new(editable_name: fixture_value) }
+            subject { described_class.new(editable_name: fixture_value, city_id: filter_city_id) }
 
             before { subject.scan_for_matches }
 
@@ -51,11 +52,14 @@ module GogglesDb
       describe '#scan_for_matches finding multiple results (1:N),' do
         [
           # 1:N matches:
-          'North Gia Swimming Club', 'East Swimming Club ASD', 'Ramiro Swimming Club',
-          'West', 'Lake'
+          'Lake Ramiro',
+          'East Minbury',
+          'Ramiro',
+          'East',
+          'Lake'
         ].each do |fixture_value|
           describe "#call ('#{fixture_value}')" do
-            subject { described_class.new(editable_name: fixture_value) }
+            subject { described_class.new(name: fixture_value) }
 
             before { subject.scan_for_matches }
 

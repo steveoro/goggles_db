@@ -191,10 +191,10 @@ shared_examples_for 'filtering scope FULLTEXT for_...' do |subject_class, method
     it "is a relation containing only #{subject_class.to_s.pluralize} that match the specified filtering value" do
       expect(result).to be_a(ActiveRecord::Relation)
       expect(result).to all be_a(subject_class)
-      # For each result row, concatenate the FULLTEXT index column values and match it against the search term:
+      # For each result row, expect at least one of the possible matching fields to hold a positive match:
+      regexp = Regexp.new(filter_value.to_s, Regexp::IGNORECASE)
       result.uniq.each do |row|
-        possible_match_text = matching_field_list.map { |field_name| row.send(field_name) }.join
-        expect(possible_match_text).to match(Regexp.new(filter_value.to_s, Regexp::IGNORECASE))
+        expect(matching_field_list.any? { |field_name| regexp.match(row.send(field_name)) }).to be true
       end
     end
   end

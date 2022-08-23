@@ -2,69 +2,51 @@
 
 require 'goggles_db'
 require 'cities'
+require_relative '../../app/strategies/goggles_db/normalizers/city_name'
 
 namespace :normalize do
-  desc 'Normalizes all country & city names comparing them with the values supplied by the coutries & cities gems'
+  desc <<~DESC
+      Normalizes all country & city names comparing them with the values supplied by the coutries & cities gems
+
+    Options: [simulate=1|<0>]
+             [limit=N|<0>]
+
+      - simulate: when positive, the task will only output the prospected changes without actually
+                  saving or changing the database at all.
+                  (Useful to check the result before corrupting any data)
+
+      - limit: when positive, only the first N rows will be processed (default 0: all rows)
+
+  DESC
   task cities: :environment do
+    simulate = ENV.include?('simulate') ? ENV['simulate'].to_i.positive? : false
+    limit_rows = ENV.include?('limit') ? ENV['limit'].to_i : 0
     puts "\r\n*** Countries + Cities normalization ***"
-    puts "\r\n--> Normalizing Country codes and names..."
-    normalize_country_strings
-    puts "\r\n--> Normalizing City names..."
-    normalize_city_names
+    puts '--> SIMULATE MODE ON' if simulate
+    puts "\r\n--> Normalizing City names & countries (+ codes)..."
+    normalize_city_names(simulate, limit_rows)
+
+    # == Note: *IN CASE OF DATA CORRUPTION*
+    #
+    # - Always test the running task on the test DB first.
+    #
+    # - In case the DB becomes corrupted due to new, mistyped entries, use the query below to restore
+    #   the first 181 cities (as of this writing, all the other additional cities on test were random
+    #   fixtures and thus "trashable"):
+    #
+    # UPDATE goggles_test.cities AS dest, goggles_development.cities AS src
+    #   SET dest.name = src.name,
+    #       dest.zip = src.zip,
+    #       dest.area = src.area,
+    #       dest.country = src.country,
+    #       dest.country_code = src.country_code,
+    #       dest.latitude = src.latitude,
+    #       dest.longitude = src.longitude,
+    #       dest.plus_code = src.plus_code
+    #   WHERE dest.id = src.id
+    #   LIMIT 181;
 
     puts "\r\nDone."
-  end
-  #-- -------------------------------------------------------------------------
-  #++
-
-  # Scans the cities table for un-normalized country names & codes and updates them
-  # with their ISO3166 country name & code.
-  # Outputs a list of problematic names that may have to be processed manually.
-  #
-  # == Note:
-  # Although using the City model helper methods this could have been sorted out inside
-  # the same single ISO-attribute update loop (see 'normalize_city_names'), by doing it
-  # this way allows for a more fine-grained debug of un-normalized data.
-  def normalize_country_strings
-    unknown_names = []
-    updated_rows  = 0
-    # ANSI color codes: 31m = red; 32m = green; 33m = yellow; 34m = blue; 37m = white
-
-    GogglesDb::City.select(:country, :country_code)
-                   .distinct("CONCAT(country, ' ', country_code)")
-                   .each do |city_model|
-      command = GogglesDb::CmdFindIsoCountry.call(city_model.country, city_model.country_code)
-
-      if command.success?
-        updated_rows += update_country_strings(command.result, city_model)
-      else
-        $stdout.write("'#{city_model.country}' (#{city_model.country_code}) \033[1;33;31m× UNKNOWN ×\033[0m\r\n")
-        unknown_names << city_model.country
-      end
-    end
-
-    puts "\r\nTotal row updates: #{updated_rows}"
-    $stdout.write("\033[1;33;31mTO BE FIXED:\033[0m\r\n'#{unknown_names.join("\r\n")}'\r\n") unless unknown_names.empty?
-  end
-  #-- -------------------------------------------------------------------------
-  #++
-
-  # Updates the city_model with an 'update_all', but only if the update is needed.
-  # Returns the number of updated rows
-  #
-  def update_country_strings(iso_country, city_model)
-    $stdout.write("\033[1;33;32mFOUND\033[0m → #{iso_country.unofficial_names.first} (#{iso_country.alpha2})\r\n")
-    # Update needed?
-    return 0 unless iso_country.unofficial_names.first != city_model.country ||
-                    iso_country.alpha2 != city_model.country_code
-
-    $stdout.write("        overwriting '#{city_model.country}' (#{city_model.country_code})\r\n")
-    GogglesDb::City.where(country: city_model.country)
-                   .or(GogglesDb::City.where(country_code: city_model.country_code))
-                   .update_all(
-                     country: iso_country.unofficial_names.first,
-                     country_code: iso_country.alpha2
-                   )
   end
   #-- -------------------------------------------------------------------------
   #++
@@ -72,70 +54,74 @@ namespace :normalize do
   # Scans the cities table for non-standard names, then updates them with their
   # expected "standard" name.
   # Outputs a list of problematic names that may have to be re-processed or fixed manually.
-  def normalize_city_names
+  def normalize_city_names(simulate, limit_rows)
     unknown_names = []
     updated_rows  = 0
+    domain = limit_rows.positive? ? GogglesDb::City.limit(limit_rows) : GogglesDb::City.all
 
-    GogglesDb::City.find_each do |city_model|
-      iso_country, iso_city = city_model.to_iso
+    domain.find_each do |city_model|
+      normalizer = GogglesDb::Normalizers::CityName.new(city_model, verbose: true)
+      city_model = normalizer.process
 
-      # Skip iteration if the country cannot be found:
-      if iso_country.nil?
-        $stdout.write("'#{city_model.name}' \033[1;33;31m× UNKNOWN COUNTRY ×\033[0m (#{city_model.country})\r\n")
-        unknown_names << city_model.name
+      # Skip iteration while checking for unknowns:
+      if normalizer.iso_country.nil?
+        unknown_names << "#{city_model.name} (ID: #{city_model.id})"
         next
       end
-
-      if iso_city.nil?
-        $stdout.write("'#{city_model.name}' \033[1;33;31m× UNKNOWN ×\033[0m\r\n")
-        unknown_names << city_model.name
+      if normalizer.iso_city.nil?
+        unknown_names << "#{city_model.name} (ID: #{city_model.id})"
       else
-        updated_rows += update_city_name(iso_city, city_model)
+        updated_rows += update_city(normalizer, city_model, simulate)
       end
     end
 
     puts "\r\nTotal row updates: #{updated_rows}"
-    $stdout.write("\033[1;33;31mTO BE FIXED:\033[0m\r\n'#{unknown_names.join("\r\n")}'\r\n") unless unknown_names.empty?
-  end
-  #-- -------------------------------------------------------------------------
-  #++
-
-  # Returns +true+ if the attribute value differs between the two
-  def compare_vs_attribute(iso_attributes, city_model, attr_name)
-    result = iso_attributes[attr_name.to_s].to_s != city_model.send(attr_name).to_s
-    $stdout.write("        #{result ? "\033[1;33;31m×\033[0m" : "\033[1;33;32m=\033[0m"} #{attr_name}: '#{iso_attributes[attr_name.to_s]}'\r\n")
-    result
+    $stdout.write("\033[1;33;31mTO BE FIXED:\033[0m\r\n#{unknown_names.join("\r\n")}\r\n") unless unknown_names.empty?
   end
 
   # Updates the city_model with an 'update', but only if the update is actually needed.
   # Returns 1 if the update was successful; 0 otherwise.
   #
-  def update_city_name(iso_city, city_model)
-    $stdout.write("\033[1;33;32mFOUND\033[0m → #{iso_city.name}\r\n")
-    iso_attributes = city_model.iso_attributes # Prepare actual values
-    # Update needed? (We won't touch the country fields here)
-    return 0 unless compare_vs_attribute(iso_attributes, city_model, 'name') ||
-                    compare_vs_attribute(iso_attributes, city_model, 'latitude') ||
-                    compare_vs_attribute(iso_attributes, city_model, 'longitude') ||
-                    compare_vs_attribute(iso_attributes, city_model, 'area')
+  # rubocop:disable Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
+  def update_city(_normalizer, city_model, simulate)
+    # Don't count unless there are changes:
+    return 0 unless city_model.has_changes_to_save?
 
-    city_model.transaction do
-      if city_model.update(
-        name: iso_attributes['name'],
-        latitude: iso_attributes['latitude'],
-        longitude: iso_attributes['longitude'],
-        area: iso_attributes['area']
-      )
-        $stdout.write("        updated '#{city_model.name}', area: '#{city_model.area}' lat: '#{city_model.latitude}' long: '#{city_model.longitude}'\r\n")
-        return 1
-      else
-        $stdout.write("        \033[1;33;31m× VALIDATION FAILED City ID #{city_model.id} ×\033[0m '#{city_model.name}'\r\n")
-      end
-    rescue ActiveRecord::RecordNotUnique
+    result = if simulate
+               # Manual check for constraint violation:
+               already_existing = GogglesDb::City.where('(name = ?) AND (id != ?)', city_model.name, city_model.id)
+               if city_model.valid? && already_existing.empty?
+                 1
+               elsif city_model.valid? && already_existing.present?
+                 -1
+               else # model not valid
+                 0
+               end
+             else
+               city_model.transaction do
+                 city_model.save!
+                 1
+               rescue ActiveRecord::RecordNotUnique
+                 -1
+               rescue ActiveModel::ValidationError
+                 0
+               end
+             end
+
+    case result
+    when 1
+      $stdout.write("        updated '#{city_model.name}' (#{city_model.country_code}), area: '#{city_model.area}'" \
+                    " lat: '#{city_model.latitude}' long: '#{city_model.longitude}'\r\n")
+      return 1
+    when -1
       $stdout.write("        \033[1;33;31m× DUPLICATE City ID #{city_model.id} ×\033[0m '#{city_model.name}'\r\n")
+    else # 0
+      $stdout.write("        \033[1;33;31m× VALIDATION FAILED City ID #{city_model.id} ×\033[0m '#{city_model.name}'\r\n")
     end
-    0
+
+    0 # Always return 0 in case of errors (we count the updates only)
   end
+  # rubocop:enable Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
   #-- -------------------------------------------------------------------------
   #++
 end

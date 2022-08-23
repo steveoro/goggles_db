@@ -20,6 +20,8 @@ module GogglesDb
     # Returns the a bespoke text label describing this row, depending on the
     # group UID.
     def text_label
+      return '📃' if batch_sql
+
       case uid
       when 'chrono'
         "⏱ #{req_event_type&.label}: #{req_timing}, #{req_swimmer_name} (#{req_swimmer_year_of_birth}) #{state_flag}"
