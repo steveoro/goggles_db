@@ -6,7 +6,7 @@ module GogglesDb
   #
   # Legacy name: "FINCalendar"
   #
-  #   - version:  7.0.3.45
+  #   - version:  7.0.4.01
   #   - author:   Steve A.
   #
   class Calendar < ApplicationRecord
@@ -18,6 +18,10 @@ module GogglesDb
 
     validates_associated :season
 
+    # Attach PDFs or images directly to the record, if needed:
+    has_one_attached :manifest_file # (use #manifest for converted text only)
+    has_one_attached :results_file
+
     validates :meeting_code, presence: { allow_nil: false }
     validates :scheduled_date, presence: { allow_nil: false }
     validates :year, presence: { allow_nil: false }
@@ -27,8 +31,8 @@ module GogglesDb
     default_scope { includes(season: [:season_type]) }
 
     # Sorting scopes:
-    scope :by_date,   ->(dir = :asc)  { order(scheduled_date: dir) }
-    scope :by_season, ->(dir = :asc)  { joins(:season).order('seasons.begin_date': dir) }
+    scope :by_meeting, ->(dir = :asc) { joins(:meeting).includes(:meeting).order('meetings.header_date': dir) }
+    scope :by_season,  ->(dir = :asc) { joins(:season).order('seasons.begin_date': dir) }
 
     # Filtering scopes:
     scope :for_season_type, ->(season_type) { joins(:season_type).where(season_types: { id: season_type.id }) }
@@ -42,7 +46,7 @@ module GogglesDb
                                    .pluck(:id)
       ids << where(cancelled: false, meeting: nil).pluck(:id)
       ids.uniq!
-      where(id: ids).by_date(:desc)
+      where(id: ids).by_meeting(:desc)
     }
     #-- ------------------------------------------------------------------------
     #++
@@ -63,6 +67,28 @@ module GogglesDb
         'meeting' => meeting&.minimal_attributes
       ).to_json(options)
     end
+    #-- ------------------------------------------------------------------------
+    #++
+
+    # Helper for #manifest_file.
+    # Returns the attachment contents as a string by reading the attached local file;
+    # returns an empty string otherwise.
+    def manifest_file_contents
+      return '' if manifest_file.blank?
+
+      manifest_file.open { |file| File.read(file) }
+    end
+
+    # Helper for #results_file.
+    # Returns the attachment contents as a string by reading the attached local file;
+    # returns an empty string otherwise.
+    def results_file_contents
+      return '' if results_file.blank?
+
+      results_file.open { |file| File.read(file) }
+    end
+    #-- ------------------------------------------------------------------------
+    #++
 
     private
 

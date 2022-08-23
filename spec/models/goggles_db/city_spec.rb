@@ -87,8 +87,8 @@ module GogglesDb
           expect(subject.first.length).to eq(2)
         end
 
-        it 'contains as 2nd member a subdivision Struct responding to \'name\'' do
-          expect(subject.last).to be_a(Struct).and respond_to('name')
+        it 'contains as 2nd member a ISO3166::Subdivision responding to \'name\'' do
+          expect(subject.last).to be_a(ISO3166::Subdivision).and respond_to('name')
         end
       end
 
@@ -132,8 +132,12 @@ module GogglesDb
         end
 
         it 'allows locale override for a chosen country name translation' do
-          expect(subject_city.localized_country_name(fixture_iso_country, 'en')).to eq('Italy')
-          expect(subject_city.localized_country_name(fixture_iso_country, 'it')).to eq('Italia')
+          en_country_name = subject_city.localized_country_name(fixture_iso_country, 'en')
+          it_country_name = subject_city.localized_country_name(fixture_iso_country, 'it')
+
+          expect(en_country_name).to be_present
+          expect(it_country_name).to be_present
+          expect(en_country_name != it_country_name).to be true
         end
       end
 
@@ -169,7 +173,7 @@ module GogglesDb
     describe '#iso_attributes' do
       subject { subject_city.iso_attributes }
 
-      let(:subject_city) { described_class.where(country: 'Italy').limit(50).sample }
+      let(:subject_city) { described_class.first(100).sample }
 
       it 'is a non-empty Hash' do
         expect(subject).to be_an(Hash).and be_present
@@ -183,15 +187,16 @@ module GogglesDb
       it 'allows locale override for a chosen country name translation' do
         en_attributes = subject_city.iso_attributes('en')
         it_attributes = subject_city.iso_attributes('it')
-        expect(it_attributes['country']).to eq('Italia')
-        expect(en_attributes['country']).to eq('Italy')
+        expect(it_attributes['country']).to be_present
+        expect(en_attributes['country']).to be_present
+        expect(it_attributes['country'] != en_attributes['country']).to be true
       end
     end
 
     describe '#to_json' do
       subject { subject_city.to_json }
 
-      let(:subject_city) { described_class.all.limit(50).sample }
+      let(:subject_city) { described_class.first(100).sample }
 
       it 'is a String' do
         expect(subject).to be_a(String).and be_present

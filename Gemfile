@@ -49,6 +49,8 @@ group :development, :test do
   gem 'ffaker'
   gem 'letter_opener'
   gem 'pry'
+  gem 'pry-byebug'
+  gem 'pry-stack_explorer'
   gem 'rspec'
   gem 'rspec-rails'
 end

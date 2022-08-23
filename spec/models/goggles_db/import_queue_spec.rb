@@ -3,6 +3,7 @@
 require 'rails_helper'
 require 'support/shared_method_existance_examples'
 require 'support/shared_filtering_scopes_examples'
+require 'support/shared_active_storage_examples'
 
 module GogglesDb
   RSpec.describe ImportQueue, type: :model do
@@ -19,6 +20,7 @@ module GogglesDb
       it_behaves_like(
         'responding to a list of methods',
         %i[
+          data_file batch_sql data_file_contents
           done
           import_queue parent
           import_queues sibling_rows
@@ -33,14 +35,20 @@ module GogglesDb
         'having one or more required & present attributes (invalid if missing)',
         %i[process_runs request_data solved_data]
       )
+
+      it_behaves_like('active storage field with local file', :data_file)
     end
-
-    before { expect(minimum_domain.count).to be_positive }
-
     #-- ------------------------------------------------------------------------
     #++
 
+    # Make sure the minimum test domain is existing before each test:
+    before { expect(minimum_domain.count).to be_positive }
+
+    # After each test, make sure the attachments are removed:
+    after { described_class.with_batch_sql.each { |row| row.data_file.purge } }
+
     let(:minimum_domain) do
+      FactoryBot.create_list(:import_queue_with_data_file, 3)
       FactoryBot.create_list(:import_queue_existing_swimmer, 3, uid: 'FAKE-1')
       FactoryBot.create_list(:import_queue_existing_team, 3, process_runs: 1)
       FactoryBot.create_list(:import_queue_existing_team, 2, process_runs: 1, done: true)
@@ -58,6 +66,20 @@ module GogglesDb
       it_behaves_like(
         'filtering scope <ANY_FILTER_NAME> on a field with implicit value',
         described_class, 'deletable', 'done', true
+      )
+    end
+
+    describe 'self.with_batch_sql' do
+      it_behaves_like(
+        'filtering scope <ANY_FILTER_NAME> on a field with implicit value',
+        described_class, 'with_batch_sql', 'batch_sql', true
+      )
+    end
+
+    describe 'self.without_batch_sql' do
+      it_behaves_like(
+        'filtering scope <ANY_FILTER_NAME> on a field with implicit value',
+        described_class, 'without_batch_sql', 'batch_sql', false
       )
     end
 
@@ -86,6 +108,22 @@ module GogglesDb
         it 'does not destroy the associated import_queues' do
           expect { parent_row.delete }.to change(described_class, :count).by(-1)
         end
+      end
+    end
+    #-- ------------------------------------------------------------------------
+    #++
+
+    describe '#data_file_contents' do
+      subject { fixture_row.data_file_contents }
+
+      let(:fixture_row) { FactoryBot.create(:import_queue_with_data_file) }
+
+      # After each test, make sure the attachments are removed:
+      after { described_class.with_batch_sql.each { |row| row.data_file.purge } }
+
+      it 'returns the string file contents' do
+        # (See spec/factories/goggles_db/import_queues.rb:22)
+        expect(subject).to start_with('SELECT COUNT(*) FROM ')
       end
     end
     #-- ------------------------------------------------------------------------

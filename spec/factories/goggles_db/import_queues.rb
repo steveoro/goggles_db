@@ -3,6 +3,8 @@ FactoryBot.define do
     before_create_validate_instance
 
     user
+    batch_sql           { false }
+
     import_queue        { nil } # Parent
     request_data        { {}.to_json }
     solved_data         { {}.to_json }
@@ -14,6 +16,25 @@ FactoryBot.define do
     error_messages      { nil }
     #-- -----------------------------------------------------------------------
     #++
+
+    # == Note: this factory will generate a random data file that needs to be purged
+    #          manually afterwards.
+    factory :import_queue_with_data_file do
+      batch_sql { true }
+
+      # Attach a random SQL file as instance's #data_file:
+      after(:create) do |saved_instance|
+        text_contents = "SELECT COUNT(*) FROM #{%w[users swimmers teams meetings].sample};\r\n"
+        file_path = Rails.root.join('tmp', 'storage', "test-data-#{saved_instance.id}.sql")
+        File.open(file_path, 'w') { |f| f.write(text_contents) }
+
+        saved_instance.data_file.attach(
+          io: File.open(file_path),
+          filename: File.basename(file_path),
+          content_type: 'application/sql'
+        )
+      end
+    end
 
     factory :import_queue_existing_swimmer do
       request_data do

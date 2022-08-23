@@ -7,9 +7,9 @@ module GogglesDb
     #
     # = DbFinders singleton factory
     #
-    #   - version:  7-0.3.53
+    #   - version:  7-0.4.01
     #   - author:   Steve A.
-    #   - build:    20220526
+    #   - build:    20220804
     #
     # Allows to create a plug-in strategy object for finding a specific entity given the search
     # parameters.
@@ -25,9 +25,14 @@ module GogglesDb
       # - <tt>search_terms</tt>: a *required* +Hash+ of search terms having the
       #   form: <tt>{ column_name1 => "target value", ... }</tt>, with the column names as symbols;
       #
+      #   === Notes:
+      #   Be aware that only certain column symbols will be allowed as search terms, depending
+      #   on the target <tt>model_klass</tt> (see implementation for further details; this depends
+      #   also on the used search scope, which is typically :for_name and has a single parameter).
+      #
       #   Add a <tt>toggle_debug: true</tt> element in <tt>search_terms</tt> to enable
       #   the verbose search output on the console (default: false); this will be removed from
-      #   the search terms.
+      #   the search terms (as all other column names non valid as search terms).
       #
       # == Returns
       # A <tt>DbFinders::BaseStrategy</tt> sibling
@@ -43,7 +48,7 @@ module GogglesDb
           FuzzySwimmer.new(search_terms)
 
         elsif model_klass == GogglesDb::Team
-          search_terms.keep_if { |key, _v| %i[name editable_name city_id toggle_debug].include?(key) }
+          search_terms.keep_if { |key, _v| %i[name editable_name name_variations city_id toggle_debug].include?(key) }
           FuzzyTeam.new(search_terms)
 
         elsif model_klass == GogglesDb::SwimmingPool

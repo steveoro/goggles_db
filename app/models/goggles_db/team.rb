@@ -4,7 +4,7 @@ module GogglesDb
   #
   # = Team model
   #
-  #   - version:  7-0.3.44
+  #   - version:  7-0.4.01
   #   - author:   Steve A.
   #
   class Team < ApplicationRecord
@@ -38,11 +38,27 @@ module GogglesDb
     validates :contact_name,  length: { maximum: 100 }
     validates :home_page_url, length: { maximum: 150 }
 
-    # Sorting scopes:
+    #-- ------------------------------------------------------------------------
+    #   Sorting scopes:
+    #-- ------------------------------------------------------------------------
+    #++
+
     scope :by_name, ->(dir = :asc) { order(name: dir) }
 
-    # Filtering scopes:
-    scope :for_name, ->(name) { where('MATCH(teams.name, teams.editable_name, teams.name_variations) AGAINST(?)', name) }
+    #-- ------------------------------------------------------------------------
+    #   Filtering scopes:
+    #-- ------------------------------------------------------------------------
+    #++
+
+    # Fulltext search by name with additional domain inclusion by using standard "LIKE"s
+    scope :for_name, lambda { |name|
+      like_query = "%#{name}%"
+      where(
+        '(MATCH(teams.name, teams.editable_name, teams.name_variations) AGAINST(?)) OR ' \
+        '(teams.name LIKE ?) OR (teams.editable_name LIKE ?) OR (teams.name_variations LIKE ?)',
+        name, like_query, like_query, like_query
+      )
+    }
 
     # TODO: CLEAR UNUSED
     # scope :with_results, -> { where('EXISTS(SELECT 1 from meeting_individual_results where not is_disqualified and team_id = teams.id)') }

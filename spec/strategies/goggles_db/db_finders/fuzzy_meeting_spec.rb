@@ -34,7 +34,7 @@ module GogglesDb
           { code: 'riccione', header_year: '2017/2018' },
           { code: 'csiprova5' }, # first come, first served => loop halts as soon as the perfect match is found
           { code: 'csiprova3', header_year: '2017/2018' },
-          { code: 'bolognanuovonuoto', header_year: '2019/2020' }
+          { code: 'bolognanuovo', header_year: '2006' }
         ].each do |fixture_row|
           describe "#call ('#{fixture_row.inspect}')" do
             subject { described_class.new(fixture_row) }

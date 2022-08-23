@@ -6,11 +6,14 @@ require 'ostruct'
 
 module GogglesDb
   #
-  # = "Find Swimmers" command
+  # = Generic DB entity fuzzy-finder command
   #
   #   - version:  7-0.3.53
   #   - author:   Steve A.
   #   - build:    20220524
+  #
+  # Uses the DbFinders::Factory to create a specific fuzzy-finder for
+  # the specified DB entity.
   #
   # == Dependencies:
   #
@@ -34,6 +37,7 @@ module GogglesDb
     attr_reader :matches
 
     # Creates a new finder command object given the parameters for the search.
+    #
     # Currently supported ActiveRecord models for the search strategy:
     # - GogglesDb::Swimmer
     # - GogglesDb::Team

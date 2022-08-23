@@ -70,8 +70,11 @@ module GogglesDb
 
     # Filtering scopes:
     describe 'self.for_name' do
-      %w[ferrari ferretti comunale].each do |filter_text|
-        it_behaves_like('filtering scope FULLTEXT for_...', described_class, :for_name, %w[name], filter_text)
+      %w[melato verola ferrari ferretti comunale].each do |filter_text|
+        it_behaves_like(
+          'filtering scope FULLTEXT for_...', described_class, :for_name,
+          %w[name nick_name address], filter_text
+        )
       end
     end
     #-- ------------------------------------------------------------------------

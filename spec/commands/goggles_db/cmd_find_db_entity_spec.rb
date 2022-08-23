@@ -62,20 +62,29 @@ module GogglesDb
           { klass: GogglesDb::Swimmer, params: { complete_name: 'Ligabue' } },
           { klass: GogglesDb::Swimmer, params: { complete_name: 'Smith Bao' } },
 
-          { klass: GogglesDb::Team, params: { editable_name: 'West Concetta Swimming Club 2022' } },
-          { klass: GogglesDb::Team, params: { editable_name: 'Framistad Swimming Club 2021' } },
-          { klass: GogglesDb::Team, params: { editable_name: 'Ogaberg Swimming Club ASD' } },
+          { klass: GogglesDb::City, params: { name: 'Bologna' } },
+          { klass: GogglesDb::City, params: { name: 'Carpi' } },
+          { klass: GogglesDb::City, params: { name: 'London' } },
+          { klass: GogglesDb::City, params: { name: 'Parma' } },
+          { klass: GogglesDb::City, params: { name: 'Reggio Emilia' } },
+          { klass: GogglesDb::City, params: { name: 'Riccione' } },
+          { klass: GogglesDb::City, params: { name: 'Verolanuova' } },
 
-          { klass: GogglesDb::SwimmingPool, params: { nick_name: 'reggiocomunale25' } },
-          { klass: GogglesDb::SwimmingPool, params: { nick_name: 'reggiocomunale50' } },
-          { klass: GogglesDb::SwimmingPool, params: { nick_name: 'carpicomunale' } }
+          # Here we need to filter down the result list using the exact city, otherwise we'll have tons of matches:
+          { klass: GogglesDb::Team, params: { name: 'Lake Ramiro', city_id: 37 } },
+          { klass: GogglesDb::Team, params: { name: 'East Minbury', city_id: 27 } },
+          { klass: GogglesDb::Team, params: { name: 'Kautzertown', city_id: 9 } },
+
+          { klass: GogglesDb::SwimmingPool, params: { nick_name: 'reggioemiliasferretti' } },
+          { klass: GogglesDb::SwimmingPool, params: { nick_name: 'reggioemiliaoferrari' } },
+          { klass: GogglesDb::SwimmingPool, params: { nick_name: 'parmagonesti' } }
         ].each do |fixture|
-          describe "#call (#{fixture[:params].inspect})" do
+          describe "#call (#{fixture[:klass]})" do
             subject { described_class.call(fixture[:klass], fixture[:params]) }
 
             it_behaves_like('CmdFindDbEntity successful #call', fixture[:klass], fixture[:params].keys.first, nil)
 
-            it 'has a single-item #matches list' do
+            it "has a single-item #matches list (search #{fixture[:params]})" do
               expect(subject.matches.count).to eq(1)
             end
           end

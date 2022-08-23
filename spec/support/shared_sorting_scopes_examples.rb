@@ -2,6 +2,9 @@
 
 # This applies to scopes like 'by_rank' or 'by_date', where the +value_name+ is
 # a direct sibling of the +subject_class+ instance. (Shallow depth association)
+#
+# REQUIRES/ASSUMES:
+# - subject_class...: subject.class to be tested (usually 'described_class') having a proper non-empty domain
 shared_examples_for 'sorting scope by_<ANY_VALUE_NAME>' do |subject_class, value_name, comparable_method|
   let(:result) { subject_class.send("by_#{value_name}").limit(20) }
 
@@ -17,6 +20,9 @@ shared_examples_for 'sorting scope by_<ANY_VALUE_NAME>' do |subject_class, value
 end
 
 # Same as above (shallow depth association) but supporting an externally prepared 'result'.
+#
+# REQUIRES/ASSUMES:
+# - result...: pre-prepared non-empty test domain
 shared_examples_for 'sorting scope by_<ANY_VALUE_NAME> (with prepared result)' do |subject_class, comparable_method|
   it "is a #{subject_class} relation" do
     expect(result).to be_a(ActiveRecord::Relation)
@@ -31,6 +37,9 @@ end
 
 # This applies to other scopes scopes like 'by_swimmer' or 'by_season', where
 # the +comparable_method+ is a sibling of the +entity_name+ instance. (1st-level association)
+#
+# REQUIRES/ASSUMES:
+# - subject_class...: subject.class to be tested (usually 'described_class') having a proper non-empty domain
 shared_examples_for 'sorting scope by_<ANY_ENTITY_NAME>' do |subject_class, entity_name, comparable_method|
   let(:result) { subject_class.send("by_#{entity_name}").limit(50) }
 

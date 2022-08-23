@@ -31,7 +31,7 @@ module GogglesDb
       describe '#scan_for_matches finding a single result (1:1),' do
         [
           # 1:1 matches:
-          'reggiocomunale25', 'reggiocomunale50', 'carpicomunale'
+          'reggioemiliasferretti', 'reggioemiliaoferrari', 'parmagonesti'
         ].each do |fixture_value|
           describe "#call ('#{fixture_value}')" do
             subject { described_class.new(nick_name: fixture_value) }
@@ -50,10 +50,10 @@ module GogglesDb
       describe '#scan_for_matches finding multiple results (1:N),' do
         [
           # 1:N matches:
-          'comunale', 'stadio nuoto'
+          'reggioemilia', 'bologna', 'modena', 'stadio'
         ].each do |fixture_value|
           describe "#call ('#{fixture_value}')" do
-            subject { described_class.new(name: fixture_value) }
+            subject { described_class.new(nick_name: fixture_value) }
 
             before { subject.scan_for_matches }
 

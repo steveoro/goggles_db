@@ -29,12 +29,11 @@ Gem::Specification.new do |spec|
 
   # Base Rails dependancy:
   # [20210128] ActiveRecord 6.1 introduces too many changes for the current version
-  spec.add_dependency 'rails', '>= 6.0.4', '< 6.1.0'
+  spec.add_dependency 'rails', '>= 6.0.5.1', '< 6.1.0'
   spec.add_dependency 'rails-i18n', '~> 6.0'
 
   spec.add_dependency 'acts-as-taggable-on'
   spec.add_dependency 'acts_as_votable'
-  spec.add_dependency 'carrierwave' # requires mini_magick for image manipulation
 
   # Countries & cities lookup:
   spec.add_dependency 'cities'    # https://github.com/joecorcoran/cities

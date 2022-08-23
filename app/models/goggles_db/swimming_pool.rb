@@ -4,7 +4,7 @@ module GogglesDb
   #
   # = SwimmingPool model
   #
-  #   - version:  7-0.3.44
+  #   - version:  7-0.4.01
   #   - author:   Steve A.
   #
   class SwimmingPool < ApplicationRecord
@@ -66,8 +66,15 @@ module GogglesDb
     #-- ------------------------------------------------------------------------
     #++
 
-    # Fulltext search by name or nick_name
-    scope :for_name, ->(name) { where('MATCH(swimming_pools.name, swimming_pools.nick_name) AGAINST(?)', name) }
+    # Fulltext search by name or nick_name with additional domain inclusion by using standard "LIKE"s
+    scope :for_name, lambda { |name|
+      like_query = "%#{name}%"
+      where(
+        '(MATCH(swimming_pools.name, swimming_pools.nick_name) AGAINST(?)) OR ' \
+        '(swimming_pools.name LIKE ?) OR (swimming_pools.nick_name LIKE ?) OR (swimming_pools.address LIKE ?)',
+        name, like_query, like_query, like_query
+      )
+    }
     #-- ------------------------------------------------------------------------
     #++
 
