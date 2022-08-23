@@ -29,7 +29,7 @@ module GogglesDb
 
     # Compact label
     SEMANTIC = "#{MAJOR}.#{MINOR}.#{PATCH}"
-    DB = '1.97.0' # Internal DB structure (frozen @ <minor>.<patch>.<seq> from last migration)
+    DB = '1.98.0' # Internal DB structure (frozen @ <minor>.<patch>.<seq> from last migration)
 
     # Pointless UNICODE emojis (just for fun):
     EMOJI_BUTTERFLY    = 'з== ( ▀ ͜͞ʖ▀) ==ε'

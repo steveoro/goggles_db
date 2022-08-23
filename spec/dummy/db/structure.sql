@@ -71,7 +71,7 @@ CREATE TABLE `active_storage_attachments` (
   UNIQUE KEY `index_active_storage_attachments_uniqueness` (`record_type`,`record_id`,`name`,`blob_id`),
   KEY `index_active_storage_attachments_on_blob_id` (`blob_id`),
   CONSTRAINT `fk_rails_c3b3935057` FOREIGN KEY (`blob_id`) REFERENCES `active_storage_blobs` (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB AUTO_INCREMENT=465 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 DROP TABLE IF EXISTS `active_storage_blobs`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
@@ -87,7 +87,7 @@ CREATE TABLE `active_storage_blobs` (
   `created_at` datetime NOT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `index_active_storage_blobs_on_key` (`key`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB AUTO_INCREMENT=465 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 DROP TABLE IF EXISTS `admin_grants`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
@@ -103,7 +103,7 @@ CREATE TABLE `admin_grants` (
   UNIQUE KEY `index_admin_grants_on_user_id_and_entity` (`user_id`,`entity`),
   KEY `index_admin_grants_on_user_id` (`user_id`),
   KEY `index_admin_grants_on_entity` (`entity`)
-) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=77521 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 DROP TABLE IF EXISTS `api_daily_uses`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
@@ -119,7 +119,7 @@ CREATE TABLE `api_daily_uses` (
   PRIMARY KEY (`id`),
   UNIQUE KEY `index_api_daily_uses_on_route_and_day` (`route`,`day`),
   KEY `index_api_daily_uses_on_route` (`route`)
-) ENGINE=InnoDB AUTO_INCREMENT=101 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=76433 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 DROP TABLE IF EXISTS `app_parameters`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
@@ -163,7 +163,7 @@ CREATE TABLE `app_parameters` (
   `updated_at` datetime DEFAULT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `index_app_parameters_on_code` (`code`)
-) ENGINE=InnoDB AUTO_INCREMENT=84 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=1019 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 DROP TABLE IF EXISTS `ar_internal_metadata`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
@@ -245,7 +245,7 @@ CREATE TABLE `badge_payments` (
   PRIMARY KEY (`id`),
   KEY `index_badge_payments_on_badge_id` (`badge_id`),
   KEY `index_badge_payments_on_user_id` (`user_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=165 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=6947 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 DROP TABLE IF EXISTS `badges`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
@@ -275,7 +275,7 @@ CREATE TABLE `badges` (
   KEY `fk_badges_category_types` (`category_type_id`),
   KEY `fk_badges_entry_time_types` (`entry_time_type_id`),
   KEY `fk_badges_team_affiliations` (`team_affiliation_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=126736 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=277152 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 DROP TABLE IF EXISTS `base_movements`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
@@ -335,7 +335,7 @@ CREATE TABLE `calendars` (
   KEY `index_calendars_on_meeting_id` (`meeting_id`),
   KEY `index_calendars_on_meeting_code` (`meeting_code`),
   KEY `index_calendars_on_cancelled` (`cancelled`)
-) ENGINE=InnoDB AUTO_INCREMENT=830 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=2724 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 DROP TABLE IF EXISTS `category_types`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
@@ -359,7 +359,7 @@ CREATE TABLE `category_types` (
   PRIMARY KEY (`id`),
   UNIQUE KEY `season_and_code` (`season_id`,`relay`,`code`),
   KEY `federation_code` (`federation_code`,`relay`)
-) ENGINE=InnoDB AUTO_INCREMENT=1572 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=161042 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 DROP TABLE IF EXISTS `cities`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
@@ -381,7 +381,7 @@ CREATE TABLE `cities` (
   UNIQUE KEY `index_cities_on_country_code_and_area_and_name` (`country_code`,`area`,`name`),
   KEY `index_cities_on_name` (`name`),
   FULLTEXT KEY `city_name` (`name`,`area`)
-) ENGINE=InnoDB AUTO_INCREMENT=187 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=385360 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 DROP TABLE IF EXISTS `coach_level_types`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
@@ -431,7 +431,7 @@ CREATE TABLE `computed_season_rankings` (
   KEY `rank_x_season` (`season_id`,`rank`),
   KEY `teams_x_season` (`season_id`,`team_id`),
   KEY `fk_computed_season_rankings_teams` (`team_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=58 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=3678 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 DROP TABLE IF EXISTS `day_part_types`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
@@ -478,7 +478,7 @@ CREATE TABLE `delayed_jobs` (
   `updated_at` datetime DEFAULT NULL,
   PRIMARY KEY (`id`),
   KEY `delayed_jobs_priority` (`priority`,`run_at`)
-) ENGINE=InnoDB AUTO_INCREMENT=5146 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=5145 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 DROP TABLE IF EXISTS `disqualification_code_types`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
@@ -626,7 +626,7 @@ CREATE TABLE `federation_types` (
   `updated_at` datetime DEFAULT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `index_federation_types_on_code` (`code`)
-) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=139 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 DROP TABLE IF EXISTS `friendships`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
@@ -779,7 +779,7 @@ CREATE TABLE `import_queues` (
   KEY `index_import_queues_on_user_id_and_uid` (`user_id`,`uid`),
   KEY `index_import_queues_on_import_queue_id` (`import_queue_id`),
   KEY `index_import_queues_on_batch_sql` (`batch_sql`)
-) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=29767 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 DROP TABLE IF EXISTS `individual_records`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
@@ -851,7 +851,7 @@ CREATE TABLE `laps` (
   CONSTRAINT `fk_rails_a33a36dd83` FOREIGN KEY (`swimmer_id`) REFERENCES `swimmers` (`id`),
   CONSTRAINT `fk_rails_c073154702` FOREIGN KEY (`team_id`) REFERENCES `teams` (`id`),
   CONSTRAINT `fk_rails_d2251ad180` FOREIGN KEY (`meeting_individual_result_id`) REFERENCES `meeting_individual_results` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=9983 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=28703 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 DROP TABLE IF EXISTS `locker_cabinet_types`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
@@ -880,7 +880,7 @@ CREATE TABLE `managed_affiliations` (
   UNIQUE KEY `team_manager_with_affiliation` (`team_affiliation_id`,`user_id`),
   KEY `index_managed_affiliations_on_team_affiliation_id` (`team_affiliation_id`),
   KEY `index_managed_affiliations_on_user_id` (`user_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=163 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=15500 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 DROP TABLE IF EXISTS `medal_types`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
@@ -927,7 +927,7 @@ CREATE TABLE `meeting_entries` (
   KEY `idx_meeting_entries_team_affiliation` (`team_affiliation_id`),
   KEY `idx_meeting_entries_badge` (`badge_id`),
   KEY `idx_meeting_entries_entry_time_type` (`entry_time_type_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=12742 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=32204 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 DROP TABLE IF EXISTS `meeting_event_reservations`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
@@ -959,7 +959,7 @@ CREATE TABLE `meeting_event_reservations` (
   CONSTRAINT `fk_rails_6cc7a28bdd` FOREIGN KEY (`meeting_id`) REFERENCES `meetings` (`id`),
   CONSTRAINT `fk_rails_e8541cd824` FOREIGN KEY (`meeting_event_id`) REFERENCES `meeting_events` (`id`),
   CONSTRAINT `fk_rails_f9b61694b4` FOREIGN KEY (`team_id`) REFERENCES `teams` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=19638 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=34393 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 DROP TABLE IF EXISTS `meeting_events`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
@@ -983,7 +983,7 @@ CREATE TABLE `meeting_events` (
   KEY `fk_meeting_events_meeting_sessions` (`meeting_session_id`),
   KEY `fk_meeting_events_event_types` (`event_type_id`),
   KEY `fk_meeting_events_heat_types` (`heat_type_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=20132 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=163891 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 DROP TABLE IF EXISTS `meeting_individual_results`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
@@ -1025,7 +1025,7 @@ CREATE TABLE `meeting_individual_results` (
   KEY `index_meeting_individual_results_on_disqualified` (`disqualified`),
   KEY `index_meeting_individual_results_on_personal_best` (`personal_best`),
   KEY `index_meeting_individual_results_on_season_type_best` (`season_type_best`)
-) ENGINE=InnoDB AUTO_INCREMENT=844156 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=879293 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 DROP TABLE IF EXISTS `meeting_programs`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
@@ -1051,7 +1051,7 @@ CREATE TABLE `meeting_programs` (
   KEY `fk_meeting_programs_meeting_events` (`meeting_event_id`),
   KEY `fk_meeting_programs_pool_types` (`pool_type_id`),
   KEY `fk_meeting_programs_time_standards` (`standard_timing_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=164438 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=344908 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 DROP TABLE IF EXISTS `meeting_relay_reservations`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
@@ -1081,7 +1081,7 @@ CREATE TABLE `meeting_relay_reservations` (
   CONSTRAINT `fk_rails_a15976fb75` FOREIGN KEY (`badge_id`) REFERENCES `badges` (`id`),
   CONSTRAINT `fk_rails_adf945379a` FOREIGN KEY (`swimmer_id`) REFERENCES `swimmers` (`id`),
   CONSTRAINT `fk_rails_bd2a0aa40d` FOREIGN KEY (`meeting_event_id`) REFERENCES `meeting_events` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=2668 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=9451 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 DROP TABLE IF EXISTS `meeting_relay_results`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
@@ -1116,7 +1116,7 @@ CREATE TABLE `meeting_relay_results` (
   KEY `fk_meeting_relay_results_team_affiliations` (`team_affiliation_id`),
   KEY `fk_meeting_relay_results_entry_time_types` (`entry_time_type_id`),
   KEY `idx_mrr_disqualification_code_type` (`disqualification_code_type_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=38000 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=64905 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 DROP TABLE IF EXISTS `meeting_relay_swimmers`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
@@ -1141,7 +1141,7 @@ CREATE TABLE `meeting_relay_swimmers` (
   KEY `fk_meeting_relay_swimmers_stroke_types` (`stroke_type_id`),
   KEY `relay_order` (`relay_order`),
   KEY `fk_meeting_relay_swimmers_meeting_relay_results` (`meeting_relay_result_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=2330 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=27444 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 DROP TABLE IF EXISTS `meeting_reservations`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
@@ -1172,7 +1172,7 @@ CREATE TABLE `meeting_reservations` (
   CONSTRAINT `fk_rails_449dc9078e` FOREIGN KEY (`badge_id`) REFERENCES `badges` (`id`),
   CONSTRAINT `fk_rails_54be3a08b1` FOREIGN KEY (`swimmer_id`) REFERENCES `swimmers` (`id`),
   CONSTRAINT `fk_rails_bc62b0fc13` FOREIGN KEY (`meeting_id`) REFERENCES `meetings` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=3176 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=22029 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 DROP TABLE IF EXISTS `meeting_sessions`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
@@ -1197,7 +1197,7 @@ CREATE TABLE `meeting_sessions` (
   KEY `fk_meeting_sessions_meetings` (`meeting_id`),
   KEY `fk_meeting_sessions_swimming_pools` (`swimming_pool_id`),
   KEY `fk_meeting_sessions_day_part_types` (`day_part_type_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=3315 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=137256 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 DROP TABLE IF EXISTS `meeting_team_scores`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
@@ -1226,7 +1226,7 @@ CREATE TABLE `meeting_team_scores` (
   KEY `fk_meeting_team_scores_teams` (`team_id`),
   KEY `fk_meeting_team_scores_seasons` (`season_id`),
   KEY `fk_meeting_team_scores_team_affiliations` (`team_affiliation_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=36228 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=40945 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 DROP TABLE IF EXISTS `meetings`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
@@ -1287,7 +1287,7 @@ CREATE TABLE `meetings` (
   KEY `fk_meetings_score_meeting_score_computation_types` (`meeting_score_computation_type_id`),
   KEY `index_meetings_on_home_team_id` (`home_team_id`),
   FULLTEXT KEY `meeting_name` (`description`,`code`)
-) ENGINE=InnoDB AUTO_INCREMENT=19320 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=190178 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 DROP TABLE IF EXISTS `movement_scope_types`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
@@ -1483,7 +1483,7 @@ CREATE TABLE `season_personal_standards` (
   UNIQUE KEY `idx_season_personal_standards_season_swimmer_event_pool` (`season_id`,`swimmer_id`,`pool_type_id`,`event_type_id`),
   KEY `idx_season_personal_standards_season_id` (`season_id`),
   KEY `idx_season_personal_standards_swimmer_id` (`swimmer_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=16279 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=18357 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 DROP TABLE IF EXISTS `season_types`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
@@ -1500,7 +1500,7 @@ CREATE TABLE `season_types` (
   PRIMARY KEY (`id`),
   UNIQUE KEY `index_season_types_on_code` (`code`),
   KEY `fk_season_types_federation_types` (`federation_type_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=9 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=39 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 DROP TABLE IF EXISTS `seasons`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
@@ -1526,7 +1526,7 @@ CREATE TABLE `seasons` (
   KEY `fk_seasons_season_types` (`season_type_id`),
   KEY `fk_seasons_edition_types` (`edition_type_id`),
   KEY `fk_seasons_timing_types` (`timing_type_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=226 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=397263 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 DROP TABLE IF EXISTS `sessions`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
@@ -1556,7 +1556,7 @@ CREATE TABLE `settings` (
   PRIMARY KEY (`id`),
   UNIQUE KEY `index_settings_on_target_type_and_target_id_and_var` (`target_type`,`target_id`,`var`),
   KEY `index_settings_on_target_type_and_target_id` (`target_type`,`target_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB AUTO_INCREMENT=87 DEFAULT CHARSET=utf8mb4;
 /*!40101 SET character_set_client = @saved_cs_client */;
 DROP TABLE IF EXISTS `shower_types`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
@@ -1611,7 +1611,7 @@ CREATE TABLE `standard_timings` (
   KEY `fk_time_standards_pool_types` (`pool_type_id`),
   KEY `fk_time_standards_event_types` (`event_type_id`),
   KEY `fk_time_standards_category_types` (`category_type_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=16510 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=20025 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 DROP TABLE IF EXISTS `stroke_types`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
@@ -1638,8 +1638,9 @@ CREATE TABLE `swimmer_aliases` (
   `updated_at` datetime DEFAULT NULL,
   `complete_name` varchar(100) DEFAULT NULL,
   `swimmer_id` int(11) DEFAULT NULL,
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=1657 DEFAULT CHARSET=utf8;
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `idx_swimmer_id_complete_name` (`swimmer_id`,`complete_name`)
+) ENGINE=InnoDB AUTO_INCREMENT=1702 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 DROP TABLE IF EXISTS `swimmer_level_types`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
@@ -1710,7 +1711,7 @@ CREATE TABLE `swimmers` (
   FULLTEXT KEY `swimmer_first_name` (`first_name`),
   FULLTEXT KEY `swimmer_last_name` (`last_name`),
   FULLTEXT KEY `swimmer_complete_name` (`complete_name`)
-) ENGINE=InnoDB AUTO_INCREMENT=40725 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=230886 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 DROP TABLE IF EXISTS `swimming_pool_reviews`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
@@ -1773,7 +1774,7 @@ CREATE TABLE `swimming_pools` (
   KEY `fk_swimming_pools_hair_dryer_types` (`hair_dryer_type_id`),
   KEY `fk_swimming_pools_locker_cabinet_types` (`locker_cabinet_type_id`),
   FULLTEXT KEY `swimming_pool_name` (`name`,`nick_name`)
-) ENGINE=InnoDB AUTO_INCREMENT=241 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=157325 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 DROP TABLE IF EXISTS `taggings`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
@@ -1830,7 +1831,7 @@ CREATE TABLE `team_affiliations` (
   KEY `fk_team_affiliations_teams` (`team_id`),
   KEY `index_team_affiliations_on_number` (`number`),
   FULLTEXT KEY `team_affiliation_name` (`name`)
-) ENGINE=InnoDB AUTO_INCREMENT=5859 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=197916 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 DROP TABLE IF EXISTS `team_aliases`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
@@ -1844,7 +1845,7 @@ CREATE TABLE `team_aliases` (
   `team_id` int(11) DEFAULT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `idx_team_id_name` (`team_id`,`name`)
-) ENGINE=InnoDB AUTO_INCREMENT=1449 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=1503 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 DROP TABLE IF EXISTS `team_lap_templates`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
@@ -1870,7 +1871,7 @@ CREATE TABLE `team_lap_templates` (
   KEY `idx_team_passage_templates_event_type` (`event_type_id`),
   KEY `idx_team_passage_templates_pool_type` (`pool_type_id`),
   KEY `index_team_lap_templates_on_length_in_meters` (`length_in_meters`)
-) ENGINE=InnoDB AUTO_INCREMENT=209 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=2099 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 DROP TABLE IF EXISTS `teams`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
@@ -1898,7 +1899,7 @@ CREATE TABLE `teams` (
   KEY `index_teams_on_editable_name` (`editable_name`),
   KEY `fk_teams_cities` (`city_id`),
   FULLTEXT KEY `team_name` (`name`,`editable_name`,`name_variations`)
-) ENGINE=InnoDB AUTO_INCREMENT=1327 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=231192 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 DROP TABLE IF EXISTS `timing_types`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
@@ -2029,7 +2030,7 @@ CREATE TABLE `user_laps` (
   KEY `index_user_laps_on_swimmer_id` (`swimmer_id`),
   CONSTRAINT `fk_rails_3a8ef09ce9` FOREIGN KEY (`user_result_id`) REFERENCES `user_results` (`id`),
   CONSTRAINT `fk_rails_51835bd9c8` FOREIGN KEY (`swimmer_id`) REFERENCES `swimmers` (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB AUTO_INCREMENT=11685 DEFAULT CHARSET=utf8mb4;
 /*!40101 SET character_set_client = @saved_cs_client */;
 DROP TABLE IF EXISTS `user_results`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
@@ -2070,7 +2071,7 @@ CREATE TABLE `user_results` (
   KEY `index_user_results_on_standard_timing_id` (`standard_timing_id`),
   CONSTRAINT `fk_rails_6ac8587baa` FOREIGN KEY (`user_workshop_id`) REFERENCES `user_workshops` (`id`),
   CONSTRAINT `fk_rails_e406f4db18` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=17700 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 DROP TABLE IF EXISTS `user_swimmer_confirmations`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
@@ -2201,7 +2202,7 @@ CREATE TABLE `user_workshops` (
   CONSTRAINT `fk_rails_68db6bc5bc` FOREIGN KEY (`edition_type_id`) REFERENCES `edition_types` (`id`),
   CONSTRAINT `fk_rails_aa39033a10` FOREIGN KEY (`team_id`) REFERENCES `teams` (`id`),
   CONSTRAINT `fk_rails_ebe7a00465` FOREIGN KEY (`timing_type_id`) REFERENCES `timing_types` (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB AUTO_INCREMENT=23274 DEFAULT CHARSET=utf8mb4;
 /*!40101 SET character_set_client = @saved_cs_client */;
 DROP TABLE IF EXISTS `users`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
@@ -2253,7 +2254,7 @@ CREATE TABLE `users` (
   KEY `idx_users_swimmer` (`swimmer_id`),
   KEY `idx_users_swimmer_level_type` (`swimmer_level_type_id`),
   KEY `idx_users_coach_level_type` (`coach_level_type_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=750 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=284607 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 DROP TABLE IF EXISTS `votes`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
@@ -2666,6 +2667,7 @@ INSERT INTO `schema_migrations` (version) VALUES
 ('20210302125701'),
 ('20210302170844'),
 ('20210315110522'),
+('20210429155847'),
 ('20210513113601'),
 ('20210513155157'),
 ('20210513170020'),
@@ -2701,6 +2703,7 @@ INSERT INTO `schema_migrations` (version) VALUES
 ('20220801132800'),
 ('20220808114135'),
 ('20220808120347'),
-('20220808140700');
+('20220808140700'),
+('20220823131256');
 
 
