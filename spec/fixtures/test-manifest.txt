@@ -1,0 +1,7 @@
+TEST Manifest for any Calendar row that may have an attached file
+
+Imagine a list of valid events here:
+1. 100 FS
+2. 50 BF
+3. 100 MX
+4. 200 BS

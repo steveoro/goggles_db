@@ -53,10 +53,7 @@ module GogglesDb
       describe '#manifest_file_contents' do
         subject { fixture_row.manifest_file_contents }
 
-        let(:fixture_row) { FactoryBot.create(:calendar_with_manifest_file) }
-
-        # After each test, make sure the attachments are removed (see above factory def):
-        after { fixture_row.manifest_file.purge }
+        let(:fixture_row) { FactoryBot.create(:calendar_with_static_manifest_file) }
 
         it 'returns the string file contents' do
           expect(subject).to start_with('TEST Manifest for ')

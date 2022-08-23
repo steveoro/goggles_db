@@ -8,13 +8,14 @@
 !/log/.keep
 !/tmp/.keep
 spec/dummy/log/*.log
-spec/dummy/tmp/
+/spec/dummy/tmp/*
+/spec/dummy/tmp/storage/.keep
 
 # Ignore uploaded files in development
 /storage/*
 !/storage/.keep
 pkg/
-spec/dummy/storage/
+spec/dummy/storage/*
 spec/dummy/db/dump/*.sql
 spec/dummy/db/dump/*.bz2
 /public/assets
