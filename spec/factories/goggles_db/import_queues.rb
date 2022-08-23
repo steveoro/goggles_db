@@ -18,8 +18,8 @@ FactoryBot.define do
     #++
 
     # == Note: this factory will generate a random data file that needs to be purged
-    #          manually afterwards.
-    factory :import_queue_with_data_file do
+    #          manually afterwards with something like: "fixture_row.data_file.purge"
+    factory :import_queue_with_dynamic_data_file do
       batch_sql { true }
 
       # Attach a random SQL file as instance's #data_file:
@@ -32,6 +32,18 @@ FactoryBot.define do
           io: File.open(file_path),
           filename: File.basename(file_path),
           content_type: 'application/sql'
+        )
+      end
+    end
+
+    # == Note: DO NOT PURGE the static fixture file used here
+    factory :import_queue_with_static_data_file do
+      # Attach a sample text file as instance's #data_file:
+      after(:create) do |saved_instance|
+        file_path = GogglesDb::Engine.root.join('spec', 'fixtures', 'test-script.sql')
+        saved_instance.data_file.attach(
+          io: File.open(file_path),
+          filename: File.basename(file_path)
         )
       end
     end

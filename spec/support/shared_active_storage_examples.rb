@@ -7,6 +7,12 @@ require 'rails_helper'
 # - attach_msg...: member/helper name for the attach object
 # => creates & purges the temp file '<Rails.root/>tmp/storage/test.sql'
 shared_examples_for 'active storage field with local file' do |attach_msg|
+  # Remove all temp data folders and data.
+  # During tests, objects are wrapped in a transaction so destroy is never called upon them and their
+  # corresponding data folder for the blobs stays there even after purging the attachable itself.
+  # See: https://guides.rubyonrails.org/v6.0/active_storage_overview.html#discarding-files-stored-during-integration-tests
+  after { FileUtils.rm_rf(Rails.root.join('tmp/storage')) }
+
   it 'allows a storage file to be attached and managed' do
     attachable = subject.send(attach_msg)
     # Verify basic interface coherence:
@@ -18,7 +24,7 @@ shared_examples_for 'active storage field with local file' do |attach_msg|
 
     it "can be accessed via the ##{attach_msg} member and disposed with #purge" do
       # Create the local temp storage file:
-      file_path = Rails.root.join('tmp/storage/test.sql')
+      file_path = Rails.root.join('tmp/test.sql')
       File.open(file_path, 'w') { |f| f.write(text_contents) }
 
       # Attach the file to the attachable:

@@ -48,7 +48,7 @@ module GogglesDb
     after { described_class.with_batch_sql.each { |row| row.data_file.purge } }
 
     let(:minimum_domain) do
-      FactoryBot.create_list(:import_queue_with_data_file, 3)
+      FactoryBot.create_list(:import_queue_with_static_data_file, 3)
       FactoryBot.create_list(:import_queue_existing_swimmer, 3, uid: 'FAKE-1')
       FactoryBot.create_list(:import_queue_existing_team, 3, process_runs: 1)
       FactoryBot.create_list(:import_queue_existing_team, 2, process_runs: 1, done: true)
@@ -116,10 +116,7 @@ module GogglesDb
     describe '#data_file_contents' do
       subject { fixture_row.data_file_contents }
 
-      let(:fixture_row) { FactoryBot.create(:import_queue_with_data_file) }
-
-      # After each test, make sure the attachments are removed:
-      after { described_class.with_batch_sql.each { |row| row.data_file.purge } }
+      let(:fixture_row) { FactoryBot.create(:import_queue_with_static_data_file) }
 
       it 'returns the string file contents' do
         # (See spec/factories/goggles_db/import_queues.rb:22)
