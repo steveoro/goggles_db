@@ -117,7 +117,7 @@ shared_examples_for 'AbstractMeeting #name_without_edition' do |factory_name_sym
       subject do
         FactoryBot.build(
           factory_name_sym,
-          edition_type: GogglesDb::EditionType.send(%i[yearly seasonal].sample)
+          edition_type: GogglesDb::EditionType.send(%i[roman yearly seasonal].sample)
         )
       end
 

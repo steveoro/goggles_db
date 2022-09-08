@@ -7,7 +7,7 @@ module GogglesDb
     #
     # = CodedName
     #
-    #   - version:  7-0.4.01
+    #   - version:  7-0.4.06
     #   - author:   Steve A.
     #   - build:    20220823
     #
@@ -65,7 +65,7 @@ module GogglesDb
         case description.to_s
         # CSI-only:
         when /^([IXVLMCD]+|\d{1,2}[°^oa]?|fin.+)\s(prova\s)?(fin.+)?(camp.+\s)?(reg.+\s)?csi\b/ui
-          edition, _name = edition_split_from(description)
+          edition, _name, _type_id = edition_split_from(description)
           edition.positive? && (description =~ /\bfin.+\s/ui).nil? ? "csiprova#{edition}" : 'csifinale'
 
         when /dist(anze|\.)?\s+spec(iali|\.)?/i
@@ -176,53 +176,70 @@ module GogglesDb
       #-- -----------------------------------------------------------------------
       #++
 
-      # Regexp used to discriminate between any edition number included inside any Meeting descriptions
-      REGEXP_EDITION = /(^[IXVLMCD]+[°^oa]?\W)|(^\d{1,2}[°^oa]?\W)/ui.freeze unless defined?(REGEXP_EDITION)
+      # Discriminates between any edition number OR year included inside any Meeting description
+      unless defined?(REGEXP_EDITION_OR_YEAR)
+        REGEXP_EDITION_OR_YEAR = /(?<roman>^[IXVLMCD]+[°^oa]?\W)|(?<arabic>^\d{1,2}[°^oa]?\W)|(?<year>\b\d{2}\b|\b\d{4}\b)/ui.freeze
+      end
 
-      # Regexp used to discriminate between any edition number OR year included inside any Meeting descriptions
-      REGEXP_EDITION_OR_YEAR = /(^[IXVLMCD]+[°^oa]?\W)|(^\d{1,2}[°^oa]?\W)|(\b\d{2}\b|\b\d{4}\b)/ui.freeze unless defined?(REGEXP_EDITION_OR_YEAR)
+      # Matches any yearly-type of description ("CAMPIONATO REGIONALE ...", "DISTANZE SPECIALI ...", YYYY may be/not missing from name)
+      unless defined?(REGEXP_YEARLY_DESC)
+        REGEXP_YEARLY_DESC = /(((?<!Prova\W|Meeting\W)Camp.+\W(Reg.+\W)?)|(distanze\sspec)|italiani|mondiali|europei|\s\d{4}$)/ui.freeze
+      end
+
+      # Matches any seasonal-type of description ("2a PROVA REGIONALE ..." or "II PROVA REGIONALE ...")
+      unless defined?(REGEXP_SEASONAL_DESC)
+        REGEXP_SEASONAL_DESC = /(prova\W(camp.+\W)?(reg.+\W)?|meeting\W(camp.+\W)?(reg.+\W)|final.\W(camp.+\W)?(reg.+\W)?)/ui.freeze
+      end
 
       # Tries to extract (or parse) the value of an edition number from a meeting descripion.
       # Assumes the edition is in the front part of the description.
       #
       # == Examples:
-      # - "15^ Trofeo Regionale CSI" => [15, "Trofeo Regionale CSI"]
-      # - "XII Trofeo Vattelapesca" => [12, "Trofeo Vattelapesca"]
-      # - "Trofeo Gianni Pinotto 2021" => [2021, "Trofeo Gianni Pinotto"]
-      # - "VI Meeting Generico 2021" => [6, "Meeting Generico"]
+      # - "15^ Trofeo Regionale CSI"   => [15, "Trofeo Regionale CSI", EditionType::ORDINAL_ID]
+      # - "XII Trofeo Vattelapesca"    => [12, "Trofeo Vattelapesca", EditionType::ROMAN_ID]
+      # - "Trofeo Gianni Pinotto 2021" => [2021, "Trofeo Gianni Pinotto", EditionType::YEARLY_ID]
+      # - "VI Meeting Generico 2021"   => [6, "Meeting Generico", EditionType::ROMAN_ID]
+      #
+      # The last example shows how "roman" has precedence over the "yearly" type format.
       #
       # == Params
       # - <tt>meeting_description</tt> => any Meeting#description which, allegedly, contains an edition number
       #   to be extracted.
       #
       # == Returns
-      # A couple of results; in order:
+      # An Array of results; in order:
       #
-      # 1. the integer edition or year number (converted if it's from a Roman number);
-      #    returns an unparsed edition only when the whole description is just an edition number;
+      # 1. integer edition or year number (converted if it's from a Roman number); 0 otherwise;
       #
-      # 2. the remainder part of the description, stripped of the edition or year number.
-      #    returns an empty string only when the whole description is just an edition number.
+      # 2. remainder part of the description, stripped of the edition or year number;
+      #    it should never return an empty string (unless the whole description is just an edition number).
+      #
+      # 3. EditionType ID, if any.
       #
       # rubocop:disable Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
       def self.edition_split_from(meeting_description)
-        return [0, meeting_description] unless meeting_description =~ REGEXP_EDITION_OR_YEAR
+        edition_type_id = GogglesDb::EditionType::NONE_ID
+        # Return the default unless there's any match:
+        return [0, meeting_description, edition_type_id] unless (meeting_description =~ REGEXP_EDITION_OR_YEAR) ||
+                                                                (meeting_description =~ REGEXP_YEARLY_DESC) ||
+                                                                (meeting_description =~ REGEXP_SEASONAL_DESC)
 
-        tokens = meeting_description.to_s.split(REGEXP_EDITION_OR_YEAR).reject(&:blank?)
-        if tokens.instance_of?(Array) && tokens.length > 1
-          # Make sure the first result token is always the edition number (priority 1);
-          # use the year number at the end only if there's no edition at the beginning (priority 2):
-          tokens.reverse! if (tokens.first =~ REGEXP_EDITION).nil? &&
-                             (tokens.last =~ REGEXP_EDITION_OR_YEAR).present?
+        # Match edition number, in any format:
+        match_data = REGEXP_EDITION_OR_YEAR.match(meeting_description)
+        groups = match_data&.named_captures || {}
+        edition = groups['roman'] || groups['arabic'] || groups['year']
+        # Decide which edition type:
+        edition_type_id = GogglesDb::EditionType::ROMAN_ID if groups['roman'].present?
+        edition_type_id = GogglesDb::EditionType::ORDINAL_ID if groups['arabic'].present?
+        edition_type_id = GogglesDb::EditionType::YEARLY_ID if groups['year'].present? ||
+                                                               (edition_type_id == GogglesDb::EditionType::NONE_ID && meeting_description =~ REGEXP_YEARLY_DESC)
+        edition_type_id = GogglesDb::EditionType::SEASONAL_ID if meeting_description =~ REGEXP_SEASONAL_DESC
 
-          reg = Regexp.new(/(^[IXVLMCD]+)[°^oa]?\W/ui)
-          edition = tokens.first.match(reg)&.captures&.first
-          edition = edition.blank? ? tokens.first.to_i : Integer.from_roman(edition)
-          [edition, tokens.last.strip]
-        else
-          # 1 token only when the description is just an edition number or a year
-          [tokens.first, '']
-        end
+        # Strip the name of the edition and ignore the rest, giving higher priority to the first found part:
+        name = meeting_description.to_s.split(edition)&.reject(&:blank?)&.first
+        edition = groups['roman'].present? ? Integer.from_roman(edition) : edition.to_i
+
+        [edition, name.strip, edition_type_id]
       end
       # rubocop:enable Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
       #-- -----------------------------------------------------------------------
