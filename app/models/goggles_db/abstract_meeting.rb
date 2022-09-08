@@ -44,7 +44,7 @@ module GogglesDb
     def edition_label
       return "#{edition}°" if edition_type.ordinal?
       return edition.to_i.to_roman if edition_type.roman?
-      return header_year if edition_type.seasonal? || edition_type.yearly?
+      return header_year.to_s.split('/')&.first if edition_type.seasonal? || edition_type.yearly?
 
       ''
     end
