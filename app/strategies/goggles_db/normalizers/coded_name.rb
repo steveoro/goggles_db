@@ -83,8 +83,8 @@ module GogglesDb
           norm_city = normalize(city_name).gsub(/\W/iu, '')
           norm_title = normalize(description).gsub(/\W/iu, '')
           # Avoid the repetition of the name in the coded result:
-          if norm_city == norm_title
-            norm_city
+          if norm_title.start_with?(norm_city) || norm_title.end_with?(norm_city)
+            norm_title
           else
             "#{norm_city}#{norm_title}"
           end
@@ -236,7 +236,7 @@ module GogglesDb
         edition_type_id = GogglesDb::EditionType::SEASONAL_ID if meeting_description =~ REGEXP_SEASONAL_DESC
 
         # Strip the name of the edition and ignore the rest, giving higher priority to the first found part:
-        name = meeting_description.to_s.split(edition)&.reject(&:blank?)&.first
+        name = meeting_description.to_s.split(edition)&.reject(&:blank?)&.join
         edition = groups['roman'].present? ? Integer.from_roman(edition) : edition.to_i
 
         [edition, name.strip, edition_type_id]
