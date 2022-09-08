@@ -53,78 +53,107 @@ module GogglesDb
 
     describe 'self.edition_split_from()' do
       context 'when parsing a description without any edition number,' do
-        let(:descriptions) do
-          [
-            'Meeting Vattelapesca',
-            'Campionato Regionale della Pallacorda',
-            'Memorial Paolo Rompiglioni',
-            'Finale di Mio Zio'
-          ]
-        end
+        # base default: "None", but precedence may vary
+        [
+          ['Meeting Vattelapesca', 0, GogglesDb::EditionType::NONE_ID],
+          ['Campionato Regionale della Pallacorda', 0, GogglesDb::EditionType::YEARLY_ID],
+          ['Memorial Paolo Rompiglioni', 0, GogglesDb::EditionType::NONE_ID],
+          ['Meeting di Mio Zio', 0, GogglesDb::EditionType::NONE_ID]
+        ].each do |description, expected_edition, expected_type_id|
+          describe "self.edition_split_from('#{description}')" do
+            let(:results) { described_class.edition_split_from(description) }
 
-        it 'returns the correct (0) edition number as first result item and the whole description as second' do
-          descriptions.each do |description|
-            result, split_desc = described_class.edition_split_from(description)
-            expect(result).to be_zero
-            expect(split_desc).to be_a(String)
-            expect(split_desc).to be_present
-            expect(description).to eq(split_desc)
+            it 'returns the expected edition number' do
+              expect(results.first).to eq(expected_edition)
+            end
+
+            it 'returns a non-empty description' do
+              expect(results.second).to be_present
+            end
+
+            it 'returns the description stripped of its edition number (if present)' do
+              expect(results.second).not_to include(expected_edition.to_s)
+            end
+
+            it 'returns the expected edition type ID' do
+              expect(results.third).to eq(expected_type_id)
+            end
           end
         end
       end
 
       context 'when parsing a description that includes an yearly edition number at the end,' do
-        let(:descriptions) do
-          [
-            'Meeting Vattelapesca 2019',
-            'Campionato Regionale della Pallacorda 2020',
-            'Memorial Paolo Rompiglioni 2021',
-            'Finale di Mio Zio 2022'
-          ]
-        end
+        [
+          ['Meeting Vattelapesca 2019', 2019, GogglesDb::EditionType::YEARLY_ID],
+          ['Campionato Regionale della Pallacorda 2020', 2020, GogglesDb::EditionType::YEARLY_ID],
+          ['Memorial Paolo Rompiglioni 2021', 2021, GogglesDb::EditionType::YEARLY_ID],
+          ['Meeting di Mio Zio 2022', 2022, GogglesDb::EditionType::YEARLY_ID]
+        ].each do |description, expected_edition, expected_type_id|
+          describe "self.edition_split_from('#{description}')" do
+            let(:results) { described_class.edition_split_from(description) }
 
-        it 'returns the correct edition number as first result item and the whole description as second' do
-          descriptions.each_with_index do |description, index|
-            result, split_desc = described_class.edition_split_from(description)
-            expect(result).to eq(2019 + index)
-            expect(split_desc).to be_a(String)
-            expect(split_desc).to be_present
-            expect(description).to include(split_desc)
+            it 'returns the expected edition number' do
+              expect(results.first).to eq(expected_edition)
+            end
+
+            it 'returns a non-empty description' do
+              expect(results.second).to be_present
+            end
+
+            it 'returns the description stripped of its edition number (if present)' do
+              expect(results.second).not_to include(expected_edition.to_s)
+            end
+
+            it 'returns the expected edition type ID' do
+              expect(results.third).to eq(expected_type_id)
+            end
           end
         end
       end
 
-      context 'when parsing a description that includes an edition number (either Roman or ordinal),' do
-        let(:descriptions) do
-          [
-            # Roman
-            'Ia Prova Camp. Regionale CSI',
-            'IIo Meeting della Polenta',
-            'III Campionato del Rutto Atomico',
-            'IV Meeting della Stanchezza 2010',
-            'Va Finale di ChiNonSaScrivereINumeriRomani',
-            'VI Memorial dei miei Scatoloni',
-            'VII° Campionato MaAncheNo',
-            'VIII Meeting SiamoPazzi 2002', # NOTE: IIX won't be correctly parsed as "8" but as "2"
+      context 'when parsing a description that includes an edition number,' do
+        # Test also various precedence variations:
+        [
+          # base default: Roman, but precedence may vary
+          ['Ia Prova Camp. Regionale CSI', 1, GogglesDb::EditionType::SEASONAL_ID],
+          ['IIo Meeting della Polenta', 2, GogglesDb::EditionType::ROMAN_ID],
+          ['III Campionato del Rutto Atomico', 3, GogglesDb::EditionType::ROMAN_ID],
+          ['IV Meeting della Stanchezza 2010', 4, GogglesDb::EditionType::ROMAN_ID],
+          ['Va Finale di ChiNonSaScrivereINumeriRomani', 5, GogglesDb::EditionType::SEASONAL_ID],
+          ['VI Memorial dei miei Scatoloni', 6, GogglesDb::EditionType::ROMAN_ID],
+          ['VII° Campionato MaAncheNo', 7, GogglesDb::EditionType::ROMAN_ID],
+          ['VIII Meeting SiamoPazzi 2002', 8, GogglesDb::EditionType::ROMAN_ID],
+          # NOTE: IIX won't be correctly parsed as "8" but as "2"
 
-            # Ordinal
-            '9a Prova Camp. Regionale CSI',
-            '10° Finale Regionale CSI 2018-2019',
-            '11^ Campionato del Rutto Atomico',
-            '12o Meeting della Variabilità',
-            '13 Meeting della Stanchezza 1997',
-            '14a Gara Mondiale Nata nel 2003',
-            '15° Finale Regionale della Polenta 2022'
-          ]
-        end
+          # base default: Ordinal, but precedence may vary
+          ['9a Prova Camp. Regionale CSI', 9, GogglesDb::EditionType::SEASONAL_ID],
+          ['10° Finale Regionale CSI 2018-2019', 10, GogglesDb::EditionType::SEASONAL_ID],
+          ['11^ Campionato del Rutto Atomico', 11, GogglesDb::EditionType::ORDINAL_ID],
+          ['12o Meeting della Variabilità', 12, GogglesDb::EditionType::ORDINAL_ID],
+          ['13 Meeting della Stanchezza 1997', 13, GogglesDb::EditionType::ORDINAL_ID],
+          ['14a Gara Mondiale Nata nel 2003', 14, GogglesDb::EditionType::ORDINAL_ID],
+          ['15° Finale Regionale della Polenta 2022', 15, GogglesDb::EditionType::SEASONAL_ID]
+        ].each do |description, expected_edition, expected_type_id|
+          describe "self.edition_split_from('#{description}')" do
+            let(:results) { described_class.edition_split_from(description) }
 
-        it 'returns the correct edition number as first result item and part of the description as second' do
-          descriptions.each_with_index do |description, index|
-            result, split_desc = described_class.edition_split_from(description)
-            expect(result).to eq(index + 1)
-            expect(split_desc).to be_a(String)
-            expect(split_desc).to be_present
-            expect(description).to include(split_desc)
+            it 'returns the expected edition number' do
+              expect(results.first).to eq(expected_edition)
+            end
+
+            it 'returns a non-empty description' do
+              expect(results.second).to be_present
+            end
+
+            it 'returns the description stripped of its edition number (if present)' do
+              # Let's use the fixture format above as a shortcut here by assuming it always has the edition up front:
+              edition_string = description.split.first
+              expect(results.second).not_to include(edition_string)
+            end
+
+            it 'returns the expected edition type ID' do
+              expect(results.third).to eq(expected_type_id)
+            end
           end
         end
       end

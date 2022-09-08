@@ -59,18 +59,8 @@ module GogglesDb
     # the Meeting name as a +String+, stripped of any edition label.
     #
     def name_without_edition(meeting_name = description)
-      tokens = if edition_label.present? && meeting_name.starts_with?(/#{edition_label}\s|#{edition}°/)
-                 condensed_name(meeting_name).split(/#{edition_label}\s|#{edition}°/)
-               elsif meeting_name.starts_with?(/#{edition}°/)
-                 condensed_name(meeting_name).split(/#{edition}°/)
-               else
-                 [condensed_name(meeting_name)]
-               end
-      tokens.reject(&:empty?)
-            .last.strip
-            .split(/(#{header_year})/)
-            .reject(&:empty?)
-            .first.strip
+      _edition, result, _edition_type_id = GogglesDb::Normalizers::CodedName.edition_split_from(meeting_name)
+      result
     end
 
     # Meeting name prefixed or appended with proper edition label, depending on edition type.
