@@ -236,7 +236,7 @@ module GogglesDb
         edition_type_id = GogglesDb::EditionType::SEASONAL_ID if meeting_description =~ REGEXP_SEASONAL_DESC
 
         # Strip the name of the edition and ignore the rest, giving higher priority to the first found part:
-        name = meeting_description.to_s.split(edition)&.reject(&:blank?)&.join
+        name = edition.blank? ? meeting_description : meeting_description.to_s.split(edition)&.reject(&:blank?)&.join
         edition = groups['roman'].present? ? Integer.from_roman(edition) : edition.to_i
 
         [edition, name.strip, edition_type_id]
