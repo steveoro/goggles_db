@@ -4,7 +4,8 @@ require 'goggles_db'
 
 namespace :normalize do
   desc <<~DESC
-      Normalizes all coded names (Meeting#code & SwimmingPool#nick_name) using the Normalizer helpers
+      Normalizes all coded names (Meeting#code & SwimmingPool#nick_name) using the Normalizer helpers.
+      For Meetings, this will try to detect & update also the edition using the normalizer.
 
     Options: [simulate=1|<0>]
              [limit=N|<0>]
@@ -19,7 +20,7 @@ namespace :normalize do
   task coded_names: :environment do
     simulate = ENV.include?('simulate') ? ENV['simulate'].to_i.positive? : false
     limit_rows = ENV.include?('limit') ? ENV['limit'].to_i : 0
-    puts "\r\n*** Normalize coded names ***"
+    puts "\r\n*** Normalize coded names (and editions) ***"
     puts '==> SIMULATE MODE ON' if simulate
 
     puts "\r\n==> Processing Meetings (tot. #{GogglesDb::Meeting.count})"
@@ -27,11 +28,32 @@ namespace :normalize do
     domain.includes(meeting_sessions: { swimming_pool: %i[city pool_type] }).each do |meeting|
       city = meeting.swimming_pools&.first&.city&.name
       std_code = GogglesDb::Normalizers::CodedName.for_meeting(meeting.description, city)
+      edition, _name_no_edition, edition_type_id = GogglesDb::Normalizers::CodedName.edition_split_from(meeting.description)
+      # Ignore peculiar case:
+      edition = meeting.edition if meeting.description.starts_with?(/#{edition} giorn+/i) # Ignore "NN Giorn(i|ate)" which isn't an edition number
+
+      # Check if edition_type should be fixed for certain Federation Championships (which have recurring meetings only from year to year):
+      if [GogglesDb::FederationType::FIN_ID, GogglesDb::FederationType::LEN_ID,
+          GogglesDb::FederationType::FINA_ID].include?(meeting.federation_type.id) &&
+         meeting.edition_type_id != edition_type_id &&
+         meeting.edition_type_id == GogglesDb::EditionType::NONE_ID
+        $stdout.write("\033[1;33;34m*\033[0m")
+        puts " ID #{meeting.id}, edition_type: #{meeting.edition_type_id} => #{edition_type_id}"
+        meeting.update!(edition_type_id: edition_type_id) unless simulate
+      end
+
+      # Check if edition number should be fixed:
+      if edition != meeting.edition && edition.positive?
+        $stdout.write("\033[1;33;34m*\033[0m")
+        puts " ID #{meeting.id}, edition: #{meeting.edition} => #{edition} (#{meeting.description} " \
+             "- #{meeting.edition_type.code})"
+        meeting.update!(edition: edition) unless simulate
+      end
       next unless std_code != meeting.code
 
+      # Update the code:
       $stdout.write("\033[1;33;34m*\033[0m")
-      # DEBUG
-      puts " #{meeting.code} => #{std_code}\r\n"
+      puts " ID #{meeting.id}, code: #{meeting.code} => #{std_code}"
       meeting.update!(code: std_code) unless simulate
     end
 
@@ -50,8 +72,7 @@ namespace :normalize do
         $stdout.write("\033[1;33;34m*\033[0m")
         swimming_pool.update!(nick_name: std_code) unless simulate
       end
-      # DEBUG
-      puts " #{swimming_pool.nick_name} => #{std_code}\r\n"
+      puts " ID #{swimming_pool.id}, nick_name: #{swimming_pool.nick_name} => #{std_code}"
 
       # == MANUAL FIX in case of duplicates:
       # > pool = GogglesDb::SwimmingPool.find(<duplicate_id>)

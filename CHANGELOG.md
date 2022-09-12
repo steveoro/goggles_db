@@ -2,6 +2,7 @@
 
 _Please, add the latest build info on top of the list; use Version::MAJOR only after gold release; keep semantic versioning in line with framework's_
 
+- **0.4.07** [Steve A.] tweaked AbstractMeeting name helpers to better reflect descriptions for seasonal & ordinal meetings; updated specs & re-normalized DB dumps
 - **0.4.06** [Steve A.] improved meeting edition normalizer with additional specs; changed a bit how the common AbstractMeeting edition helpers work w/ updated specs
 - **0.4.05** [Steve A.] improved clean-up after ActiveStorage tests + minor factories adjustments
 - **0.4.01** [Steve A.] support push batch SQL import data to dedicated API endpoint directly into ImportQueues as file attachments; improvements to for_name scopes & GogglesDb::DbFinders::BaseStrategy; refactored & moved name Parser::CodedName normalizer from Admin2 so that it can be shared among projects; several data-fix migrations & additional strategy classes; improved fuzzy finders & ISO city finder with refactored code and data normalization tasks; DB normalized & re-dumped.

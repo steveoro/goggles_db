@@ -27,8 +27,16 @@ shared_examples_for 'AbstractMeeting #edition_label' do |factory_name_sym|
       end
     end
 
-    context 'with a seasonal or yearly edition type,' do
-      subject { FactoryBot.build(factory_name_sym, edition_type: GogglesDb::EditionType.send(%w[yearly seasonal].sample)) }
+    context 'with a seasonal edition type,' do
+      subject { FactoryBot.build(factory_name_sym, edition_type: GogglesDb::EditionType.seasonal) }
+
+      it 'returns the label as a numeric string' do
+        expect(subject.edition_label).to eq("#{subject.edition}°")
+      end
+    end
+
+    context 'with a yearly edition type,' do
+      subject { FactoryBot.build(factory_name_sym, edition_type: GogglesDb::EditionType.yearly) }
 
       it 'returns the first part of the header_year as label' do
         expect(subject.edition_label).to eq(subject.header_year.to_s.split('/')&.first)
@@ -80,8 +88,9 @@ shared_examples_for 'AbstractMeeting #name_without_edition' do |factory_name_sym
         'Long static name with no edition', 'Trofeo SuperMaster Città di Riccione', 'Meeting Master Torino',
         ' Città del Tricolore, Reggio Emilia'
       ].each do |fixture_name|
-        it 'is the same base custom name (not shortened)' do
-          expect(subject.name_without_edition(fixture_name)).to eq(fixture_name)
+        it 'is the base name returned by the normalizer/splitter, uncondensed but stripped' do
+          expected_result = GogglesDb::Normalizers::CodedName.edition_split_from(fixture_name).second
+          expect(subject.name_without_edition(fixture_name)).to eq(expected_result.strip)
         end
       end
     end
@@ -108,13 +117,8 @@ shared_examples_for 'AbstractMeeting #name_without_edition' do |factory_name_sym
       end
     end
 
-    context 'with a custom name parameter that includes an edition label at the end,' do
-      subject do
-        FactoryBot.build(
-          factory_name_sym,
-          edition_type: GogglesDb::EditionType.send(%i[yearly seasonal].sample)
-        )
-      end
+    context 'with a custom name parameter that includes an edition label at the end (YEARLY),' do
+      subject { FactoryBot.build(factory_name_sym, edition_type: GogglesDb::EditionType.yearly) }
 
       [
         'Meeting Fake short name', 'Trofeo Città di Riccione', 'Meeting Master Torino',

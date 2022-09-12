@@ -6,7 +6,7 @@ module GogglesDb
   #
   # Encapsulates common behavior for Meetings & User Workshops.
   #
-  #   - version:  7-0.3.45
+  #   - version:  7-0.4.07
   #   - author:   Steve A.
   #
   class AbstractMeeting < ApplicationRecord
@@ -19,7 +19,10 @@ module GogglesDb
     validates_associated :edition_type
     validates_associated :timing_type
 
-    default_scope { includes(:edition_type, :timing_type, season: [:season_type]) }
+    has_one :season_type, through: :season
+    has_one :federation_type, through: :season_type
+
+    default_scope { includes(:edition_type, :timing_type, season: [season_type: [:federation_type]]) }
 
     validates :code,        presence: { length: { within: 1..50 }, allow_nil: false }
     validates :header_year, presence: { length: { within: 1..9 }, allow_nil: false }
@@ -41,13 +44,15 @@ module GogglesDb
     # Returns just the verbose edition label based on the current edition value & type.
     # Returns a safe empty string otherwise.
     #
+    # rubocop:disable Metrics/CyclomaticComplexity
     def edition_label
-      return "#{edition}°" if edition_type.ordinal?
-      return edition.to_i.to_roman if edition_type.roman?
-      return header_year.to_s.split('/')&.first if edition_type.seasonal? || edition_type.yearly?
+      return "#{edition}°" if edition.to_i.positive? && (edition_type.seasonal? || edition_type.ordinal?)
+      return edition.to_i.to_roman if edition.to_i.positive? && edition_type.roman?
+      return header_year.to_s.split('/')&.first if edition_type.yearly?
 
       ''
     end
+    # rubocop:enable Metrics/CyclomaticComplexity
 
     # Meeting name stripped of any edition label.
     #
@@ -60,7 +65,8 @@ module GogglesDb
     #
     def name_without_edition(meeting_name = description)
       _edition, result, _edition_type_id = GogglesDb::Normalizers::CodedName.edition_split_from(meeting_name)
-      result
+      # Remove also the federation name from the description:
+      result.gsub(/\b#{federation_type.short_name}\b/i, '').strip
     end
 
     # Meeting name prefixed or appended with proper edition label, depending on edition type.
@@ -73,10 +79,12 @@ module GogglesDb
     # the Meeting name as a +String+, composed with the actual displayable edition label.
     #
     def name_with_edition(meeting_name = description)
-      return "#{edition_label} #{name_without_edition(meeting_name)}" if edition_type.ordinal? || edition_type.roman?
-      return "#{name_without_edition(meeting_name)} #{header_year}" if edition_type.seasonal? || edition_type.yearly?
+      # Strip also the result to avoid zero edition numbers (when not properly set):
+      return "#{edition_label} #{name_without_edition(meeting_name)} #{header_year}".strip if edition_type.seasonal?
+      return "#{edition_label} #{name_without_edition(meeting_name)}".strip if edition_type.ordinal? || edition_type.roman?
+      return "#{name_without_edition(meeting_name)} #{header_year}" if edition_type.yearly?
 
-      meeting_name
+      meeting_name # (No edition type at all)
     end
 
     # Returns the shortest possible name for this meeting as a String.
@@ -86,13 +94,17 @@ module GogglesDb
     # - <tt>meeting_name</tt>: the meeting name to be processed;
     #   defaults to +description+.
     #
+    # rubocop:disable Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
     def condensed_name(meeting_name = description)
-      # Remove spaces, split in tokens, delete empty tokens and take just the first 3:
-      tokens = meeting_name.split(/trofeo|meeting|collegiale|workshop|campionato|raduno/i).last
-      tokens = notes if tokens.blank?
-      tokens.to_s.strip.split(/\s|,/).reject(&:empty?)[0..3].join(' ')
+      tokens = split_description_in_tokens(name_without_edition(meeting_name))
+      # Fallback to using the notes if we have them and the splitting above does not yield tokens:
+      tokens = split_description_in_tokens(notes) if tokens.blank? && notes.present?
+      # Remove spaces, split in shorter tokens, delete blanks and take just the first 3:
+      tokens = tokens&.to_s&.strip&.split(/\s|,/)&.reject(&:blank?)
+      tokens.is_a?(Array) ? tokens[0..3]&.join(' ') : tokens.to_s
     end
     #-- ------------------------------------------------------------------------
+    # rubocop:enable Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
     #++
 
     # Override: include the "minimum required" hash of attributes & associations.
@@ -108,6 +120,14 @@ module GogglesDb
         'season_type' => season_type.minimal_attributes,
         'federation_type' => federation_type.minimal_attributes
       )
+    end
+
+    private
+
+    # Splits any specified meeting_description using common leading names to get just the most relevant part.
+    # Assumes description is in Italian. Returns an empty string in the worst case scenario.
+    def split_description_in_tokens(meeting_description)
+      meeting_description.split(/trofeo|meeting|collegial.|workshop|campionat.|raduno/i).last || ''
     end
   end
 end
