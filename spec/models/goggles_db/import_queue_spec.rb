@@ -93,11 +93,12 @@ module GogglesDb
 
     describe '#sibling_rows' do
       context 'when deleting a parent row' do
-        let(:parent_row) { described_class.all.sample }
+        let(:parent_row) { FactoryBot.create(:import_queue, uid: 'FAKE-2') }
 
         before do
-          expect(minimum_domain.count).to be_positive
+          # expect(minimum_domain.count).to be_positive
           expect(parent_row).to be_a(described_class).and be_valid
+          # previous_count = parent_row.sibling_rows.count
           FactoryBot.create_list(:import_queue_existing_swimmer, 3, import_queue_id: parent_row.id, uid: 'FAKE-2')
           parent_row.reload
           expect(parent_row.sibling_rows.count).to eq(3)

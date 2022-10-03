@@ -153,9 +153,9 @@ module GogglesDb
     # Returns the attachment contents as a string by reading the attached local file;
     # returns an empty string otherwise.
     def data_file_contents
-      return '' if data_file.blank?
+      return '' unless data_file.present? && data_file.attached?
 
-      data_file.open { |file| File.read(file) }
+      data_file.download
     end
     #-- ------------------------------------------------------------------------
     #++
