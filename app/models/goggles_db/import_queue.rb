@@ -4,7 +4,7 @@ module GogglesDb
   #
   # = ImportQueue model
   #
-  #   - version:  7-0.4.01
+  #   - version:  7-0.4.10
   #   - author:   Steve A.
   #
   # Stores '/import' API requests and generic import micro- & macro- transactions steps.
@@ -152,10 +152,11 @@ module GogglesDb
     # == MacroTransaction helper.
     # Returns the attachment contents as a string by reading the attached local file;
     # returns an empty string otherwise.
+    # Forces the encoding to UTF-8.
     def data_file_contents
       return '' unless data_file.present? && data_file.attached?
 
-      data_file.download
+      data_file.download.force_encoding('UTF-8')
     end
     #-- ------------------------------------------------------------------------
     #++

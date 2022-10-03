@@ -2,6 +2,7 @@
 
 _Please, add the latest build info on top of the list; use Version::MAJOR only after gold release; keep semantic versioning in line with framework's_
 
+- **0.4.10** [Steve A.] forced UTF-8 encoding for downloaded script files in ImportQueues
 - **0.4.09** [Steve A.] using proper download method for attachments in ImportQueue instead of low-level file access; improved stability in ImportQueue specs
 - **0.4.07** [Steve A.] tweaked AbstractMeeting name helpers to better reflect descriptions for seasonal & ordinal meetings; updated specs & re-normalized DB dumps
 - **0.4.06** [Steve A.] improved meeting edition normalizer with additional specs; changed a bit how the common AbstractMeeting edition helpers work w/ updated specs
