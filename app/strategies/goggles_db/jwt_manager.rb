@@ -6,15 +6,15 @@ module GogglesDb
   #
   # = JWT Manager strategy object
   #
-  #   - file vers.: 0.1.91
+  #   - file vers.: 0.4.20
   #   - author....: Steve A.
-  #   - build.....: 20210330
+  #   - build.....: 20221021
   #
   #   Wraps encoding & decoding helper methods for JSON Web Token usage.
   #
   class JWTManager
     # Default token duration for the encoded JWT, after which it will expire
-    TOKEN_LIFE = 2.hours
+    TOKEN_LIFE = 10.hours
 
     # Constructor
     #
