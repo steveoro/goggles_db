@@ -4,13 +4,15 @@ module GogglesDb
   #
   # = Team model
   #
-  #   - version:  7-0.4.01
+  #   - version:  7-0.4.20
   #   - author:   Steve A.
   #
   class Team < ApplicationRecord
     self.table_name = 'teams'
 
     belongs_to :city, optional: true
+
+    default_scope { includes(:city) }
 
     has_many :badges, dependent: :delete_all
     has_many :swimmers, through: :badges # May be used with uniq

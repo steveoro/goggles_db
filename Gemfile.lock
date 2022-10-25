@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    goggles_db (0.4.09)
+    goggles_db (0.4.20)
       acts-as-taggable-on
       acts_as_votable
       cities
@@ -96,7 +96,7 @@ GEM
       zeitwerk (~> 2.2, >= 2.2.2)
     acts-as-taggable-on (9.0.1)
       activerecord (>= 6.0, < 7.1)
-    acts_as_votable (0.13.2)
+    acts_as_votable (0.14.0)
     addressable (2.8.0)
       public_suffix (>= 2.0.2, < 5.0)
     ast (2.4.2)
@@ -150,10 +150,10 @@ GEM
     factory_bot_rails (6.2.0)
       factory_bot (~> 6.2.0)
       railties (>= 5.0.0)
-    faraday (2.5.2)
+    faraday (2.6.0)
       faraday-net_http (>= 2.0, < 3.1)
       ruby2_keywords (>= 0.0.4)
-    faraday-net_http (3.0.0)
+    faraday-net_http (3.0.1)
     ffaker (2.20.0)
     ffi (1.15.5)
     formatador (1.1.0)
@@ -246,7 +246,7 @@ GEM
     mysql2 (0.5.4)
     nenv (0.3.0)
     nio4r (2.5.8)
-    nokogiri (1.13.8-x86_64-linux)
+    nokogiri (1.13.9-x86_64-linux)
       racc (~> 1.4)
     notiffany (0.1.3)
       nenv (~> 0.1)

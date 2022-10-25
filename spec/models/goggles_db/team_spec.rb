@@ -48,6 +48,12 @@ module GogglesDb
 
       it_behaves_like('a valid Team instance')
     end
+
+    context 'without an associated City' do
+      subject { FactoryBot.create(:team, city: nil) }
+
+      it_behaves_like('a valid Team instance')
+    end
     #-- ------------------------------------------------------------------------
     #++
 
