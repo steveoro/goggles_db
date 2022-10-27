@@ -6,7 +6,7 @@ module GogglesDb
   #
   # Legacy name: "FINCalendar"
   #
-  #   - version:  7.0.4.01
+  #   - version:  7.0.4.21
   #   - author:   Steve A.
   #
   class Calendar < ApplicationRecord
@@ -18,6 +18,8 @@ module GogglesDb
 
     validates_associated :season
 
+    default_scope { left_outer_joins(:meeting).includes(season: [season_type: [:federation_type]]) }
+
     # Attach PDFs or images directly to the record, if needed:
     has_one_attached :manifest_file # (use #manifest for converted text only)
     has_one_attached :results_file
@@ -27,8 +29,6 @@ module GogglesDb
     validates :year, presence: { allow_nil: false }
     validates :month, presence: { allow_nil: false }
     # NOTE: on some occasions, meeting_name may be nil; the decorator will return a '?'.
-
-    default_scope { includes(season: [:season_type]) }
 
     # Sorting scopes:
     scope :by_meeting, ->(dir = :asc) { joins(:meeting).includes(:meeting).order('meetings.header_date': dir) }

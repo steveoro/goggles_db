@@ -4,14 +4,14 @@ module GogglesDb
   #
   # = Meeting model
   #
-  #   - version:  7-0.4.01
+  #   - version:  7-0.4.21
   #   - author:   Steve A.
   #
   class Meeting < AbstractMeeting
     self.table_name = 'meetings'
 
-    # Legacy name: "organization_team"
-    belongs_to :home_team, optional: true, class_name: 'Team'
+    belongs_to :home_team, optional: true, class_name: 'Team' # Legacy name: "organization_team"
+    belongs_to :calendar, optional: true
 
     has_one :season_type, through: :season
     has_one :federation_type, through: :season

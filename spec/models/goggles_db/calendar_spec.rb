@@ -16,6 +16,12 @@ module GogglesDb
         expect(subject).to be_a(described_class).and be_valid
       end
 
+      # Tests the validity of the default_scope when there's an optional association involved:
+      it 'does not raise errors when selecting a random row with a field name' do
+        field_name = %w[meeting_code scheduled_date season_id meeting_id].sample
+        expect { described_class.unscoped.select(field_name).limit(100).sample }.not_to raise_error
+      end
+
       it_behaves_like(
         'having one or more required associations',
         %i[season]

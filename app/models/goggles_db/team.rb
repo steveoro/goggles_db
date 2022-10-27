@@ -4,7 +4,7 @@ module GogglesDb
   #
   # = Team model
   #
-  #   - version:  7-0.4.20
+  #   - version:  7-0.4.21
   #   - author:   Steve A.
   #
   class Team < ApplicationRecord
@@ -12,7 +12,7 @@ module GogglesDb
 
     belongs_to :city, optional: true
 
-    default_scope { includes(:city) }
+    default_scope { left_outer_joins(:city) }
 
     has_many :badges, dependent: :delete_all
     has_many :swimmers, through: :badges # May be used with uniq
