@@ -2,6 +2,7 @@
 
 _Please, add the latest build info on top of the list; use Version::MAJOR only after gold release; keep semantic versioning in line with framework's_
 
+- **0.4.21** [Steve A.] fixed default scopes for Team and Calendar (which may now require 'unscoped' when selecting individual fields)
 - **0.4.20** [Steve A.] some security updates; increased duration of JWTs to 10 hours; removed unconfirmed new user access possibility; added a default scope for Team
 - **0.4.10** [Steve A.] forced UTF-8 encoding for downloaded script files in ImportQueues
 - **0.4.09** [Steve A.] using proper download method for attachments in ImportQueue instead of low-level file access; improved stability in ImportQueue specs

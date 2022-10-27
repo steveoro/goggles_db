@@ -41,6 +41,12 @@ module GogglesDb
       subject { described_class.all.limit(20).sample }
 
       it_behaves_like('a valid Team instance')
+
+      # Tests the validity of the default_scope based on an optional association:
+      it 'does not raise errors when selecting a random row with a field name' do
+        field_name = %w[name editable_name address name_variations].sample
+        expect { described_class.select(field_name).limit(100).sample }.not_to raise_error
+      end
     end
 
     context 'when using the factory, the resulting instance' do
