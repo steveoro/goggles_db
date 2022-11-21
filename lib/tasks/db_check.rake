@@ -76,7 +76,7 @@ namespace :db do
           WHERE (m.season_id = #{season_id}) AND
                 (mir.team_affiliation_id != (select id from team_affiliations ta where ta.team_id = mir.team_id and ta.season_id = #{season_id}));
       SQL
-      execute_query_and_report(sql, 'TAs misplaced in MIRs....', verbose)
+      execute_query_and_report(sql, 'TAs misplaced in MIRs.....', verbose)
     end
     #-- -----------------------------------------------------------------------
     #++
