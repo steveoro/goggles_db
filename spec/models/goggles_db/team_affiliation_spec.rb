@@ -6,7 +6,7 @@ require 'support/shared_filtering_scopes_examples'
 require 'support/shared_to_json_examples'
 
 module GogglesDb
-  RSpec.describe TeamAffiliation, type: :model do
+  RSpec.describe TeamAffiliation do
     let(:fixture_manager) do
       manager = FactoryBot.create(:user)
       FactoryBot.create(:managed_affiliation, team_affiliation: affiliation_with_badges, manager: manager)

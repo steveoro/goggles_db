@@ -86,7 +86,7 @@ module GogglesDb
 
     # Filters out ID, timestamps, lock columns...
     def reject_common_columns(attribute_hash)
-      attribute_hash.reject { |key, _value| %w[id lock_version created_at updated_at season_id].include?(key) }
+      attribute_hash.except('id', 'lock_version', 'created_at', 'updated_at', 'season_id')
     end
 
     # Clones the Meeting master row, clearing out some of its attributes.

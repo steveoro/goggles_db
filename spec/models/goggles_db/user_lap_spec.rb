@@ -9,7 +9,7 @@ require 'support/shared_to_json_examples'
 require 'support/shared_abstract_lap_examples'
 
 module GogglesDb
-  RSpec.describe UserLap, type: :model do
+  RSpec.describe UserLap do
     # Make sure UserLaps have some permanent fixtures:
     # (These are supposed to remain there, and this is why an "after(:all)" clearing block
     # is totally missing here)

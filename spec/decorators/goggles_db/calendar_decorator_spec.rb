@@ -6,7 +6,7 @@ RSpec.describe GogglesDb::CalendarDecorator, type: :decorator do
   context 'for a row with an associated Meeting,' do
     subject(:decorated_instance) { described_class.decorate(fixture_row) }
 
-    let(:fixture_row) { FactoryBot.create(:calendar) }
+    let(:fixture_row) { create(:calendar) }
 
     before do
       expect(fixture_row).to be_a(GogglesDb::Calendar).and be_valid

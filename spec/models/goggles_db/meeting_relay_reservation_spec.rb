@@ -6,7 +6,7 @@ require 'support/shared_filtering_scopes_examples'
 require 'support/shared_to_json_examples'
 
 module GogglesDb
-  RSpec.describe MeetingRelayReservation, type: :model do
+  RSpec.describe MeetingRelayReservation do
     shared_examples_for 'a valid MeetingRelayReservation instance' do
       it 'is valid' do
         expect(subject).to be_a(described_class).and be_valid

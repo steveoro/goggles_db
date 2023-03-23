@@ -30,7 +30,7 @@ class Integer
     n = self
     roman = ''
     ROMAN_NUMBERS.each do |value, letter|
-      roman << letter * (n / value)
+      roman << (letter * (n / value))
       n = n % value
     end
     roman

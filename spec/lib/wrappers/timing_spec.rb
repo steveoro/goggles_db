@@ -101,7 +101,7 @@ describe Timing, type: :model do
     end
 
     it 'has an equal value of hundredths' do
-      expect(subject.to_hundredths).to eq(fix1_hours * 360_000 + fix1_mins * 6000 + fix1_secs * 100 + fix1_hundredths)
+      expect(subject.to_hundredths).to eq((fix1_hours * 360_000) + (fix1_mins * 6000) + (fix1_secs * 100) + fix1_hundredths)
     end
   end
 
@@ -154,8 +154,8 @@ describe Timing, type: :model do
   describe '#*' do
     subject { fixture1 * int_number }
 
-    let(:fixture1) { described_class.new(hundredths: rand * 100, seconds: 1 + rand * 60, minutes: rand * 60, hours: rand * 24) }
-    let(:int_number) { (1 + rand * 100).to_i }
+    let(:fixture1) { described_class.new(hundredths: rand * 100, seconds: 1 + (rand * 60), minutes: rand * 60, hours: rand * 24) }
+    let(:int_number) { (1 + (rand * 100)).to_i }
 
     it 'raises an ArgumentError when no valid integer value is specified' do
       expect { fixture1 * [nil, 'not-a-number', 2.5].sample }.to raise_error(ArgumentError)
@@ -195,17 +195,17 @@ describe Timing, type: :model do
     let(:fixture_eq)    { described_class.new(hundredths: fixture.hundredths, seconds: fixture.seconds, minutes: fixture.minutes, hours: fixture.hours) }
     let(:fixture_prev) do
       described_class.new(
-        hundredths: fixture.hundredths - rand * fixture.hundredths,
-        seconds: fixture.seconds - rand * fixture.seconds,
-        minutes: fixture.minutes - rand * fixture.minutes,
+        hundredths: fixture.hundredths - (rand * fixture.hundredths),
+        seconds: fixture.seconds - (rand * fixture.seconds),
+        minutes: fixture.minutes - (rand * fixture.minutes),
         hours: fixture.hours
       )
     end
     let(:fixture_succ) do
       described_class.new(
-        hundredths: fixture.hundredths + rand * fixture.hundredths,
-        seconds: fixture.seconds + rand * fixture.seconds,
-        minutes: fixture.minutes + rand * fixture.minutes,
+        hundredths: fixture.hundredths + (rand * fixture.hundredths),
+        seconds: fixture.seconds + (rand * fixture.seconds),
+        minutes: fixture.minutes + (rand * fixture.minutes),
         hours: fixture.hours
       )
     end
@@ -251,7 +251,7 @@ describe Timing, type: :model do
       end
 
       it 'contains all zeros' do
-        expect(subject).to match("0\'00\"00")
+        expect(subject).to match("0'00\"00")
       end
     end
   end
@@ -269,7 +269,7 @@ describe Timing, type: :model do
       end
 
       it 'contains all zeros' do
-        expect(subject).to eq("0\'00\"00")
+        expect(subject).to eq("0'00\"00")
       end
     end
   end

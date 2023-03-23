@@ -6,7 +6,7 @@ require 'support/shared_sorting_scopes_examples'
 require 'support/shared_filtering_scopes_examples'
 
 module GogglesDb
-  RSpec.describe TeamLapTemplate, type: :model do
+  RSpec.describe TeamLapTemplate do
     shared_examples_for 'a valid TeamLapTemplate instance' do
       it 'is valid' do
         expect(subject).to be_a(described_class).and be_valid

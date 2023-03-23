@@ -1,7 +1,6 @@
 # frozen_string_literal: true
 
 require 'fuzzystringmatch'
-require 'ostruct'
 
 module GogglesDb
   #
@@ -17,9 +16,9 @@ module GogglesDb
     #
     # = BaseStrategy parent object
     #
-    #   - version:  7-0.4.01
+    #   - version:  7-0.5.01
     #   - author:   Steve A.
-    #   - build:    20220804
+    #   - build:    20230323
     #
     # Encapsulates the base interface for its siblings.
     #
@@ -84,6 +83,7 @@ module GogglesDb
         @filtering_terms = search_terms.reject { |key, _v| key == @target_key }
         @search_method = search_method
         @bias = bias
+        @candidate_struct = Struct.new(:candidate, :weight)
         @matches = []
       end
 
@@ -92,8 +92,8 @@ module GogglesDb
       # == Params
       # - +value+: the string value to be "normalized".
       def normalize_value(value)
-        value.gsub('à', 'a').gsub('[èé]', 'e').gsub('ì', 'i')
-             .gsub('ò', 'o').gsub('ù', 'u').gsub('ç', 'c')
+        value.tr('à', 'a').gsub('[èé]', 'e').tr('ì', 'i')
+             .tr('ò', 'o').tr('ù', 'u').tr('ç', 'c')
              .downcase
       end
       #-- ---------------------------------------------------------------------
@@ -125,7 +125,7 @@ module GogglesDb
 
           # Check a perfect match without computing the score:
           if candidate_row.send(@target_key) == @target_value
-            @matches << OpenStruct.new(candidate: candidate_row, weight: 1.0)
+            @matches << @candidate_struct.new(candidate: candidate_row, weight: 1.0)
             Rails.logger.debug '   perfect match found' if @toggle_debug.present?
             break
           end
@@ -135,10 +135,10 @@ module GogglesDb
           # Store candidate if it seems to be a match but also if it's a substring (possibly returned by LIKEs):
           # (this allows returning results even when the search contains just a few typed chars)
           if weight >= @bias
-            @matches << OpenStruct.new(candidate: candidate_row, weight: weight)
+            @matches << @candidate_struct.new(candidate: candidate_row, weight: weight)
           elsif candidate_row.send(@target_key).to_s.include?(@target_value.to_s)
             # Give substrings a "political" weight equal to the bias, because the metric score possibly will be very low:
-            @matches << OpenStruct.new(candidate: candidate_row, weight: @bias)
+            @matches << @candidate_struct.new(candidate: candidate_row, weight: @bias)
           end
         end
       end

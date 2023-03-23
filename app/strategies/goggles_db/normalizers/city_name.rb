@@ -97,7 +97,7 @@ module GogglesDb
         if @verbose
           Rails.logger.debug do
             "        #{differs ? "\033[1;33;31m×\033[0m" : "\033[1;33;32m=\033[0m"} #{column_name}: " \
-                        "#{differs ? "#{column_value} != " : ''}#{iso_value}\r\n"
+              "#{differs ? "#{column_value} != " : ''}#{iso_value}\r\n"
           end
         end
         differs

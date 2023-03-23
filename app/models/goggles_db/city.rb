@@ -99,7 +99,7 @@ module GogglesDb
     # - 'subdivision_struct': ISO struct including 'name' & 'geo' fields
     def iso_subdivision(iso_country = nil)
       # Remove illegal chars from Regexp before checking:
-      area_token = area.to_s.gsub('?', '')
+      area_token = area.to_s.delete('?')
       chosen_country = iso_country || @iso_country
       @subdivision = chosen_country&.subdivisions&.find do |_iso_code, iso_struct|
         next if area_token.blank?

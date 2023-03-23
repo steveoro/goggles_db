@@ -5,7 +5,9 @@ git_source(:github) { |repo| "https://github.com/#{repo}.git" }
 
 gem 'devise'
 gem 'devise-i18n'
+gem 'mysql2'
 gem 'scenic'
+gem 'scenic-mysql_adapter'
 
 # Declare your gem's dependencies in goggles_db.gemspec.
 # Bundler will treat runtime dependencies like base dependencies, and
@@ -31,8 +33,7 @@ group :development do
   gem 'haml_lint', require: false
   gem 'inch', require: false # grades source documentation
   gem 'listen', '~> 3.2'
-  # [20210128] Rubocop 1.9.0 seems to have several issues with the current stack
-  gem 'rubocop' # '= 1.8.1', require: false
+  gem 'rubocop'
   gem 'rubocop-performance'
   gem 'rubocop-rails', require: false
   gem 'rubocop-rake'

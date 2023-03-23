@@ -5,7 +5,7 @@ require 'support/shared_method_existance_examples'
 require 'support/shared_abstract_result_examples'
 
 module GogglesDb
-  RSpec.describe UserResult, type: :model do
+  RSpec.describe UserResult do
     # Make sure UserResult have some permanent fixtures:
     # (These are supposed to remain there, and this is why an "after(:all)" clearing block
     # is totally missing here)

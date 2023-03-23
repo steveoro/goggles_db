@@ -4,7 +4,7 @@ require 'rails_helper'
 require 'support/shared_method_existance_examples'
 
 module GogglesDb
-  RSpec.describe AdminGrant, type: :model do
+  RSpec.describe AdminGrant do
     shared_examples_for 'a valid AdminGrant instance' do
       it 'is valid' do
         expect(subject).to be_a(described_class).and be_valid

@@ -26,7 +26,7 @@ FactoryBot.define do
       after(:create) do |saved_instance|
         text_contents = "SELECT COUNT(*) FROM #{%w[users swimmers teams meetings].sample};\r\n"
         file_path = Rails.root.join('tmp', 'storage', "test-data-#{saved_instance.id}.sql")
-        File.open(file_path, 'w') { |f| f.write(text_contents) }
+        File.write(file_path, text_contents)
 
         saved_instance.data_file.attach(
           io: File.open(file_path),

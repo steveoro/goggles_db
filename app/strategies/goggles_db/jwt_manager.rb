@@ -89,7 +89,7 @@ module GogglesDb
     # See #decode(jwt_token) for format info.
     #
     def self.decode(jwt_token, base_key)
-      HashWithIndifferentAccess.new(
+      ActiveSupport::HashWithIndifferentAccess.new(
         JWT.decode(jwt_token, base_key, true, algorithm: 'HS512').first
       )['data']
     rescue JWT::ExpiredSignature, JWT::VerificationError, JWT::DecodeError

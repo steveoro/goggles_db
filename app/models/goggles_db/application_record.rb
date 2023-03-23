@@ -13,7 +13,7 @@ module GogglesDb
     # (lock_version, timestamps...).
     #
     def minimal_attributes
-      attributes.reject { |att_name, _att_value| %w[lock_version created_at updated_at].include?(att_name) }
+      attributes.except('lock_version', 'created_at', 'updated_at')
     end
   end
 end

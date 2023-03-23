@@ -7,7 +7,7 @@ require 'support/shared_filtering_scopes_examples'
 require 'support/shared_to_json_examples'
 
 module GogglesDb
-  RSpec.describe ComputedSeasonRanking, type: :model do
+  RSpec.describe ComputedSeasonRanking do
     context 'when using the factory, the resulting instance' do
       subject { FactoryBot.create(:computed_season_ranking) }
 

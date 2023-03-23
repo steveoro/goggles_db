@@ -47,7 +47,7 @@ module GogglesDb
         end
 
         it 'creates the new Meeting with no encapsulated manifest body' do
-          expect(subject.result.manifest_body).to be nil
+          expect(subject.result.manifest_body).to be_nil
         end
 
         it 'creates the new Meeting with all the data-import flags cleared out' do
@@ -145,7 +145,7 @@ module GogglesDb
         end
 
         it 'has a nil #result' do
-          expect(subject.result).to be nil
+          expect(subject.result).to be_nil
         end
       end
     end

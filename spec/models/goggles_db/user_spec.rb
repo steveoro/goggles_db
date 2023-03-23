@@ -4,7 +4,7 @@ require 'rails_helper'
 require 'support/shared_method_existance_examples'
 
 module GogglesDb
-  RSpec.describe User, type: :model do
+  RSpec.describe User do
     context 'when using the factory, the resulting instance' do
       subject { FactoryBot.create(:user) }
 
@@ -471,6 +471,7 @@ module GogglesDb
 
     describe '#matching_swimmers' do
       let(:fixture_swimmer) { FactoryBot.create(:swimmer) }
+      let(:fake_domains) { %w[fake.example.com fake.example.org fake.example.net] }
       # Same year of birth and equal name:
 
       context 'when the user has a matching swimmer' do
@@ -556,8 +557,7 @@ module GogglesDb
             )
           end
           let(:fixture_user1) do
-            email = "#{names_hash[:user_last].split.first}.#{names_hash[:user_first].split.first}" +
-                    "#{(rand * 100_000).to_i}@#{%w[fake.example.com fake.example.org fake.example.net].sample}"
+            email = "#{names_hash[:user_last].split.first}.#{names_hash[:user_first].split.first}#{(rand * 100_000).to_i}@#{fake_domains.sample}"
             FactoryBot.create(
               :user,
               first_name: names_hash[:user_first],
@@ -618,7 +618,7 @@ module GogglesDb
       end
 
       it 'returns nil' do
-        expect(fixture_user.associate_to_swimmer!(swimmer_override)).to be nil
+        expect(fixture_user.associate_to_swimmer!(swimmer_override)).to be_nil
       end
 
       it_behaves_like('#associate_to_swimmer! skipping updates', use_override)

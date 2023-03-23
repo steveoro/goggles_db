@@ -4,7 +4,7 @@ require 'rails_helper'
 require 'support/shared_method_existance_examples'
 
 module GogglesDb
-  RSpec.describe GogglesDb::SwimmerStat, type: :model do
+  RSpec.describe GogglesDb::SwimmerStat do
     subject { described_class.new(fixture_swimmer) }
 
     let(:fixture_swimmer) { GogglesDb::Swimmer.first(200).sample }

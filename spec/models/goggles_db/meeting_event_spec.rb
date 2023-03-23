@@ -6,7 +6,7 @@ require 'support/shared_sorting_scopes_examples'
 require 'support/shared_to_json_examples'
 
 module GogglesDb
-  RSpec.describe MeetingEvent, type: :model do
+  RSpec.describe MeetingEvent do
     subject { same_session_events.sample }
 
     shared_examples_for 'a valid MeetingEvent instance' do

@@ -6,7 +6,7 @@ require 'support/shared_filtering_scopes_examples'
 require 'support/shared_to_json_examples'
 
 module GogglesDb
-  RSpec.describe Season, type: :model do
+  RSpec.describe Season do
     context 'when using the factory, the resulting instance' do
       subject { FactoryBot.create(:season) }
 

@@ -47,7 +47,7 @@ module GogglesDb
                        )
                      else # Leaf reached!
                        "#{member.class.name} ID:#{member.id}, " \
-                       "#{sub_member_sym}: #{member.errors.messages[sub_member_sym].join(', ')}"
+                         "#{sub_member_sym}: #{member.errors.messages[sub_member_sym].join(', ')}"
                      end
       end
       error_msg

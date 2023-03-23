@@ -3,7 +3,7 @@
 require 'rails_helper'
 
 module GogglesDb
-  RSpec.describe GoggleCupStandard, type: :model do
-    pending "add some examples to (or delete) #{__FILE__}"
+  RSpec.describe GoggleCupStandard do
+    pending 'Model not implemented yet'
   end
 end

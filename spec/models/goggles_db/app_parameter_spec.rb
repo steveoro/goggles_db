@@ -4,7 +4,7 @@ require 'rails_helper'
 require 'support/shared_method_existance_examples'
 
 module GogglesDb
-  RSpec.describe AppParameter, type: :model do
+  RSpec.describe AppParameter do
     context 'when using the factory, the resulting instance' do
       subject { FactoryBot.create(:app_parameter) }
 

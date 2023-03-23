@@ -69,7 +69,7 @@ module GogglesDb
           end
 
           it 'is nil' do
-            expect(result).to be nil
+            expect(result).to be_nil
           end
         end
       end
@@ -83,7 +83,7 @@ module GogglesDb
         end
 
         let(:max_delta) { expected_std_timing.to_timing.to_hundredths / 2 }
-        let(:fixure_delta) { Timing.new.from_hundredths((1 + rand * max_delta).to_i) }
+        let(:fixure_delta) { Timing.new.from_hundredths((1 + (rand * max_delta)).to_i) }
 
         context 'with an existing StandardTiming matched by the constructor parameters,' do
           subject(:strategy) do
@@ -95,7 +95,7 @@ module GogglesDb
             )
           end
 
-          before { expect(strategy).to be_a_kind_of(described_class) }
+          before { expect(strategy).to be_a(described_class) }
 
           context 'when the requested timing equals the existing reference,' do
             it 'returns as score of 1000' do
@@ -104,7 +104,7 @@ module GogglesDb
 
             context 'with a base standard points override,' do
               it 'returns the base score override value' do
-                base_score_override = (500 + rand * 400).to_i.to_f
+                base_score_override = (500 + (rand * 400)).to_i.to_f
                 expect(
                   strategy.compute_for(expected_std_timing.to_timing, standard_points: base_score_override).to_i
                 ).to eq(base_score_override)
@@ -123,7 +123,7 @@ module GogglesDb
 
             context 'with a base standard points override,' do
               it 'returns a score < the base score override' do
-                base_score_override = (500 + rand * 400).to_i.to_f
+                base_score_override = (500 + (rand * 400)).to_i.to_f
                 expect(fixure_timing).to be > expected_std_timing.to_timing
                 expect(
                   strategy.compute_for(fixure_timing, standard_points: base_score_override).to_i
@@ -143,7 +143,7 @@ module GogglesDb
 
             context 'with a base standard points override,' do
               it 'returns a score > the base score override' do
-                base_score_override = (500 + rand * 400).to_i.to_f
+                base_score_override = (500 + (rand * 400)).to_i.to_f
                 expect(fixure_delta.to_hundredths).to be_positive
                 expect(fixure_timing).to be < expected_std_timing.to_timing
                 expect(
@@ -163,9 +163,9 @@ module GogglesDb
           end
 
           # Any random timing shall do:
-          let(:fixure_timing) { expected_std_timing.to_timing + fixure_delta * [-1, 1].sample }
+          let(:fixure_timing) { expected_std_timing.to_timing + (fixure_delta * [-1, 1].sample) }
 
-          before { expect(strategy).to be_a_kind_of(described_class) }
+          before { expect(strategy).to be_a(described_class) }
 
           it 'always returns as score of 1000' do
             expect(strategy.compute_for(fixure_timing).to_i).to eq(1000)
@@ -173,7 +173,7 @@ module GogglesDb
 
           context 'with a base standard points override,' do
             it 'always returns the base score override value' do
-              base_score_override = (500 + rand * 400).to_i.to_f
+              base_score_override = (500 + (rand * 400)).to_i.to_f
               expect(
                 strategy.compute_for(fixure_timing, standard_points: base_score_override).to_i
               ).to eq(base_score_override)
@@ -200,7 +200,7 @@ module GogglesDb
             )
           end
 
-          before { expect(strategy).to be_a_kind_of(described_class) }
+          before { expect(strategy).to be_a(described_class) }
 
           context 'when the requested score equals the standard score,' do
             it 'is a Timing instance representing the same reference standard time' do
@@ -237,7 +237,7 @@ module GogglesDb
             )
           end
 
-          before { expect(strategy).to be_a_kind_of(described_class) }
+          before { expect(strategy).to be_a(described_class) }
 
           context 'when the requested score equals the standard score,' do
             it 'is a zeroed Timing instance' do

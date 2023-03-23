@@ -1,6 +1,8 @@
 require:
-  - rubocop-rspec
+  - rubocop-performance
   - rubocop-rails
+  - rubocop-rake
+  - rubocop-rspec
 
 inherit_from: .rubocop_todo.yml
 
@@ -44,11 +46,10 @@ Metrics/AbcSize:
 Metrics/BlockLength:
   Max: 40
   CountAsOne: ['array', 'heredoc']
-  IgnoredMethods: ['describe', 'context', 'define', 'factory', 'shared_examples_for']
   Exclude:
     - 'goggles_db.gemspec'
     - 'lib/tasks/*.rake'
-    - 'spec/models/goggles_db/city_spec.rb'
+    - 'spec/**/*'
 
 Metrics/ClassLength:
   Max: 120
@@ -64,7 +65,6 @@ Metrics/CyclomaticComplexity:
 Metrics/MethodLength:
   Max: 40
   CountAsOne: ['array', 'heredoc']
-  IgnoredMethods: ['describe', 'context']
 
 Metrics/ModuleLength:
   Max: 200
@@ -81,6 +81,12 @@ Naming/VariableNumber:
   Exclude:
     - 'db/migrate/20201121173221_rename_bool_fields_for_mevents_plus_more.rb'
     - 'db/migrate/20210130164719_rename_under_25_to_under25.rb'
+
+Rake/MethodDefinitionInTask:
+  Exclude:
+    - 'lib/tasks/db_check.rake'
+    - 'lib/tasks/db_dump_rebuild_reset.rake'
+    - 'lib/tasks/normalize_*'
 
 # This rule is simply stupid and needs to be kept disabled (most of the inline SQL will fail using squish)
 Rails/SquishedSQLHeredocs:
@@ -100,6 +106,10 @@ RSpec/MultipleMemoizedHelpers:
 
 RSpec/NestedGroups:
   Max: 5
+
+RSpec/PendingWithoutReason:
+  Exclude:
+    - 'spec/models/goggles_db/goggle_cup*'
 
 Style/Documentation:
   Exclude:

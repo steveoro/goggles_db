@@ -8,7 +8,7 @@ require 'support/shared_to_json_examples'
 require 'support/shared_abstract_meeting_examples'
 
 module GogglesDb
-  RSpec.describe Meeting, type: :model do
+  RSpec.describe Meeting do
     subject { FactoryBot.create(:meeting) }
 
     shared_examples_for 'a valid Meeting instance' do
@@ -242,7 +242,7 @@ module GogglesDb
       end
 
       context "given the chosen Swimmer has any #{described_class.to_s.pluralize} associated to it," do
-        let(:result) { described_class.send('for_swimmer', chosen_filter).limit(10) }
+        let(:result) { described_class.send(:for_swimmer, chosen_filter).limit(10) }
 
         it 'is a relation containing only Meetings attended by the specified Swimmer' do
           expect(result).to be_a(ActiveRecord::Relation)

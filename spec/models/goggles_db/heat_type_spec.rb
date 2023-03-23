@@ -4,7 +4,7 @@ require 'rails_helper'
 require 'support/shared_localizable_examples'
 
 module GogglesDb
-  RSpec.describe HeatType, type: :model do
+  RSpec.describe HeatType do
     context 'any pre-seeded instance' do
       subject { described_class.all.sample }
 

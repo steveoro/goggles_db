@@ -8,7 +8,7 @@ module GogglesDb
     it_behaves_like('responding to a list of methods', %i[search_by])
 
     describe '#search_by' do
-      context 'it is always a  MIRs,' do
+      context 'it is always a MIRs,' do
         subject { described_class.new.search_by(FFaker::Lorem.word, nil, FFaker::Lorem.word, FFaker::Lorem.word) }
 
         it 'does not raise any error because it ignores its parameters' do

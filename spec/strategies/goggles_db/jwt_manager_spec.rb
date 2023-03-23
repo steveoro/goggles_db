@@ -42,7 +42,7 @@ module GogglesDb
       describe '#decode' do
         context 'when the JWT contains valid data,' do
           it 'returns a kind of Hash with the expected data keys' do
-            expect(decoded_jwt).to be_a_kind_of(Hash).and be_present
+            expect(decoded_jwt).to be_a(Hash).and be_present
           end
 
           it 'has the expected data keys' do
@@ -58,7 +58,7 @@ module GogglesDb
 
         context 'when the JWT is invalid,' do
           it 'is nil' do
-            expect(subject.decode('surely not a valid JWT')).to be nil
+            expect(subject.decode('surely not a valid JWT')).to be_nil
           end
         end
       end

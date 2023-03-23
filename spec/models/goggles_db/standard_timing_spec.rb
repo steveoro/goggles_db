@@ -8,7 +8,7 @@ require 'support/shared_timing_manageable_examples'
 require 'support/shared_to_json_examples'
 
 module GogglesDb
-  RSpec.describe StandardTiming, type: :model do
+  RSpec.describe StandardTiming do
     shared_examples_for 'a valid StandardTiming instance' do
       it 'is valid' do
         expect(subject).to be_a(described_class).and be_valid
@@ -144,7 +144,7 @@ module GogglesDb
         let(:empty_season) { FactoryBot.create(:season) }
 
         it 'is nil' do
-          expect(subject).to be nil
+          expect(subject).to be_nil
         end
       end
     end

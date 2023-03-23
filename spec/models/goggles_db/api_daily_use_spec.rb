@@ -6,7 +6,7 @@ require 'support/shared_sorting_scopes_examples'
 require 'support/shared_filtering_scopes_examples'
 
 module GogglesDb
-  RSpec.describe APIDailyUse, type: :model do
+  RSpec.describe APIDailyUse do
     shared_examples_for 'a valid APIDailyUse instance' do
       it 'is valid' do
         expect(subject).to be_an(described_class).and be_valid

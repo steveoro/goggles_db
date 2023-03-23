@@ -5,7 +5,7 @@ require 'support/shared_method_existance_examples'
 require 'support/shared_to_json_examples'
 
 module GogglesDb
-  RSpec.describe ManagedAffiliation, type: :model do
+  RSpec.describe ManagedAffiliation do
     shared_examples_for 'a valid ManagedAffiliation instance' do
       it 'is valid' do
         expect(subject).to be_a(described_class).and be_valid

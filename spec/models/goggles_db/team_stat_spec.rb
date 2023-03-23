@@ -4,7 +4,7 @@ require 'rails_helper'
 require 'support/shared_method_existance_examples'
 
 module GogglesDb
-  RSpec.describe GogglesDb::TeamStat, type: :model do
+  RSpec.describe GogglesDb::TeamStat do
     subject { described_class.new(fixture_team) }
 
     let(:fixture_team) { GogglesDb::Team.first(200).sample }

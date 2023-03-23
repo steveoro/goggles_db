@@ -77,7 +77,7 @@ shared_examples_for '#to_json when called with unset optional associations' do |
       it "contains just the key of the JSON details of its #{association_name}" do
         expect(json_hash).to be_present
         expect(json_hash).to have_key(association_name)
-        expect(json_hash[association_name]).to be nil
+        expect(json_hash[association_name]).to be_nil
       end
     end
   end
