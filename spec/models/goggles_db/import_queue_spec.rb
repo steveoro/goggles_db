@@ -6,7 +6,7 @@ require 'support/shared_filtering_scopes_examples'
 require 'support/shared_active_storage_examples'
 
 module GogglesDb
-  RSpec.describe ImportQueue, type: :model do
+  RSpec.describe ImportQueue do
     shared_examples_for 'a valid ImportQueue instance' do
       it 'is valid' do
         expect(subject).to be_an(described_class).and be_valid
@@ -153,7 +153,7 @@ module GogglesDb
       let(:minutes) { (rand * 5).to_i }
       let(:seconds) { (rand * 59).to_i }
       let(:hundredths) { (rand * 99).to_i }
-      let(:meters) { 50 + (rand * 8).to_i * 50 }
+      let(:meters) { 50 + ((rand * 8).to_i * 50) }
       let(:fixture_swimmer) { GogglesDb::Swimmer.first(150).sample }
       let(:fixture_event_type) { GogglesDb::EventType.all.sample }
 

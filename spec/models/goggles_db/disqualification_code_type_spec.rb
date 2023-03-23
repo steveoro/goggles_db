@@ -5,7 +5,7 @@ require 'support/shared_method_existance_examples'
 require 'support/shared_localizable_examples'
 
 module GogglesDb
-  RSpec.describe DisqualificationCodeType, type: :model do
+  RSpec.describe DisqualificationCodeType do
     context 'any pre-seeded instance' do
       subject { described_class.all.sample }
 

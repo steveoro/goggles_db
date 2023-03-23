@@ -131,14 +131,14 @@ namespace :db do
     # (The Resulting SQL file will be much longer, though -- but the bzipped
     #  version can result more compressed due to the replicated strings, and it is
     #  indeed much more readable and editable...)
-    cmd = "mysqldump --host=#{db_host} -u #{db_user} --password=\"#{db_pwd}\" --add-drop-table --triggers" \
-          " --routines --single-transaction #{db_name} >> #{file_name}"
+    cmd = "mysqldump --host=#{db_host} -u #{db_user} --password=\"#{db_pwd}\" --add-drop-table --triggers " \
+          "--routines --single-transaction #{db_name} >> #{file_name}"
     sh cmd
     append_sql_transaction_footer(file_name)
     puts "\r\nRecovery dump created."
 
     compressed_file = "#{file_name}.bz2"
-    FileUtils.rm(compressed_file) if File.exist?(compressed_file)
+    FileUtils.rm_f(compressed_file)
     puts 'Compressing as bz2...'
     sh "bzip2 #{file_name}"
     puts "\r\nDone.\r\n\r\n"

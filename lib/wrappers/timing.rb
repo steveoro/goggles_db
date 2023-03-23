@@ -55,8 +55,8 @@ class Timing
 
   # Converts the current instance value to a total Number value of hundredths of a second.
   def to_hundredths
-    @hundredths + @seconds * 100 + @minutes * 6000 +
-      @hours * 360_000 + @days * 8_640_000
+    @hundredths + (@seconds * 100) + (@minutes * 6000) +
+      (@hours * 360_000) + (@days * 8_640_000)
   end
 
   # Checks if the current instance is zero.

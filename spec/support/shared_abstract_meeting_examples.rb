@@ -12,7 +12,7 @@ require 'support/shared_to_json_examples'
 shared_examples_for 'AbstractMeeting #edition_label' do |factory_name_sym|
   describe 'for a valid instance' do
     context 'with an ordinal edition type,' do
-      subject { FactoryBot.build(factory_name_sym, edition_type: GogglesDb::EditionType.ordinal) }
+      subject { build(factory_name_sym, edition_type: GogglesDb::EditionType.ordinal) }
 
       it 'returns the label as a numeric string' do
         expect(subject.edition_label).to eq("#{subject.edition}°")
@@ -20,7 +20,7 @@ shared_examples_for 'AbstractMeeting #edition_label' do |factory_name_sym|
     end
 
     context 'with a roman edition type,' do
-      subject { FactoryBot.build(factory_name_sym, edition_type: GogglesDb::EditionType.roman) }
+      subject { build(factory_name_sym, edition_type: GogglesDb::EditionType.roman) }
 
       it 'returns the label as a roman numeral' do
         expect(subject.edition_label).to eq(subject.edition.to_i.to_roman)
@@ -28,7 +28,7 @@ shared_examples_for 'AbstractMeeting #edition_label' do |factory_name_sym|
     end
 
     context 'with a seasonal edition type,' do
-      subject { FactoryBot.build(factory_name_sym, edition_type: GogglesDb::EditionType.seasonal) }
+      subject { build(factory_name_sym, edition_type: GogglesDb::EditionType.seasonal) }
 
       it 'returns the label as a numeric string' do
         expect(subject.edition_label).to eq("#{subject.edition}°")
@@ -36,7 +36,7 @@ shared_examples_for 'AbstractMeeting #edition_label' do |factory_name_sym|
     end
 
     context 'with a yearly edition type,' do
-      subject { FactoryBot.build(factory_name_sym, edition_type: GogglesDb::EditionType.yearly) }
+      subject { build(factory_name_sym, edition_type: GogglesDb::EditionType.yearly) }
 
       it 'returns the first part of the header_year as label' do
         expect(subject.edition_label).to eq(subject.header_year.to_s.split('/')&.first)
@@ -44,7 +44,7 @@ shared_examples_for 'AbstractMeeting #edition_label' do |factory_name_sym|
     end
 
     context 'with an unspecified edition type,' do
-      subject { FactoryBot.build(factory_name_sym, edition_type: GogglesDb::EditionType.none) }
+      subject { build(factory_name_sym, edition_type: GogglesDb::EditionType.none) }
 
       it 'returns an empty string label' do
         expect(subject.edition_label).to eq('')
@@ -61,7 +61,7 @@ shared_examples_for 'AbstractMeeting #name_without_edition' do |factory_name_sym
   describe 'for a valid instance' do
     context 'with the default description parameter,' do
       subject do
-        FactoryBot.build(
+        build(
           factory_name_sym,
           edition_type: GogglesDb::EditionType.send(%i[ordinal roman none yearly seasonal].sample)
         )
@@ -78,7 +78,7 @@ shared_examples_for 'AbstractMeeting #name_without_edition' do |factory_name_sym
 
     context 'with a custom name parameter that does not include any edition label,' do
       subject do
-        FactoryBot.build(
+        build(
           factory_name_sym,
           edition_type: GogglesDb::EditionType.send(%i[ordinal roman none yearly seasonal].sample)
         )
@@ -97,7 +97,7 @@ shared_examples_for 'AbstractMeeting #name_without_edition' do |factory_name_sym
 
     context 'with a custom name parameter that includes an edition label at the front,' do
       subject do
-        FactoryBot.build(
+        build(
           factory_name_sym,
           edition_type: GogglesDb::EditionType.send(%i[ordinal roman].sample)
         )
@@ -118,7 +118,7 @@ shared_examples_for 'AbstractMeeting #name_without_edition' do |factory_name_sym
     end
 
     context 'with a custom name parameter that includes an edition label at the end (YEARLY),' do
-      subject { FactoryBot.build(factory_name_sym, edition_type: GogglesDb::EditionType.yearly) }
+      subject { build(factory_name_sym, edition_type: GogglesDb::EditionType.yearly) }
 
       [
         'Meeting Fake short name', 'Trofeo Città di Riccione', 'Meeting Master Torino',
@@ -144,7 +144,7 @@ shared_examples_for 'AbstractMeeting #name_with_edition' do |factory_name_sym|
   describe 'for a valid instance' do
     context 'with ordinal or roman edition type (prefix),' do
       subject do
-        FactoryBot.build(
+        build(
           factory_name_sym,
           edition_type: GogglesDb::EditionType.send(%i[ordinal roman].sample)
         )
@@ -161,7 +161,7 @@ shared_examples_for 'AbstractMeeting #name_with_edition' do |factory_name_sym|
 
     context 'with seasonal or yearly edition type (postfix),' do
       subject do
-        FactoryBot.build(
+        build(
           factory_name_sym,
           edition_type: GogglesDb::EditionType.send(%i[seasonal yearly].sample)
         )
@@ -177,7 +177,7 @@ shared_examples_for 'AbstractMeeting #name_with_edition' do |factory_name_sym|
     end
 
     context 'with no edition type set,' do
-      subject { FactoryBot.build(factory_name_sym, edition_type: GogglesDb::EditionType.none) }
+      subject { build(factory_name_sym, edition_type: GogglesDb::EditionType.none) }
 
       it 'is the default meeting name' do
         expect(subject.name_with_edition).to eq(subject.description)
@@ -192,7 +192,7 @@ shared_examples_for 'AbstractMeeting #condensed_name' do |factory_name_sym|
   describe 'for a valid instance' do
     context 'with a description that includes a common prefix,' do
       subject do
-        FactoryBot.build(
+        build(
           factory_name_sym,
           description: "#{common_prefix} #{base_tokens.join(' ')}"
         )

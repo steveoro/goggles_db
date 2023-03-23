@@ -5,7 +5,7 @@ FactoryBot.define do
     before_create_validate_instance
 
     name           { "#{FFaker::Address.street_name} pool" }
-    nick_name      { "#{FFaker::Address.street_name.downcase.gsub(' ', '')}-#{pool_type.length_in_meters}-#{(rand * 10_000).to_i}" }
+    nick_name      { "#{FFaker::Address.street_name.downcase.delete(' ')}-#{pool_type.length_in_meters}-#{(rand * 10_000).to_i}" }
     address        { FFaker::Address.street_address }
     lanes_number   { [6, 8, 10].sample }
     multiple_pools { [false, true].sample }

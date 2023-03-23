@@ -5,7 +5,7 @@ require 'support/shared_method_existance_examples'
 require 'support/shared_filtering_scopes_examples'
 
 module GogglesDb
-  RSpec.describe City, type: :model do
+  RSpec.describe City do
     shared_examples_for 'a valid City instance' do
       it 'is valid' do
         expect(subject).to be_a(described_class).and be_valid

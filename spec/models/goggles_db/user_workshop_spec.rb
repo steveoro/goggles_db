@@ -8,7 +8,7 @@ require 'support/shared_to_json_examples'
 require 'support/shared_abstract_meeting_examples'
 
 module GogglesDb
-  RSpec.describe UserWorkshop, type: :model do
+  RSpec.describe UserWorkshop do
     subject { FactoryBot.create(:user_workshop) }
 
     # Make sure UserWorkshop have some permanent fixtures:

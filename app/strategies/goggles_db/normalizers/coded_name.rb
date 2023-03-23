@@ -112,7 +112,7 @@ module GogglesDb
         #
         norm_city = normalize(city_name).gsub(/\W/iu, '')
         norm_name = normalize(name).split(/\s/)
-                                   .reject { |token| token =~ /#{norm_city}/i }
+                                   .grep_v(/#{norm_city}/i)
                                    .map { |token| token.gsub(/\W/iu, '') }
                                    .reject(&:empty?)
                                    .join
@@ -142,7 +142,7 @@ module GogglesDb
         # (with these, "\s" is not enough).
         name.to_s
             .gsub(/\b\d{4}/iu, '')
-            .gsub(%r{[\-_'`\\/:.,;]}, '')
+            .gsub(%r{[-_'`\\/:.,;]}, '')
             .gsub(/à/iu, 'a').gsub(/[èé]/iu, 'e').gsub(/ì/iu, 'i')
             .gsub(/ò/iu, 'o').gsub(/ù/iu, 'u').gsub(/ç/iu, 'c')
             .gsub(/\*|\^/iu, '°')
@@ -233,7 +233,7 @@ module GogglesDb
         edition_type_id = GogglesDb::EditionType::ORDINAL_ID if groups['arabic'].present?
         edition_type_id = GogglesDb::EditionType::YEARLY_ID if groups['year'].present? ||
                                                                (edition_type_id == GogglesDb::EditionType::NONE_ID && meeting_description =~ REGEXP_YEARLY_DESC)
-        edition_type_id = GogglesDb::EditionType::SEASONAL_ID if meeting_description =~ REGEXP_SEASONAL_DESC
+        edition_type_id = GogglesDb::EditionType::SEASONAL_ID if REGEXP_SEASONAL_DESC.match?(meeting_description)
 
         # Strip the name of the edition and ignore the rest, giving higher priority to the first found part:
         name = edition.blank? ? meeting_description : meeting_description.to_s.split(edition)&.reject(&:blank?)&.join

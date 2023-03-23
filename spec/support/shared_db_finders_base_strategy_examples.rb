@@ -26,7 +26,7 @@ shared_examples_for 'DbFinders::BaseStrategy successful #scan_for_matches' do
       expect(subject.matches).to be_present
     end
 
-    it 'is an array of OpenStruct, each with a candidate and a weight' do
+    it 'is an array of Structs, each with a candidate and a weight' do
       expect(subject.matches).to all respond_to(:candidate).and respond_to(:weight)
     end
   end

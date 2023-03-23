@@ -6,7 +6,7 @@ require 'support/shared_sorting_scopes_examples'
 require 'support/shared_filtering_scopes_examples'
 
 module GogglesDb
-  RSpec.describe SeasonPersonalStandard, type: :model do
+  RSpec.describe SeasonPersonalStandard do
     shared_examples_for 'a valid SeasonPersonalStandard instance' do
       it 'is valid' do
         expect(subject).to be_a(described_class).and be_valid
@@ -116,7 +116,7 @@ module GogglesDb
         let(:empty_season) { FactoryBot.create(:season) }
 
         it 'is nil' do
-          expect(subject).to be nil
+          expect(subject).to be_nil
         end
       end
     end

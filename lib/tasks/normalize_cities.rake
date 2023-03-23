@@ -110,8 +110,8 @@ namespace :normalize do
 
     case result
     when 1
-      $stdout.write("        updated '#{city_model.name}' (#{city_model.country_code}), area: '#{city_model.area}'" \
-                    " lat: '#{city_model.latitude}' long: '#{city_model.longitude}'\r\n")
+      $stdout.write("        updated '#{city_model.name}' (#{city_model.country_code}), area: '#{city_model.area}' " \
+                    "lat: '#{city_model.latitude}' long: '#{city_model.longitude}'\r\n")
       return 1
     when -1
       $stdout.write("        \033[1;33;31m× DUPLICATE City ID #{city_model.id} ×\033[0m '#{city_model.name}'\r\n")

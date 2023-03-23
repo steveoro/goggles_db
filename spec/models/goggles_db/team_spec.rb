@@ -7,7 +7,7 @@ require 'support/shared_filtering_scopes_examples'
 require 'support/shared_to_json_examples'
 
 module GogglesDb
-  RSpec.describe Team, type: :model do
+  RSpec.describe Team do
     shared_examples_for 'a valid Team instance' do
       it 'is valid' do
         expect(subject).to be_a(described_class).and be_valid

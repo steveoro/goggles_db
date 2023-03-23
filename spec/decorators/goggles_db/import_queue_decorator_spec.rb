@@ -4,23 +4,23 @@ require 'rails_helper'
 
 RSpec.describe GogglesDb::ImportQueueDecorator, type: :decorator do
   let(:fixture_event_type) { GogglesDb::EventType.all.sample }
-  let(:fixture_swimmer) { FactoryBot.build(:swimmer) }
+  let(:fixture_swimmer) { build(:swimmer) }
 
   describe '#state_flag' do
     context 'with a row which is done (but not yet deleted),' do
       subject { described_class.decorate(model_obj) }
 
-      let(:model_obj) { FactoryBot.create(:import_queue, done: true) }
+      let(:model_obj) { create(:import_queue, done: true) }
 
       it 'returns a green dot' do
         expect(subject.state_flag).to eq('🟢')
       end
     end
 
-    context "for a row which hasn\'t been processed yet," do
+    context "for a row which hasn't been processed yet," do
       subject { described_class.decorate(model_obj) }
 
-      let(:model_obj) { FactoryBot.create(:import_queue) }
+      let(:model_obj) { create(:import_queue) }
 
       it 'returns an empty string' do
         expect(subject.state_flag).to be_a(String).and be_empty
@@ -30,7 +30,7 @@ RSpec.describe GogglesDb::ImportQueueDecorator, type: :decorator do
     context 'with a row that has already been processed at least once,' do
       subject { described_class.decorate(model_obj) }
 
-      let(:model_obj) { FactoryBot.create(:import_queue, process_runs: 1) }
+      let(:model_obj) { create(:import_queue, process_runs: 1) }
 
       it 'returns the counter of runs' do
         expect(subject.state_flag).to eq('▶ 1')
@@ -42,7 +42,7 @@ RSpec.describe GogglesDb::ImportQueueDecorator, type: :decorator do
     let(:minutes) { (rand * 5).to_i }
     let(:seconds) { (rand * 59).to_i }
     let(:hundredths) { (rand * 99).to_i }
-    let(:meters) { 50 + (rand * 8).to_i * 50 }
+    let(:meters) { 50 + ((rand * 8).to_i * 50) }
     let(:timing_request_data) do
       {
         'target_entity' => 'Lap',
@@ -68,7 +68,7 @@ RSpec.describe GogglesDb::ImportQueueDecorator, type: :decorator do
     context 'with a row that contains a valid parent chrono timing,' do
       subject { described_class.decorate(fixture_row) }
 
-      let(:fixture_row) { FactoryBot.create(:import_queue, uid: 'chrono', request_data: timing_request_data) }
+      let(:fixture_row) { create(:import_queue, uid: 'chrono', request_data: timing_request_data) }
 
       it 'is aliased with #display_label && #short_label' do
         expect(subject.text_label).to eq(subject.display_label)
@@ -95,7 +95,7 @@ RSpec.describe GogglesDb::ImportQueueDecorator, type: :decorator do
     context 'with a row that contains a valid sibling chrono timing,' do
       subject { described_class.decorate(fixture_row) }
 
-      let(:fixture_row) { FactoryBot.create(:import_queue, uid: 'chrono-1', request_data: timing_request_data) }
+      let(:fixture_row) { create(:import_queue, uid: 'chrono-1', request_data: timing_request_data) }
 
       it 'is aliased with #display_label && #short_label' do
         expect(subject.text_label).to eq(subject.display_label)
@@ -118,7 +118,7 @@ RSpec.describe GogglesDb::ImportQueueDecorator, type: :decorator do
     context 'with a row that contains valid meeting reservation data,' do
       subject { described_class.decorate(fixture_row) }
 
-      let(:fixture_row) { FactoryBot.create(:import_queue, uid: 'res', request_data: timing_request_data) }
+      let(:fixture_row) { create(:import_queue, uid: 'res', request_data: timing_request_data) }
 
       it 'is aliased with #display_label && #short_label' do
         expect(subject.text_label).to eq(subject.display_label)
@@ -149,7 +149,7 @@ RSpec.describe GogglesDb::ImportQueueDecorator, type: :decorator do
     context 'with a generic row that contains any other entity data,' do
       subject { described_class.decorate(fixture_row) }
 
-      let(:fixture_row) { FactoryBot.create(:import_queue, request_data: timing_request_data) }
+      let(:fixture_row) { create(:import_queue, request_data: timing_request_data) }
 
       it 'is aliased with #display_label && #short_label' do
         expect(subject.text_label).to eq(subject.display_label)
@@ -188,7 +188,7 @@ RSpec.describe GogglesDb::ImportQueueDecorator, type: :decorator do
           }
         }.to_json
       end
-      let(:fixture_row) { FactoryBot.create(:import_queue, request_data: fixture_request_data) }
+      let(:fixture_row) { create(:import_queue, request_data: fixture_request_data) }
 
       it 'returns the year of birth of the swimmer' do
         expect(subject.req_swimmer_year_of_birth).to eq(fixture_swimmer.year_of_birth)
@@ -207,7 +207,7 @@ RSpec.describe GogglesDb::ImportQueueDecorator, type: :decorator do
           }
         }.to_json
       end
-      let(:fixture_row) { FactoryBot.create(:import_queue, request_data: fixture_request_data) }
+      let(:fixture_row) { create(:import_queue, request_data: fixture_request_data) }
 
       it 'returns the year of birth of the swimmer' do
         expect(subject.req_swimmer_year_of_birth).to eq(fixture_swimmer.year_of_birth)
@@ -223,10 +223,10 @@ RSpec.describe GogglesDb::ImportQueueDecorator, type: :decorator do
           'swimmer' => { 'id' => (rand * 150).to_i } # (Don't care if it's existing or not)
         }.to_json
       end
-      let(:fixture_row) { FactoryBot.create(:import_queue, request_data: fixture_request_data) }
+      let(:fixture_row) { create(:import_queue, request_data: fixture_request_data) }
 
       it 'is nil' do
-        expect(subject.req_swimmer_year_of_birth).to be nil
+        expect(subject.req_swimmer_year_of_birth).to be_nil
       end
     end
   end

@@ -7,7 +7,7 @@ require 'support/shared_filtering_scopes_examples'
 require 'support/shared_to_json_examples'
 
 module GogglesDb
-  RSpec.describe EventsByPoolType, type: :model do
+  RSpec.describe EventsByPoolType do
     let(:full_cached_table) { described_class.all_individuals + described_class.all_relays }
 
     context 'any pre-seeded instance' do
@@ -35,7 +35,7 @@ module GogglesDb
         end
 
         context 'with an Event/Pool type combination not valid for any MeetingEvent,' do
-          it 'returns false ' do
+          it 'returns false' do
             uneventable_row = (full_cached_table - described_class.all_eventable).sample
             expect(uneventable_row.nil? || !uneventable_row&.eventable?).to be true
           end

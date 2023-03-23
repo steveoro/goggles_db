@@ -5,7 +5,7 @@ require 'support/shared_method_existance_examples'
 require 'support/shared_localizable_examples'
 
 module GogglesDb
-  RSpec.describe EventType, type: :model do
+  RSpec.describe EventType do
     context 'any pre-seeded instance' do
       subject { (described_class.all_individuals + described_class.all_relays).sample }
 

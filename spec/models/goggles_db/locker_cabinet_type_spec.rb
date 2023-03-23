@@ -4,7 +4,7 @@ require 'rails_helper'
 require 'support/shared_localizable_examples'
 
 module GogglesDb
-  RSpec.describe LockerCabinetType, type: :model do
+  RSpec.describe LockerCabinetType do
     context 'any pre-seeded instance' do
       subject { described_class.all.sample }
 

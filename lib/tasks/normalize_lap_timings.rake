@@ -141,8 +141,8 @@ namespace :normalize do
   #
   def case_delta_zero_and_abs_present(lap, lap_idx)
     lap.hundredths.to_i.zero? && lap.seconds.to_i.zero? && lap.minutes.to_i.zero? &&
-      (lap.hundredths_from_start.present? && lap.seconds_from_start.present? &&
-      lap.minutes_from_start.present? || lap_idx.positive?)
+      ((lap.hundredths_from_start.present? && lap.seconds_from_start.present? &&
+      lap.minutes_from_start.present?) || lap_idx.positive?)
   end
 
   # Checks: abs timing missing && (delta timing present || prev. lap exists)
@@ -157,7 +157,7 @@ namespace :normalize do
   def case_abs_zero_and_delta_present(lap, lap_idx)
     lap.hundredths_from_start.to_i.zero? && lap.seconds_from_start.to_i.zero? &&
       lap.minutes_from_start.to_i.zero? &&
-      (lap.hundredths.present? && lap.seconds.present? && lap.minutes.present? || lap_idx.positive?)
+      ((lap.hundredths.present? && lap.seconds.present? && lap.minutes.present?) || lap_idx.positive?)
   end
 
   # Checks: (abs timing == delta timing) && prev. lap exists

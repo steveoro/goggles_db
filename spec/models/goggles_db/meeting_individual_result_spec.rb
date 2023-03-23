@@ -9,7 +9,7 @@ require 'support/shared_to_json_examples'
 require 'support/shared_abstract_result_examples'
 
 module GogglesDb
-  RSpec.describe MeetingIndividualResult, type: :model do
+  RSpec.describe MeetingIndividualResult do
     shared_examples_for 'a valid MeetingIndividualResult instance' do
       it 'is valid' do
         expect(subject).to be_a(described_class).and be_valid

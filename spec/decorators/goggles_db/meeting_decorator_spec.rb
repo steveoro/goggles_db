@@ -56,7 +56,7 @@ RSpec.describe GogglesDb::MeetingDecorator, type: :decorator do
     end
 
     context 'when there are no sessions,' do
-      subject(:result) { described_class.decorate(FactoryBot.create(:meeting)).scheduled_dates }
+      subject(:result) { described_class.decorate(create(:meeting)).scheduled_dates }
 
       it 'returns an empty list' do
         expect(result).to eq([])
@@ -74,10 +74,10 @@ RSpec.describe GogglesDb::MeetingDecorator, type: :decorator do
     end
 
     context 'when there are no sessions,' do
-      subject(:result) { described_class.decorate(FactoryBot.create(:meeting)).scheduled_date }
+      subject(:result) { described_class.decorate(create(:meeting)).scheduled_date }
 
       it 'returns nil' do
-        expect(result).to be nil
+        expect(result).to be_nil
       end
     end
   end
@@ -94,7 +94,7 @@ RSpec.describe GogglesDb::MeetingDecorator, type: :decorator do
     context 'when there are no sessions,' do
       subject(:result) { described_class.decorate(fixture_row).meeting_date }
 
-      let(:fixture_row) { FactoryBot.create(:meeting) }
+      let(:fixture_row) { create(:meeting) }
 
       it 'returns the #header_date' do
         expect(result).to eq(fixture_row.header_date)
@@ -112,7 +112,7 @@ RSpec.describe GogglesDb::MeetingDecorator, type: :decorator do
     end
 
     context 'when there are no sessions,' do
-      subject(:result) { described_class.decorate(FactoryBot.create(:meeting)).meeting_pools }
+      subject(:result) { described_class.decorate(create(:meeting)).meeting_pools }
 
       it 'returns an empty list' do
         expect(result).to eq([])
@@ -130,10 +130,10 @@ RSpec.describe GogglesDb::MeetingDecorator, type: :decorator do
     end
 
     context 'when there are no sessions,' do
-      subject(:result) { described_class.decorate(FactoryBot.create(:meeting)).meeting_pool }
+      subject(:result) { described_class.decorate(create(:meeting)).meeting_pool }
 
       it 'returns nil' do
-        expect(result).to be nil
+        expect(result).to be_nil
       end
     end
   end
@@ -148,7 +148,7 @@ RSpec.describe GogglesDb::MeetingDecorator, type: :decorator do
     end
 
     context 'when there are no sessions,' do
-      subject(:result) { described_class.decorate(FactoryBot.create(:meeting)).event_list }
+      subject(:result) { described_class.decorate(create(:meeting)).event_list }
 
       it 'returns an empty list' do
         expect(result).to eq([])
@@ -166,7 +166,7 @@ RSpec.describe GogglesDb::MeetingDecorator, type: :decorator do
     end
 
     context 'when there are no sessions,' do
-      subject(:result) { described_class.decorate(FactoryBot.create(:meeting)).event_type_list }
+      subject(:result) { described_class.decorate(create(:meeting)).event_type_list }
 
       it 'returns an empty list' do
         expect(result).to eq([])

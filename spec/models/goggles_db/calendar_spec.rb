@@ -8,7 +8,7 @@ require 'support/shared_to_json_examples'
 require 'support/shared_active_storage_examples'
 
 module GogglesDb
-  RSpec.describe Calendar, type: :model do
+  RSpec.describe Calendar do
     context 'when using the factory, the resulting instance' do
       subject { FactoryBot.create(:calendar) }
 
@@ -112,7 +112,7 @@ module GogglesDb
           it 'is a relation containing only Calendar rows having the either the meeting unset or with an header_date set in the future' do
             expect(result).to be_a(ActiveRecord::Relation)
             expect(result).to all be_a(described_class)
-            all_calendar_meetings = result.map(&:meeting).compact.uniq
+            all_calendar_meetings = result.filter_map(&:meeting).uniq
             expect(all_calendar_meetings.map(&:header_date)).to all be > Time.zone.today
           end
         end

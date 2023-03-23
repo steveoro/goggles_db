@@ -8,7 +8,7 @@ require 'support/shared_timing_manageable_examples'
 require 'support/shared_to_json_examples'
 
 module GogglesDb
-  RSpec.describe MeetingRelaySwimmer, type: :model do
+  RSpec.describe MeetingRelaySwimmer do
     shared_examples_for 'a valid MeetingRelaySwimmer instance' do
       it 'is valid' do
         expect(subject).to be_a(described_class).and be_valid

@@ -7,7 +7,7 @@ require 'support/shared_filtering_scopes_examples'
 require 'support/shared_to_json_examples'
 
 module GogglesDb
-  RSpec.describe BadgePayment, type: :model do
+  RSpec.describe BadgePayment do
     context 'when using the factory, the resulting instance' do
       subject { FactoryBot.create(:badge_payment) }
 

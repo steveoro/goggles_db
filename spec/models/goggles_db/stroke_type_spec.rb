@@ -4,7 +4,7 @@ require 'rails_helper'
 require 'support/shared_localizable_examples'
 
 module GogglesDb
-  RSpec.describe StrokeType, type: :model do
+  RSpec.describe StrokeType do
     context 'any pre-seeded instance' do
       subject { described_class.all.sample }
 

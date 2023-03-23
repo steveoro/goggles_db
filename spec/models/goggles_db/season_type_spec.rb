@@ -4,7 +4,7 @@ require 'rails_helper'
 require 'support/shared_method_existance_examples'
 
 module GogglesDb
-  RSpec.describe SeasonType, type: :model do
+  RSpec.describe SeasonType do
     %w[mas_fin mas_csi mas_uisp ago_fin ago_csi ago_uisp mas_len mas_fina].each do |word|
       # Redefine the subject on a specific instance in order to use the shared_examples:
       subject { described_class.send(word) }

@@ -6,7 +6,7 @@ require 'support/shared_sorting_scopes_examples'
 require 'support/shared_to_json_examples'
 
 module GogglesDb
-  RSpec.describe MeetingSession, type: :model do
+  RSpec.describe MeetingSession do
     #-- ------------------------------------------------------------------------
     #++
 

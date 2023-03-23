@@ -6,7 +6,7 @@ require 'support/shared_filtering_scopes_examples'
 require 'support/shared_to_json_examples'
 
 module GogglesDb
-  RSpec.describe Swimmer, type: :model do
+  RSpec.describe Swimmer do
     subject(:new_swimmer) { FactoryBot.create(:swimmer) }
 
     let(:new_badge) { FactoryBot.create(:badge) }
@@ -44,7 +44,7 @@ module GogglesDb
 
       it 'is does not have an associated user yet' do
         expect(new_swimmer).to respond_to(:associated_user)
-        expect(new_swimmer.associated_user).to be nil
+        expect(new_swimmer.associated_user).to be_nil
       end
 
       it 'is has a #complete_name' do
@@ -67,7 +67,7 @@ module GogglesDb
 
       context 'with a given date,' do
         it 'returns the age of the swimmer during that date\'s year' do
-          sample_date = Time.zone.today + (rand * 30 - rand * 15).to_i.years
+          sample_date = Time.zone.today + ((rand * 30) - (rand * 15)).to_i.years
           expect(new_swimmer.age(sample_date)).to eq(sample_date.year - new_swimmer.year_of_birth)
         end
       end

@@ -143,7 +143,7 @@ module GogglesDb
         end
 
         it 'has a nil #result' do
-          expect(subject.result).to be nil
+          expect(subject.result).to be_nil
         end
       end
 

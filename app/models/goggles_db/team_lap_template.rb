@@ -39,7 +39,7 @@ module GogglesDb
     # (which will be likely edited by the Team manager according to personal preferences).
     def self.default_lap_lengths_for(total_length_in_meters, pool_length = 50)
       (pool_length..total_length_in_meters).step(pool_length).to_a.delete_if do |len|
-        (total_length_in_meters > 100) && (len % 50 != 0) || (len % pool_length != 0)
+        ((total_length_in_meters > 100) && (len % 50 != 0)) || (len % pool_length != 0)
       end
     end
   end

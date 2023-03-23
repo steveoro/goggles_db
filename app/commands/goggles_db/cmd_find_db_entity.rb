@@ -24,7 +24,7 @@ module GogglesDb
   #
   # - result: best-fit or corresponding database row instance among the matches; +nil+ when not found.
   #
-  # - matches: Array of OpenStruct instances, sorted by weights in descending order, with structure:
+  # - matches: Array of Struct/OpenStruct instances, sorted by weights in descending order, having structure:
   #            [
   #              <OpenStruct 1 candidate=[entity row 1], weight=1.0>,
   #              <OpenStruct 2 candidate=[entity row 2], weight=0.9>,

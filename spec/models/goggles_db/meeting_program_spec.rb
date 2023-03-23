@@ -6,7 +6,7 @@ require 'support/shared_sorting_scopes_examples'
 require 'support/shared_to_json_examples'
 
 module GogglesDb
-  RSpec.describe MeetingProgram, type: :model do
+  RSpec.describe MeetingProgram do
     shared_examples_for 'a valid MeetingProgram instance' do
       it 'is valid' do
         expect(subject).to be_a(described_class).and be_valid
@@ -114,7 +114,7 @@ module GogglesDb
           let(:json_hash) { JSON.parse(subject.to_json) }
 
           it "doesn't contain the MRR list" do
-            expect(json_hash['meeting_relay_results']).to be nil
+            expect(json_hash['meeting_relay_results']).to be_nil
           end
 
           it_behaves_like(
@@ -133,7 +133,7 @@ module GogglesDb
           let(:json_hash) { JSON.parse(subject.to_json) }
 
           it "doesn't contain the MIR list" do
-            expect(json_hash['meeting_individual_results']).to be nil
+            expect(json_hash['meeting_individual_results']).to be_nil
           end
 
           it_behaves_like(

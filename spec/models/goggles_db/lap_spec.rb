@@ -9,7 +9,7 @@ require 'support/shared_to_json_examples'
 require 'support/shared_abstract_lap_examples'
 
 module GogglesDb
-  RSpec.describe Lap, type: :model do
+  RSpec.describe Lap do
     shared_examples_for 'a valid Lap instance' do
       it 'is valid' do
         expect(subject).to be_a(described_class).and be_valid

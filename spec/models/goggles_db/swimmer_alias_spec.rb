@@ -4,7 +4,7 @@ require 'rails_helper'
 require 'support/shared_method_existance_examples'
 
 module GogglesDb
-  RSpec.describe SwimmerAlias, type: :model do
+  RSpec.describe SwimmerAlias do
     shared_examples_for 'a valid SwimmerAlias instance' do
       it 'is valid' do
         expect(subject).to be_a(described_class).and be_valid

@@ -3,7 +3,6 @@
 require 'simple_command'
 require 'cities'
 require 'fuzzystringmatch'
-require 'ostruct'
 
 module GogglesDb
   #
@@ -23,7 +22,7 @@ module GogglesDb
   #
   # - result: best-fit or corresponding Cities::City instance among the matches; +nil+ when not found.
   #
-  # - matches: Array of OpenStruct instances, sorted by weights in descending order, with structure:
+  # - matches: Array of Struct/OpenStruct instances, sorted by weights in descending order, having structure:
   #            [
   #              <OpenStruct 1 candidate=Cities::City 1, weight=1.0>,
   #              <OpenStruct 2 candidate=Cities::City 2, weight=0.9>,
@@ -89,6 +88,7 @@ module GogglesDb
       @iso_country = iso_country
       @city_name = city_name
       @toggle_debug = toggle_debug
+      @candidate_struct = Struct.new(:candidate, :weight)
       @matches = []
     end
 
@@ -161,13 +161,13 @@ module GogglesDb
         regexp_match = key_name =~ regexp
         if regexp_match
           weight = 1.0
-          @matches << OpenStruct.new(candidate: city, weight: weight)
+          @matches << @candidate_struct.new(candidate: city, weight: weight)
           break
         end
 
         # Store candidates only if they seem to be a match:
         weight = compute_best_weight(key_name, city)
-        @matches << OpenStruct.new(candidate: city, weight: weight) if weight >= MATCH_BIAS
+        @matches << @candidate_struct.new(candidate: city, weight: weight) if weight >= MATCH_BIAS
       end
       weight
     end

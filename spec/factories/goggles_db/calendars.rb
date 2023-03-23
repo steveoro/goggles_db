@@ -20,7 +20,7 @@ FactoryBot.define do
       after(:create) do |saved_instance|
         text_contents = "TEST Manifest for '#{saved_instance.meeting_name}'\r\nImagine a list of events here...\r\n"
         file_path = Rails.root.join('tmp', 'storage', "test-manifest-#{saved_instance.id}.txt")
-        File.open(file_path, 'w') { |f| f.write(text_contents) }
+        File.write(file_path, text_contents)
 
         saved_instance.manifest_file.attach(
           io: File.open(file_path),

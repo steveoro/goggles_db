@@ -30,8 +30,8 @@ class DataFixRemoveDuplicatesInReservationTables < ActiveRecord::Migration[6.0]
     # Build an array of [badge_id, meeting_event_id] for any reservation found created twice or more:
     dup_event_res_list = klass.group(:badge_id, :meeting_event_id)
                               .count(:meeting_event_id)
-                              .map { |grp| grp.first if grp.last > 1 }
-                              .compact
+                              .filter_map { |grp| grp.first if grp.last > 1 }
+
     Rails.logger.debug { "\r\n--> Found #{dup_event_res_list.count} groups with #{klass} duplicates; deleting:" }
     dup_event_res_list.each do |tuple|
       badge_id, meeting_event_id = tuple

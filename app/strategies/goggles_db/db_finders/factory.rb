@@ -40,7 +40,7 @@ module GogglesDb
       # rubocop:disable Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
       def self.for(model_klass, search_terms = {})
         raise(ArgumentError, 'No search term specified') if search_terms.blank? ||
-                                                            search_terms.reject { |k, _v| k == :toggle_debug }.blank?
+                                                            search_terms.except(:toggle_debug).blank?
 
         if model_klass == GogglesDb::Swimmer
           # Add also strict parameter checking for the search terms in all models, like this:

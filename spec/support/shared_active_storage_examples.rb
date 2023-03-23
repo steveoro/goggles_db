@@ -25,7 +25,7 @@ shared_examples_for 'active storage field with local file' do |attach_msg|
     it "can be accessed via the ##{attach_msg} member and disposed with #purge" do
       # Create the local temp storage file:
       file_path = Rails.root.join('tmp/test.sql')
-      File.open(file_path, 'w') { |f| f.write(text_contents) }
+      File.write(file_path, text_contents)
 
       # Attach the file to the attachable:
       attachable = subject.send(attach_msg)

@@ -13,7 +13,7 @@ shared_examples_for 'having a list of scopes with no parameters' do |method_name
 
   method_name_array.each do |method_name|
     it "returns #{method_name.to_s.camelcase}'s ActiveRecord::Relation" do
-      expect(subject.class.send(method_name)).to be_a_kind_of(ActiveRecord::Relation)
+      expect(subject.class.send(method_name)).to be_a(ActiveRecord::Relation)
     end
   end
 end
@@ -45,7 +45,7 @@ shared_examples_for 'having one or more required associations' do |attribute_nam
 
   attribute_name_array.each do |attribute_name|
     it "returns a sibling of GogglesDb::ApplicationRecord (#{attribute_name.to_s.camelcase})" do
-      expect(subject.send(attribute_name)).to be_a_kind_of(GogglesDb::ApplicationRecord)
+      expect(subject.send(attribute_name)).to be_a(GogglesDb::ApplicationRecord)
     end
   end
 end

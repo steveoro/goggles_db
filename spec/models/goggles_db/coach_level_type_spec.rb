@@ -4,7 +4,7 @@ require 'rails_helper'
 require 'support/shared_localizable_examples'
 
 module GogglesDb
-  RSpec.describe CoachLevelType, type: :model do
+  RSpec.describe CoachLevelType do
     context 'any pre-seeded instance' do
       subject { described_class.all.sample }
 

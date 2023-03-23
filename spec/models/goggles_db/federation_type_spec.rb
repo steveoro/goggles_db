@@ -3,7 +3,7 @@
 require 'rails_helper'
 
 module GogglesDb
-  RSpec.describe FederationType, type: :model do
+  RSpec.describe FederationType do
     %w[fin csi uisp len fina].each do |word|
       describe "self.#{word}" do
         it 'is has a #code' do

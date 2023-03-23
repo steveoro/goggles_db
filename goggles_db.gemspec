@@ -22,7 +22,7 @@ Gem::Specification.new do |spec|
     spec.metadata['allowed_push_host'] = 'https://master-goggles.org' # (Not valid yet)
   else
     raise 'RubyGems 2.0 or newer is required to protect against ' \
-      'public gem pushes.'
+          'public gem pushes.'
   end
 
   spec.files = Dir['{app,config,db,lib}/**/*', 'LICENSE', 'Rakefile', 'README.md']
@@ -65,6 +65,5 @@ Gem::Specification.new do |spec|
   # NOTE: data factories are published here to allow
   # fixture creation even on staging/production environments
 
-  spec.add_development_dependency 'mysql2'
-  spec.add_development_dependency 'scenic-mysql_adapter'
+  spec.metadata['rubygems_mfa_required'] = 'true'
 end

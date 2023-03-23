@@ -5,7 +5,7 @@ require 'support/shared_method_existance_examples'
 require 'support/shared_filtering_scopes_examples'
 
 module GogglesDb
-  RSpec.describe MeetingTeamScore, type: :model do
+  RSpec.describe MeetingTeamScore do
     shared_examples_for 'a valid MeetingTeamScore instance' do
       it 'is valid' do
         expect(subject).to be_a(described_class).and be_valid
