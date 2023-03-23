@@ -28,18 +28,16 @@ Gem::Specification.new do |spec|
   spec.files = Dir['{app,config,db,lib}/**/*', 'LICENSE', 'Rakefile', 'README.md']
 
   # Base Rails dependancy:
-  # [20210128] ActiveRecord 6.1 introduces too many changes for the current version
-  spec.add_dependency 'rails', '>= 6.0.5.1', '< 6.1.0'
+  # [20210128] ActiveRecord 6.1 introduces too many changes for the current implementation
+  spec.add_dependency 'rails', '>= 6.0.6.1', '< 6.1.0'
   spec.add_dependency 'rails-i18n', '~> 6.0'
 
   spec.add_dependency 'acts-as-taggable-on'
   spec.add_dependency 'acts_as_votable'
-
   # Countries & cities lookup:
   spec.add_dependency 'cities'    # https://github.com/joecorcoran/cities
   spec.add_dependency 'countries' # https://github.com/hexorx/countries
   spec.add_dependency 'country_select'
-
   spec.add_dependency 'devise'
   spec.add_dependency 'devise-i18n'
   spec.add_dependency 'draper'
@@ -50,7 +48,7 @@ Gem::Specification.new do |spec|
   spec.add_dependency 'ledermann-rails-settings' # https://github.com/ledermann/rails-settings
   spec.add_dependency 'loofah', '>= 2.2'
   spec.add_dependency 'mini_magick'
-  spec.add_dependency 'nokogiri', '>= 1.13.4'
+  spec.add_dependency 'nokogiri', '>= 1.14.2'
   spec.add_dependency 'omniauth-facebook'
   # Subseeded by google_sign_in used by goggles_main (no Devise/Omniauth dependencies)
   # spec.add_dependency 'omniauth-google-oauth2'

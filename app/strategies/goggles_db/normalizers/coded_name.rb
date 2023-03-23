@@ -151,7 +151,7 @@ module GogglesDb
             .gsub(/\bnuoto\b|\bcoppa\b|\bcampionat.\b|\btrofeo\b+|\brepubblica\b|\bfinali\b|\btr.?\b/iu, '')
             .gsub(/\b[dn][ae]l?(lo|la|l)?\b/iu, ' ')
             .gsub(/\bcircolo\b|\bcittadella\b|\bcomplesso\b|\bcentro\b|\bcenter\b|\bclub\b/ui, 'c')
-            .gsub(/\bcitt[aà]\'?\b|\bdi\b|\bcomunal[ei]\b|\bs?coperta\b|\bimpiant.\b|\bpiscin.\b|\bpolisportiv.\b|\bnatatori\b/iu, '')
+            .gsub(/\bcitt[aà]'?\b|\bdi\b|\bcomunal[ei]\b|\bs?coperta\b|\bimpiant.\b|\bpiscin.\b|\bpolisportiv.\b|\bnatatori\b/iu, '')
             .gsub(/\balbert[oa]?\b|\banna\b|\bandrea\b|\bachille\b|\barmando\b|\barnoldo\b/ui, 'a')
             .gsub(/\bcarl[ao]?\b|\bcarmen\b|\bcelio\b|\bcorrado\b|\bch?ristiano?\b/ui, 'c')
             .gsub(/\bdaniel[ae]\b|\bdari[ao]\b/ui, 'd')

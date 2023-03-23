@@ -4,9 +4,9 @@ module GogglesDb
   #
   # = "Manager checker" wrapper/strategy object
   #
-  #   - file vers.: 7.03
+  #   - file vers.: 7.4.25
   #   - author....: Steve A.
-  #   - build.....: 20210614
+  #   - build.....: 20230131
   #
   #  Checks if the specified User instance can manage or handle the
   #  specific instances supplied as parameters.
@@ -25,6 +25,26 @@ module GogglesDb
         GrantChecker.crud?(user, 'Team') ||
         GrantChecker.crud?(user, 'TeamAffiliation') ||
         GogglesDb::ManagedAffiliation.exists?(user_id: user.id, team_affiliation_id: team_affiliation.id)
+    end
+
+    # Similarly to Returns <tt>self.for_affiliation?()</tt>, returns +true+ if the specified User
+    # manages any team affiliation for the specified season.
+    #
+    # == Params:
+    # - user: the GogglesDb::User instance to be checked for managing grants;
+    # - season: the GogglesDb::Season instance in which the user may manage any team.
+    #
+    def self.any_for?(user, season)
+      return false unless user.instance_of?(User) && season.instance_of?(Season)
+
+      GrantChecker.admin?(user) ||
+        GrantChecker.crud?(user, 'Team') ||
+        GrantChecker.crud?(user, 'TeamAffiliation') ||
+        GogglesDb::ManagedAffiliation.includes(:team_affiliation).joins(:team_affiliation)
+                                     .exists?(
+                                       user_id: user.id,
+                                       'team_affiliations.season_id': season.season_id
+                                     )
     end
   end
 end
