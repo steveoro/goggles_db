@@ -31,12 +31,8 @@ module GogglesDb
     has_many :meeting_team_scores, dependent: :delete_all
     has_many :computed_season_rankings, dependent: :delete_all
     has_many :standard_timings, dependent: :delete_all
+    has_many :user_workshops, dependent: :delete_all
     # has_many :goggle_cup_definitions
-
-    # Not needed right now:
-    # has_many :meeting_sessions, through: :meetings
-    # has_many :meeting_events, through: :meeting_sessions
-    # has_many :meeting_individual_results, through: :meetings
 
     validates :header_year, presence: { length: { within: 1..9 }, allow_nil: false }
     validates :edition,     presence: { length: { within: 1..3 }, allow_nil: false }

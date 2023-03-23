@@ -6,7 +6,7 @@ module GogglesDb
   #
   # Encapsulates common behavior for Laps & User Laps.
   #
-  #   - version:  7-0.3.33
+  #   - version:  7-0.4.25
   #   - author:   Steve A.
   #
   class AbstractLap < ApplicationRecord
@@ -14,12 +14,19 @@ module GogglesDb
 
     include TimingManageable
 
+    # Absolute distance from the start. (Delta length can be computed only when knowing the preceeding lap.)
     validates :length_in_meters, presence: { length: { within: 1..5, allow_nil: false } },
                                  numericality: true
 
+    # Delta timing:
     validates :minutes,  presence: { length: { within: 1..3, allow_nil: false } }, numericality: true
     validates :seconds,  presence: { length: { within: 1..2, allow_nil: false } }, numericality: true
     validates :hundredths, presence: { length: { within: 1..2, allow_nil: false } }, numericality: true
+
+    # Absolute timing:
+    validates :minutes_from_start,  presence: { length: { within: 1..3, allow_nil: false } }, numericality: true
+    validates :seconds_from_start,  presence: { length: { within: 1..2, allow_nil: false } }, numericality: true
+    validates :hundredths_from_start, presence: { length: { within: 1..2, allow_nil: false } }, numericality: true
 
     # Sorting scopes:
     scope :by_distance, -> { order(:length_in_meters) }
@@ -30,14 +37,31 @@ module GogglesDb
 
     # All siblings laps:
     scope :related_laps, ->(lap) { by_distance.where(lap.parent_result_where_condition) }
-    # All preceding laps, including the current one:
+    # All preceeding laps, including the current one:
     scope :summing_laps, ->(lap) { related_laps(lap).where('length_in_meters <= ?', lap.length_in_meters) }
+
+    # XXX TODO: SPEC THIS one:
+    # Just the laps following the specified one:
+    scope :following_laps, ->(lap) { related_laps(lap).where('length_in_meters > ?', lap.length_in_meters) }
     #-- -----------------------------------------------------------------------
     #++
 
+    # XXX TODO: SPEC this one:
+
+    # Returns the single lap row preceeding this one by distance, if any; +nil+ otherwise.
+    def previous_lap
+      self.class.related_laps(self).where('length_in_meters < ?', length_in_meters).last
+    end
+
+    # ADD recompute_delta method using same strategy as in main
+
     # Returns the Timing instance storing the lap timing from the start of the race.
-    # If the "_from_start" fields have not been filled with data, the Timing value
-    # will be computed.
+    #
+    # If the "_from_start" fields have not been filled in, this will try to recompute the
+    # absolute timing using all deltas
+    #
+    # (Note that this will imply 3 summing queries and it may fail to yield correct values
+    #  if the preceeding deltas are not set.)
     def timing_from_start
       # Quick way to detect if the timing from start is already set:
       amount = minutes_from_start.to_i + hundredths_from_start.to_i + seconds_from_start.to_i
