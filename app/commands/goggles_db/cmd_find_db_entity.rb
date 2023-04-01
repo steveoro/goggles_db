@@ -2,15 +2,13 @@
 
 require 'simple_command'
 require 'fuzzystringmatch'
-require 'ostruct'
 
 module GogglesDb
   #
   # = Generic DB entity fuzzy-finder command
-  #
-  #   - version:  7-0.3.53
+  #   - version:  7-0.5.01
   #   - author:   Steve A.
-  #   - build:    20220524
+  #   - build:    20230401
   #
   # Uses the DbFinders::Factory to create a specific fuzzy-finder for
   # the specified DB entity.
@@ -76,8 +74,10 @@ module GogglesDb
       @matches = []
     end
 
-    # Sets the result to the best corresponding GogglesDb::Swimmer instance (when at least a candidate is found).
+    # Sets the result to the best corresponding +model_klass+ instance (when at least a candidate is found).
+
     # While searching, updates the #matches array with a list of possible alternative candidates, sorted in descending order.
+    # Each candidate stored in #matches will be an hash <tt>Struct(:candidate, :weight)</tt>.
     #
     # Otherwise, sets #result to +nil+ and logs just the requested swimmer name into the #errors hash.
     # Always returns itself.

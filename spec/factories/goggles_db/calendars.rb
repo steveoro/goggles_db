@@ -43,11 +43,11 @@ FactoryBot.define do
 
     factory :calendar_with_blank_meeting do
       meeting_id     { nil }
-      season         { build(:meeting).season }
-      meeting_code   { build(:meeting).code }
-      meeting_name   { build(:meeting).description }
-      scheduled_date { build(:meeting).header_date.day }
-      year           { build(:meeting).header_date.year }
+      season         { FactoryBot.build(:meeting).season }
+      meeting_code   { FactoryBot.build(:meeting).code }
+      meeting_name   { FactoryBot.build(:meeting).description }
+      scheduled_date { FactoryBot.build(:meeting).header_date.day }
+      year           { FactoryBot.build(:meeting).header_date.year }
       month          { I18n.t('date.abbr_month_names').fetch(meeting.header_date.month) }
     end
   end

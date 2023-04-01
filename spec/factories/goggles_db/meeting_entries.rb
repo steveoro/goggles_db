@@ -4,8 +4,8 @@ FactoryBot.define do
 
     sequence(:start_list_number)
 
-    meeting_program  { create(:meeting_program) }
-    badge            { create(:badge, season: meeting_program.season) }
+    meeting_program  { FactoryBot.create(:meeting_program) }
+    badge            { FactoryBot.create(:badge, season: meeting_program.season) }
     team             { badge.team }
     team_affiliation { badge.team_affiliation }
     swimmer          { badge.swimmer }

@@ -15,7 +15,6 @@ module GogglesDb
   module DbFinders
     #
     # = BaseStrategy parent object
-    #
     #   - version:  7-0.5.01
     #   - author:   Steve A.
     #   - build:    20230323
@@ -125,7 +124,7 @@ module GogglesDb
 
           # Check a perfect match without computing the score:
           if candidate_row.send(@target_key) == @target_value
-            @matches << @candidate_struct.new(candidate: candidate_row, weight: 1.0)
+            @matches << @candidate_struct.new(candidate_row, 1.0)
             Rails.logger.debug '   perfect match found' if @toggle_debug.present?
             break
           end
@@ -135,10 +134,10 @@ module GogglesDb
           # Store candidate if it seems to be a match but also if it's a substring (possibly returned by LIKEs):
           # (this allows returning results even when the search contains just a few typed chars)
           if weight >= @bias
-            @matches << @candidate_struct.new(candidate: candidate_row, weight: weight)
+            @matches << @candidate_struct.new(candidate_row, weight)
           elsif candidate_row.send(@target_key).to_s.include?(@target_value.to_s)
             # Give substrings a "political" weight equal to the bias, because the metric score possibly will be very low:
-            @matches << @candidate_struct.new(candidate: candidate_row, weight: @bias)
+            @matches << @candidate_struct.new(candidate_row, @bias)
           end
         end
       end

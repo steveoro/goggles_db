@@ -2,20 +2,20 @@ FactoryBot.define do
   factory :meeting_individual_result, class: 'GogglesDb::MeetingIndividualResult' do
     before_create_validate_instance
 
-    badge                     { create(:badge) }
+    badge                     { FactoryBot.create(:badge) }
     swimmer                   { badge.swimmer }
     team                      { badge.team }
     team_affiliation          { badge.team_affiliation }
-    meeting_program           { create(:meeting_program_individual, gender_type_id: swimmer.gender_type_id) }
+    meeting_program           { FactoryBot.create(:meeting_program_individual, gender_type_id: swimmer.gender_type_id) }
     rank                      { (0..25).to_a.sample }
     standard_points           { (rand * 1000).to_i }
     meeting_points { standard_points }
-    team_points               { ((rand * 10) % 10).to_i + 1 }
+    team_points               { (rand * 9).to_i + 1 }
     goggle_cup_points         { (rand * 1000).to_i }
     reaction_time             { rand.round(2) }
     minutes                   { 0 }
-    seconds                   { ((rand * 60) % 60).to_i }
-    hundredths                { ((rand * 100) % 100).to_i }
+    seconds                   { (rand * 59).to_i }
+    hundredths                { (rand * 99).to_i }
 
     disqualification_code_type { [true, false].sample ? GogglesDb::DisqualificationCodeType.all.sample : nil }
     #-- -----------------------------------------------------------------------

@@ -4,8 +4,8 @@ FactoryBot.define do
   factory :meeting_reservation, class: 'GogglesDb::MeetingReservation' do
     before_create_validate_instance
 
-    badge                 { create(:badge) }
-    meeting               { create(:meeting, season: badge.season) }
+    badge                 { FactoryBot.create(:badge) }
+    meeting               { FactoryBot.create(:meeting, season: badge.season) }
     team                  { badge.team }
     swimmer               { badge.swimmer }
     user

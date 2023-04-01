@@ -4,7 +4,7 @@ module GogglesDb
   #
   # = ImportQueue model
   #
-  #   - version:  7-0.4.10
+  #   - version:  7-0.5.01
   #   - author:   Steve A.
   #
   # Stores '/import' API requests and generic import micro- & macro- transactions steps.
@@ -114,6 +114,8 @@ module GogglesDb
     belongs_to :user
     validates_associated :user
 
+    default_scope { includes(:user) }
+
     # == Note: remember to set <tt>batch_sql = true</tt> whenever a data file needs to be attached,
     # or the ImportProcessorJob will ignore the attachment (because it filters out the rows using the
     # column value without instantiating the class first).
@@ -208,6 +210,22 @@ module GogglesDb
     end
 
     # == Microtransaction management helper.
+    # Returns the associated Swimmer <tt>year_of_birth</tt> found by searching at a maximum
+    # depth of 1, starting at the root-key depth (0) of the request, or +nil+ when
+    # not found.
+    #
+    # === Supported layouts by priority:
+    #
+    # 1. /swimmer => <field_name>
+    # 2. /<anything> => /swimmer => <field_name> (but not deeper)
+    #
+    def req_swimmer_year_of_birth
+      return req&.fetch(root_key, nil)&.fetch('year_of_birth', nil) if root_key == 'swimmer'
+
+      req&.fetch(root_key, nil)&.fetch('swimmer', nil)&.fetch('year_of_birth', nil)
+    end
+
+    # == Microtransaction management helper.
     # Returns the associated EventType at root-key depth of the request, if any, or +nil+ when not set.
     def req_event_type
       event_type_id = req&.fetch(root_key, nil)&.fetch(result_parent_key, nil)&.fetch('event_type_id', nil)
@@ -246,6 +264,25 @@ module GogglesDb
     # or +nil+ when not set.
     def req_length_in_meters
       @req_length_in_meters ||= fetch_root_int_value('length_in_meters')
+    end
+
+    # == Microtransaction management helper.
+    # Returns the associated final result Hash (structured either as a MIR or a UserResult) searched at depth-1 of the request,
+    # or an empty Hash or +nil+ when not properly set.
+    def req_final_result
+      @req_final_result ||= req&.fetch(root_key, nil)&.fetch('meeting_individual_result', {}) ||
+                            req&.fetch(root_key, nil)&.fetch('user_result', {})
+    end
+
+    # == Microtransaction management helper.
+    # Returns a Timing instance set with any timing data found for #req_final_result,
+    # or zeroed out when not found.
+    def req_final_timing
+      @req_final_timing ||= Timing.new(
+        minutes: req_final_result&.fetch('minutes', 0),
+        seconds: req_final_result&.fetch('seconds', 0),
+        hundredths: req_final_result&.fetch('hundredths', 0)
+      )
     end
 
     protected

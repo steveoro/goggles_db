@@ -42,13 +42,13 @@ module GogglesDb
 
       it_behaves_like(
         'responding to a list of class methods',
-        %i[by_date by_season for_name]
+        %i[by_date by_season for_name not_cancelled not_expired]
       )
       it_behaves_like(
         'responding to a list of methods',
         %i[swimming_pool
            user_results pool_types event_types swimmers
-           edition_label minimal_attributes
+           edition_label minimal_attributes expired?
            off_season? confirmed? cancelled?
            autofilled? read_only? pb_acquired?
            to_json]
@@ -66,34 +66,12 @@ module GogglesDb
 
       it_behaves_like('a valid UserWorkshop instance')
     end
-
-    # Sorting scopes:
-    describe 'self.by_date' do
-      it_behaves_like('sorting scope by_<ANY_VALUE_NAME>', described_class, 'date', 'header_date')
-    end
-
-    describe 'self.by_season' do
-      it_behaves_like('sorting scope by_<ANY_ENTITY_NAME>', described_class, 'season', 'begin_date')
-    end
-
-    # Filtering scopes:
-    describe 'self.not_cancelled' do
-      it_behaves_like('filtering scope for_<ANY_CHOSEN_FILTER> with no parameters', described_class, 'not_cancelled',
-                      'cancelled', false)
-    end
-
-    describe 'self.for_season_type' do
-      it_behaves_like('filtering scope for_<ANY_CHOSEN_FILTER>', described_class, 'for_season_type', 'season_type',
-                      GogglesDb::SeasonType.all_masters.sample)
-    end
-
-    describe 'self.for_code' do
-      it_behaves_like('filtering scope for_<ANY_CHOSEN_FILTER>', described_class, 'for_code', 'code',
-                      %w[workshop-1 workshop-2 workshop-3 workshop-4 workshop-5].sample)
-    end
     #-- ------------------------------------------------------------------------
     #++
 
+    it_behaves_like('AbstractMeeting sorting & filtering scopes', :user_workshop)
+
+    # Filtering scopes:
     describe 'self.for_name' do
       context 'when combined with other associations that include same-named columns,' do
         subject { described_class.for_name('workshop-') }
@@ -189,6 +167,7 @@ module GogglesDb
     it_behaves_like('AbstractMeeting #name_without_edition', :user_workshop)
     it_behaves_like('AbstractMeeting #name_with_edition', :user_workshop)
     it_behaves_like('AbstractMeeting #condensed_name', :user_workshop)
+    it_behaves_like('AbstractMeeting #expired?', :user_workshop)
 
     it_behaves_like('AbstractMeeting #minimal_attributes', described_class)
 

@@ -35,7 +35,7 @@ shared_examples_for 'filtering scope for the same group of laps' do |sibling_cla
   end
 
   it 'includes the specified Lap' do
-    expect(result.map(&:id).uniq).to include(existing_row.id)
+    expect(result.pluck(:id).uniq).to include(existing_row.id)
   end
 end
 
@@ -68,7 +68,35 @@ shared_examples_for 'AbstractLap filtering scopes' do |sibling_class|
       it 'contains only preceding laps plus the current one' do
         expect(result).to be_a(ActiveRecord::Relation)
         expect(result).to all be_a(sibling_class)
-        expect(result.map(&:length_in_meters)).to all be <= existing_row.length_in_meters
+        expect(result.pluck(:length_in_meters)).to all be <= existing_row.length_in_meters
+      end
+    end
+  end
+
+  describe 'self.following_laps' do
+    context 'given a lap with a valid parent result association,' do
+      let(:result) { sibling_class.following_laps(existing_row) }
+
+      it 'is a relation containing only laps belonging to the same parent result' do
+        expect(result).to be_a(ActiveRecord::Relation)
+        expect(result).to all be_a(sibling_class)
+        parent_result_id = existing_row.send(sibling_class.parent_result_column_sym)
+        expect(result.map { |row| row.send(sibling_class.parent_result_column_sym) }.uniq)
+          .to all eq(parent_result_id)
+      end
+
+      it 'has a positive number of items' do
+        expect(result.count).to be_positive
+      end
+
+      it 'does NOT includes the specified Lap' do
+        expect(result.pluck(:id).uniq).not_to include(existing_row.id)
+      end
+
+      it 'contains only following laps having length greater than the current one' do
+        expect(result).to be_a(ActiveRecord::Relation)
+        expect(result).to all be_a(sibling_class)
+        expect(result.pluck(:length_in_meters)).to all be > existing_row.length_in_meters
       end
     end
   end

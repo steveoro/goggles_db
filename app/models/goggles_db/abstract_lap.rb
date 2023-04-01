@@ -39,8 +39,6 @@ module GogglesDb
     scope :related_laps, ->(lap) { by_distance.where(lap.parent_result_where_condition) }
     # All preceeding laps, including the current one:
     scope :summing_laps, ->(lap) { related_laps(lap).where('length_in_meters <= ?', lap.length_in_meters) }
-
-    # XXX TODO: SPEC THIS one:
     # Just the laps following the specified one:
     scope :following_laps, ->(lap) { related_laps(lap).where('length_in_meters > ?', lap.length_in_meters) }
     #-- -----------------------------------------------------------------------

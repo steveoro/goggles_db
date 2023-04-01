@@ -3,8 +3,8 @@
 #
 # = Timing
 #
-#   - Goggles framework vers.:  7-0.3.36
-#   - author: Steve A.
+#  - version:  7-0.5.01
+#  - author:   Steve A.
 #
 #  Utility class to store timing data and to allow simple mathematical operations
 #  between timings (delta, sum, ...).
@@ -61,6 +61,12 @@ class Timing
 
   # Checks if the current instance is zero.
   delegate :zero?, to: :to_hundredths
+
+  # Checks if the current instance is positive.
+  delegate :positive?, to: :to_hundredths
+
+  # Checks if the current instance is positive.
+  delegate :negative?, to: :to_hundredths
 
   alias empty? zero? # (new, old)
 

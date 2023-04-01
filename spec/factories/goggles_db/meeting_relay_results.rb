@@ -2,9 +2,9 @@ FactoryBot.define do
   factory :meeting_relay_result, class: 'GogglesDb::MeetingRelayResult' do
     before_create_validate_instance
 
-    team             { create(:team) }
-    meeting_program  { create(:meeting_program_relay) }
-    team_affiliation { create(:team_affiliation, team: team, season: meeting_program.season) }
+    team             { FactoryBot.create(:team) }
+    meeting_program  { FactoryBot.create(:meeting_program_relay) }
+    team_affiliation { FactoryBot.create(:team_affiliation, team: team, season: meeting_program.season) }
     rank             { (0..25).to_a.sample }
     play_off         { true }
     out_of_race      { false }
@@ -29,10 +29,10 @@ FactoryBot.define do
 
     factory :meeting_relay_result_with_swimmers do
       after(:create) do |created_instance|
-        create(:meeting_relay_swimmer, meeting_relay_result: created_instance, relay_order: 1)
-        create(:meeting_relay_swimmer, meeting_relay_result: created_instance, relay_order: 2)
-        create(:meeting_relay_swimmer, meeting_relay_result: created_instance, relay_order: 3)
-        create(:meeting_relay_swimmer, meeting_relay_result: created_instance, relay_order: 4)
+        FactoryBot.create(:meeting_relay_swimmer, meeting_relay_result: created_instance, relay_order: 1)
+        FactoryBot.create(:meeting_relay_swimmer, meeting_relay_result: created_instance, relay_order: 2)
+        FactoryBot.create(:meeting_relay_swimmer, meeting_relay_result: created_instance, relay_order: 3)
+        FactoryBot.create(:meeting_relay_swimmer, meeting_relay_result: created_instance, relay_order: 4)
       end
     end
     #-- -----------------------------------------------------------------------

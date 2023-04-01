@@ -197,6 +197,65 @@ module GogglesDb
         end
       end
 
+      describe '#req_swimmer_year_of_birth' do
+        before do
+          expect(fixture_swimmer).to be_a(GogglesDb::Swimmer)
+          expect(fixture_event_type).to be_a(GogglesDb::EventType).and be_valid
+        end
+
+        context 'with a row that contains birth year data nested under a Swimmer node at depth 1,' do
+          let(:fixture_request_data) do
+            {
+              'target_entity' => 'Whatever',
+              'whatever' => {
+                'swimmer' => {
+                  'complete_name' => fixture_swimmer.complete_name,
+                  'year_of_birth' => fixture_swimmer.year_of_birth
+                }
+              }
+            }.to_json
+          end
+
+          subject { FactoryBot.create(:import_queue, request_data: fixture_request_data) }
+
+          it 'returns the year of birth of the swimmer' do
+            expect(subject.req_swimmer_year_of_birth).to eq(fixture_swimmer.year_of_birth)
+          end
+        end
+
+        context 'with a row that contains birth year data nested at root level,' do
+          let(:fixture_request_data) do
+            {
+              'target_entity' => 'Swimmer',
+              'swimmer' => {
+                'complete_name' => fixture_swimmer.complete_name,
+                'year_of_birth' => fixture_swimmer.year_of_birth
+              }
+            }.to_json
+          end
+
+          subject { FactoryBot.create(:import_queue, request_data: fixture_request_data) }
+
+          it 'returns the year of birth of the swimmer' do
+            expect(subject.req_swimmer_year_of_birth).to eq(fixture_swimmer.year_of_birth)
+          end
+        end
+
+        context "for a row that doesn't contain any birth year data," do
+          let(:fixture_request_data) do
+            {
+              'target_entity' => 'Swimmer',
+              'swimmer' => { 'id' => (rand * 150).to_i } # (Don't care if it's existing or not)
+            }.to_json
+          end
+          subject { FactoryBot.create(:import_queue, request_data: fixture_request_data) }
+
+          it 'is nil' do
+            expect(subject.req_swimmer_year_of_birth).to be_nil
+          end
+        end
+      end
+
       describe '#req_event_type' do
         it 'is an EventType' do
           expect(subject.req_event_type).to be_an(GogglesDb::EventType).and be_valid
@@ -246,4 +305,6 @@ module GogglesDb
       end
     end
   end
+  #-- -------------------------------------------------------------------------
+  #++
 end

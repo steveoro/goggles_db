@@ -51,6 +51,14 @@ module GogglesDb
     #-- ------------------------------------------------------------------------
     #++
 
+    # Returns +true+ if this row has either been cancelled or closed for due time.
+    def expired?
+      return true if cancelled
+
+      meeting && (meeting.cancelled || meeting.header_date < Time.zone.today)
+    end
+    #-- ------------------------------------------------------------------------
+
     # Override: include the minimum required 1st-level associations.
     #
     def minimal_attributes

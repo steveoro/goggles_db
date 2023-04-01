@@ -6,7 +6,7 @@ FactoryBot.define do
 
     sequence(:event_order)
 
-    meeting_session { create(:meeting_session) }
+    meeting_session { FactoryBot.create(:meeting_session) }
     heat_type       { GogglesDb::HeatType.all.sample }
     event_type do
       GogglesDb::EventsByPoolType.eventable
