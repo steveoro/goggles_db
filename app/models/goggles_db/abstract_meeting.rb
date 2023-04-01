@@ -6,7 +6,7 @@ module GogglesDb
   #
   # Encapsulates common behavior for Meetings & User Workshops.
   #
-  #   - version:  7-0.4.07
+  #   - version:  7-0.5.01
   #   - author:   Steve A.
   #
   class AbstractMeeting < ApplicationRecord
@@ -35,6 +35,7 @@ module GogglesDb
 
     # Filtering scopes:
     scope :not_cancelled,   -> { where(cancelled: false) }
+    scope :not_expired,     -> { not_cancelled.where('header_date >= ?', Time.zone.today) }
     scope :for_season_type, ->(season_type) { joins(:season_type).where(season_types: { id: season_type.id }) }
     scope :for_season,      ->(season) { joins(:season).where(season_id: season.id) }
     scope :for_code,        ->(code) { where(code: code) }
@@ -103,9 +104,14 @@ module GogglesDb
       tokens = tokens&.to_s&.strip&.split(/\s|,/)&.reject(&:blank?)
       tokens.is_a?(Array) ? tokens[0..3]&.join(' ') : tokens.to_s
     end
-    #-- ------------------------------------------------------------------------
     # rubocop:enable Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
     #++
+
+    # Returns +true+ if this abstract meeting has either been cancelled or closed for due time.
+    def expired?
+      cancelled || header_date < Time.zone.today
+    end
+    #-- ------------------------------------------------------------------------
 
     # Override: include the "minimum required" hash of attributes & associations.
     #

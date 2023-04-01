@@ -5,7 +5,7 @@ require 'rails_helper'
 RSpec.describe GogglesDb::UserWorkshopDecorator, type: :decorator do
   subject(:decorated_instance) { described_class.decorate(fixture_row) }
 
-  let(:fixture_row) { create(:workshop_with_results) }
+  let(:fixture_row) { FactoryBot.create(:workshop_with_results) }
 
   before do
     expect(fixture_row).to be_a(GogglesDb::UserWorkshop).and be_valid
@@ -56,7 +56,7 @@ RSpec.describe GogglesDb::UserWorkshopDecorator, type: :decorator do
     end
 
     context 'when there are no results,' do
-      subject(:result) { described_class.decorate(create(:user_workshop)).scheduled_dates }
+      subject(:result) { described_class.decorate(FactoryBot.create(:user_workshop)).scheduled_dates }
 
       it 'returns an empty list' do
         expect(result).to eq([])
@@ -74,7 +74,7 @@ RSpec.describe GogglesDb::UserWorkshopDecorator, type: :decorator do
     end
 
     context 'when there are no results,' do
-      subject(:result) { described_class.decorate(create(:user_workshop)).scheduled_date }
+      subject(:result) { described_class.decorate(FactoryBot.create(:user_workshop)).scheduled_date }
 
       it 'returns nil' do
         expect(result).to be_nil
@@ -94,7 +94,7 @@ RSpec.describe GogglesDb::UserWorkshopDecorator, type: :decorator do
     context 'when there are no results,' do
       subject(:result) { described_class.decorate(fixture_row).meeting_date }
 
-      let(:fixture_row) { create(:user_workshop) }
+      let(:fixture_row) { FactoryBot.create(:user_workshop) }
 
       it 'returns the #header_date' do
         expect(result).to eq(fixture_row.header_date)
@@ -112,7 +112,7 @@ RSpec.describe GogglesDb::UserWorkshopDecorator, type: :decorator do
     end
 
     context 'when there are no results,' do
-      subject(:result) { described_class.decorate(create(:user_workshop)).meeting_pools }
+      subject(:result) { described_class.decorate(FactoryBot.create(:user_workshop)).meeting_pools }
 
       it 'returns an empty list' do
         expect(result).to eq([])
@@ -130,7 +130,7 @@ RSpec.describe GogglesDb::UserWorkshopDecorator, type: :decorator do
     end
 
     context 'when there are no results and no default pool is set on the workshop,' do
-      subject(:result) { described_class.decorate(create(:user_workshop)).meeting_pool }
+      subject(:result) { described_class.decorate(FactoryBot.create(:user_workshop)).meeting_pool }
 
       it 'returns nil' do
         expect(result).to be_nil
@@ -148,7 +148,7 @@ RSpec.describe GogglesDb::UserWorkshopDecorator, type: :decorator do
     end
 
     context 'when there are no results,' do
-      subject(:result) { described_class.decorate(create(:user_workshop)).event_type_list }
+      subject(:result) { described_class.decorate(FactoryBot.create(:user_workshop)).event_type_list }
 
       it 'returns an empty list' do
         expect(result).to eq([])

@@ -22,6 +22,30 @@ describe Timing, type: :model do
     it 'has 0 minutes'  do expect(subject.minutes).to eq(0); end
     it 'has 0 seconds'  do expect(subject.seconds).to eq(0); end
     it 'has 0 hundredths' do expect(subject.hundredths).to eq(0); end
+
+    describe '#zero?' do
+      it 'is true' do
+        expect(subject.zero?).to be true
+      end
+    end
+
+    describe '#empty?' do
+      it 'is true' do
+        expect(subject.empty?).to be true
+      end
+    end
+
+    describe '#positive?' do
+      it 'is false' do
+        expect(subject.positive?).to be false
+      end
+    end
+
+    describe '#negative?' do
+      it 'is false' do
+        expect(subject.negative?).to be false
+      end
+    end
   end
 
   shared_examples_for 'a valid Timing with all members assigned' do
@@ -34,6 +58,30 @@ describe Timing, type: :model do
     it 'has 0 minutes'  do expect(subject.minutes).to eq(fix1_mins); end
     it 'has 0 seconds'  do expect(subject.seconds).to eq(fix1_secs); end
     it 'has 0 hundredths' do expect(subject.hundredths).to eq(fix1_hundredths); end
+
+    describe '#zero?' do
+      it 'is false' do
+        expect(subject.zero?).to be false
+      end
+    end
+
+    describe '#empty?' do
+      it 'is false' do
+        expect(subject.empty?).to be false
+      end
+    end
+
+    describe '#positive?' do
+      it 'is true' do
+        expect(subject.positive?).to be true
+      end
+    end
+
+    describe '#negative?' do
+      it 'is false' do
+        expect(subject.negative?).to be false
+      end
+    end
   end
   #-- -------------------------------------------------------------------------
   #++
@@ -43,7 +91,7 @@ describe Timing, type: :model do
 
     it_behaves_like(
       'responding to a list of methods',
-      %i[clear from_hundredths + - * == <=> to_hundredths zero? empty? to_s to_compact_s]
+      %i[clear from_hundredths + - * == <=> to_hundredths zero? positive? negative? empty? to_s to_compact_s]
     )
     it_behaves_like(
       'responding to a list of class methods',

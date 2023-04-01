@@ -6,8 +6,8 @@ FactoryBot.define do
 
     sequence(:session_order)
 
-    meeting        { create(:meeting) }
-    swimming_pool  { create(:swimming_pool) } # this will yield only "eventable" pools
+    meeting        { FactoryBot.create(:meeting) }
+    swimming_pool  { FactoryBot.create(:swimming_pool) } # this will yield only "eventable" pools
     description    { 'FINALS' }
     day_part_type  { GogglesDb::DayPartType.all.sample }
     scheduled_date { Time.zone.today }

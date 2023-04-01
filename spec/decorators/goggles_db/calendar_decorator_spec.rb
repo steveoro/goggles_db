@@ -6,7 +6,7 @@ RSpec.describe GogglesDb::CalendarDecorator, type: :decorator do
   context 'for a row with an associated Meeting,' do
     subject(:decorated_instance) { described_class.decorate(fixture_row) }
 
-    let(:fixture_row) { create(:calendar) }
+    let(:fixture_row) { FactoryBot.create(:calendar) }
 
     before do
       expect(fixture_row).to be_a(GogglesDb::Calendar).and be_valid
@@ -47,6 +47,14 @@ RSpec.describe GogglesDb::CalendarDecorator, type: :decorator do
 
       it 'is the scheduled or header date from the decorated Meeting as an ISO string' do
         expect(result).to eq(fixture_row.meeting.decorate.meeting_date.to_s)
+      end
+    end
+
+    describe '#decorated_meeting' do
+      subject(:result) { decorated_instance.decorated_meeting }
+
+      it 'is the decorated Meeting instance' do
+        expect(result).to be_a(GogglesDb::MeetingDecorator)
       end
     end
   end
@@ -128,6 +136,14 @@ RSpec.describe GogglesDb::CalendarDecorator, type: :decorator do
 
       it 'includes the scheduled year from the calendar' do
         expect(result).to include(fixture_row.year)
+      end
+    end
+
+    describe '#decorated_meeting' do
+      subject(:result) { decorated_instance.decorated_meeting }
+
+      it 'is nil' do
+        expect(result).to be_nil
       end
     end
   end

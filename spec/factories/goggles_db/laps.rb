@@ -3,7 +3,7 @@ FactoryBot.define do
     before_create_validate_instance
 
     sequence(:length_in_meters) { |n| (n + 1) * 50 }
-    meeting_individual_result   { create(:meeting_individual_result) }
+    meeting_individual_result   { FactoryBot.create(:meeting_individual_result) }
 
     meeting_program { meeting_individual_result.meeting_program }
     minutes         { 0 }

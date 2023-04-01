@@ -4,7 +4,7 @@ module GogglesDb
   #
   # = User model
   #
-  #   - version:  7-0.3.21
+  #   - version:  7-0.5.01
   #   - author:   Steve A.
   #
   class User < ApplicationRecord
@@ -42,12 +42,12 @@ module GogglesDb
     end
 
     belongs_to :swimmer, optional: true
-
     belongs_to :swimmer_level_type, optional: true
     belongs_to :coach_level_type, optional: true
 
     has_many :admin_grants, dependent: :destroy
     has_many :import_queues, dependent: :destroy
+    has_many :issues, dependent: :destroy
     has_many :managed_affiliations, dependent: :destroy
 
     # [Steve A.] FKeys are active on the following 3, so any 'dependent:' option won't count

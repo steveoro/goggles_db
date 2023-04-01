@@ -29,7 +29,7 @@ module GogglesDb
 
       it_behaves_like(
         'responding to a list of class methods',
-        %i[by_date by_season for_name
+        %i[by_date by_season for_name not_cancelled not_expired
            team_presence? swimmer_presence?]
       )
       it_behaves_like(
@@ -46,7 +46,7 @@ module GogglesDb
            tweeted? posted?
            results_acquired? autofilled? read_only? pb_acquired?
            tags_by_user_list tags_by_team_list
-           edition_label minimal_attributes
+           edition_label minimal_attributes expired?
            to_json]
       )
     end
@@ -62,32 +62,12 @@ module GogglesDb
 
       it_behaves_like('a valid Meeting instance')
     end
+    #-- ------------------------------------------------------------------------
+    #++
 
-    # Sorting scopes:
-    describe 'self.by_date' do
-      it_behaves_like('sorting scope by_<ANY_VALUE_NAME>', described_class, 'date', 'header_date')
-    end
-
-    describe 'self.by_season' do
-      it_behaves_like('sorting scope by_<ANY_ENTITY_NAME>', described_class, 'season', 'begin_date')
-    end
+    it_behaves_like('AbstractMeeting sorting & filtering scopes', :meeting)
 
     # Filtering scopes:
-    describe 'self.not_cancelled' do
-      it_behaves_like('filtering scope for_<ANY_CHOSEN_FILTER> with no parameters', described_class, 'not_cancelled',
-                      'cancelled', false)
-    end
-
-    describe 'self.for_season_type' do
-      it_behaves_like('filtering scope for_<ANY_CHOSEN_FILTER>', described_class, 'for_season_type',
-                      'season_type', GogglesDb::SeasonType.all_masters.sample)
-    end
-
-    describe 'self.for_code' do
-      it_behaves_like('filtering scope for_<ANY_CHOSEN_FILTER>', described_class, 'for_code', 'code',
-                      %w[csiprova1 csiprova2 italiani europei regemilia riccione].sample)
-    end
-
     describe 'self.only_manifest' do
       context 'when there are Meeting rows having the meeting manifest w/o acquired results,' do
         before { FactoryBot.create_list(:meeting, 5, manifest: true, results_acquired: false) }
@@ -156,7 +136,7 @@ module GogglesDb
           expect(result).to all be_a(described_class)
           expect(
             result.map(&:header_date).uniq
-          ).to all be > Time.zone.today
+          ).to all be >= Time.zone.today
           expect(result.map(&:results_acquired).uniq).to all be false
         end
       end
@@ -315,6 +295,7 @@ module GogglesDb
     it_behaves_like('AbstractMeeting #name_without_edition', :meeting)
     it_behaves_like('AbstractMeeting #name_with_edition', :meeting)
     it_behaves_like('AbstractMeeting #condensed_name', :meeting)
+    it_behaves_like('AbstractMeeting #expired?', :meeting)
 
     it_behaves_like('AbstractMeeting #minimal_attributes', described_class)
 

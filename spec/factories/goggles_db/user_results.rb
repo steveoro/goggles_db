@@ -5,7 +5,7 @@ FactoryBot.define do
     user_workshop
     swimmer
     user do
-      create(
+      FactoryBot.create(
         :user,
         first_name: swimmer.first_name,
         last_name: swimmer.last_name,

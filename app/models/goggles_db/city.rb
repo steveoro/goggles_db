@@ -3,8 +3,7 @@
 module GogglesDb
   #
   # = City model
-  #
-  #   - version:  7-0.4.01
+  #   - version:  7-0.5.01
   #   - author:   Steve A.
   #
   # Check out:
@@ -126,10 +125,10 @@ module GogglesDb
     # - <tt>iso_city</tt> => when +nil+, uses the internal memoized value computed by #to_iso;
     #   a valid Cities::City otherwise.
     # == Returns:
-    # In FIFO in precendence: 1) ISO City latitude, 2) 'latitude' column value
+    # A stringified value, taken with FIFO in precendence: 1) ISO City latitude, 2) 'latitude' column value
     def iso_latitude(iso_city = nil)
       chosen_city = iso_city || @iso_city
-      chosen_city&.latitude.to_s || latitude
+      chosen_city&.latitude&.to_s || latitude
     end
 
     # Retrieves either the currently set ISO longitude or the serialized value on the model.
@@ -138,10 +137,10 @@ module GogglesDb
     # - <tt>iso_city</tt> => when +nil+, uses the internal memoized value computed by #to_iso;
     #   a valid Cities::City otherwise.
     # == Returns:
-    # In FIFO in precendence: 1) ISO City longitude, 2) 'longitude' column value
+    # A stringified value, taken with FIFO in precendence: 1) ISO City longitude, 2) 'longitude' column value
     def iso_longitude(iso_city = nil)
       chosen_city = iso_city || @iso_city
-      chosen_city&.longitude.to_s || longitude
+      chosen_city&.longitude&.to_s || longitude
     end
 
     # Returns the ISO Region name, if available (+nil+ otherwise).
@@ -172,7 +171,9 @@ module GogglesDb
     def localized_country_name(iso_country = nil, locale_override = I18n.locale)
       chosen_country = iso_country || @iso_country
       valid_country = chosen_country&.translations&.fetch(locale_override.to_s, nil) || country
-      valid_country = chosen_country&.unofficial_names&.first if valid_country.length > 50
+      # User the first informal naming for excessively long names:
+      return chosen_country&.unofficial_names&.first if valid_country.length > 50
+
       valid_country
     end
 
@@ -185,6 +186,9 @@ module GogglesDb
     # == Returns:
     # In FIFO in precendence: 1) ISO Country code, 2) 'country_code' column value
     def iso_country_code(iso_country = nil)
+      # Make sure the internal memoized members are set:
+      to_iso if @iso_country.blank?
+
       chosen_country = iso_country || @iso_country
       chosen_country&.alpha2 || country_code
     end
@@ -198,6 +202,10 @@ module GogglesDb
     # == Returns:
     # In FIFO in precendence: 1) ISO subdivision name 2) <tt>area</tt> column value
     def iso_area(subdivision = nil)
+      # Make sure the internal memoized members are set:
+      to_iso if @iso_country.blank?
+      iso_subdivision(@iso_country) if @subdivision.blank?
+
       chosen_subdivision = subdivision || @subdivision
       chosen_subdivision&.last&.name || area
     end
@@ -211,6 +219,10 @@ module GogglesDb
     # == Returns:
     # The ISO subdivision alpha-2 code if defined; nil otherwise
     def iso_area_code(subdivision = nil)
+      # Make sure the internal memoized members are set:
+      to_iso if @iso_country.blank?
+      iso_subdivision(@iso_country) if @subdivision.blank?
+
       chosen_subdivision = subdivision || @subdivision
       chosen_subdivision&.first
     end
@@ -223,8 +235,9 @@ module GogglesDb
     # - <tt>locale_override<tt> => a locale code override; defaults to the current locale.
     def iso_attributes(locale_override = I18n.locale)
       # Make sure the internal memoized members are set:
-      to_iso unless @iso_city.present? && @iso_country.present?
-      iso_subdivision(@iso_country) && @subdivision.present?
+      to_iso if @iso_city.blank? || @iso_country.blank?
+      iso_subdivision(@iso_country) if @subdivision.blank?
+
       minimal_attributes.merge(
         'display_label' => decorate.display_label,
         'short_label' => decorate.short_label

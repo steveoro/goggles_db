@@ -5,7 +5,7 @@ FactoryBot.define do
     sequence(:code) { |n| "workshop-#{n}" }
     description     { "#{FFaker::Name.suffix} #{FFaker::Address.city} Workshop" }
     edition         { (1..40).to_a.sample }
-    season          { create(:season) }
+    season          { FactoryBot.create(:season) }
     header_date     { season.begin_date + (rand * 100).to_i.days }
     header_year     { season.header_year }
     edition_type    { GogglesDb::EditionType.send(%w[ordinal roman none yearly seasonal].sample) }

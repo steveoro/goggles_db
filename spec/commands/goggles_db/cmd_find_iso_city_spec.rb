@@ -38,7 +38,7 @@ module GogglesDb
       end
 
       describe '#matches' do
-        it 'is an array of OpenStruct, each with a candidate and a weight' do
+        it 'is an array of Structs, each with a candidate and weight members' do
           expect(subject.matches).to all respond_to(:candidate).and respond_to(:weight)
         end
 

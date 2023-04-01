@@ -7,8 +7,7 @@ require 'fuzzystringmatch'
 module GogglesDb
   #
   # = "Find ISO3166 Cities" command
-  #
-  #   - file vers.: 0.4.01
+  #   - version:  7-0.5.01
   #   - author....: Steve A.
   #
   # === Dependencies:
@@ -94,6 +93,7 @@ module GogglesDb
 
     # Sets the result to the best corresponding Cities::City instance (when at least a candidate is found).
     # While searching, updates the #matches array with a list of possible alternative candidates, sorted in descending order.
+    # Each candidate stored in #matches will be an hash <tt>Struct(:candidate, :weight)</tt>.
     #
     # If the "search mode" is enabled (by not setting the ISO country in the constructor), an opinionated
     # list of possible countries is scanned one by one, searching for the same city name.
@@ -150,26 +150,23 @@ module GogglesDb
 
     # Loops on the defined Cities names collecting a @matches list with the candidates and their
     # best weight if the weight reaches at least the MATCH_BIAS.
-    #
     # Updates directly the internal @matches list.
-    # Returns the best or last weight found.
     #
     def scan_iso_cities_for_candidates_matching(iso_country, regexp)
       weight = 0.0
       iso_country.cities.each do |key_name, city|
-        # Precendence to the Regexp match:
+        # Precedence to the Regexp match:
         regexp_match = key_name =~ regexp
         if regexp_match
           weight = 1.0
-          @matches << @candidate_struct.new(candidate: city, weight: weight)
+          @matches << @candidate_struct.new(city, weight)
           break
         end
 
         # Store candidates only if they seem to be a match:
         weight = compute_best_weight(key_name, city)
-        @matches << @candidate_struct.new(candidate: city, weight: weight) if weight >= MATCH_BIAS
+        @matches << @candidate_struct.new(city, weight) if weight >= MATCH_BIAS
       end
-      weight
     end
 
     # Removes common conjunctions in names to build up a "tokenized" Regexp able to

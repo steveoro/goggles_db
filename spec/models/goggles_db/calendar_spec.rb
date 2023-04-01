@@ -42,7 +42,7 @@ module GogglesDb
            results_file results_file_contents
            name_import_text organization_import_text
            place_import_text dates_import_text program_import_text
-           read_only?
+           read_only? expired?
            to_json]
       )
 
@@ -117,7 +117,45 @@ module GogglesDb
           end
         end
       end
-      #-- ------------------------------------------------------------------------
+      #-- ---------------------------------------------------------------------
+      #++
+
+      describe '#expired?' do
+        context 'when the calendar row has been cancelled,' do
+          subject { FactoryBot.build(:calendar, cancelled: true) }
+
+          it 'is true' do
+            expect(subject.expired?).to be true
+          end
+        end
+
+        context 'when the calendar row is not cancelled but has occurred in the past,' do
+          subject do
+            FactoryBot.build(
+              :calendar,
+              meeting: FactoryBot.build(:meeting, header_date: Time.zone.today - 1.day)
+            )
+          end
+
+          it 'is true' do
+            expect(subject.expired?).to be true
+          end
+        end
+
+        context 'when the calendar row in not cancelled and is still open (up to the current date),' do
+          subject do
+            FactoryBot.build(
+              :calendar,
+              meeting: FactoryBot.build(:meeting, header_date: Time.zone.today)
+            )
+          end
+
+          it 'is false' do
+            expect(subject.expired?).to be false
+          end
+        end
+      end
+      #-- ---------------------------------------------------------------------
       #++
 
       describe '#to_json' do
