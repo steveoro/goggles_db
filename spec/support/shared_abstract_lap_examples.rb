@@ -85,9 +85,7 @@ shared_examples_for 'AbstractLap filtering scopes' do |sibling_class|
           .to all eq(parent_result_id)
       end
 
-      it 'has a positive number of items' do
-        expect(result.count).to be_positive
-      end
+      # [Update 20230403] result.count may be >= 0, but it is not guarantee to be always positive
 
       it 'does NOT includes the specified Lap' do
         expect(result.pluck(:id).uniq).not_to include(existing_row.id)
