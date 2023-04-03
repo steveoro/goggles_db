@@ -248,6 +248,7 @@ module GogglesDb
               'swimmer' => { 'id' => (rand * 150).to_i } # (Don't care if it's existing or not)
             }.to_json
           end
+
           subject { FactoryBot.create(:import_queue, request_data: fixture_request_data) }
 
           it 'is nil' do
