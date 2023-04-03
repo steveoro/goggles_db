@@ -73,7 +73,6 @@ module GogglesDb
     scope :for_meeting_code,  ->(meeting) { joins(:meeting).where('meetings.code': meeting&.code) }
     scope :for_team,          ->(team)    { where(team_id: team.id) }
     # TODO: CLEAR UNUSED
-    # scope :with_score,        ->(score_sym = 'standard_points') { where("#{score_sym} > 0") }
     # scope :season_type_bests,        -> { where(season_type_best: true) }
     # scope :for_season_type,          ->(season_type)          { joins(:season_type).where(['season_types.id = ?', season_type.id]) }
     # scope :for_team,                 ->(team)                 { where(team_id: team.id) }
