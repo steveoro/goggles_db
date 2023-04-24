@@ -2,6 +2,7 @@
 
 _Please, add the latest build info on top of the list; use Version::MAJOR only after gold release; keep semantic versioning in line with framework's_
 
+- **0.5.02** [Steve A.] minor DB structure update with some missing default values for boolean columns;
 - **0.5.01** [Steve A.] added Issue model, ManagerChecker#for_team? & #for_swimmer?; additional Timing & ImportQueue helpers and more specs; bundle security update
 - **0.4.25** [Steve A.] added ManagerChecker.any_for?();
 - **0.4.23** [Steve A.] additional task: db:check:tas

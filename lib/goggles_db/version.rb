@@ -22,7 +22,7 @@ module GogglesDb
     MAJOR = '0'
     MINOR = '5'
     PATCH = '02'
-    BUILD = '20230403'
+    BUILD = '20230424'
 
     # Full label
     FULL = "#{MAJOR}.#{MINOR}.#{PATCH} (#{CORE}-#{BUILD})"

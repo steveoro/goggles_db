@@ -84,15 +84,25 @@ Naming/VariableNumber:
     - 'db/migrate/20201121173221_rename_bool_fields_for_mevents_plus_more.rb'
     - 'db/migrate/20210130164719_rename_under_25_to_under25.rb'
 
+
+# This rule is simply stupid and needs to be kept disabled (most of the inline SQL will fail using squish)
+Rails/SquishedSQLHeredocs:
+  Enabled: false
+
+# Excluded files here were already corrected in later migrations:
+Rails/ThreeStateBooleanColumn:
+  Exclude:
+    - 'db/migrate/20210513113601_create_goggles_db_user_workshops.rb'
+    - 'db/migrate/20220228114607_add_cancelled_to_calendars.rb'
+    - 'db/migrate/20220801110842_add_sql_batch_field_to_import_queues.rb'
+
+
 Rake/MethodDefinitionInTask:
   Exclude:
     - 'lib/tasks/db_check.rake'
     - 'lib/tasks/db_dump_rebuild_reset.rake'
     - 'lib/tasks/normalize_*'
 
-# This rule is simply stupid and needs to be kept disabled (most of the inline SQL will fail using squish)
-Rails/SquishedSQLHeredocs:
-  Enabled: false
 
 RSpec/ExpectInHook:
   Enabled: false
