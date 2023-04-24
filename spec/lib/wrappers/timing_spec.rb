@@ -170,43 +170,43 @@ describe Timing, type: :model do
   #++
 
   describe '#+' do
-    subject { fixture1 + fixture2 }
+    subject { fixture_a + fixture_b }
 
-    let(:fixture1) { described_class.new(hundredths: rand * 100, seconds: rand * 60, minutes: rand * 60, hours: rand * 24) }
-    let(:fixture2) { described_class.new(hundredths: rand * 100, seconds: rand * 60, minutes: rand * 60, hours: rand * 24) }
+    let(:fixture_a) { described_class.new(hundredths: rand * 100, seconds: rand * 60, minutes: rand * 60, hours: rand * 24) }
+    let(:fixture_b) { described_class.new(hundredths: rand * 100, seconds: rand * 60, minutes: rand * 60, hours: rand * 24) }
 
     it 'returns a Timing object' do
       expect(subject).to be_an_instance_of(described_class)
     end
 
     it 'corresponds to the sum of the two objects in hundredths' do
-      expect(subject.to_hundredths).to eq(fixture1.to_hundredths + fixture2.to_hundredths)
+      expect(subject.to_hundredths).to eq(fixture_a.to_hundredths + fixture_b.to_hundredths)
     end
   end
 
   describe '#-' do
-    subject { fixture1 - fixture2 }
+    subject { fixture_a - fixture_b }
 
-    let(:fixture1) { described_class.new(hundredths: rand * 100, seconds: rand * 60, minutes: rand * 60, hours: rand * 24) }
-    let(:fixture2) { described_class.new(hundredths: rand * 100, seconds: rand * 60, minutes: rand * 60, hours: rand * 24) }
+    let(:fixture_a) { described_class.new(hundredths: rand * 100, seconds: rand * 60, minutes: rand * 60, hours: rand * 24) }
+    let(:fixture_b) { described_class.new(hundredths: rand * 100, seconds: rand * 60, minutes: rand * 60, hours: rand * 24) }
 
     it 'returns a Timing object' do
       expect(subject).to be_an_instance_of(described_class)
     end
 
     it 'corresponds to the sum of the two objects in hundredths' do
-      expect(subject.to_hundredths).to eq(fixture1.to_hundredths - fixture2.to_hundredths)
+      expect(subject.to_hundredths).to eq(fixture_a.to_hundredths - fixture_b.to_hundredths)
     end
   end
 
   describe '#*' do
-    subject { fixture1 * int_number }
+    subject { fixture_a * int_number }
 
-    let(:fixture1) { described_class.new(hundredths: rand * 100, seconds: 1 + (rand * 60), minutes: rand * 60, hours: rand * 24) }
+    let(:fixture_a) { described_class.new(hundredths: rand * 100, seconds: 1 + (rand * 60), minutes: rand * 60, hours: rand * 24) }
     let(:int_number) { (1 + (rand * 100)).to_i }
 
     it 'raises an ArgumentError when no valid integer value is specified' do
-      expect { fixture1 * [nil, 'not-a-number', 2.5].sample }.to raise_error(ArgumentError)
+      expect { fixture_a * [nil, 'not-a-number', 2.5].sample }.to raise_error(ArgumentError)
     end
 
     it 'returns a Timing object' do
@@ -214,27 +214,27 @@ describe Timing, type: :model do
     end
 
     it 'is the value in hundredths multiplied by the numeric value' do
-      expect(subject.to_hundredths).to eq(fixture1.to_hundredths * int_number)
+      expect(subject.to_hundredths).to eq(fixture_a.to_hundredths * int_number)
     end
   end
 
   describe '#==' do
-    let(:fixture1)    { described_class.new(hundredths: rand * 100, seconds: rand * 60, minutes: rand * 60, hours: rand * 24) }
-    let(:fixture1_eq) { described_class.new(hundredths: fixture1.hundredths, seconds: fixture1.seconds, minutes: fixture1.minutes, hours: fixture1.hours) }
-    let(:fixture2)    { described_class.new(hundredths: rand * 100, seconds: rand * 60, minutes: rand * 60, hours: rand * 24) }
-    let(:fixture2_eq) { described_class.new(hundredths: fixture2.hundredths, seconds: fixture2.seconds, minutes: fixture2.minutes, hours: fixture2.hours) }
+    let(:fixture_a)    { described_class.new(hundredths: rand * 100, seconds: rand * 60, minutes: rand * 60, hours: rand * 24) }
+    let(:fixture_a_eq) { described_class.new(hundredths: fixture_a.hundredths, seconds: fixture_a.seconds, minutes: fixture_a.minutes, hours: fixture_a.hours) }
+    let(:fixture_b)    { described_class.new(hundredths: rand * 100, seconds: rand * 60, minutes: rand * 60, hours: rand * 24) }
+    let(:fixture_b_eq) { described_class.new(hundredths: fixture_b.hundredths, seconds: fixture_b.seconds, minutes: fixture_b.minutes, hours: fixture_b.hours) }
 
     it 'returns false for instances with different values' do
-      expect(fixture1 == fixture2).to be false
+      expect(fixture_a == fixture_b).to be false
     end
 
     it 'returns false for uncomparable objects' do
-      expect(fixture1 == 'asdfg').to be false
+      expect(fixture_a == 'asdfg').to be false
     end
 
     it 'returns true for instances with equal values' do
-      expect(fixture1 == fixture1_eq).to be true
-      expect(fixture2 == fixture2_eq).to be true
+      expect(fixture_a == fixture_a_eq).to be true
+      expect(fixture_b == fixture_b_eq).to be true
     end
   end
 
