@@ -70,7 +70,7 @@ module GogglesDb
       when 2
         h.tag.i(class: 'fa fa-angle-double-up')
       when 3
-        h.tag.i(class: 'fa fa-exclamation-circle text-warning')
+        h.tag.i(class: 'fa fa-exclamation-circle text-danger')
       end
     end
 

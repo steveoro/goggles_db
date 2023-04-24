@@ -119,7 +119,7 @@ CREATE TABLE `api_daily_uses` (
   PRIMARY KEY (`id`),
   UNIQUE KEY `index_api_daily_uses_on_route_and_day` (`route`,`day`),
   KEY `index_api_daily_uses_on_route` (`route`)
-) ENGINE=InnoDB AUTO_INCREMENT=4665 DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=5497 DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 DROP TABLE IF EXISTS `app_parameters`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
@@ -237,7 +237,7 @@ CREATE TABLE `badge_payments` (
   `amount` decimal(10,2) DEFAULT NULL,
   `payment_date` date DEFAULT NULL,
   `notes` text DEFAULT NULL,
-  `manual` tinyint(1) DEFAULT NULL,
+  `manual` tinyint(1) NOT NULL DEFAULT 0,
   `badge_id` bigint(20) DEFAULT NULL,
   `user_id` bigint(20) DEFAULT NULL,
   `created_at` datetime NOT NULL,
@@ -329,7 +329,7 @@ CREATE TABLE `calendars` (
   `program_import_text` text DEFAULT NULL,
   `meeting_id` int(11) DEFAULT NULL,
   `read_only` tinyint(1) NOT NULL DEFAULT 0,
-  `cancelled` tinyint(1) DEFAULT 0,
+  `cancelled` tinyint(1) NOT NULL DEFAULT 0,
   PRIMARY KEY (`id`),
   KEY `index_calendars_on_season_id` (`season_id`),
   KEY `index_calendars_on_meeting_id` (`meeting_id`),
@@ -800,7 +800,7 @@ CREATE TABLE `import_queues` (
   `bindings_left_list` varchar(255) DEFAULT NULL,
   `error_messages` text DEFAULT NULL,
   `import_queue_id` int(11) DEFAULT NULL,
-  `batch_sql` tinyint(1) DEFAULT 0,
+  `batch_sql` tinyint(1) NOT NULL DEFAULT 0,
   PRIMARY KEY (`id`),
   KEY `index_import_queues_on_user_id` (`user_id`),
   KEY `index_import_queues_on_done` (`done`),
@@ -862,7 +862,7 @@ CREATE TABLE `issues` (
   KEY `index_issues_on_priority` (`priority`),
   KEY `index_issues_on_status` (`status`),
   CONSTRAINT `fk_rails_f8f1052133` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=17 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 DROP TABLE IF EXISTS `laps`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
@@ -899,7 +899,7 @@ CREATE TABLE `laps` (
   CONSTRAINT `fk_rails_a33a36dd83` FOREIGN KEY (`swimmer_id`) REFERENCES `swimmers` (`id`),
   CONSTRAINT `fk_rails_c073154702` FOREIGN KEY (`team_id`) REFERENCES `teams` (`id`),
   CONSTRAINT `fk_rails_d2251ad180` FOREIGN KEY (`meeting_individual_result_id`) REFERENCES `meeting_individual_results` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=10005 DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=10017 DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 DROP TABLE IF EXISTS `locker_cabinet_types`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
@@ -2198,12 +2198,12 @@ CREATE TABLE `user_workshops` (
   `edition_type_id` int(11) NOT NULL DEFAULT 3,
   `timing_type_id` int(11) NOT NULL DEFAULT 1,
   `swimming_pool_id` int(11) DEFAULT NULL,
-  `autofilled` tinyint(1) DEFAULT NULL,
-  `off_season` tinyint(1) DEFAULT NULL,
-  `confirmed` tinyint(1) DEFAULT NULL,
-  `cancelled` tinyint(1) DEFAULT NULL,
-  `pb_acquired` tinyint(1) DEFAULT NULL,
-  `read_only` tinyint(1) DEFAULT NULL,
+  `autofilled` tinyint(1) NOT NULL DEFAULT 0,
+  `off_season` tinyint(1) NOT NULL DEFAULT 0,
+  `confirmed` tinyint(1) NOT NULL DEFAULT 0,
+  `cancelled` tinyint(1) NOT NULL DEFAULT 0,
+  `pb_acquired` tinyint(1) NOT NULL DEFAULT 0,
+  `read_only` tinyint(1) NOT NULL DEFAULT 0,
   `created_at` datetime(6) NOT NULL,
   `updated_at` datetime(6) NOT NULL,
   PRIMARY KEY (`id`),
@@ -2724,6 +2724,9 @@ INSERT INTO `schema_migrations` (version) VALUES
 ('20220808120347'),
 ('20220808140700'),
 ('20220823131256'),
-('20230323185031');
+('20230323185031'),
+('20230420171019'),
+('20230424112946'),
+('20230424140046');
 
 

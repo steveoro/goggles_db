@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2023_03_23_185031) do
+ActiveRecord::Schema.define(version: 2023_04_24_140046) do
 
   create_table "achievement_rows", id: :integer, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci", force: :cascade do |t|
     t.integer "lock_version", default: 0
@@ -164,7 +164,7 @@ ActiveRecord::Schema.define(version: 2023_03_23_185031) do
     t.decimal "amount", precision: 10, scale: 2
     t.date "payment_date"
     t.text "notes"
-    t.boolean "manual"
+    t.boolean "manual", default: false, null: false
     t.bigint "badge_id"
     t.bigint "user_id"
     t.datetime "created_at", null: false
@@ -241,7 +241,7 @@ ActiveRecord::Schema.define(version: 2023_03_23_185031) do
     t.text "program_import_text"
     t.integer "meeting_id"
     t.boolean "read_only", default: false, null: false
-    t.boolean "cancelled", default: false
+    t.boolean "cancelled", default: false, null: false
     t.index ["cancelled"], name: "index_calendars_on_cancelled"
     t.index ["meeting_code"], name: "index_calendars_on_meeting_code"
     t.index ["meeting_id"], name: "index_calendars_on_meeting_id"
@@ -317,6 +317,24 @@ ActiveRecord::Schema.define(version: 2023_03_23_185031) do
     t.index ["season_id", "rank"], name: "rank_x_season"
     t.index ["season_id", "team_id"], name: "teams_x_season"
     t.index ["team_id"], name: "fk_computed_season_rankings_teams"
+  end
+
+  create_table "data_import_swimmer_aliases", id: :integer, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci", force: :cascade do |t|
+    t.integer "lock_version", default: 0
+    t.datetime "created_at"
+    t.datetime "updated_at"
+    t.string "complete_name", limit: 100
+    t.integer "swimmer_id"
+    t.index ["swimmer_id", "complete_name"], name: "idx_swimmer_id_complete_name", unique: true
+  end
+
+  create_table "data_import_team_aliases", id: :integer, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci", force: :cascade do |t|
+    t.integer "lock_version", default: 0
+    t.datetime "created_at"
+    t.datetime "updated_at"
+    t.string "name", limit: 60
+    t.integer "team_id"
+    t.index ["team_id", "name"], name: "idx_team_id_name", unique: true
   end
 
   create_table "day_part_types", id: :integer, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci", force: :cascade do |t|
@@ -559,7 +577,7 @@ ActiveRecord::Schema.define(version: 2023_03_23_185031) do
     t.string "bindings_left_list"
     t.text "error_messages"
     t.integer "import_queue_id"
-    t.boolean "batch_sql", default: false
+    t.boolean "batch_sql", default: false, null: false
     t.index ["batch_sql"], name: "index_import_queues_on_batch_sql"
     t.index ["done"], name: "index_import_queues_on_done"
     t.index ["import_queue_id"], name: "index_import_queues_on_import_queue_id"
@@ -1217,15 +1235,6 @@ ActiveRecord::Schema.define(version: 2023_03_23_185031) do
     t.index ["eventable"], name: "idx_is_eventable"
   end
 
-  create_table "swimmer_aliases", id: :integer, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci", force: :cascade do |t|
-    t.integer "lock_version", default: 0
-    t.datetime "created_at"
-    t.datetime "updated_at"
-    t.string "complete_name", limit: 100
-    t.integer "swimmer_id"
-    t.index ["swimmer_id", "complete_name"], name: "idx_swimmer_id_complete_name", unique: true
-  end
-
   create_table "swimmer_level_types", id: :integer, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci", force: :cascade do |t|
     t.integer "lock_version", default: 0
     t.datetime "created_at"
@@ -1374,15 +1383,6 @@ ActiveRecord::Schema.define(version: 2023_03_23_185031) do
     t.index ["team_id"], name: "fk_team_affiliations_teams"
   end
 
-  create_table "team_aliases", id: :integer, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci", force: :cascade do |t|
-    t.integer "lock_version", default: 0
-    t.datetime "created_at"
-    t.datetime "updated_at"
-    t.string "name", limit: 60
-    t.integer "team_id"
-    t.index ["team_id", "name"], name: "idx_team_id_name", unique: true
-  end
-
   create_table "team_lap_templates", id: :integer, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci", force: :cascade do |t|
     t.integer "lock_version", default: 0
     t.integer "part_order", limit: 3, default: 0
@@ -1503,7 +1503,7 @@ ActiveRecord::Schema.define(version: 2023_03_23_185031) do
     t.index ["user_id", "achievement_id"], name: "index_user_achievements_on_user_id_and_achievement_id", unique: true
   end
 
-  create_table "user_laps", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci", force: :cascade do |t|
+  create_table "user_laps", options: "ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci", force: :cascade do |t|
     t.integer "user_result_id", null: false
     t.integer "swimmer_id", null: false
     t.decimal "reaction_time", precision: 5, scale: 2
@@ -1622,7 +1622,7 @@ ActiveRecord::Schema.define(version: 2023_03_23_185031) do
     t.index ["user_id", "description"], name: "index_user_trainings_on_user_id_and_description"
   end
 
-  create_table "user_workshops", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci", force: :cascade do |t|
+  create_table "user_workshops", options: "ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci", force: :cascade do |t|
     t.integer "lock_version", default: 0
     t.date "header_date"
     t.string "header_year", limit: 10
@@ -1636,12 +1636,12 @@ ActiveRecord::Schema.define(version: 2023_03_23_185031) do
     t.integer "edition_type_id", default: 3, null: false
     t.integer "timing_type_id", default: 1, null: false
     t.integer "swimming_pool_id"
-    t.boolean "autofilled"
-    t.boolean "off_season"
-    t.boolean "confirmed"
-    t.boolean "cancelled"
-    t.boolean "pb_acquired"
-    t.boolean "read_only"
+    t.boolean "autofilled", default: false, null: false
+    t.boolean "off_season", default: false, null: false
+    t.boolean "confirmed", default: false, null: false
+    t.boolean "cancelled", default: false, null: false
+    t.boolean "pb_acquired", default: false, null: false
+    t.boolean "read_only", default: false, null: false
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
     t.index ["code"], name: "index_user_workshops_on_code"
