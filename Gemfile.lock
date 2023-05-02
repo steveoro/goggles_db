@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    goggles_db (0.5.02)
+    goggles_db (0.5.03)
       acts-as-taggable-on
       acts_as_votable
       cities
@@ -25,6 +25,7 @@ PATH
       plus_codes
       rails (>= 6.0.6.1, < 6.1.0)
       rails-i18n (~> 6.0)
+      sass-rails
       scenic
       simple_command
       tzinfo
@@ -102,10 +103,10 @@ GEM
     ast (2.4.2)
     awesome_print (1.9.2)
     bcrypt (3.1.18)
-    better_errors (2.9.1)
-      coderay (>= 1.0.0)
+    better_errors (2.10.0)
       erubi (>= 1.0.0)
       rack (>= 0.9.0)
+      rouge (>= 1.0.0)
     binding_of_caller (1.0.0)
       debug_inspector (>= 0.0.1)
     brakeman (5.4.1)
@@ -214,7 +215,7 @@ GEM
       rubocop (>= 0.50.0)
       sysexits (~> 1.1)
     hashie (5.0.0)
-    i18n (1.12.0)
+    i18n (1.13.0)
       concurrent-ruby (~> 1.0)
     inch (0.8.0)
       pry
@@ -286,7 +287,7 @@ GEM
       omniauth (~> 2.0)
     orm_adapter (0.5.0)
     parallel (1.23.0)
-    parser (3.2.2.0)
+    parser (3.2.2.1)
       ast (~> 2.4.1)
     plus_codes (0.2.1)
     pry (0.14.2)
@@ -300,7 +301,7 @@ GEM
       pry (~> 0.13)
     public_suffix (5.0.1)
     racc (1.6.2)
-    rack (2.2.6.4)
+    rack (2.2.7)
     rack-protection (3.0.6)
       rack
     rack-test (2.1.0)
@@ -346,6 +347,7 @@ GEM
       actionpack (>= 5.2)
       railties (>= 5.2)
     rexml (3.2.5)
+    rouge (4.1.0)
     rspec (3.12.0)
       rspec-core (~> 3.12.0)
       rspec-expectations (~> 3.12.0)
@@ -377,7 +379,7 @@ GEM
       rubocop-ast (>= 1.28.0, < 2.0)
       ruby-progressbar (~> 1.7)
       unicode-display_width (>= 2.4.0, < 3.0)
-    rubocop-ast (1.28.0)
+    rubocop-ast (1.28.1)
       parser (>= 3.2.1.0)
     rubocop-capybara (2.18.0)
       rubocop (~> 1.41)
@@ -395,6 +397,16 @@ GEM
       rubocop-capybara (~> 2.17)
     ruby-progressbar (1.13.0)
     ruby2_keywords (0.0.5)
+    sass-rails (6.0.0)
+      sassc-rails (~> 2.1, >= 2.1.1)
+    sassc (2.4.0)
+      ffi (~> 1.9)
+    sassc-rails (2.1.2)
+      railties (>= 4.0.0)
+      sassc (>= 2.0)
+      sprockets (> 3.0)
+      sprockets-rails
+      tilt
     scenic (1.7.0)
       activerecord (>= 4.0.0)
       railties (>= 4.0.0)
@@ -450,7 +462,7 @@ GEM
       websocket-extensions (>= 0.1.0)
     websocket-extensions (0.1.5)
     yard (0.9.34)
-    zeitwerk (2.6.7)
+    zeitwerk (2.6.8)
 
 PLATFORMS
   x86_64-linux

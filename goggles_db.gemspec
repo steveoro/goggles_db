@@ -56,6 +56,7 @@ Gem::Specification.new do |spec|
   # Twitter disabled for the time being (supports only OAuth 1a)
   # spec.add_dependency 'omniauth-twitter'
   spec.add_dependency 'plus_codes' # https://github.com/google/open-location-code/tree/master/ruby
+  spec.add_dependency 'sass-rails'
   spec.add_dependency 'scenic'
   spec.add_dependency 'simple_command'
   spec.add_dependency 'tzinfo'
