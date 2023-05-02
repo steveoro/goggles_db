@@ -89,8 +89,23 @@ RSpec.describe GogglesDb::ImportQueueDecorator, type: :decorator do
     end
 
     describe '#chrono_delta_label' do
-      it 'is empty' do
-        expect(subject.chrono_delta_label).to be_empty
+      it 'includes a delta-t icon' do
+        expect(subject.chrono_delta_label).to include('Δt')
+      end
+
+      it 'includes the overall lap timing' do
+        expect(subject.chrono_delta_label).to include(ERB::Util.html_escape(fixture_row.req_timing.to_s))
+      end
+
+      it 'includes the length in meters' do
+        expect(subject.chrono_delta_label).to include(fixture_row.req_length_in_meters.to_s)
+      end
+
+      it 'includes the delta timing when available (laps > 0)' do
+        if fixture_row.req_delta_timing.positive?
+          expect(subject.chrono_delta_label)
+            .to include(ERB::Util.html_escape(fixture_row.req_delta_timing.to_s))
+        end
       end
     end
 

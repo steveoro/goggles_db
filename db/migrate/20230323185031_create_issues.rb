@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 class CreateIssues < ActiveRecord::Migration[6.0]
-  def change
+  def self.up
     create_table :issues do |t|
       t.references(:user, null: false, foreign_key: true, type: :integer)
       t.string  :code, limit: 3, null: false
@@ -20,5 +20,10 @@ class CreateIssues < ActiveRecord::Migration[6.0]
       GogglesDb::AppParameter::FULL_VERSION_FIELDNAME => GogglesDb::Version::FULL,
       GogglesDb::AppParameter::DB_VERSION_FIELDNAME => GogglesDb::Version::DB
     )
+  end
+
+  def self.down
+    # Can't go back to old data after this:
+    raise ActiveRecord::IrreversibleMigration
   end
 end

@@ -62,12 +62,13 @@ module GogglesDb
       end
     end
 
-    # Assuming the request type is 'chrono-N' (any linked/lap row of a Chrono-timing req),
+    # Assuming the request type is 'chrono' (main) or 'chrono-N' (any sibling lap row),
     # this returns a descriptive label for the current delta lap timing.
     # Returns an empty string otherwise.
     #
+    # NOTE: chrono master rows usually store also the actual last delta lap timing, if available.
     def chrono_delta_label
-      return '' unless /chrono-\d+/.match?(uid)
+      return '' unless uid.include?('chrono')
 
       if req_delta_timing.positive?
         h.tag.small do
