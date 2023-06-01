@@ -4,7 +4,7 @@ module GogglesDb
   #
   # = Issue model
   #
-  #   - version:  7-0.5.01
+  #   - version:  7-0.5.10
   #   - author:   Steve A.
   #
   class Issue < ApplicationRecord
@@ -146,29 +146,13 @@ module GogglesDb
     #-- -----------------------------------------------------------------------
     #++
 
-    # Returns a minimal subset of this instance's attribute hash merged with the localized display
-    # labels ('label', 'long_label', 'alt_label').
+    # Override: include some of the decorated fields in the output.
     #
-    # === Params:
-    # - locale: a valid locale code or symbol ('it', 'en', ...) to be used as I18n.locale enforce/override
-    #
-    def lookup_attributes(locale = I18n.locale)
-      minimal_attributes.merge(
-        'label' => label(locale),
-        'long_label' => long_label(locale),
-        'alt_label' => alt_label(locale)
+    def minimal_attributes(locale = I18n.locale)
+      super(locale).merge(
+        'status_label' => status_label,
+        'processable' => processable?
       )
-    end
-
-    # Override: includes additional #lookup_attributes.
-    #
-    # === Options:
-    # - locale: a valid locale code or symbol ('it', 'en', ...) to be used as I18n.locale enforce/override
-    #
-    def to_json(options = nil)
-      locale_override = options&.fetch(:locale, nil) || I18n.locale
-      lookup_attributes(locale_override)
-        .to_json(options)
     end
 
     private

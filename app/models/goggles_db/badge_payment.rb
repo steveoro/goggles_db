@@ -4,7 +4,7 @@ module GogglesDb
   #
   # = Badge payment model
   #
-  #   - version:  7-0.3.44
+  #   - version:  7-0.5.10
   #   - authors:  Leega, Steve A.
   #
   class BadgePayment < ApplicationRecord
@@ -16,6 +16,11 @@ module GogglesDb
     has_one  :swimmer, through: :badge
     has_one  :season,  through: :badge
     has_one  :team,    through: :badge
+
+    has_one  :team_affiliation, through: :badge
+    has_one  :category_type, through: :badge
+    has_one  :entry_time_type, through: :badge
+    has_one  :gender_type, through: :swimmer
 
     validates :payment_date, presence: { allow_nil: false }
     validates :amount, presence: { allow_nil: false }
@@ -34,15 +39,5 @@ module GogglesDb
     delegate :complete_name, to: :swimmer, prefix: true
     #-- ------------------------------------------------------------------------
     #++
-
-    # Override: include all 1st-level associations into the typical to_json output.
-    def to_json(options = nil)
-      attributes.merge(
-        'badge' => badge.minimal_attributes,
-        'swimmer' => swimmer.minimal_attributes,
-        'season' => season.minimal_attributes,
-        'team' => team.minimal_attributes
-      ).to_json(options)
-    end
   end
 end

@@ -4,7 +4,7 @@ module GogglesDb
   #
   # = Swimmer model
   #
-  #   - version:  7-0.4.01
+  #   - version:  7-0.5.10
   #   - author:   Steve A.
   #   - build:    20220804
   #
@@ -101,6 +101,7 @@ module GogglesDb
 
     # Returns the latest available (defined) <tt>CategoryType</tt> for the given <tt>SeasonType</tt>,
     # regardless the actual existance of a badge for this swimmer.
+    # Only <tt>CategoryType</tt> for individuals are taken into consideration.
     #
     # == Params
     # - <tt>season_type</tt>: chosen <tt>GogglesDb::SeasonType</tt>; default: +mas_fin+.
@@ -117,34 +118,36 @@ module GogglesDb
       # Use the "full" FIN season to get the actual (first) available type code for the category:
       GogglesDb::CategoryType.for_season(last_fin_season)
                              .where('(age_end >= ?) AND (age_begin <= ?)', age, age)
+                             .individuals
                              .first
     end
     #-- ------------------------------------------------------------------------
     #++
 
-    # Override: include the minimum required 1st-level associations.
+    # Override: returns the list of single association names (as symbols)
+    # included by <tt>#to_hash</tt> (and, consequently, by <tt>#to_json</tt>).
     #
-    def minimal_attributes
-      super.merge(minimal_associations)
+    def single_associations
+      %i[associated_user gender_type]
     end
 
-    # Override: includes all 1st-level associations into the typical to_json output.
-    def to_json(options = nil)
-      attributes.merge(minimal_associations).to_json(options)
+    # Override: returns the list of multiple association names (as symbols)
+    # included by <tt>#to_hash</tt> (and, consequently, by <tt>#to_json</tt>).
+    #
+    def multiple_associations
+      %i[]
     end
 
-    private
-
-    # Returns the "minimum required" hash of associations and members.
-    # The result Hash will be used in both #minimal_attributes & #to_json.
-    def minimal_associations
-      {
-        'long_label' => decorate.display_label, # Alias only for Swimmer
-        'display_label' => decorate.display_label,
+    # Override: include some of the decorated fields in the output.
+    #
+    def minimal_attributes(locale = I18n.locale)
+      super(locale).merge(
+        'long_label' => decorate.display_label(locale), # Alias, only for Swimmer
+        'display_label' => decorate.display_label(locale),
         'short_label' => decorate.short_label,
-        'associated_user' => associated_user&.minimal_attributes,
-        'gender_type' => gender_type.lookup_attributes
-      }
+        'gender_code' => gender_type.code,
+        'associated_user_label' => associated_user&.decorate&.short_label
+      )
     end
   end
 end

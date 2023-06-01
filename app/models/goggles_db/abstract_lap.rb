@@ -6,7 +6,7 @@ module GogglesDb
   #
   # Encapsulates common behavior for Laps & User Laps.
   #
-  #   - version:  7-0.4.25
+  #   - version:  7-0.5.10
   #   - author:   Steve A.
   #
   class AbstractLap < ApplicationRecord
@@ -81,13 +81,20 @@ module GogglesDb
     #-- ------------------------------------------------------------------------
     #++
 
-    # Override: include the minimum required 1st-level associations.
+    # Override: returns the list of single association names (as symbols)
+    # included by <tt>#to_hash</tt> (and, consequently, by <tt>#to_json</tt>).
     #
-    def minimal_attributes
-      super.merge(
+    def single_associations
+      %i[swimmer gender_type]
+    end
+
+    # Override: include some of the decorated fields in the output.
+    #
+    def minimal_attributes(locale = I18n.locale)
+      super(locale).merge(
         'timing' => to_timing.to_s,
         'timing_from_start' => timing_from_start.to_s
-      ).merge(minimal_associations)
+      )
     end
 
     # Returns a commodity Hash wrapping the essential data that summarizes the Meeting
@@ -104,6 +111,9 @@ module GogglesDb
       }
     end
     # rubocop:enable Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
+
+    alias user_workshop_attributes meeting_attributes # (new, old)
+    # (Needed by app/models/goggles_db/application_record.rb:122)
 
     # Returns a commodity Hash wrapping the essential data that summarizes the Swimmer
     # associated to this row.
@@ -160,23 +170,5 @@ module GogglesDb
     #
     # ==> OVERRIDE IN SIBLINGS <==
     def parent_result_where_condition; end
-
-    # Returns the "minimum required" hash of associations.
-    #
-    # === Note:
-    # Typically these should be a subset of the (full) associations enlisted
-    # inside #to_json.
-    # The rationale here is to select just the bare amount of "leaf entities"
-    # in the hierachy tree so that these won't be included more than once in
-    # any #minimal_attributes output invoked from a higher level or parent entity.
-    #
-    # Example:
-    # #to_json or #attributes of team_affilition.badges vs single badge output.
-    def minimal_associations
-      {
-        'swimmer' => swimmer_attributes,
-        'gender_type' => swimmer.gender_type.lookup_attributes
-      }
-    end
   end
 end

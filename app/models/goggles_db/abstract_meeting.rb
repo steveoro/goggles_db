@@ -6,7 +6,7 @@ module GogglesDb
   #
   # Encapsulates common behavior for Meetings & User Workshops.
   #
-  #   - version:  7-0.5.01
+  #   - version:  7-0.5.10
   #   - author:   Steve A.
   #
   class AbstractMeeting < ApplicationRecord
@@ -113,20 +113,34 @@ module GogglesDb
     end
     #-- ------------------------------------------------------------------------
 
-    # Override: include the "minimum required" hash of attributes & associations.
+    # Override: include some of the decorated fields in the output.
     #
-    def minimal_attributes
-      super.merge(
+    def minimal_attributes(locale = I18n.locale)
+      super(locale).merge(
         'display_label' => decorate.display_label,
         'short_label' => decorate.short_label,
         'edition_label' => edition_label,
-        'season' => season.minimal_attributes,
-        'edition_type' => edition_type.lookup_attributes,
-        'timing_type' => timing_type.lookup_attributes,
-        'season_type' => season_type.minimal_attributes,
-        'federation_type' => federation_type.minimal_attributes
+        'meeting_date' => decorate.meeting_date
       )
     end
+
+    # Override: include the "minimum required" hash of attributes & associations.
+    #
+    # def minimal_attributes(locale = I18n.locale)
+    #   super(locale).merge(
+    #     'display_label' => decorate.display_label(locale),
+    #     'short_label' => decorate.short_label(locale),
+    #     'edition_label' => edition_label,
+
+    #     'season' => season.minimal_attributes,
+    #     'edition_type' => edition_type.lookup_attributes,
+    #     'timing_type' => timing_type.lookup_attributes,
+    #     'season_type' => season_type.minimal_attributes,
+    #     'federation_type' => federation_type.minimal_attributes
+    #   )
+    # end
+    #-- ------------------------------------------------------------------------
+    #++
 
     private
 

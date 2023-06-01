@@ -6,7 +6,7 @@ module GogglesDb
   #
   # Legacy name: "FINCalendar"
   #
-  #   - version:  7.0.4.21
+  #   - version:  7.0.5.10
   #   - author:   Steve A.
   #
   class Calendar < ApplicationRecord
@@ -59,21 +59,21 @@ module GogglesDb
     end
     #-- ------------------------------------------------------------------------
 
-    # Override: include the minimum required 1st-level associations.
+    # Override: returns the list of single association names (as symbols)
+    # included by <tt>#to_hash</tt> (and, consequently, by <tt>#to_json</tt>).
     #
-    def minimal_attributes
-      super.merge(minimal_associations)
+    def single_associations
+      %i[season season_type meeting]
     end
 
-    # Override: includes all 1st-level associations into the typical to_json output.
-    def to_json(options = nil)
-      attributes.merge(
+    # Override: include some of the decorated fields in the output.
+    #
+    def minimal_attributes(locale = I18n.locale)
+      super(locale).merge(
         'display_label' => decorate.display_label,
         'short_label' => decorate.short_label,
-        'meeting_date' => decorate.meeting_date,
-        'season' => season.minimal_attributes,
-        'meeting' => meeting&.minimal_attributes
-      ).to_json(options)
+        'meeting_date' => decorate.meeting_date
+      )
     end
     #-- ------------------------------------------------------------------------
     #++
@@ -97,25 +97,5 @@ module GogglesDb
     end
     #-- ------------------------------------------------------------------------
     #++
-
-    private
-
-    # Returns the "minimum required" hash of associations.
-    #
-    # === Note:
-    # Typically these should be a subset of the (full) associations enlisted
-    # inside #to_json.
-    # The rationale here is to select just the bare amount of "leaf entities"
-    # in the hierachy tree so that these won't be included more than once in
-    # any #minimal_attributes output invoked from a higher level or parent entity.
-    #
-    # Example:
-    # #to_json or #attributes of team_affilition.badges vs single badge output.
-    def minimal_associations
-      {
-        'season' => season.minimal_attributes,
-        'meeting' => meeting&.minimal_attributes
-      }
-    end
   end
 end

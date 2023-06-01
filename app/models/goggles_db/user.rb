@@ -4,7 +4,7 @@ module GogglesDb
   #
   # = User model
   #
-  #   - version:  7-0.5.01
+  #   - version:  7-0.5.10
   #   - author:   Steve A.
   #
   class User < ApplicationRecord
@@ -64,6 +64,7 @@ module GogglesDb
     validates :first_name,    length: { maximum: 50 }
     validates :last_name,     length: { maximum: 50 }
     validates :year_of_birth, length: { maximum: 4 }
+    validates :active,        allow_nil: false, inclusion: { in: [true, false] }
     #-- ------------------------------------------------------------------------
     #++
 
@@ -125,6 +126,47 @@ module GogglesDb
       end
       result_user
     }
+    #-- ------------------------------------------------------------------------
+    #++
+
+    # Devise override.
+    # This is called by devise when checking if a resource model is active or not.
+    def active_for_authentication?
+      # ASSUMES: default 'active' value for a new User row is 'true'
+      super && active?
+    end
+
+    # Devise override.
+    # Called for an inactive resource, used to customize the response message.
+    # (See I18n => 'devise.failure.account_deactivated')
+    def inactive_message
+      active? ? super : :account_deactivated
+    end
+    #-- ------------------------------------------------------------------------
+    #++
+
+    # Override: returns the list of single association names (as symbols)
+    # included by <tt>#to_hash</tt> (and, consequently, by <tt>#to_json</tt>).
+    #
+    def single_associations
+      %i[swimmer]
+    end
+
+    # Override: returns the list of multiple association names (as symbols)
+    # included by <tt>#to_hash</tt> (and, consequently, by <tt>#to_json</tt>).
+    #
+    def multiple_associations
+      %i[admin_grants managed_affiliations]
+    end
+
+    # Override: include some of the decorated fields in the output.
+    #
+    def minimal_attributes(locale = I18n.locale)
+      super(locale).merge(
+        'display_label' => decorate.display_label,
+        'short_label' => decorate.short_label
+      )
+    end
     #-- ------------------------------------------------------------------------
     #++
 
@@ -208,12 +250,14 @@ module GogglesDb
       swimmer.save!
     end
 
-    # Destroys all associated rows bound by foreing keys.
+    # Destroys all associated rows bound by foreign keys.
     # In the case of Users, those models will be:
     # - MeetingReservation (deletable)
     # - ManagedAffiliation (must be reassigned)
     # - UserWorkshop (same as above)
     # - UserResult (same as above)
+    #
+    # rubocop:disable Rails/SkipsModelValidations
     def amend_fk_rows!
       logger.info("\r\n=> Deleting user #{id}: #{first_name} #{last_name} (#{name} => #{email})")
       # Delete erasable stuff:
@@ -223,6 +267,7 @@ module GogglesDb
       GogglesDb::UserWorkshop.where(user_id: id).update_all(user_id: PLACEHOLDER_ID)
       GogglesDb::UserResult.where(user_id: id).update_all(user_id: PLACEHOLDER_ID)
     end
+    # rubocop:enable Rails/SkipsModelValidations
 
     # Returns an Array of SQL "LIKE" String conditions, one for each name "particle" extracted by splitting
     # the given name by spaces.

@@ -4,7 +4,7 @@ module GogglesDb
   #
   # = UserLap model
   #
-  #   - version:  7.3.06
+  #   - version:  7-0.5.10
   #   - author:   Steve A.
   #
   # User laps refer exclusively to user results (& user workshops)
@@ -17,24 +17,18 @@ module GogglesDb
     validates_associated :user_result
     validates_associated :swimmer
 
+    has_one :gender_type, through: :swimmer
     has_one :user_workshop, through: :user_result
     has_one :event_type, through: :user_result
     has_one :pool_type,  through: :user_result
     #-- ------------------------------------------------------------------------
     #++
 
-    # Override: includes most relevant data for its 1st-level associations
-    def to_json(options = nil)
-      # [Steve A.] Using the safe-access operator where there are no actual foreign keys:
-      attributes.merge(
-        'timing' => to_timing.to_s,
-        'timing_from_start' => timing_from_start.to_s,
-        'swimmer' => swimmer_attributes,
-        'user_workshop' => meeting_attributes,
-        'user_result' => user_result.minimal_attributes,
-        'event_type' => event_type&.lookup_attributes,
-        'pool_type' => pool_type&.lookup_attributes
-      ).to_json(options)
+    # Override: returns the list of single association names (as symbols)
+    # included by <tt>#to_hash</tt> (and, consequently, by <tt>#to_json</tt>).
+    #
+    def single_associations
+      super + %i[user_workshop event_type pool_type user_result]
     end
     #-- ------------------------------------------------------------------------
     #++

@@ -4,7 +4,7 @@ module GogglesDb
   #
   # = TeamAffiliation model
   #
-  #   - version:  7-0.4.01
+  #   - version:  7-0.5.10
   #   - author:   Steve A.
   #
   class TeamAffiliation < ApplicationRecord
@@ -62,17 +62,16 @@ module GogglesDb
     def managers
       managed_affiliations.map(&:manager)
     end
+    #-- ------------------------------------------------------------------------
+    #++
 
-    # Override: includes *most* of its 1st-level associations into the typical to_json output.
-    def to_json(options = nil)
-      attributes.merge(
+    # Override: include some of the decorated fields in the output.
+    #
+    def minimal_attributes(locale = I18n.locale)
+      super(locale).merge(
         'display_label' => decorate.display_label,
-        'short_label' => decorate.short_label,
-        'team' => team.minimal_attributes,
-        'season' => season.minimal_attributes,
-        'badges' => recent_badges([season.begin_date.year, season.end_date.year]).map(&:minimal_attributes),
-        'managers' => managers
-      ).to_json(options)
+        'short_label' => decorate.short_label
+      )
     end
   end
 end

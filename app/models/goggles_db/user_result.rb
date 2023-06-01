@@ -4,7 +4,7 @@ module GogglesDb
   #
   # = UserResult model
   #
-  #   - version:  7-0.3.35
+  #   - version:  7-0.5.10
   #   - author:   Steve A.
   #
   # User results are swimming event timings:
@@ -23,7 +23,6 @@ module GogglesDb
 
     belongs_to :user_workshop
     belongs_to :user
-    belongs_to :swimmer
     belongs_to :category_type
     belongs_to :pool_type
     belongs_to :event_type
@@ -31,7 +30,6 @@ module GogglesDb
 
     validates_associated :user_workshop
     validates_associated :user
-    validates_associated :swimmer
     validates_associated :category_type
     validates_associated :pool_type
     validates_associated :event_type
@@ -64,36 +62,26 @@ module GogglesDb
     #-- ------------------------------------------------------------------------
     #++
 
-    # Override: includes most relevant data for its 1st-level associations
-    def to_json(options = nil)
-      attributes.merge(
-        'timing' => to_timing.to_s,
-        'user_workshop' => meeting_attributes,
-        'pool_type' => pool_type.lookup_attributes,
-        'event_type' => event_type.lookup_attributes,
-        'category_type' => category_type.minimal_attributes,
-        'gender_type' => gender_type.lookup_attributes,
-        'stroke_type' => stroke_type.lookup_attributes,
-        'laps' => laps&.map(&:minimal_attributes) # (Optional)
-      ).merge(
-        minimal_associations
-      ).to_json(options)
+    # Override: returns the list of single association names (as symbols)
+    # included by <tt>#to_hash</tt> (and, consequently, by <tt>#to_json</tt>).
+    #
+    def single_associations
+      super + %i[user_workshop swimming_pool pool_type event_type category_type stroke_type]
+    end
+
+    # Override: include some of the decorated fields in the output.
+    #
+    def minimal_attributes(locale = I18n.locale)
+      super(locale).merge(
+        'event_label' => event_type.label(locale),
+        'category_label' => category_type.decorate.short_label,
+        'category_code' => category_type.code,
+        'gender_code' => gender_type.code
+      )
     end
 
     # AbstractLap overrides:
     alias_attribute :parent_meeting, :user_workshop # (old, new)
     alias user_workshop_attributes meeting_attributes # (new, old)
-
-    private
-
-    # Returns the "minimum required" hash of associations.
-    #
-    # Typical use for this is as helper called from within the #to_json definition
-    # of a parent entity via a #minimal_attributes call.
-    def minimal_associations
-      super.merge(
-        'swimming_pool' => swimming_pool&.minimal_attributes
-      )
-    end
   end
 end

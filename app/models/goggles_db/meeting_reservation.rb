@@ -4,7 +4,7 @@ module GogglesDb
   #
   # = MeetingReservation model
   #
-  #   - version:  7-0.3.33
+  #   - version:  7-0.5.10
   #   - author:   Steve A.
   #
   # Reservations are individual Meeting registrations, associated just to a specific
@@ -60,10 +60,17 @@ module GogglesDb
     #-- ------------------------------------------------------------------------
     #++
 
-    # Override: include the "minimum required" hash of attributes & associations.
+    # Override: include some of the decorated fields in the output.
     #
-    def minimal_attributes
-      super.merge(minimal_associations)
+    def minimal_attributes(locale = I18n.locale)
+      super(locale).merge(
+        'swimmer_name' => swimmer.complete_name,
+        'swimmer_label' => swimmer.decorate.display_label(locale),
+        'team_name' => team.editable_name,
+        'team_label' => team.decorate.display_label,
+        'display_label' => decorate.display_label,
+        'short_label' => decorate.short_label
+      )
     end
 
     # Returns a commodity Hash wrapping the essential data that summarizes the Meeting
@@ -76,30 +83,6 @@ module GogglesDb
         'display_label' => meeting.decorate.display_label,
         'short_label' => meeting.decorate.short_label,
         'edition_label' => meeting.edition_label
-      }
-    end
-
-    # Override: includes most relevant data for its 1st-level associations
-    def to_json(options = nil)
-      base = attributes.merge('meeting' => meeting_attributes, 'user' => user.minimal_attributes)
-                       .merge(minimal_associations)
-      # A Meeting reservation can have both type of children:
-      base['meeting_event_reservations'] = meeting_event_reservations.map(&:minimal_attributes) if meeting_event_reservations.count.positive?
-      base['meeting_relay_reservations'] = meeting_relay_reservations.map(&:minimal_attributes) if meeting_relay_reservations.count.positive?
-      base.to_json(options)
-    end
-
-    private
-
-    # Returns the "minimum required" hash of associations.
-    def minimal_associations
-      {
-        'display_label' => decorate.display_label,
-        'short_label' => decorate.short_label,
-        'badge' => badge.minimal_attributes,
-        # (^^ This includes: gender_type, category_type & entry_time_type)
-        'team' => team.minimal_attributes,
-        'swimmer' => swimmer.minimal_attributes
       }
     end
   end

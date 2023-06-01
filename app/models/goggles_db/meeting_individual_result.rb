@@ -6,7 +6,7 @@ module GogglesDb
   #
   # = MeetingIndividualResult model
   #
-  #   - version:  7-0.3.31
+  #   - version:  7-0.5.10
   #   - author:   Steve A.
   #
   class MeetingIndividualResult < AbstractResult
@@ -31,9 +31,7 @@ module GogglesDb
     has_many :laps, -> { order('laps.length_in_meters') }, dependent: :delete_all
 
     belongs_to :team
-    belongs_to :swimmer
     validates_associated :team
-    validates_associated :swimmer
 
     # These additional reference fields may be filled-in later (thus not validated upon creation):
     belongs_to :team_affiliation, optional: true
@@ -112,6 +110,40 @@ module GogglesDb
     #-- ------------------------------------------------------------------------
     #++
 
+    # Override: returns the list of single association names (as symbols)
+    # included by <tt>#to_hash</tt> (and, consequently, by <tt>#to_json</tt>).
+    #
+    def single_associations
+      super + %i[team team_affiliation meeting meeting_session meeting_event meeting_program
+                 pool_type event_type category_type stroke_type]
+    end
+
+    # Override: include some of the decorated fields in the output.
+    #
+    def minimal_attributes(locale = I18n.locale)
+      super(locale).merge(
+        'team_name' => team.editable_name,
+        'team_label' => team.decorate.display_label,
+        'event_label' => event_type.label(locale),
+        'category_label' => category_type.decorate.short_label,
+        'category_code' => category_type.code,
+        'gender_code' => gender_type.code
+      )
+    end
+
+    # Returns a commodity Hash wrapping the essential data that summarizes the Meeting
+    # associated to this row.
+    def meeting_attributes
+      {
+        'id' => meeting.id,
+        'code' => meeting.code,
+        'header_year' => meeting.header_year,
+        'display_label' => meeting.decorate.display_label,
+        'short_label' => meeting.decorate.short_label,
+        'edition_label' => meeting.edition_label
+      }
+    end
+
     # Returns a commodity Hash summarizing the associated MeetingSession
     def meeting_session_attributes
       {
@@ -121,37 +153,7 @@ module GogglesDb
       }
     end
 
-    # Override: includes most relevant data for its 1st-level associations
-    def to_json(options = nil)
-      attributes.merge(
-        'timing' => to_timing.to_s,
-        'meeting' => meeting_attributes,
-        'meeting_session' => meeting_session_attributes,
-        'meeting_program' => meeting_program.minimal_attributes,
-        'pool_type' => pool_type.lookup_attributes,
-        'event_type' => event_type.lookup_attributes,
-        'category_type' => category_type.minimal_attributes,
-        'gender_type' => gender_type.lookup_attributes,
-        'stroke_type' => stroke_type.lookup_attributes,
-        'laps' => laps&.map(&:minimal_attributes) # (Optional)
-      ).merge(
-        minimal_associations
-      ).to_json(options)
-    end
-
     # AbstractLap overrides:
     alias_attribute :parent_meeting, :meeting # (old, new)
-
-    private
-
-    # Returns the "minimum required" hash of associations.
-    #
-    # Typical use for this is as helper called from within the #to_json definition
-    # of a parent entity via a #minimal_attributes call.
-    def minimal_associations
-      super.merge(
-        'team_affiliation' => team_affiliation&.minimal_attributes
-      )
-    end
   end
 end
