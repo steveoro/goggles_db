@@ -8,8 +8,8 @@ module GogglesDb
 
     # Label method for displaying the main data for the instance row.
     # Returns an unstyled string.
-    def display_label
-      "#{season.decorate.display_label}: #{swimmer.decorate.display_label} ➡ #{team.decorate.display_label}"
+    def display_label(locale = I18n.locale)
+      "#{season.decorate.display_label}: #{swimmer.decorate.display_label(locale)} ➡ #{team.decorate.display_label}"
     end
 
     # Alternative label method for displaying a shorter version of the data available

@@ -11,7 +11,7 @@ module GogglesDb
   # any hall-of-fame-alike season history & data even for ongoing Seasons (to be updated
   # after each Meeting results acquisition).
   #
-  #   - version:  7.047
+  #   - version:  7-0.5.10
   #   - authors:  Leega, Steve A.
   #
   class ComputedSeasonRanking < ApplicationRecord
@@ -36,13 +36,5 @@ module GogglesDb
     delegate :description, to: :season, prefix: true
     #-- ------------------------------------------------------------------------
     #++
-
-    # Override: include all 1st-level associations into the typical to_json output.
-    def to_json(options = nil)
-      attributes.merge(
-        'team' => team.minimal_attributes,
-        'season' => season.minimal_attributes
-      ).to_json(options)
-    end
   end
 end

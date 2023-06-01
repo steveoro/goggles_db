@@ -4,7 +4,7 @@ module GogglesDb
   #
   # = Team model
   #
-  #   - version:  7-0.4.21
+  #   - version:  7-0.5.10
   #   - author:   Steve A.
   #
   class Team < ApplicationRecord
@@ -70,12 +70,6 @@ module GogglesDb
     #-- -----------------------------------------------------------------------
     #++
 
-    # Override: include the minimum required 1st-level associations.
-    #
-    def minimal_attributes
-      super.merge(minimal_associations)
-    end
-
     # Instance scope helper for recent badges, given a list of years
     # def recent_badges(year_list = [Time.zone.today.year - 1, Time.zone.today.year])
     def recent_badges(year_list = [Time.zone.today.year - 1, Time.zone.today.year])
@@ -87,31 +81,40 @@ module GogglesDb
     def recent_affiliations(year_list = [Time.zone.today.year - 1, Time.zone.today.year])
       team_affiliations.for_years(*year_list)
     end
+    #-- -----------------------------------------------------------------------
+    #++
 
-    # Override: includes *most* of its 1st-level associations into the typical to_json output.
-    def to_json(options = nil)
-      attributes.merge(
-        'display_label' => decorate.display_label,
-        'short_label' => decorate.short_label,
-        'city' => city&.iso_attributes(options&.fetch(:locale, nil)), # (optional, may override locale w/ options)
-        'badges' => recent_badges.map(&:minimal_attributes),
-        'team_affiliations' => recent_affiliations.map(&:minimal_attributes)
-      ).to_json(options)
+    # Override: returns the list of single association names (as symbols)
+    # included by <tt>#to_hash</tt> (and, consequently, by <tt>#to_json</tt>).
+    #
+    def single_associations
+      %i[city]
     end
 
-    private
-
-    # Returns the "minimum required" hash of associations.
+    # Override: returns the list of multiple association names (as symbols)
+    # included by <tt>#to_hash</tt> (and, consequently, by <tt>#to_json</tt>).
     #
-    # Note: the rationale here is to select just the bare amount of "leaf entities" in the hierachy tree,
-    # so that these won't be included more than once in a typical #minimal_attributes output of a
-    # higher level entity.
-    def minimal_associations
-      {
+    def multiple_associations
+      %i[]
+    end
+
+    # Override: include some of the decorated fields in the output.
+    #
+    def minimal_attributes(locale = I18n.locale)
+      super(locale).merge(
         'display_label' => decorate.display_label,
         'short_label' => decorate.short_label,
-        'city' => city&.iso_attributes # (optional, always uses current locale)
-      }
+        'city_name' => city&.decorate&.display_label
+      )
+    end
+
+    # Override: include only some of the rows from multiple_associations in the output.
+    #
+    def to_hash(options = nil)
+      super(options).merge(
+        'badges' => recent_badges.map(&:minimal_attributes),
+        'team_affiliations' => recent_affiliations.map(&:minimal_attributes)
+      )
     end
   end
 end

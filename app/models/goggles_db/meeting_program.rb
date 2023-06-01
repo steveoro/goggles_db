@@ -4,7 +4,7 @@ module GogglesDb
   #
   # = MeetingProgram model
   #
-  #   - version:  7-0.3.48
+  #   - version:  7-0.5.10
   #   - author:   Steve A.
   #
   class MeetingProgram < ApplicationRecord
@@ -71,42 +71,30 @@ module GogglesDb
     #-- ------------------------------------------------------------------------
     #++
 
-    # Override: include the "minimum required" hash of associations.
+    # Override: returns the list of single association names (as symbols)
+    # included by <tt>#to_hash</tt> (and, consequently, by <tt>#to_json</tt>).
     #
-    def minimal_attributes
-      super.merge(minimal_associations)
+    def single_associations
+      %i[pool_type event_type category_type gender_type stroke_type]
     end
 
-    # Override: includes *most* of the 1st-level associations into the typical to_json output.
-    # == Params
-    # - options: can be any option hash accepted by JSON#generate (spaces, indentation,
-    #            formatting, ...).
-    def to_json(options = nil)
-      base = attributes.merge('meeting_event' => meeting_event.minimal_attributes)
-                       .merge(minimal_associations)
-
-      if relay? && meeting_relay_results.count.positive?
-        base['meeting_relay_results'] = meeting_relay_results.map(&:minimal_attributes)
-      elsif !relay? && meeting_individual_results.count.positive?
-        base['meeting_individual_results'] = meeting_individual_results.map(&:minimal_attributes)
-      end
-      base.to_json(options)
+    # Override: returns the list of multiple association names (as symbols)
+    # included by <tt>#to_hash</tt> (and, consequently, by <tt>#to_json</tt>).
+    #
+    def multiple_associations
+      %i[meeting_individual_results meeting_relay_results]
     end
 
-    private
-
-    # Returns the "minimum required" hash of associations.
+    # Override: include some of the decorated fields in the output.
     #
-    # Typical use for this is as helper method called from within the #to_json definition of a parent entity.
-    # Assuming the above, usually most associations can be safely skipped avoid duplication output.
-    def minimal_associations
-      {
-        'pool_type' => pool_type.lookup_attributes,
-        'event_type' => event_type.lookup_attributes,
-        'category_type' => category_type.minimal_attributes,
-        'gender_type' => gender_type.lookup_attributes,
-        'stroke_type' => stroke_type.lookup_attributes
-      }
+    def minimal_attributes(locale = I18n.locale)
+      super(locale).merge(
+        'event_label' => event_type.label(locale),
+        'category_label' => category_type.decorate.short_label,
+        'category_code' => category_type.code,
+        'gender_code' => gender_type.code,
+        'pool_code' => pool_type.code
+      )
     end
   end
 end

@@ -5,9 +5,6 @@ def compare_attributes_between(parsed_json_association_obj, association)
   # Handle also special case with ISO-normalized values, such as City:
   if association.respond_to?(:iso_attributes)
     expect(parsed_json_association_obj).to eq(JSON.parse(association.iso_attributes.to_json))
-  # Expect associations with lookup entities to include translated labels in their to_json:
-  elsif association.respond_to?(:lookup_attributes)
-    expect(parsed_json_association_obj).to eq(JSON.parse(association.lookup_attributes.to_json))
   # Default case for most entities:
   else
     expect(parsed_json_association_obj).to eq(JSON.parse(association.minimal_attributes.to_json))

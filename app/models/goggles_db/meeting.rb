@@ -4,7 +4,7 @@ module GogglesDb
   #
   # = Meeting model
   #
-  #   - version:  7-0.4.21
+  #   - version:  7-0.5.10
   #   - author:   Steve A.
   #
   class Meeting < AbstractMeeting
@@ -118,12 +118,18 @@ module GogglesDb
     #-- ------------------------------------------------------------------------
     #++
 
-    # Override: includes main associations into the typical to_json output.
-    def to_json(options = nil)
-      minimal_attributes.merge(
-        'meeting_sessions' => meeting_sessions.map(&:minimal_attributes),
-        'meeting_events' => meeting_events.map(&:minimal_attributes)
-      ).to_json(options)
+    # Override: returns the list of single association names (as symbols)
+    # included by <tt>#to_hash</tt> (and, consequently, by <tt>#to_json</tt>).
+    #
+    def single_associations
+      %i[season season_type federation_type edition_type timing_type]
+    end
+
+    # Override: returns the list of multiple association names (as symbols)
+    # included by <tt>#to_hash</tt> (and, consequently, by <tt>#to_json</tt>).
+    #
+    def multiple_associations
+      %i[meeting_sessions meeting_events]
     end
   end
 end

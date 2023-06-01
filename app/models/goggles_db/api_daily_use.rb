@@ -4,7 +4,7 @@ module GogglesDb
   #
   # = APIDailyUse model
   #
-  #   - version:  7.075
+  #   - version:  7-0.5.10
   #   - author:   Steve A.
   #
   # Stores overall count of API calls for each (route, day).
@@ -42,9 +42,11 @@ module GogglesDb
     # 'route' does not need to correspond to an actual API route; it can be
     # any valid string.
     #
+    # rubocop:disable Rails/SkipsModelValidations
     def self.increase_for!(route, day = Time.zone.today)
       counter_row = APIDailyUse.create_or_find_by!(route: route, day: day)
       counter_row.increment!(:count)
     end
+    # rubocop:enable Rails/SkipsModelValidations
   end
 end

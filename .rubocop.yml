@@ -56,6 +56,7 @@ Metrics/ClassLength:
   Exclude:
     - 'lib/wrappers/timing.rb'
     - 'app/models/goggles_db/swimmer_stat.rb'
+    - 'app/models/goggles_db/user.rb'
 
 Metrics/CyclomaticComplexity:
   Exclude:
@@ -84,6 +85,11 @@ Naming/VariableNumber:
     - 'db/migrate/20201121173221_rename_bool_fields_for_mevents_plus_more.rb'
     - 'db/migrate/20210130164719_rename_under_25_to_under25.rb'
 
+Rails/SkipsModelValidations:
+  Exclude:
+    - 'db/migrate/*.rb'
+    - 'lib/tasks/db_anonimize_data.rake'
+    - ''
 
 # This rule is simply stupid and needs to be kept disabled (most of the inline SQL will fail using squish)
 Rails/SquishedSQLHeredocs:

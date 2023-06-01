@@ -6,7 +6,7 @@ module GogglesDb
   #
   # This entity is assumed to be pre-seeded on the database.
   #
-  #   - version:  7.074
+  #   - version:  7-0.5.10
   #   - authors:  Steve A.
   #
   class EventsByPoolType < ApplicationRecord
@@ -84,18 +84,6 @@ module GogglesDb
     # Returns +true+ if both the PoolType & the StrokeType are suitable for standard Meeting events.
     def eventable?
       stroke_type.eventable? && pool_type.eventable?
-    end
-
-    # Override: includes all 1st-level associations into the typical to_json output.
-    # == Params
-    # - options: can be any option hash accepted by JSON#generate (spaces, indentation,
-    #            formatting and so on).
-    def to_json(options = nil)
-      attributes.merge(
-        'pool_type' => pool_type.lookup_attributes,
-        'event_type' => event_type.lookup_attributes,
-        'stroke_type' => stroke_type.lookup_attributes
-      ).to_json(options)
     end
   end
 end

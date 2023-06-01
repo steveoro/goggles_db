@@ -6,13 +6,16 @@ module GogglesDb
   #
   # Encapsulates common behavior for MIRs & User Results.
   #
-  #   - version:  7.02.18
+  #   - version:  7-0.5.10
   #   - author:   Steve A.
   #
   class AbstractResult < ApplicationRecord
     self.abstract_class = true
 
     include TimingManageable
+
+    belongs_to :swimmer
+    validates_associated :swimmer
 
     belongs_to :disqualification_code_type, optional: true
 
@@ -56,12 +59,28 @@ module GogglesDb
     #-- -----------------------------------------------------------------------
     #++
 
-    # Override: include the "minimum required" hash of attributes & associations.
+    # Override: returns the list of single association names (as symbols)
+    # included by <tt>#to_hash</tt> (and, consequently, by <tt>#to_json</tt>).
     #
-    def minimal_attributes
-      super.merge(
-        'timing' => to_timing.to_s
-      ).merge(minimal_associations)
+    def single_associations
+      %i[swimmer gender_type disqualification_code_type]
+    end
+
+    # Override: returns the list of multiple association names (as symbols)
+    # included by <tt>#to_hash</tt> (and, consequently, by <tt>#to_json</tt>).
+    #
+    def multiple_associations
+      %i[laps]
+    end
+
+    # Override: include some of the decorated fields in the output.
+    #
+    def minimal_attributes(locale = I18n.locale)
+      super(locale).merge(
+        'timing' => to_timing.to_s,
+        'swimmer_name' => swimmer.complete_name,
+        'swimmer_label' => swimmer.decorate.display_label(locale)
+      )
     end
 
     # Returns a commodity Hash wrapping the essential data that summarizes the Meeting
@@ -74,6 +93,9 @@ module GogglesDb
         'edition_label' => parent_meeting&.edition_label
       }
     end
+
+    alias user_workshop_attributes meeting_attributes # (new, old)
+    # (Needed by app/models/goggles_db/application_record.rb:122)
 
     # Similarly to <tt>#meeting_attributes</tt>, this returns a commodity Hash
     # summarizing the associated Swimmer.
@@ -100,11 +122,11 @@ module GogglesDb
     #
     # Typical use for this is as helper called from within the #to_json definition
     # of a parent entity via a #minimal_attributes call.
-    def minimal_associations
-      {
-        'swimmer' => swimmer_attributes,
-        'disqualification_code_type' => disqualification_code_type&.lookup_attributes
-      }
-    end
+    # def minimal_associations
+    #   {
+    #     'swimmer' => swimmer_attributes,
+    #     'disqualification_code_type' => disqualification_code_type&.lookup_attributes
+    #   }
+    # end
   end
 end

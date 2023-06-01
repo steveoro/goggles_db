@@ -4,7 +4,7 @@ module GogglesDb
   #
   # = UserWorkshop model
   #
-  #   - version:  7-0.4.01
+  #   - version:  7-0.5.10
   #   - author:   Steve A.
   #
   # Allows to manage user-driven or team-driven swimming workshops
@@ -23,7 +23,7 @@ module GogglesDb
     self.table_name = 'user_workshops'
 
     belongs_to :user # "Creator" of this workshop
-    belongs_to :team # Team arraging this Workshop, if none
+    belongs_to :team # Team arranging this Workshop, if none
     validates_associated :user
     validates_associated :team
     alias home_team team # (new, old)
@@ -76,13 +76,18 @@ module GogglesDb
     #-- ------------------------------------------------------------------------
     #++
 
-    # Override: includes main associations into the typical to_json output.
-    def to_json(options = nil)
-      minimal_attributes.merge(
-        'user' => user.minimal_attributes,
-        'home_team' => team.minimal_attributes,
-        'swimming_pool' => swimming_pool&.minimal_attributes
-      ).to_json(options)
+    # Override: returns the list of single association names (as symbols)
+    # included by <tt>#to_hash</tt> (and, consequently, by <tt>#to_json</tt>).
+    #
+    def single_associations
+      %i[user team swimming_pool season season_type federation_type edition_type timing_type]
+    end
+
+    # Override: returns the list of multiple association names (as symbols)
+    # included by <tt>#to_hash</tt> (and, consequently, by <tt>#to_json</tt>).
+    #
+    def multiple_associations
+      %i[user_results]
     end
   end
 end

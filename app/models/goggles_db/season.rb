@@ -4,7 +4,7 @@ module GogglesDb
   #
   # = Season model
   #
-  #   - version:  7-0.3.44
+  #   - version:  7-0.5.10
   #   - author:   Steve A.
   #
   class Season < ApplicationRecord
@@ -105,16 +105,27 @@ module GogglesDb
     #-- ------------------------------------------------------------------------
     #++
 
-    # Override: includes all 1st-level associations into the typical to_json output.
-    def to_json(options = nil)
-      attributes.merge(
+    # Override: returns the list of single association names (as symbols)
+    # included by <tt>#to_hash</tt> (and, consequently, by <tt>#to_json</tt>).
+    #
+    def single_associations
+      %i[season_type edition_type timing_type]
+    end
+
+    # Override: returns the list of multiple association names (as symbols)
+    # included by <tt>#to_hash</tt> (and, consequently, by <tt>#to_json</tt>).
+    #
+    def multiple_associations
+      %i[category_types]
+    end
+
+    # Override: include some of the decorated fields in the output.
+    #
+    def minimal_attributes(locale = I18n.locale)
+      super(locale).merge(
         'display_label' => decorate.display_label,
-        'short_label' => decorate.short_label,
-        'season_type' => season_type.minimal_attributes,
-        'edition_type' => edition_type.lookup_attributes,
-        'timing_type' => timing_type.lookup_attributes,
-        'category_types' => category_types.map(&:minimal_attributes)
-      ).to_json(options)
+        'short_label' => decorate.short_label
+      )
     end
   end
 end

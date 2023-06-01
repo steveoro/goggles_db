@@ -6,7 +6,7 @@ module GogglesDb
   #
   # = MeetingEntry model
   #
-  #   - version:  7-0.3.33
+  #   - version:  7-0.5.10
   #   - author:   Steve A.
   #
   # This model should be used for *individual* startlist entries only,
@@ -30,6 +30,8 @@ module GogglesDb
     validates_associated :meeting_program
     validates_associated :team
     validates_associated :team_affiliation
+
+    default_scope { left_outer_joins(:swimmer) }
 
     has_one :meeting,         through: :meeting_program
     has_one :meeting_session, through: :meeting_program
@@ -79,12 +81,24 @@ module GogglesDb
     #-- ------------------------------------------------------------------------
     #++
 
-    # Override: include the "minimum required" hash of attributes & associations.
+    # Override: returns the list of single association names (as symbols)
+    # included by <tt>#to_hash</tt> (and, consequently, by <tt>#to_json</tt>).
     #
-    def minimal_attributes
-      super.merge(
-        'timing' => to_timing.to_s
-      ).merge(minimal_associations)
+    def single_associations
+      %i[meeting meeting_session meeting_program team_affiliation team swimmer
+         pool_type event_type category_type gender_type]
+    end
+
+    # Override: include some of the decorated fields in the output.
+    #
+    def minimal_attributes(locale = I18n.locale)
+      super(locale).merge(
+        'timing' => to_timing.to_s,
+        'swimmer_name' => swimmer&.complete_name,
+        'swimmer_label' => swimmer&.decorate&.display_label(locale),
+        'team_name' => team.editable_name,
+        'team_label' => team.decorate.display_label
+      )
     end
 
     # Returns a commodity Hash wrapping the essential data that summarizes the Meeting
@@ -107,33 +121,6 @@ module GogglesDb
         'id' => meeting_session.id,
         'session_order' => meeting_session.session_order,
         'scheduled_date' => meeting_session.scheduled_date
-      }
-    end
-
-    # Override: includes most relevant data for its 1st-level associations
-    def to_json(options = nil)
-      attributes.merge(
-        'timing' => to_timing.to_s,
-        'meeting' => meeting_attributes,
-        'meeting_session' => meeting_session_attributes,
-        'meeting_program' => meeting_program.minimal_attributes
-      ).merge(
-        minimal_associations
-      ).to_json(options)
-    end
-
-    private
-
-    # Returns the "minimum required" hash of associations.
-    def minimal_associations
-      {
-        'team' => team.minimal_attributes,
-        'team_affiliation' => team_affiliation.minimal_attributes,
-        'swimmer' => swimmer&.minimal_attributes, # (optional)
-        'pool_type' => pool_type.lookup_attributes,
-        'event_type' => event_type.lookup_attributes,
-        'category_type' => category_type.minimal_attributes,
-        'gender_type' => gender_type.lookup_attributes
       }
     end
   end

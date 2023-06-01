@@ -6,7 +6,7 @@ module GogglesDb
   #
   # = MeetingRelaySwimmer (MRS) model
   #
-  #   - version:  7.02.09
+  #   - version:  7-0.5.10
   #   - author:   Steve A.
   #
   # == Note:
@@ -34,6 +34,7 @@ module GogglesDb
     has_one  :meeting_program,  through: :meeting_relay_result
     has_one  :event_type,       through: :meeting_relay_result
     has_one  :team,             through: :badge
+    has_one  :gender_type,      through: :swimmer
 
     validates :relay_order, presence: { length: { within: 1..3, allow_nil: false } }, numericality: true
     validates :reaction_time, presence: true, numericality: true
@@ -51,12 +52,19 @@ module GogglesDb
     #-- ------------------------------------------------------------------------
     #++
 
-    # Override: include the minimum required 1st-level attributes & associations.
+    # Override: include some of the decorated fields in the output.
     #
-    def minimal_attributes
-      super.merge(
-        'timing' => to_timing.to_s
-      ).merge(minimal_associations)
+    def minimal_attributes(locale = I18n.locale)
+      super(locale).merge(
+        'timing' => to_timing.to_s,
+        'swimmer_name' => swimmer.complete_name,
+        'swimmer_label' => swimmer.decorate.display_label(locale),
+        'team_name' => team.editable_name,
+        'team_label' => team.decorate.display_label,
+        'event_label' => event_type.label(locale),
+        'stroke_code' => stroke_type.code,
+        'gender_code' => gender_type.code
+      )
     end
 
     # Returns a commodity Hash wrapping the essential data that summarizes the Swimmer
@@ -64,47 +72,13 @@ module GogglesDb
     def swimmer_attributes
       {
         'id' => swimmer.id,
-        'display_label' => swimmer.decorate.display_label,
         'short_label' => swimmer.decorate.short_label,
         'complete_name' => swimmer.complete_name,
         'last_name' => swimmer.last_name,
         'first_name' => swimmer.first_name,
         'year_of_birth' => swimmer.year_of_birth,
-        'year_guessed' => swimmer.year_guessed
-      }
-    end
-
-    # Override: includes most relevant data for its 1st-level associations
-    def to_json(options = nil)
-      attributes.merge(
-        'timing' => to_timing.to_s,
-        'meeting_relay_result' => meeting_relay_result.minimal_attributes,
-        'team' => team.minimal_attributes,
-        # (Badge already includes swimmer_attributes)
-        'badge' => badge.minimal_attributes,
-        'event_type' => event_type.lookup_attributes,
-        'stroke_type' => stroke_type.lookup_attributes
-      ).to_json(options)
-    end
-
-    private
-
-    # Returns the "minimum required" hash of associations.
-    #
-    # === Note:
-    # Typically these should be a subset of the (full) associations enlisted
-    # inside #to_json.
-    # The rationale here is to select just the bare amount of "leaf entities"
-    # in the hierachy tree so that these won't be included more than once in
-    # any #minimal_attributes output invoked from a higher level or parent entity.
-    #
-    # Example:
-    # #to_json or #attributes of team_affilition.badges vs single badge output.
-    def minimal_associations
-      {
-        'swimmer' => swimmer_attributes,
-        'gender_type' => swimmer.gender_type.lookup_attributes,
-        'stroke_type' => stroke_type.lookup_attributes
+        'year_guessed' => swimmer.year_guessed,
+        'associated_user_label' => swimmer&.associated_user&.decorate&.short_label
       }
     end
   end

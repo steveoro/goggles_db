@@ -42,27 +42,23 @@ module GogglesDb
     def eventable?
       !out_of_race
     end
+    #-- ------------------------------------------------------------------------
+    #++
 
-    # Override: include the minimum required 1st-level attributes & associations.
+    # Override: returns the list of single association names (as symbols)
+    # included by <tt>#to_hash</tt> (and, consequently, by <tt>#to_json</tt>).
     #
-    def minimal_attributes
-      super.merge(minimal_associations)
+    def single_associations
+      %i[season]
     end
 
-    # Override: includes all 1st-level associations into the typical to_json output.
-    def to_json(options = nil)
-      attributes.merge(minimal_associations).to_json(options)
-    end
-
-    private
-
-    # Returns the "minimum required" hash of associations.
-    def minimal_associations
-      {
+    # Override: include some of the decorated fields in the output.
+    #
+    def minimal_attributes(locale = I18n.locale)
+      super(locale).merge(
         'display_label' => decorate.display_label,
-        'short_label' => decorate.short_label,
-        'season' => season.minimal_attributes
-      }
+        'short_label' => decorate.short_label
+      )
     end
   end
 end

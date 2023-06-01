@@ -29,21 +29,21 @@ shared_examples_for 'Localizable' do
       %i[attributes to_json code label long_label alt_label]
     )
 
-    describe '#lookup_attributes' do
+    describe '#minimal_attributes' do
       it 'is an Hash' do
-        expect(subject.lookup_attributes).to be_an(Hash).and be_present
+        expect(subject.minimal_attributes).to be_an(Hash).and be_present
       end
 
       it 'includes the basic attribute keys' do
-        expect(subject.lookup_attributes.keys).to include('id', 'code')
+        expect(subject.minimal_attributes.keys).to include('id', 'code')
       end
 
       it 'includes also the additional localized labels' do
-        expect(subject.lookup_attributes.keys).to include('label', 'long_label', 'alt_label')
+        expect(subject.minimal_attributes.keys).to include('label', 'long_label', 'alt_label')
       end
 
       [nil, :it, :en].each do |locale_sym|
-        let(:result) { subject.lookup_attributes(locale_sym) }
+        let(:result) { subject.minimal_attributes(locale_sym) }
         it 'allows overriding the locale with a parameter' do
           expect(result).to be_an(Hash)
         end

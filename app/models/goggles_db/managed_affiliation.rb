@@ -4,9 +4,9 @@ module GogglesDb
   #
   # = ManagedAffiliation model
   #
-  # (previously known as "TeamManager")
+  # (formerly known as "TeamManager")
   #
-  #   - version:  7-0.3.33
+  #   - version:  7-0.5.10
   #   - author:   Steve A.
   #
   class ManagedAffiliation < ApplicationRecord
@@ -25,27 +25,15 @@ module GogglesDb
     #-- -----------------------------------------------------------------------
     #++
 
-    # Override: include the minimum required 1st-level attributes & associations.
+    # Override: include some of the decorated fields in the output.
     #
-    def minimal_attributes
-      super.merge(minimal_associations)
-    end
-
-    # Override: includes all 1st-level associations into the typical to_json output.
-    def to_json(options = nil)
-      attributes.merge(minimal_associations).to_json(options)
-    end
-
-    private
-
-    # Returns the "minimum required" hash of associations.
-    def minimal_associations
-      {
+    def minimal_attributes(locale = I18n.locale)
+      super(locale).merge(
         'display_label' => decorate.display_label,
-        'short_label' => decorate.short_label,
-        'manager' => manager.minimal_attributes,
-        'team_affiliation' => team_affiliation.minimal_attributes
-      }
+        'short_label' => decorate.short_label
+      )
     end
+    #-- ------------------------------------------------------------------------
+    #++
   end
 end

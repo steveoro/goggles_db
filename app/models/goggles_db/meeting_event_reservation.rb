@@ -4,7 +4,7 @@ module GogglesDb
   #
   # = MeetingEventReservation model
   #
-  #   - version:  7-0.3.33
+  #   - version:  7-0.5.10
   #   - author:   Steve A.
   #
   # Event reservations are individual event registrations, added personally by each athlete.
@@ -43,12 +43,29 @@ module GogglesDb
     #-- ------------------------------------------------------------------------
     #++
 
-    # Override: include the "minimum required" hash of attributes & associations.
+    # Override: returns the list of single association names (as symbols)
+    # included by <tt>#to_hash</tt> (and, consequently, by <tt>#to_json</tt>).
     #
-    def minimal_attributes
-      super.merge(
-        'timing' => to_timing.to_s
-      ).merge(minimal_associations)
+    def single_associations
+      %i[meeting meeting_event event_type badge team swimmer]
+    end
+
+    # Override: include some of the decorated fields in the output.
+    #
+    def minimal_attributes(locale = I18n.locale)
+      super(locale).merge(
+        'timing' => to_timing.to_s,
+        'swimmer_name' => swimmer.complete_name,
+        'swimmer_label' => swimmer.decorate.display_label(locale),
+        'team_name' => team.editable_name,
+        'team_label' => team.decorate.display_label,
+        'display_label' => decorate.display_label,
+        'short_label' => decorate.short_label,
+        'event_label' => event_type.label(locale),
+        'category_label' => category_type.decorate.short_label,
+        'category_code' => category_type.code,
+        'gender_code' => gender_type.code
+      )
     end
 
     # Returns a commodity Hash wrapping the essential data that summarizes the Meeting
@@ -61,31 +78,6 @@ module GogglesDb
         'display_label' => meeting.decorate.display_label,
         'short_label' => meeting.decorate.short_label,
         'edition_label' => meeting.edition_label
-      }
-    end
-
-    # Override: includes most relevant data for its 1st-level associations
-    def to_json(options = nil)
-      attributes.merge(
-        'timing' => to_timing.to_s,
-        'display_label' => decorate.display_label,
-        'short_label' => decorate.short_label,
-        'meeting' => meeting_attributes,
-        'meeting_event' => meeting_event.minimal_attributes,
-        'event_type' => event_type.lookup_attributes,
-        'badge' => badge.minimal_attributes,
-        'team' => team.minimal_attributes,
-        'swimmer' => swimmer.minimal_attributes
-      ).to_json(options)
-    end
-
-    private
-
-    # Returns the "minimum required" hash of associations.
-    def minimal_associations
-      {
-        'meeting_event' => meeting_event.minimal_attributes
-        # (^^ This includes: event_type, stroke_type & heat_type)
       }
     end
   end

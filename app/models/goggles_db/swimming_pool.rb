@@ -4,7 +4,7 @@ module GogglesDb
   #
   # = SwimmingPool model
   #
-  #   - version:  7-0.4.01
+  #   - version:  7-0.5.10
   #   - author:   Steve A.
   #
   class SwimmingPool < ApplicationRecord
@@ -78,35 +78,23 @@ module GogglesDb
     #-- ------------------------------------------------------------------------
     #++
 
-    # Override: include the minimum required 1st-level associations.
+    # Override: returns the list of single association names (as symbols)
+    # included by <tt>#to_hash</tt> (and, consequently, by <tt>#to_json</tt>).
     #
-    def minimal_attributes
-      super.merge(minimal_associations)
+    def single_associations
+      %i[city pool_type shower_type hair_dryer_type locker_cabinet_type]
     end
 
-    # Override: includes the 1st-level associations into the typical to_json output.
-    def to_json(options = nil)
-      attributes.merge(minimal_associations).to_json(options)
-    end
-
-    private
-
-    # Returns the "minimum required" hash of associations.
+    # Override: include some of the decorated fields in the output.
     #
-    # Note: the rationale here is to select just the bare amount of "leaf entities" in the hierachy tree,
-    # so that these won't be included more than once in a typical #minimal_attributes output of a
-    # higher level entity.
-    def minimal_associations
-      {
-        'display_label' => decorate.display_label,
-        'short_label' => decorate.short_label,
-        'city' => city&.iso_attributes, # (optional, always uses current locale)
-        'pool_type' => pool_type.lookup_attributes,
-        # Optional:
-        'shower_type' => shower_type&.lookup_attributes,
-        'hair_dryer_type' => hair_dryer_type&.lookup_attributes,
-        'locker_cabinet_type' => locker_cabinet_type&.lookup_attributes
-      }
+    def minimal_attributes(locale = I18n.locale)
+      super(locale).merge(
+        'display_label' => decorate.display_label(locale),
+        'short_label' => decorate.short_label(locale),
+        'city' => city.decorate.short_label,
+        'city_name' => city.name,
+        'pool_code' => pool_type.code
+      )
     end
   end
 end

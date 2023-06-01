@@ -4,7 +4,7 @@ module GogglesDb
   #
   # = MeetingSession model
   #
-  #   - version:  7-0.3.44
+  #   - version:  7-0.5.10
   #   - author:   Steve A.
   #
   class MeetingSession < ApplicationRecord
@@ -45,6 +45,13 @@ module GogglesDb
     #-- ------------------------------------------------------------------------
     #++
 
+    # Override: returns the list of multiple association names (as symbols)
+    # included by <tt>#to_hash</tt> (and, consequently, by <tt>#to_json</tt>).
+    #
+    def multiple_associations
+      %i[meeting_events]
+    end
+
     # Returns a commodity Hash wrapping the essential data that summarizes the Meeting
     # associated to this row.
     def meeting_attributes
@@ -56,21 +63,6 @@ module GogglesDb
         'short_label' => meeting.decorate.short_label,
         'edition_label' => meeting.edition_label
       }
-    end
-
-    # Override: includes the 1st-level associations into the typical to_json output.
-    # == Params
-    # - options: can be any option hash accepted by JSON#generate
-    def to_json(options = nil)
-      attributes.merge(
-        'meeting' => meeting_attributes,
-        'season' => season.minimal_attributes,
-        'season_type' => season_type.minimal_attributes,
-        # Optional:
-        'swimming_pool' => swimming_pool&.minimal_attributes,
-        'pool_type' => pool_type&.lookup_attributes,
-        'day_part_type' => day_part_type&.lookup_attributes
-      ).to_json(options)
     end
   end
 end

@@ -6,7 +6,7 @@ module GogglesDb
   #
   # = Lap model
   #
-  #   - version:  7.3.06
+  #   - version:  7-0.5.10
   #   - author:   Steve A.
   #
   # == Note:
@@ -27,9 +27,11 @@ module GogglesDb
     belongs_to :meeting_individual_result
     validates_associated :meeting_individual_result
 
-    has_one :meeting,    through: :meeting_program
-    has_one :event_type, through: :meeting_program
-    has_one :pool_type,  through: :meeting_program
+    has_one :meeting,       through: :meeting_program
+    has_one :event_type,    through: :meeting_program
+    has_one :category_type, through: :meeting_program
+    has_one :gender_type,   through: :meeting_program
+    has_one :pool_type,     through: :meeting_program
 
     validates :stroke_cycles, length: { within: 1..3 }, allow_nil: true
     validates :breath_cycles, length: { within: 1..3 }, allow_nil: true
@@ -41,20 +43,11 @@ module GogglesDb
     #-- ------------------------------------------------------------------------
     #++
 
-    # Override: includes most relevant data for its 1st-level associations
-    def to_json(options = nil)
-      # [Steve A.] Using the safe-access operator where there are no actual foreign keys:
-      attributes.merge(
-        'timing' => to_timing.to_s,
-        'timing_from_start' => timing_from_start.to_s,
-        'meeting_program' => meeting_program&.minimal_attributes,
-        'swimmer' => swimmer_attributes,
-        'team' => team&.minimal_attributes,
-        'meeting' => meeting_attributes,
-        'meeting_individual_result' => meeting_individual_result&.minimal_attributes,
-        'event_type' => event_type&.lookup_attributes,
-        'pool_type' => pool_type&.lookup_attributes
-      ).to_json(options)
+    # Override: returns the list of single association names (as symbols)
+    # included by <tt>#to_hash</tt> (and, consequently, by <tt>#to_json</tt>).
+    #
+    def single_associations
+      super + %i[team meeting meeting_program event_type category_type meeting_individual_result]
     end
     #-- ------------------------------------------------------------------------
     #++

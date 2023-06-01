@@ -6,7 +6,7 @@ module GogglesDb
   #
   # = StandardTiming model
   #
-  #   - version:  7-0.3.38
+  #   - version:  7-0.5.10
   #   - author:   Steve A.
   #
   # Standard timings used to compute event scores during a specific season for all
@@ -66,31 +66,21 @@ module GogglesDb
     #-- ------------------------------------------------------------------------
     #++
 
-    # Override: include the minimum required 1st-level attributes & associations.
+    # Override: returns the list of single association names (as symbols)
+    # included by <tt>#to_hash</tt> (and, consequently, by <tt>#to_json</tt>).
     #
-    def minimal_attributes
-      super.merge(minimal_associations)
+    def single_associations
+      %i[season pool_type event_type gender_type category_type]
     end
 
-    # Override: includes all 1st-level associations into the typical to_json output.
-    def to_json(options = nil)
-      attributes.merge(minimal_associations).to_json(options)
-    end
-
-    private
-
-    # Returns the "minimum required" hash of associations.
-    def minimal_associations
-      {
-        'display_label' => decorate.display_label,
-        'short_label' => decorate.short_label,
+    # Override: include some of the decorated fields in the output.
+    #
+    def minimal_attributes(locale = I18n.locale)
+      super(locale).merge(
         'timing' => to_timing.to_s,
-        'season' => season.minimal_attributes,
-        'pool_type' => pool_type.lookup_attributes,
-        'event_type' => event_type.lookup_attributes,
-        'gender_type' => gender_type.lookup_attributes,
-        'category_type' => category_type.minimal_attributes
-      }
+        'display_label' => decorate.display_label(locale),
+        'short_label' => decorate.short_label(locale)
+      )
     end
   end
 end

@@ -4,7 +4,7 @@ module GogglesDb
   #
   # = Badge model
   #
-  #   - version:  7-0.3.45
+  #   - version:  7-0.5.10
   #   - author:   Steve A.
   #
   class Badge < ApplicationRecord
@@ -75,10 +75,13 @@ module GogglesDb
     #-- ------------------------------------------------------------------------
     #++
 
-    # Override: include the minimum required 1st-level associations.
+    # Override: include some of the decorated fields in the output.
     #
-    def minimal_attributes
-      super.merge(minimal_associations)
+    def minimal_attributes(locale = I18n.locale)
+      super(locale).merge(
+        'display_label' => decorate.display_label(locale),
+        'short_label' => decorate.short_label
+      )
     end
 
     # Returns a commodity Hash wrapping the essential data that summarizes the Swimmer
@@ -93,43 +96,6 @@ module GogglesDb
         'first_name' => swimmer.first_name,
         'year_of_birth' => swimmer.year_of_birth,
         'year_guessed' => swimmer.year_guessed
-      }
-    end
-
-    # Override: includes all 1st-level associations into the typical to_json output.
-    def to_json(options = nil)
-      attributes.merge(
-        'display_label' => decorate.display_label,
-        'short_label' => decorate.short_label,
-        'swimmer' => swimmer.minimal_attributes,
-        'gender_type' => swimmer.gender_type&.lookup_attributes,
-        'team_affiliation' => team_affiliation.minimal_attributes,
-        'season' => season.minimal_attributes,
-        'team' => team.minimal_attributes,
-        'category_type' => category_type&.minimal_attributes,
-        'entry_time_type' => entry_time_type&.lookup_attributes
-      ).to_json(options)
-    end
-
-    private
-
-    # Returns the "minimum required" hash of associations.
-    #
-    # === Note:
-    # Typically these should be a subset of the (full) associations enlisted
-    # inside #to_json.
-    # The rationale here is to select just the bare amount of "leaf entities"
-    # in the hierachy tree so that these won't be included more than once in
-    # any #minimal_attributes output invoked from a higher level or parent entity.
-    #
-    # Example:
-    # #to_json or #attributes of team_affilition.badges vs single badge output.
-    def minimal_associations
-      {
-        'swimmer' => swimmer_attributes,
-        'gender_type' => swimmer.gender_type&.lookup_attributes,
-        'category_type' => category_type&.minimal_attributes,
-        'entry_time_type' => entry_time_type&.lookup_attributes
       }
     end
   end

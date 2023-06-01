@@ -3,7 +3,7 @@
 module GogglesDb
   #
   # = City model
-  #   - version:  7-0.5.01
+  #   - version:  7-0.5.10
   #   - author:   Steve A.
   #
   # Check out:
@@ -238,18 +238,18 @@ module GogglesDb
       to_iso if @iso_city.blank? || @iso_country.blank?
       iso_subdivision(@iso_country) if @subdivision.blank?
 
-      minimal_attributes.merge(
+      prepare_iso_attributes(@iso_city, @iso_country, @subdivision, locale_override)
+    end
+
+    # Override: include some of the decorated fields in the output.
+    #
+    def minimal_attributes(locale = I18n.locale)
+      super(locale).merge(
         'display_label' => decorate.display_label,
         'short_label' => decorate.short_label
       ).merge(
-        prepare_iso_attributes(@iso_city, @iso_country, @subdivision, locale_override)
+        iso_attributes(locale)
       )
-    end
-
-    # Override: includes all iso_attributes.
-    # Use :locale as option key (with supported locale value) to override translations.
-    def to_json(options = nil)
-      iso_attributes(options&.fetch(:locale, nil)).to_json(options)
     end
     #-- -----------------------------------------------------------------------
     #++
