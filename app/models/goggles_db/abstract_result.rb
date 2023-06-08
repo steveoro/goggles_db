@@ -6,7 +6,7 @@ module GogglesDb
   #
   # Encapsulates common behavior for MIRs & User Results.
   #
-  #   - version:  7-0.5.10
+  #   - version:  7-0.5.11
   #   - author:   Steve A.
   #
   class AbstractResult < ApplicationRecord
@@ -30,8 +30,12 @@ module GogglesDb
     validates :meeting_points,    presence: true, numericality: true
     validates :reaction_time,     presence: true, numericality: true
 
+    # Use prefix here as MIR will also have a team#name & #editable_name:
+    delegate :first_name, :last_name, :complete_name, :year_of_birth, :gender_type_id, to: :swimmer, prefix: true
+
     # Sorting scopes:
-    scope :by_rank,   ->(dir = :asc) { order(disqualified: :asc, rank: dir.to_s.downcase.to_sym) }
+    scope :by_rank, ->(dir = :asc) { order(disqualified: :asc, rank: dir.to_s.downcase.to_sym) }
+
     scope :by_timing, lambda { |dir = :asc|
       order(
         disqualified: :asc,
@@ -40,6 +44,11 @@ module GogglesDb
         # than using 3 separate as (minutes: :desc, seconds: :desc, hundredths: :desc), but
         # yields slighlty faster results a bit more often. (Tested with benchmarks or real data)
       )
+    }
+
+    scope :by_swimmer, lambda { |dir = :asc|
+      joins(:swimmer).includes(:swimmer)
+                     .order('swimmers.complete_name': dir.to_s.downcase.to_sym)
     }
 
     # Filtering scopes:

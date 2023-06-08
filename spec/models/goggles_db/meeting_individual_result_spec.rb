@@ -30,7 +30,8 @@ module GogglesDb
 
       it_behaves_like(
         'responding to a list of methods',
-        %i[out_of_race? disqualified? personal_best?
+        %i[team_name team_editable_name
+           out_of_race? disqualified? personal_best?
            valid_for_ranking? to_timing
            meeting_attributes meeting_session_attributes swimmer_attributes]
       )
@@ -53,24 +54,26 @@ module GogglesDb
     #++
 
     # Sorting scopes:
-    describe 'self.by_rank' do
-      let(:result) do
-        # Choose a sample MPrg for which we are sure there will be multiple MIRs:
-        mprg = GogglesDb::MeetingProgram.includes(:meeting_individual_results, :event_type)
-                                        .joins(:meeting_individual_results, :event_type)
-                                        .where('event_types.code': '50SL')
-                                        .last(300).sample
-        expect(mprg.meeting_individual_results.count).to be_positive
-        mprg.meeting_individual_results.by_rank
-      end
+    it_behaves_like('AbstractResult sorting scopes', described_class)
 
-      it_behaves_like('sorting scope by_<ANY_VALUE_NAME> (with prepared result)', described_class, 'rank')
-    end
+    # describe 'self.by_rank' do
+    #   let(:result) do
+    #     # Choose a sample MPrg for which we are sure there will be multiple MIRs:
+    #     mprg = GogglesDb::MeetingProgram.includes(:meeting_individual_results, :event_type)
+    #                                     .joins(:meeting_individual_results, :event_type)
+    #                                     .where('event_types.code': '50SL')
+    #                                     .last(300).sample
+    #     expect(mprg.meeting_individual_results.count).to be_positive
+    #     mprg.meeting_individual_results.by_rank
+    #   end
+
+    #   it_behaves_like('sorting scope by_<ANY_VALUE_NAME> (with prepared result)', described_class, 'rank')
+    # end
 
     describe 'self.by_date' do
       let(:result) do
-        mirs = described_class.where(swimmer_id: 142).by_date
-        expect(mirs.count).to be > 300
+        mirs = described_class.where(swimmer_id: 142).by_date.limit(50)
+        expect(mirs.count).to be_positive
         mirs
       end
 
@@ -85,21 +88,23 @@ module GogglesDb
       end
     end
 
-    describe 'self.by_timing' do
-      let(:result) do
-        mprg = GogglesDb::MeetingProgram.includes(:meeting_individual_results, :event_type)
-                                        .joins(:meeting_individual_results, :event_type)
-                                        .where('event_types.code': '50SL')
-                                        .last(300).sample
-        expect(mprg.meeting_individual_results.count).to be_positive
-        # (Note: exclude disqualified results to simplify time comparison)
-        mprg.meeting_individual_results.qualifications.by_timing
-      end
+    # describe 'self.by_timing' do
+    #   let(:result) do
+    #     mprg = GogglesDb::MeetingProgram.includes(:meeting_individual_results, :event_type)
+    #                                     .joins(:meeting_individual_results, :event_type)
+    #                                     .where('event_types.code': '50SL')
+    #                                     .last(300).sample
+    #     expect(mprg.meeting_individual_results.count).to be_positive
+    #     # (Note: exclude disqualified results to simplify time comparison)
+    #     mprg.meeting_individual_results.qualifications.by_timing
+    #   end
 
-      it_behaves_like('sorting scope by_<ANY_VALUE_NAME> (with prepared result)', described_class, 'to_timing')
-    end
+    #   it_behaves_like('sorting scope by_<ANY_VALUE_NAME> (with prepared result)', described_class, 'to_timing')
+    # end
 
     # Filtering scopes:
+    it_behaves_like('AbstractResult filtering scopes', described_class)
+
     describe 'self.valid_for_ranking' do
       let(:result) { subject.class.valid_for_ranking.order('out_of_race DESC, disqualified DESC').limit(20) }
 

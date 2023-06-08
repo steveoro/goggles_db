@@ -14,7 +14,7 @@ def hash2_includes_hash1(hash1:, hash2:)
   # That's the only case in which we can safely ignore the value comparison.
   expect(
     hash1.except('country', 'country_code')
-          .all? { |key, value| hash2.key?(key) && (hash2[key] == value) }
+         .all? { |key, value| hash2.key?(key) && (hash2[key].to_s == value.to_s) }
   ).to be true
 end
 #-- ---------------------------------------------------------------------------

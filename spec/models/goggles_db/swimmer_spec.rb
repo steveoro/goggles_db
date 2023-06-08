@@ -225,10 +225,14 @@ module GogglesDb
 
       let(:fixture_row) { described_class.first(200).sample }
 
-      %w[long_label display_label short_label].each do |method_name|
+      %w[display_label short_label].each do |method_name|
         it "includes the decorated '#{method_name}'" do
           expect(result[method_name]).to eq(fixture_row.decorate.send(method_name))
         end
+      end
+
+      it "includes #long_label as an alias to 'display_label'" do
+        expect(result['long_label']).to eq(fixture_row.decorate.display_label)
       end
 
       it 'includes the gender_code' do

@@ -34,7 +34,8 @@ module GogglesDb
         end
 
         it "has a corresponding (true, for having the same code) ##{word}? helper method" do
-          expect(subject.send("#{word}?")).to be true
+          # Not using the subject here on purpose as the double send() forces subject instantiation:
+          expect(described_class.send(word).send("#{word}?")).to be true
         end
       end
 

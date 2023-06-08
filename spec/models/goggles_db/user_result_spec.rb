@@ -67,11 +67,13 @@ module GogglesDb
     #++
 
     # Sorting scopes:
-    describe 'self.by_rank' do
-      let(:result) { described_class.by_rank.limit(20) }
+    it_behaves_like('AbstractResult sorting scopes', described_class)
 
-      it_behaves_like('sorting scope by_<ANY_VALUE_NAME> (with prepared result)', described_class, 'rank')
-    end
+    # describe 'self.by_rank' do
+    #   let(:result) { described_class.by_rank.limit(20) }
+
+    #   it_behaves_like('sorting scope by_<ANY_VALUE_NAME> (with prepared result)', described_class, 'rank')
+    # end
 
     describe 'self.by_date' do
       let(:result) { described_class.by_date.limit(20) }
@@ -87,11 +89,11 @@ module GogglesDb
       end
     end
 
-    describe 'self.by_timing' do
-      let(:result) { described_class.by_timing.limit(20) }
+    # describe 'self.by_timing' do
+    #   let(:result) { described_class.by_timing.limit(20) }
 
-      it_behaves_like('sorting scope by_<ANY_VALUE_NAME> (with prepared result)', described_class, 'to_timing')
-    end
+    #   it_behaves_like('sorting scope by_<ANY_VALUE_NAME> (with prepared result)', described_class, 'to_timing')
+    # end
 
     # Filtering scopes:
     it_behaves_like('AbstractResult filtering scopes', described_class)
