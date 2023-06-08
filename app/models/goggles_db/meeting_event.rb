@@ -62,14 +62,14 @@ module GogglesDb
     # included by <tt>#to_hash</tt> (and, consequently, by <tt>#to_json</tt>).
     #
     def single_associations
-      %i[meeting_session season season_type event_type pool_type stroke_type heat_type]
+      %w[meeting_session season season_type event_type pool_type stroke_type heat_type]
     end
 
     # Override: returns the list of multiple association names (as symbols)
     # included by <tt>#to_hash</tt> (and, consequently, by <tt>#to_json</tt>).
     #
     def multiple_associations
-      %i[meeting_programs]
+      %w[meeting_programs]
     end
 
     # Override: include some of the decorated fields in the output.

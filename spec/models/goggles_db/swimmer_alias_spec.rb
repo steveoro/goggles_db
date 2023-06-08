@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 require 'rails_helper'
+require 'support/shared_application_record_examples'
 require 'support/shared_method_existance_examples'
 
 module GogglesDb
@@ -15,7 +16,7 @@ module GogglesDb
         %i[swimmer]
       )
 
-      # Presence of fields & requiredness:
+      # Presence of fields & required-ness:
       it_behaves_like(
         'having one or more required & present attributes (invalid if missing)',
         %i[complete_name swimmer_id]
@@ -25,6 +26,8 @@ module GogglesDb
         'responding to a list of methods',
         %i[complete_name swimmer_id]
       )
+
+      it_behaves_like('ApplicationRecord shared interface')
     end
     #-- ------------------------------------------------------------------------
     #++

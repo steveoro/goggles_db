@@ -1,16 +1,14 @@
 # frozen_string_literal: true
 
 require 'rails_helper'
+require 'support/shared_abstract_meeting_examples'
+require 'support/shared_application_record_examples'
 require 'support/shared_method_existance_examples'
 require 'support/shared_sorting_scopes_examples'
 require 'support/shared_filtering_scopes_examples'
-require 'support/shared_to_json_examples'
-require 'support/shared_abstract_meeting_examples'
 
 module GogglesDb
   RSpec.describe Meeting do
-    subject { FactoryBot.create(:meeting) }
-
     shared_examples_for 'a valid Meeting instance' do
       it 'is valid' do
         expect(subject).to be_a(described_class).and be_valid
@@ -21,7 +19,7 @@ module GogglesDb
         %i[season season_type federation_type edition_type timing_type]
       )
 
-      # Presence of fields & requiredness:
+      # Presence of fields & required-ness:
       it_behaves_like(
         'having one or more required & present attributes (invalid if missing)',
         %i[code header_year edition description]
@@ -46,14 +44,15 @@ module GogglesDb
            tweeted? posted?
            results_acquired? autofilled? read_only? pb_acquired?
            tags_by_user_list tags_by_team_list
-           edition_label minimal_attributes expired?
-           to_json]
+           edition_label expired?]
       )
+
+      it_behaves_like('ApplicationRecord shared interface')
     end
 
-    context 'any pre-seeded instance' do
-      subject { described_class.all.limit(20).sample }
+    subject { described_class.first(150).sample }
 
+    context 'any pre-seeded instance' do
       it_behaves_like('a valid Meeting instance')
     end
 
@@ -299,36 +298,24 @@ module GogglesDb
 
     it_behaves_like('AbstractMeeting #minimal_attributes', described_class)
 
-    describe '#to_json' do
-      # Required keys:
-      %w[
-        display_label short_label edition_label
-        season edition_type timing_type season_type federation_type
-      ].each do |member_name|
-        it "includes the #{member_name} member key" do
-          expect(subject.to_json[member_name]).to be_present
-        end
-      end
-
+    describe '#to_hash' do
       # Required associations:
       it_behaves_like(
-        '#to_json when called on a valid instance',
-        %w[season edition_type timing_type season_type federation_type]
+        '#to_hash when the entity has any 1:1 required association with',
+        %w[season season_type federation_type edition_type timing_type]
       )
 
       # Collection associations:
       context 'when the entity contains collection associations,' do
         subject do
           # Use existing data to get a Meeting that already has events:
-          event = GogglesDb::MeetingEvent.limit(200).sample
+          event = GogglesDb::MeetingEvent.first(200).sample
           expect(event.meeting_session.meeting).to be_a(described_class).and be_valid
           event.meeting_session.meeting
         end
 
-        let(:json_hash) { JSON.parse(subject.to_json) }
-
         it_behaves_like(
-          '#to_json when the entity contains collection associations with',
+          '#to_hash when the entity has any 1:N collection association with',
           %w[meeting_sessions meeting_events]
         )
       end

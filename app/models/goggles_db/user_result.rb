@@ -66,7 +66,7 @@ module GogglesDb
     # included by <tt>#to_hash</tt> (and, consequently, by <tt>#to_json</tt>).
     #
     def single_associations
-      super + %i[user_workshop swimming_pool pool_type event_type category_type stroke_type]
+      super + %w[user_workshop swimming_pool pool_type event_type category_type stroke_type]
     end
 
     # Override: include some of the decorated fields in the output.

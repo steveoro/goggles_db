@@ -1,9 +1,9 @@
 # frozen_string_literal: true
 
 require 'rails_helper'
+require 'support/shared_application_record_examples'
 require 'support/shared_method_existance_examples'
 require 'support/shared_sorting_scopes_examples'
-require 'support/shared_to_json_examples'
 
 module GogglesDb
   RSpec.describe MeetingProgram do
@@ -29,10 +29,10 @@ module GogglesDb
         %i[standard_timing meeting_individual_results meeting_relay_results meeting_relay_swimmers
            meeting_entries laps
            relay? scheduled_date
-           begin_time autofilled? out_of_race?
-           minimal_attributes
-           to_json]
+           begin_time autofilled? out_of_race?]
       )
+
+      it_behaves_like('ApplicationRecord shared interface')
     end
 
     context 'any pre-seeded instance' do
@@ -77,28 +77,37 @@ module GogglesDb
     #-- ------------------------------------------------------------------------
     #++
 
-    describe '#minimal_attributes' do
-      subject { described_class.limit(500).sample.minimal_attributes }
+    describe '#minimal_attributes (override)' do
+      subject(:result) { fixture_row.minimal_attributes }
 
-      it 'is an Hash' do
-        expect(subject).to be_an(Hash)
+      let(:fixture_row) { described_class.last(100).sample }
+
+      it 'includes the event label' do
+        expect(result['event_label']).to eq(fixture_row.event_type.label)
       end
 
-      %w[pool_type event_type category_type gender_type stroke_type].each do |association_name|
-        it "includes the #{association_name} association key" do
-          expect(subject.keys).to include(association_name)
-        end
+      it 'includes the category code & label' do
+        expect(result['category_code']).to eq(fixture_row.category_type.code)
+        expect(result['category_label']).to eq(fixture_row.category_type.decorate.short_label)
+      end
+
+      it 'includes the gender code' do
+        expect(result['gender_code']).to eq(fixture_row.gender_type.code)
+      end
+
+      it 'includes the pool code' do
+        expect(result['pool_code']).to eq(fixture_row.pool_type.code)
       end
     end
 
-    describe '#to_json' do
+    describe '#to_hash' do
       # Required associations:
       context 'for required associations,' do
-        subject { FactoryBot.create(:meeting_program) }
+        subject { described_class.last(100).sample }
 
         it_behaves_like(
-          '#to_json when called on a valid instance',
-          %w[meeting_event pool_type event_type category_type gender_type stroke_type]
+          '#to_hash when the entity has any 1:1 required association with',
+          %w[pool_type event_type category_type gender_type stroke_type]
         )
       end
 
@@ -106,19 +115,19 @@ module GogglesDb
       context 'for collection associations,' do
         context 'when the entity has MIRs,' do
           subject do
-            mir = GogglesDb::MeetingIndividualResult.limit(200).sample
+            mir = GogglesDb::MeetingIndividualResult.last(200).sample
             expect(mir.meeting_program).to be_a(described_class).and be_valid
             mir.meeting_program
           end
 
-          let(:json_hash) { JSON.parse(subject.to_json) }
+          let(:result) { subject.to_hash(max_siblings: 3) } # limit sibling rows
 
           it "doesn't contain the MRR list" do
-            expect(json_hash['meeting_relay_results']).to be_nil
+            expect(result['meeting_relay_results']).to be_nil
           end
 
           it_behaves_like(
-            '#to_json when the entity contains collection associations with',
+            '#to_hash when the entity has any 1:N collection association with',
             %w[meeting_individual_results]
           )
         end
@@ -130,14 +139,14 @@ module GogglesDb
             mrr.meeting_program
           end
 
-          let(:json_hash) { JSON.parse(subject.to_json) }
+          let(:result) { subject.to_hash(max_siblings: 3) } # limit sibling rows
 
           it "doesn't contain the MIR list" do
-            expect(json_hash['meeting_individual_results']).to be_nil
+            expect(result['meeting_individual_results']).to be_nil
           end
 
           it_behaves_like(
-            '#to_json when the entity contains collection associations with',
+            '#to_hash when the entity has any 1:N collection association with',
             %w[meeting_relay_results]
           )
         end

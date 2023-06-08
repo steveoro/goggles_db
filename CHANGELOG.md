@@ -2,7 +2,7 @@
 
 _Please, add the latest build info on top of the list; use Version::MAJOR only after gold release; keep semantic versioning in line with framework's_
 
-- **0.5.10** [Steve A.] added #active? to Users; refactored all to_hash methods using ancestor AbstractRecord class; specs update
+- **0.5.10** [Steve A.] added #active? to Users; refactored all to_hash methods using ancestor AbstractRecord class; specs & bundle update
 - **0.5.05** [Steve A.] added to_hash methods as middlemen in between to_json output
 - **0.5.03** [Steve A.] slight change in ImportQueueDecorator so that #chrono_delta_label can be called also on master chrono rows
 - **0.5.02** [Steve A.] minor DB structure update with some missing default values for boolean columns;

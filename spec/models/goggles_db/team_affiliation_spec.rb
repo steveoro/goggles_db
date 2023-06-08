@@ -1,9 +1,9 @@
 # frozen_string_literal: true
 
 require 'rails_helper'
+require 'support/shared_application_record_examples'
 require 'support/shared_method_existance_examples'
 require 'support/shared_filtering_scopes_examples'
-require 'support/shared_to_json_examples'
 
 module GogglesDb
   RSpec.describe TeamAffiliation do
@@ -48,7 +48,9 @@ module GogglesDb
            number header_year]
       )
 
-      # Presence of fields & requiredness:
+      it_behaves_like('ApplicationRecord shared interface')
+
+      # Presence of fields & required-ness:
       it_behaves_like(
         'having one or more required & present attributes (invalid if missing)',
         %i[name]
@@ -58,7 +60,7 @@ module GogglesDb
     #++
 
     # Sorting scopes:
-    # TODO
+    # (TODO: none yet)
 
     # Filtering scopes:
     describe 'self.for_years' do
@@ -114,35 +116,33 @@ module GogglesDb
     #-- ------------------------------------------------------------------------
     #++
 
-    describe '#to_json' do
-      subject { FactoryBot.create(:team_affiliation) }
+    describe '#minimal_attributes' do
+      subject(:result) { fixture_row.minimal_attributes }
 
-      let(:json_hash) { JSON.parse(subject.to_json) }
+      let(:fixture_row) { described_class.first(100).sample }
 
       %w[display_label short_label].each do |method_name|
         it "includes the decorated '#{method_name}'" do
-          expect(json_hash[method_name]).to eq(subject.decorate.send(method_name))
+          expect(result[method_name]).to eq(fixture_row.decorate.send(method_name))
         end
       end
+    end
+
+    describe '#to_hash' do
+      # Make sure both collection association are present by making an educated guess:
+      subject { GogglesDb::ManagedAffiliation.first(20).sample.team_affiliation }
 
       # Required associations:
       it_behaves_like(
-        '#to_json when called on a valid instance',
+        '#to_hash when the entity has any 1:1 required association with',
         %w[team season]
       )
+
       # Collection associations:
       context 'when the entity contains collection associations,' do
-        subject do
-          # Force fixture_manager to be created before reaching the subject:
-          expect(fixture_manager).to be_a(User)
-          affiliation_with_badges
-        end
-
-        let(:json_hash) { JSON.parse(subject.to_json) }
-
         it_behaves_like(
-          '#to_json when the entity contains collection associations with',
-          %w[badges managers]
+          '#to_hash when the entity has any 1:N collection association with',
+          %w[badges managed_affiliations]
         )
       end
     end

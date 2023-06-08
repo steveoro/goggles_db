@@ -1,12 +1,12 @@
 # frozen_string_literal: true
 
 require 'rails_helper'
+require 'support/shared_abstract_lap_examples'
+require 'support/shared_application_record_examples'
 require 'support/shared_method_existance_examples'
 require 'support/shared_sorting_scopes_examples'
 require 'support/shared_filtering_scopes_examples'
 require 'support/shared_timing_manageable_examples'
-require 'support/shared_to_json_examples'
-require 'support/shared_abstract_lap_examples'
 
 module GogglesDb
   RSpec.describe UserLap do
@@ -60,6 +60,8 @@ module GogglesDb
            user_workshop_attributes meeting_attributes
            to_timing to_json]
       )
+
+      it_behaves_like('ApplicationRecord shared interface')
     end
 
     #-- ------------------------------------------------------------------------
@@ -75,7 +77,7 @@ module GogglesDb
     end
 
     context 'any pre-seeded instance' do
-      subject { described_class.all.limit(20).sample }
+      subject { described_class.first(20).sample }
 
       it_behaves_like('a valid UserLap instance')
     end
@@ -103,26 +105,16 @@ module GogglesDb
     #-- ------------------------------------------------------------------------
     #++
 
-    describe '#to_json' do
+    describe '#to_hash' do
       subject { FactoryBot.create(:user_lap) }
-
-      let(:result) { JSON.parse(subject.to_json) }
-
-      it 'includes the timing string' do
-        expect(result['timing']).to eq(subject.to_timing.to_s)
-      end
-
-      it 'includes the timing string from the start of the race' do
-        expect(result['timing_from_start']).to eq(subject.timing_from_start.to_s)
-      end
 
       # Required associations:
       it_behaves_like(
-        '#to_json when called on a valid instance',
+        '#to_hash when the entity has any 1:1 required association with',
         %w[user_result event_type pool_type]
       )
       it_behaves_like(
-        '#to_json when called on a valid instance with a synthetized association',
+        '#to_hash when the entity has any 1:1 summarized association with',
         %w[user_workshop swimmer]
       )
     end

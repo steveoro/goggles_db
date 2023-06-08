@@ -1,8 +1,9 @@
 # frozen_string_literal: true
 
 require 'rails_helper'
-require 'support/shared_method_existance_examples'
+require 'support/shared_application_record_examples'
 require 'support/shared_localizable_examples'
+require 'support/shared_method_existance_examples'
 
 module GogglesDb
   RSpec.describe DisqualificationCodeType do
@@ -19,6 +20,7 @@ module GogglesDb
       )
 
       it_behaves_like('Localizable')
+      it_behaves_like('ApplicationRecord shared interface')
 
       it 'has a #code' do
         expect(subject.code).to be_present

@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 require 'rails_helper'
+require 'support/shared_application_record_examples'
 require 'support/shared_method_existance_examples'
 require 'support/shared_sorting_scopes_examples'
 require 'support/shared_filtering_scopes_examples'
@@ -22,6 +23,8 @@ module GogglesDb
         %i[default_lap_lengths_for
            by_length for_team for_event_type for_pool_type templates_for]
       )
+
+      it_behaves_like('ApplicationRecord shared interface')
     end
 
     context 'any pre-seeded instance' do

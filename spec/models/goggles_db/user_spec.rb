@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 require 'rails_helper'
+require 'support/shared_application_record_examples'
 require 'support/shared_method_existance_examples'
 
 module GogglesDb
@@ -17,14 +18,12 @@ module GogglesDb
         'responding to a list of methods',
         %i[settings swimmer coach_level_type managed_affiliations]
       )
-      #-- ----------------------------------------------------------------------
-      #++
 
       it 'is valid' do
         expect(subject).to be_a(described_class).and be_valid
       end
 
-      it 'is has a #name' do
+      it 'has a #name' do
         expect(subject).to respond_to(:name)
         expect(subject.name).to be_present
       end
@@ -33,6 +32,8 @@ module GogglesDb
         expect(subject).to respond_to(:email)
         expect(subject.email).to be_present
       end
+
+      it_behaves_like('ApplicationRecord shared interface')
     end
     #-- ------------------------------------------------------------------------
     #++

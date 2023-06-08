@@ -1,9 +1,9 @@
 # frozen_string_literal: true
 
 require 'rails_helper'
+require 'support/shared_application_record_examples'
 require 'support/shared_method_existance_examples'
 require 'support/shared_filtering_scopes_examples'
-require 'support/shared_to_json_examples'
 
 module GogglesDb
   RSpec.describe Swimmer do
@@ -31,6 +31,8 @@ module GogglesDb
           minimal_attributes to_json
         ]
       )
+
+      it_behaves_like('ApplicationRecord shared interface')
       #-- ----------------------------------------------------------------------
       #++
 
@@ -47,12 +49,12 @@ module GogglesDb
         expect(new_swimmer.associated_user).to be_nil
       end
 
-      it 'is has a #complete_name' do
+      it 'has a #complete_name' do
         expect(new_swimmer).to respond_to(:complete_name)
         expect(new_swimmer.complete_name).to be_present
       end
 
-      it 'is has a #year_of_birth' do
+      it 'has a #year_of_birth' do
         expect(new_swimmer).to respond_to(:year_of_birth)
         expect(new_swimmer.year_of_birth).to be_present
       end
@@ -218,73 +220,43 @@ module GogglesDb
     #-- ------------------------------------------------------------------------
     #++
 
-    describe '#minimal_attributes' do
-      subject(:result) { existing_row.minimal_attributes }
+    describe '#minimal_attributes (override)' do
+      subject(:result) { fixture_row.minimal_attributes }
 
-      let(:existing_row) { described_class.limit(200).sample }
+      let(:fixture_row) { described_class.first(200).sample }
 
-      it 'is an Hash' do
-        expect(result).to be_an(Hash)
-      end
-
-      %w[long_label display_label short_label associated_user gender_type].each do |member_name|
-        it "includes the #{member_name} member key" do
-          expect(result.keys).to include(member_name)
-        end
-      end
-
-      %w[display_label short_label].each do |method_name|
+      %w[long_label display_label short_label].each do |method_name|
         it "includes the decorated '#{method_name}'" do
-          expect(result[method_name]).to eq(existing_row.decorate.send(method_name))
+          expect(result[method_name]).to eq(fixture_row.decorate.send(method_name))
         end
+      end
+
+      it 'includes the gender_code' do
+        expect(result['gender_code']).to eq(fixture_row.gender_type.code)
+      end
+
+      it 'includes the associated_user_label (if a user is set)' do
+        expect(result['associated_user_label']).to eq(fixture_row.associated_user&.decorate&.short_label)
       end
     end
 
-    describe '#to_json' do
-      subject { described_class.limit(200).sample }
-
-      let(:json_hash) { JSON.parse(subject.to_json) }
-
-      # Required keys:
-      %w[
-        long_label display_label short_label
-        gender_type
-      ].each do |member_name|
-        it "includes the #{member_name} member key" do
-          expect(json_hash[member_name]).to be_present
-        end
-      end
-
-      %w[display_label short_label].each do |method_name|
-        it "includes the decorated '#{method_name}'" do
-          expect(json_hash[method_name]).to eq(subject.decorate.send(method_name))
-        end
-      end
+    describe '#to_hash' do
+      subject { described_class.first(200).sample }
 
       # Required associations:
       it_behaves_like(
-        '#to_json when called on a valid instance',
+        '#to_hash when the entity has any 1:1 required association with',
         %w[gender_type]
       )
 
       # Optional associations:
-      it_behaves_like(
-        '#to_json when called with unset optional associations',
-        %w[associated_user]
-      )
-
       context 'when the entity contains other optional associations' do
         subject { FactoryBot.create(:swimmer, associated_user: fixture_user) }
 
         let(:fixture_user) { FactoryBot.create(:user) }
-        let(:json_hash) do
-          expect(subject.associated_user).to be_a(User).and be_valid
-          expect(subject.associated_user_id).to eq(fixture_user.id)
-          JSON.parse(subject.to_json)
-        end
 
         it_behaves_like(
-          '#to_json when the entity contains other optional associations with',
+          '#to_hash when the entity has any 1:1 optional association with',
           %w[associated_user]
         )
       end

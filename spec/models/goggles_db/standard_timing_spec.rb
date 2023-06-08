@@ -1,11 +1,11 @@
 # frozen_string_literal: true
 
 require 'rails_helper'
+require 'support/shared_application_record_examples'
 require 'support/shared_method_existance_examples'
 require 'support/shared_sorting_scopes_examples'
 require 'support/shared_filtering_scopes_examples'
 require 'support/shared_timing_manageable_examples'
-require 'support/shared_to_json_examples'
 
 module GogglesDb
   RSpec.describe StandardTiming do
@@ -23,6 +23,8 @@ module GogglesDb
         'responding to a list of class methods',
         %i[exists_for? find_first]
       )
+
+      it_behaves_like('ApplicationRecord shared interface')
     end
 
     context 'any pre-seeded instance' do
@@ -151,51 +153,29 @@ module GogglesDb
     #-- ------------------------------------------------------------------------
     #++
 
-    describe '#minimal_attributes' do
-      subject { existing_row.minimal_attributes }
+    describe '#minimal_attributes (override)' do
+      subject(:result) { fixture_row.minimal_attributes }
 
-      let(:existing_row) { described_class.limit(500).sample }
-
-      it 'is an Hash' do
-        expect(subject).to be_an(Hash)
-      end
+      let(:fixture_row) { described_class.last(200).sample }
 
       it 'includes the timing string' do
-        expect(subject['timing']).to eq(existing_row.to_timing.to_s)
+        expect(result['timing']).to eq(fixture_row.to_timing.to_s)
       end
 
       %w[display_label short_label].each do |method_name|
         it "includes the decorated '#{method_name}'" do
-          expect(subject[method_name]).to eq(existing_row.decorate.send(method_name))
-        end
-      end
-
-      %w[display_label short_label season pool_type event_type category_type gender_type].each do |association_name|
-        it "includes the #{association_name} association key" do
-          expect(subject.keys).to include(association_name)
+          expect(result[method_name]).to eq(fixture_row.decorate.send(method_name))
         end
       end
     end
 
-    describe '#to_json' do
-      subject { described_class.limit(500).sample }
-
-      let(:to_json_result) { JSON.parse(subject.to_json) }
-
-      it 'includes the timing string' do
-        expect(to_json_result['timing']).to eq(subject.to_timing.to_s)
-      end
-
-      %w[display_label short_label].each do |method_name|
-        it "includes the decorated '#{method_name}'" do
-          expect(to_json_result[method_name]).to eq(subject.decorate.send(method_name))
-        end
-      end
+    describe '#to_hash' do
+      subject { described_class.first(200).sample }
 
       # Required associations:
       it_behaves_like(
-        '#to_json when called on a valid instance',
-        %w[season pool_type event_type category_type gender_type]
+        '#to_hash when the entity has any 1:1 required association with',
+        %w[season pool_type event_type gender_type category_type]
       )
     end
   end

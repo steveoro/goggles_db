@@ -31,7 +31,7 @@ module GogglesDb
       result_hash
     end
 
-    # Returns the list of all association names (as symbols) available for the current model instance,
+    # Returns the list of all association names (as Strings) available for the current model instance,
     # given a specific association type filter.
     #
     # == Params:
@@ -39,10 +39,10 @@ module GogglesDb
     #                    leave default value for no filters.
     #
     def all_associations(filter = nil)
-      self.class.reflect_on_all_associations(filter).map(&:name)
+      self.class.reflect_on_all_associations(filter).map(&:name).map(&:to_s)
     end
 
-    # Returns the list of single association names (as symbols), be it belongs_to (N:1 or has_one (1:1)
+    # Returns the list of single association names (as Strings), be it belongs_to (N:1 or has_one (1:1)
     # available for the current model instance.
     # Does not include the association if it doesn't respond to <tt>#minimal_attributes</tt>.
     #
@@ -112,7 +112,7 @@ module GogglesDb
       single_associations.each do |key|
         next unless send(key).respond_to?(:minimal_attributes)
 
-        result_hash[key] = map_attributes_from_model(send(key), locale_override)
+        result_hash[key.to_s] = map_attributes_from_model(send(key), locale_override)
       end
       result_hash
     end
@@ -133,8 +133,8 @@ module GogglesDb
         next unless domain.respond_to?(:map) && domain.respond_to?(:first) && domain.respond_to?(:count)
         next unless domain.count.positive?
 
-        result_hash[key] = domain.first(max_siblings)
-                                 .map { |row| map_attributes_from_model(row, locale_override) }
+        result_hash[key.to_s] = domain.first(max_siblings)
+                                      .map { |row| map_attributes_from_model(row, locale_override) }
       end
       result_hash
     end

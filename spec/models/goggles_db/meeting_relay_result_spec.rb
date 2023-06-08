@@ -1,11 +1,11 @@
 # frozen_string_literal: true
 
 require 'rails_helper'
+require 'support/shared_application_record_examples'
 require 'support/shared_method_existance_examples'
 require 'support/shared_sorting_scopes_examples'
 require 'support/shared_filtering_scopes_examples'
 require 'support/shared_timing_manageable_examples'
-require 'support/shared_to_json_examples'
 
 module GogglesDb
   RSpec.describe MeetingRelayResult do
@@ -33,6 +33,8 @@ module GogglesDb
            out_of_race? disqualified? valid_for_ranking?
            to_timing to_json]
       )
+
+      it_behaves_like('ApplicationRecord shared interface')
     end
 
     context 'any pre-seeded instance' do
@@ -179,54 +181,55 @@ module GogglesDb
       it_behaves_like 'TimingManageable'
     end
 
-    describe '#minimal_attributes' do
-      subject { fixture_row.minimal_attributes }
+    describe '#minimal_attributes (override)' do
+      subject(:result) { fixture_row.minimal_attributes }
 
-      let(:fixture_row) { FactoryBot.build(:meeting_relay_result) }
+      let(:fixture_row) { described_class.last(100).sample }
 
       before { expect(fixture_row).to be_a(described_class).and be_valid }
 
-      it 'is an Hash' do
-        expect(subject).to be_an(Hash)
-      end
-
       it 'includes the timing string' do
-        expect(subject['timing']).to eq(fixture_row.to_timing.to_s)
+        expect(result['timing']).to eq(fixture_row.to_timing.to_s)
       end
 
-      %w[team_affiliation meeting_relay_swimmers disqualification_code_type].each do |association_name|
-        it "includes the #{association_name} association key" do
-          # Don't check nil association links: (it may happen)
-          expect(subject.keys).to include(association_name) if fixture_row.send(association_name).present?
-        end
+      it 'includes the team name & decorated label' do
+        expect(result['team_name']).to eq(fixture_row.team.editable_name)
+        expect(result['team_label']).to eq(fixture_row.team.decorate.display_label)
+      end
+
+      it 'includes the event label' do
+        expect(result['event_label']).to eq(fixture_row.event_type.label)
+      end
+
+      it 'includes the category code & label' do
+        expect(result['category_code']).to eq(fixture_row.category_type.code)
+        expect(result['category_label']).to eq(fixture_row.category_type.decorate.short_label)
+      end
+
+      it 'includes the gender code' do
+        expect(result['gender_code']).to eq(fixture_row.gender_type.code)
       end
     end
 
-    describe '#to_json' do
-      subject { FactoryBot.create(:meeting_relay_result) }
-
-      it 'includes the timing string' do
-        expect(JSON.parse(subject.to_json)['timing']).to eq(subject.to_timing.to_s)
-      end
+    describe '#to_hash' do
+      subject { described_class.last(100).sample }
 
       # Required associations:
       it_behaves_like(
-        '#to_json when called on a valid instance',
+        '#to_hash when the entity has any 1:1 required association with',
         %w[meeting_program pool_type event_type category_type gender_type]
       )
       it_behaves_like(
-        '#to_json when called on a valid instance with a synthetized association',
+        '#to_hash when the entity has any 1:1 summarized association with',
         %w[meeting meeting_session]
       )
 
       # Collection associations:
       context 'when the entity contains collection associations,' do
-        subject         { FactoryBot.create(:meeting_relay_result_with_swimmers) }
-
-        let(:json_hash) { JSON.parse(subject.to_json) }
+        subject { FactoryBot.create(:meeting_relay_result_with_swimmers) }
 
         it_behaves_like(
-          '#to_json when the entity contains collection associations with',
+          '#to_hash when the entity has any 1:N collection association with',
           %w[meeting_relay_swimmers]
         )
       end

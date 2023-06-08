@@ -1,11 +1,11 @@
 # frozen_string_literal: true
 
 require 'rails_helper'
+require 'support/shared_application_record_examples'
 require 'support/shared_method_existance_examples'
 require 'support/shared_sorting_scopes_examples'
 require 'support/shared_filtering_scopes_examples'
 require 'support/shared_timing_manageable_examples'
-require 'support/shared_to_json_examples'
 
 # REQUIRES/ASSUMES:
 # - subject...: a valid fixture instance of the sibling class
@@ -74,29 +74,19 @@ end
 
 # REQUIRES/ASSUMES:
 # - the existance of some fixture rows
-shared_examples_for 'AbstractResult #minimal_attributes' do |sibling_class, min_associations_list|
+shared_examples_for 'AbstractResult #minimal_attributes' do |sibling_class, _min_associations_list|
   subject { fixture_row.minimal_attributes }
 
-  let(:fixture_row) { sibling_class.limit(100).sample }
+  let(:fixture_row) { sibling_class.last(100).sample }
   before { expect(fixture_row).to be_a(sibling_class).and be_valid }
-
-  it 'is an Hash' do
-    expect(subject).to be_an(Hash)
-  end
 
   it 'includes the timing string' do
     expect(subject['timing']).to eq(fixture_row.to_timing.to_s)
   end
 
-  min_associations_list.each do |association_name|
-    it "includes the #{association_name} association key" do
-      # Don't check nil association links: (it may happen)
-      expect(subject.keys).to include(association_name) if fixture_row.send(association_name).present?
-    end
-  end
-  it "contains the 'synthetized' swimmer details" do
-    expect(subject['swimmer']).to be_an(Hash).and be_present
-    expect(subject['swimmer']).to eq(fixture_row.swimmer_attributes)
+  it 'includes the swimmer name & decorated label' do
+    expect(subject['swimmer_name']).to eq(fixture_row.swimmer.complete_name)
+    expect(subject['swimmer_label']).to eq(fixture_row.swimmer.decorate.display_label)
   end
 end
 #-- ---------------------------------------------------------------------------

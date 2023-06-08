@@ -1,11 +1,11 @@
 # frozen_string_literal: true
 
 require 'rails_helper'
+require 'support/shared_application_record_examples'
 require 'support/shared_method_existance_examples'
 require 'support/shared_sorting_scopes_examples'
 require 'support/shared_filtering_scopes_examples'
 require 'support/shared_timing_manageable_examples'
-require 'support/shared_to_json_examples'
 
 # REQUIRES/ASSUMES:
 # (none)
@@ -247,32 +247,19 @@ end
 # REQUIRES/ASSUMES:
 # - the existance of some fixture rows
 shared_examples_for 'AbstractMeeting #minimal_attributes' do |sibling_class|
-  subject { fixture_row.minimal_attributes }
+  subject(:result) { fixture_row.minimal_attributes }
 
-  let(:fixture_row) { sibling_class.limit(100).sample }
+  let(:fixture_row) { sibling_class.first(100).sample }
   before { expect(fixture_row).to be_a(sibling_class).and be_valid }
 
-  it 'is an Hash' do
-    expect(subject).to be_an(Hash)
-  end
-
-  it 'includes the display_label (from the decorator)' do
-    expect(subject['display_label']).to eq(fixture_row.decorate.display_label)
-  end
-
-  it 'includes the short_label (from the decorator)' do
-    expect(subject['short_label']).to eq(fixture_row.decorate.short_label)
+  %w[display_label short_label meeting_date].each do |method_name|
+    it "includes the decorated '#{method_name}'" do
+      expect(result[method_name]).to eq(fixture_row.decorate.send(method_name))
+    end
   end
 
   it 'includes the edition_label' do
-    expect(subject['edition_label']).to eq(fixture_row.edition_label.to_s)
-  end
-
-  %w[season edition_type timing_type season_type federation_type].each do |member_name|
-    it "includes the #{member_name} association key" do
-      # Don't check nil association links: (it may happen)
-      expect(subject.keys).to include(member_name) if fixture_row.send(member_name).present?
-    end
+    expect(result['edition_label']).to eq(fixture_row.edition_label.to_s)
   end
 end
 #-- ---------------------------------------------------------------------------

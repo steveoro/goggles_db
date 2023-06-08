@@ -1,11 +1,11 @@
 # frozen_string_literal: true
 
 require 'rails_helper'
+require 'support/shared_active_storage_examples'
+require 'support/shared_application_record_examples'
 require 'support/shared_sorting_scopes_examples'
 require 'support/shared_method_existance_examples'
 require 'support/shared_filtering_scopes_examples'
-require 'support/shared_to_json_examples'
-require 'support/shared_active_storage_examples'
 
 module GogglesDb
   RSpec.describe Calendar do
@@ -46,7 +46,7 @@ module GogglesDb
            to_json]
       )
 
-      # Presence of fields & requiredness:
+      # Presence of fields & required-ness:
       it_behaves_like(
         'having one or more required & present attributes (invalid if missing)',
         %i[meeting_code]
@@ -65,6 +65,8 @@ module GogglesDb
           expect(subject).to start_with('TEST Manifest for ')
         end
       end
+
+      it_behaves_like('ApplicationRecord shared interface')
     end
     #-- -----------------------------------------------------------------------
     #++
@@ -158,29 +160,25 @@ module GogglesDb
       #-- ---------------------------------------------------------------------
       #++
 
-      describe '#to_json' do
-        context 'for a row with an associated Meeting,' do
-          # subject { FactoryBot.create(:calendar) }
-          subject { described_class.joins(:meeting).includes(:meeting).first(200).sample }
+      describe '#minimal_attributes (override)' do
+        subject(:result) { fixture_row.minimal_attributes }
 
-          it_behaves_like(
-            '#to_json when called on a valid instance',
-            %w[season]
-          )
-        end
+        let(:fixture_row) { described_class.joins(:meeting).includes(:meeting).first(200).sample }
 
-        context 'for a row without an associated Meeting,' do
-          subject do
-            result = described_class.where(meeting_id: nil).first(100).sample
-            result = FactoryBot.create(:calendar_with_blank_meeting) if result.blank?
-            expect(result).to be_present
-            expect(result.meeting).to be_blank
-            result
+        %w[display_label short_label meeting_date].each do |method_name|
+          it "includes the decorated '#{method_name}'" do
+            expect(result[method_name]).to eq(fixture_row.decorate.send(method_name))
           end
+        end
+      end
 
+      describe '#to_hash' do
+        context 'for a row with an associated Meeting,' do
+          subject { described_class.joins(:meeting).includes(:meeting).first(200).sample }
+          # If we include the meeting above, we won't need to use the 'optional' version of the same example group:
           it_behaves_like(
-            '#to_json when called with unset optional associations',
-            %w[meeting]
+            '#to_hash when the entity has any 1:1 required association with',
+            %w[season season_type meeting]
           )
         end
       end

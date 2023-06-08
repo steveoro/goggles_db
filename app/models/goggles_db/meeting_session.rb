@@ -49,7 +49,7 @@ module GogglesDb
     # included by <tt>#to_hash</tt> (and, consequently, by <tt>#to_json</tt>).
     #
     def multiple_associations
-      %i[meeting_events]
+      %w[meeting_events]
     end
 
     # Returns a commodity Hash wrapping the essential data that summarizes the Meeting

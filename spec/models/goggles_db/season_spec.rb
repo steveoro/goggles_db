@@ -1,9 +1,9 @@
 # frozen_string_literal: true
 
 require 'rails_helper'
+require 'support/shared_application_record_examples'
 require 'support/shared_method_existance_examples'
 require 'support/shared_filtering_scopes_examples'
-require 'support/shared_to_json_examples'
 
 module GogglesDb
   RSpec.describe Season do
@@ -48,11 +48,13 @@ module GogglesDb
            category_types badges swimmers team_affiliations teams
            ended? started? ongoing? individual_rank?]
       )
-      # Presence of fields & requiredness:
+      # Presence of fields & required-ness:
       it_behaves_like(
         'having one or more required & present attributes (invalid if missing)',
         %i[header_year edition description begin_date end_date]
       )
+
+      it_behaves_like('ApplicationRecord shared interface')
       #-- ----------------------------------------------------------------------
       #++
 
@@ -253,30 +255,24 @@ module GogglesDb
     #-- ------------------------------------------------------------------------
     #++
 
-    describe '#to_json' do
-      subject { FactoryBot.create(:season) }
+    describe '#minimal_attributes (override)' do
+      subject(:result) { fixture_row.minimal_attributes }
 
-      let(:json_hash) { JSON.parse(subject.to_json) }
-
-      # Required keys:
-      # (Cannot include collection associations keys here using the factory -- see below for proper fixture)
-      %w[
-        display_label short_label season_type edition_type timing_type
-      ].each do |member_name|
-        it "includes the #{member_name} member key" do
-          expect(json_hash[member_name]).to be_present
-        end
-      end
+      let(:fixture_row) { described_class.limit(200).sample }
 
       %w[display_label short_label].each do |method_name|
         it "includes the decorated '#{method_name}'" do
-          expect(json_hash[method_name]).to eq(subject.decorate.send(method_name))
+          expect(result[method_name]).to eq(fixture_row.decorate.send(method_name))
         end
       end
+    end
+
+    describe '#to_hash' do
+      subject { described_class.limit(100).sample }
 
       # Required associations:
       it_behaves_like(
-        '#to_json when called on a valid instance',
+        '#to_hash when the entity has any 1:1 required association with',
         %w[season_type edition_type timing_type]
       )
 
@@ -288,10 +284,8 @@ module GogglesDb
           category.season
         end
 
-        let(:json_hash) { JSON.parse(subject.to_json) }
-
         it_behaves_like(
-          '#to_json when the entity contains collection associations with',
+          '#to_hash when the entity has any 1:N collection association with',
           %w[category_types]
         )
       end

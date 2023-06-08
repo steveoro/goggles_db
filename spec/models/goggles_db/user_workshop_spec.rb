@@ -1,11 +1,11 @@
 # frozen_string_literal: true
 
 require 'rails_helper'
+require 'support/shared_abstract_meeting_examples'
+require 'support/shared_application_record_examples'
 require 'support/shared_method_existance_examples'
 require 'support/shared_sorting_scopes_examples'
 require 'support/shared_filtering_scopes_examples'
-require 'support/shared_to_json_examples'
-require 'support/shared_abstract_meeting_examples'
 
 module GogglesDb
   RSpec.describe UserWorkshop do
@@ -53,6 +53,8 @@ module GogglesDb
            autofilled? read_only? pb_acquired?
            to_json]
       )
+
+      it_behaves_like('ApplicationRecord shared interface')
     end
 
     context 'any pre-seeded instance' do
@@ -171,25 +173,17 @@ module GogglesDb
 
     it_behaves_like('AbstractMeeting #minimal_attributes', described_class)
 
-    describe '#to_json' do
-      # Required keys:
-      %w[
-        display_label short_label edition_label
-        user home_team
-        season edition_type timing_type season_type federation_type
-      ].each do |member_name|
-        it "includes the #{member_name} member key" do
-          expect(subject.to_json[member_name]).to be_present
-        end
-      end
-
+    describe '#to_hash' do
       # Required associations:
       it_behaves_like(
-        '#to_json when called on a valid instance',
-        %w[
-          user home_team
-          season edition_type timing_type season_type federation_type
-        ]
+        '#to_hash when the entity has any 1:1 required association with',
+        %w[user team season season_type federation_type edition_type timing_type]
+      )
+
+      # Optional associations:
+      it_behaves_like(
+        '#to_hash when the entity has any 1:1 optional association with',
+        %w[swimming_pool]
       )
     end
   end

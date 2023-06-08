@@ -1,15 +1,16 @@
 # frozen_string_literal: true
 
 require 'rails_helper'
+require 'support/shared_active_storage_examples'
+require 'support/shared_application_record_examples'
 require 'support/shared_method_existance_examples'
 require 'support/shared_filtering_scopes_examples'
-require 'support/shared_active_storage_examples'
 
 module GogglesDb
   RSpec.describe ImportQueue do
     shared_examples_for 'a valid ImportQueue instance' do
       it 'is valid' do
-        expect(subject).to be_an(described_class).and be_valid
+        expect(subject).to be_a(described_class).and be_valid
       end
 
       it_behaves_like(
@@ -37,6 +38,7 @@ module GogglesDb
       )
 
       it_behaves_like('active storage field with local file', :data_file)
+      it_behaves_like('ApplicationRecord shared interface')
     end
     #-- ------------------------------------------------------------------------
     #++

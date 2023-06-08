@@ -85,7 +85,7 @@ module GogglesDb
     # included by <tt>#to_hash</tt> (and, consequently, by <tt>#to_json</tt>).
     #
     def single_associations
-      %i[meeting meeting_session meeting_program team_affiliation team swimmer
+      %w[meeting meeting_session meeting_program team_affiliation team swimmer
          pool_type event_type category_type gender_type]
     end
 

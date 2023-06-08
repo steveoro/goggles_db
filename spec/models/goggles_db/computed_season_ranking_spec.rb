@@ -1,10 +1,10 @@
 # frozen_string_literal: true
 
 require 'rails_helper'
+require 'support/shared_application_record_examples'
 require 'support/shared_method_existance_examples'
 require 'support/shared_sorting_scopes_examples'
 require 'support/shared_filtering_scopes_examples'
-require 'support/shared_to_json_examples'
 
 module GogglesDb
   RSpec.describe ComputedSeasonRanking do
@@ -33,11 +33,13 @@ module GogglesDb
            to_json]
       )
 
-      # Presence of fields & requiredness:
+      # Presence of fields & required-ness:
       it_behaves_like(
         'having one or more required & present attributes (invalid if missing)',
         %i[rank total_points]
       )
+
+      it_behaves_like('ApplicationRecord shared interface')
     end
     #-- ------------------------------------------------------------------------
     #++
@@ -58,11 +60,11 @@ module GogglesDb
     #-- ------------------------------------------------------------------------
     #++
 
-    describe '#to_json' do
+    describe '#to_hash' do
       subject { FactoryBot.create(:computed_season_ranking) }
 
       it_behaves_like(
-        '#to_json when called on a valid instance',
+        '#to_hash when the entity has any 1:1 required association with',
         %w[team season]
       )
     end

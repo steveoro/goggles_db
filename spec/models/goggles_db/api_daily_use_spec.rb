@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 require 'rails_helper'
+require 'support/shared_application_record_examples'
 require 'support/shared_method_existance_examples'
 require 'support/shared_sorting_scopes_examples'
 require 'support/shared_filtering_scopes_examples'
@@ -9,7 +10,7 @@ module GogglesDb
   RSpec.describe APIDailyUse do
     shared_examples_for 'a valid APIDailyUse instance' do
       it 'is valid' do
-        expect(subject).to be_an(described_class).and be_valid
+        expect(subject).to be_a(described_class).and be_valid
       end
 
       # Presence of fields:
@@ -22,6 +23,8 @@ module GogglesDb
         'responding to a list of class methods',
         %i[increase_for!]
       )
+
+      it_behaves_like('ApplicationRecord shared interface')
     end
 
     before { expect(minimum_domain.count).to be_positive }

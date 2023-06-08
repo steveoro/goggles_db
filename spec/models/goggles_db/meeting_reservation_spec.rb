@@ -1,9 +1,9 @@
 # frozen_string_literal: true
 
 require 'rails_helper'
+require 'support/shared_application_record_examples'
 require 'support/shared_method_existance_examples'
 require 'support/shared_filtering_scopes_examples'
-require 'support/shared_to_json_examples'
 
 module GogglesDb
   RSpec.describe MeetingReservation do
@@ -25,7 +25,14 @@ module GogglesDb
            minimal_attributes meeting_attributes
            to_json]
       )
+
+      it_behaves_like('ApplicationRecord shared interface')
     end
+
+    #-- ------------------------------------------------------------------------
+    #++
+
+    let(:fixture_row) { described_class.last(100).sample }
 
     context 'any pre-seeded instance' do
       subject { described_class.all.limit(20).sample }
@@ -82,42 +89,37 @@ module GogglesDb
       end
     end
 
-    describe '#minimal_attributes' do
-      subject { described_class.limit(200).sample.minimal_attributes }
+    describe '#minimal_attributes (override)' do
+      subject(:result) { fixture_row.minimal_attributes }
 
-      it 'is an Hash' do
-        expect(subject).to be_an(Hash)
+      %w[display_label short_label].each do |method_name|
+        it "includes the decorated '#{method_name}'" do
+          expect(result[method_name]).to eq(fixture_row.decorate.send(method_name))
+        end
       end
 
-      %w[
-        display_label short_label
-        badge team swimmer
-      ].each do |association_name|
-        it "includes the #{association_name} association key" do
-          expect(subject.keys).to include(association_name)
-        end
+      it 'includes the swimmer name & decorated label' do
+        expect(result['swimmer_name']).to eq(fixture_row.swimmer&.complete_name)
+        expect(result['swimmer_label']).to eq(fixture_row.swimmer&.decorate&.display_label)
+      end
+
+      it 'includes the team name & decorated label' do
+        expect(result['team_name']).to eq(fixture_row.team.editable_name)
+        expect(result['team_label']).to eq(fixture_row.team.decorate.display_label)
       end
     end
 
-    describe '#to_json' do
+    describe '#to_hash' do
       # Required associations:
       context 'for required associations,' do
-        subject { FactoryBot.create(:meeting_reservation) }
-
-        let(:json_hash) { JSON.parse(subject.to_json) }
-
-        %w[display_label short_label].each do |method_name|
-          it "includes the decorated '#{method_name}'" do
-            expect(json_hash[method_name]).to eq(subject.decorate.send(method_name))
-          end
-        end
+        subject { fixture_row }
 
         it_behaves_like(
-          '#to_json when called on a valid instance',
+          '#to_hash when the entity has any 1:1 required association with',
           %w[badge team swimmer user]
         )
         it_behaves_like(
-          '#to_json when called on a valid instance with a synthetized association',
+          '#to_hash when the entity has any 1:1 summarized association with',
           %w[meeting]
         )
       end
@@ -131,10 +133,8 @@ module GogglesDb
             mer.meeting_reservation
           end
 
-          let(:json_hash) { JSON.parse(subject.to_json) }
-
           it_behaves_like(
-            '#to_json when the entity contains collection associations with',
+            '#to_hash when the entity has any 1:N collection association with',
             %w[meeting_event_reservations]
           )
         end
@@ -146,10 +146,8 @@ module GogglesDb
             mrr.meeting_reservation
           end
 
-          let(:json_hash) { JSON.parse(subject.to_json) }
-
           it_behaves_like(
-            '#to_json when the entity contains collection associations with',
+            '#to_hash when the entity has any 1:N collection association with',
             %w[meeting_relay_reservations]
           )
         end
