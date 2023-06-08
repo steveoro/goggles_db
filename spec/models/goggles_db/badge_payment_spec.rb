@@ -1,10 +1,10 @@
 # frozen_string_literal: true
 
 require 'rails_helper'
+require 'support/shared_application_record_examples'
 require 'support/shared_sorting_scopes_examples'
 require 'support/shared_method_existance_examples'
 require 'support/shared_filtering_scopes_examples'
-require 'support/shared_to_json_examples'
 
 module GogglesDb
   RSpec.describe BadgePayment do
@@ -26,8 +26,7 @@ module GogglesDb
       it_behaves_like(
         'responding to a list of methods',
         %i[payment_date amount swimmer_complete_name
-           manual?
-           to_json]
+           manual?]
       )
 
       # Presence of fields & requiredness:
@@ -35,6 +34,8 @@ module GogglesDb
         'having one or more required & present attributes (invalid if missing)',
         %i[payment_date amount]
       )
+
+      it_behaves_like('ApplicationRecord shared interface')
     end
     #-- ------------------------------------------------------------------------
     #++
@@ -63,11 +64,11 @@ module GogglesDb
     #-- ------------------------------------------------------------------------
     #++
 
-    describe '#to_json' do
+    describe '#to_hash' do
       subject { FactoryBot.create(:badge_payment) }
 
       it_behaves_like(
-        '#to_json when called on a valid instance',
+        '#to_hash when the entity has any 1:1 required association with',
         %w[badge swimmer season team]
       )
     end

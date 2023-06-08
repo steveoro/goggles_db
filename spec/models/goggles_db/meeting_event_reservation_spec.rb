@@ -1,10 +1,10 @@
 # frozen_string_literal: true
 
 require 'rails_helper'
+require 'support/shared_application_record_examples'
 require 'support/shared_method_existance_examples'
 require 'support/shared_filtering_scopes_examples'
 require 'support/shared_timing_manageable_examples'
-require 'support/shared_to_json_examples'
 
 module GogglesDb
   RSpec.describe MeetingEventReservation do
@@ -23,9 +23,10 @@ module GogglesDb
         'responding to a list of methods',
         %i[minutes seconds hundredths
            accepted?
-           meeting_attributes
-           to_json]
+           meeting_attributes]
       )
+
+      it_behaves_like('ApplicationRecord shared interface')
     end
 
     context 'any pre-seeded instance' do
@@ -59,58 +60,55 @@ module GogglesDb
       it_behaves_like 'TimingManageable'
     end
 
-    describe '#minimal_attributes' do
-      subject { fixture_row.minimal_attributes }
+    describe '#minimal_attributes (override)' do
+      subject(:result) { fixture_row.minimal_attributes }
 
       let(:fixture_row) { described_class.limit(20).sample }
 
-      it 'is an Hash' do
-        expect(subject).to be_an(Hash)
+      %w[display_label short_label].each do |method_name|
+        it "includes the decorated '#{method_name}'" do
+          expect(result[method_name]).to eq(fixture_row.decorate.send(method_name))
+        end
       end
 
       it 'includes the timing string' do
-        expect(subject['timing']).to eq(fixture_row.to_timing.to_s)
+        expect(result['timing']).to eq(fixture_row.to_timing.to_s)
       end
 
-      %w[meeting_event].each do |association_name|
-        it "includes the #{association_name} association key" do
-          expect(subject.keys).to include(association_name)
-        end
+      it 'includes the swimmer name & decorated label' do
+        expect(result['swimmer_name']).to eq(fixture_row.swimmer.complete_name)
+        expect(result['swimmer_label']).to eq(fixture_row.swimmer.decorate.display_label)
+      end
+
+      it 'includes the team name & decorated label' do
+        expect(result['team_name']).to eq(fixture_row.team.editable_name)
+        expect(result['team_label']).to eq(fixture_row.team.decorate.display_label)
+      end
+
+      it 'includes the event label' do
+        expect(result['event_label']).to eq(fixture_row.event_type.label)
+      end
+
+      it 'includes the category code & label' do
+        expect(result['category_code']).to eq(fixture_row.category_type.code)
+        expect(result['category_label']).to eq(fixture_row.category_type.decorate.short_label)
+      end
+
+      it 'includes the gender code' do
+        expect(result['gender_code']).to eq(fixture_row.gender_type.code)
       end
     end
 
-    describe '#to_json' do
-      subject { FactoryBot.create(:meeting_event_reservation) }
-
-      let(:json_hash) { JSON.parse(subject.to_json) }
-
-      it 'includes the timing string' do
-        expect(json_hash['timing']).to eq(subject.to_timing.to_s)
-      end
-
-      # Required keys:
-      %w[
-        timing display_label short_label
-        meeting meeting_event event_type badge team swimmer
-      ].each do |member_name|
-        it "includes the #{member_name} member key" do
-          expect(json_hash[member_name]).to be_present
-        end
-      end
-
-      %w[display_label short_label].each do |method_name|
-        it "includes the decorated '#{method_name}'" do
-          expect(json_hash[method_name]).to eq(subject.decorate.send(method_name))
-        end
-      end
+    describe '#to_hash' do
+      subject { described_class.limit(20).sample }
 
       # Required associations:
       it_behaves_like(
-        '#to_json when called on a valid instance',
+        '#to_hash when the entity has any 1:1 required association with',
         %w[meeting_event event_type badge team swimmer]
       )
       it_behaves_like(
-        '#to_json when called on a valid instance with a synthetized association',
+        '#to_hash when the entity has any 1:1 summarized association with',
         %w[meeting]
       )
     end

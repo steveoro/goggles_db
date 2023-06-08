@@ -47,7 +47,7 @@ module GogglesDb
     # included by <tt>#to_hash</tt> (and, consequently, by <tt>#to_json</tt>).
     #
     def single_associations
-      super + %i[team meeting meeting_program event_type category_type meeting_individual_result]
+      super + %w[team meeting meeting_program event_type category_type meeting_individual_result]
     end
     #-- ------------------------------------------------------------------------
     #++

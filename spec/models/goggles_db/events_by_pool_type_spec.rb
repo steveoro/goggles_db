@@ -1,10 +1,10 @@
 # frozen_string_literal: true
 
 require 'rails_helper'
+require 'support/shared_application_record_examples'
 require 'support/shared_method_existance_examples'
 require 'support/shared_sorting_scopes_examples'
 require 'support/shared_filtering_scopes_examples'
-require 'support/shared_to_json_examples'
 
 module GogglesDb
   RSpec.describe EventsByPoolType do
@@ -14,7 +14,7 @@ module GogglesDb
       subject { full_cached_table.sample }
 
       it 'is valid' do
-        expect(subject).to be_an(described_class).and be_valid
+        expect(subject).to be_a(described_class).and be_valid
       end
 
       it_behaves_like(
@@ -25,6 +25,8 @@ module GogglesDb
         'responding to a list of methods',
         %i[length_in_meters relay? eventable? to_json]
       )
+
+      it_behaves_like('ApplicationRecord shared interface')
 
       describe '#eventable?' do
         context 'with an Event/Pool type combination valid for a MeetingEvent,' do
@@ -42,9 +44,9 @@ module GogglesDb
         end
       end
 
-      describe '#to_json' do
+      describe '#to_hash' do
         it_behaves_like(
-          '#to_json when called on a valid instance',
+          '#to_hash when the entity has any 1:1 required association with',
           %w[pool_type event_type stroke_type]
         )
       end
@@ -97,7 +99,7 @@ module GogglesDb
         it 'returns non-empty Relation of EventsByPoolType' do
           expect(result).to be_a(ActiveRecord::Relation)
           expect(result).not_to be_empty
-          expect(result).to all be_an(described_class)
+          expect(result).to all be_a(described_class)
         end
 
         describe 'the result set' do

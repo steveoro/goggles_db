@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 require 'rails_helper'
+require 'support/shared_application_record_examples'
 require 'support/shared_method_existance_examples'
 require 'support/shared_filtering_scopes_examples'
 
@@ -23,6 +24,8 @@ module GogglesDb
            meeting_points meeting_relay_points meeting_team_points
            season_points season_relay_points season_team_points]
       )
+
+      it_behaves_like('ApplicationRecord shared interface')
     end
 
     context 'any valid, pre-seeded instance' do

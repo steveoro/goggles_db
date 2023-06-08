@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 require 'rails_helper'
+require 'support/shared_application_record_examples'
 require 'support/shared_method_existance_examples'
 require 'support/shared_localizable_examples'
 
@@ -10,7 +11,7 @@ module GogglesDb
       subject { (described_class.all_individuals + described_class.all_relays).sample }
 
       it 'is valid' do
-        expect(subject).to be_an(described_class).and be_valid
+        expect(subject).to be_a(described_class).and be_valid
       end
 
       it_behaves_like(
@@ -23,6 +24,7 @@ module GogglesDb
       )
 
       it_behaves_like('Localizable')
+      it_behaves_like('ApplicationRecord shared interface')
 
       it 'has a #code' do
         expect(subject.code).to be_present

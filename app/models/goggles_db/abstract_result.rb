@@ -63,14 +63,14 @@ module GogglesDb
     # included by <tt>#to_hash</tt> (and, consequently, by <tt>#to_json</tt>).
     #
     def single_associations
-      %i[swimmer gender_type disqualification_code_type]
+      %w[swimmer gender_type disqualification_code_type]
     end
 
     # Override: returns the list of multiple association names (as symbols)
     # included by <tt>#to_hash</tt> (and, consequently, by <tt>#to_json</tt>).
     #
     def multiple_associations
-      %i[laps]
+      %w[laps]
     end
 
     # Override: include some of the decorated fields in the output.
@@ -117,16 +117,5 @@ module GogglesDb
     #
     # ==> OVERRIDE IN SIBLINGS <==
     def parent_meeting; end
-
-    # Returns the "minimum required" hash of associations.
-    #
-    # Typical use for this is as helper called from within the #to_json definition
-    # of a parent entity via a #minimal_attributes call.
-    # def minimal_associations
-    #   {
-    #     'swimmer' => swimmer_attributes,
-    #     'disqualification_code_type' => disqualification_code_type&.lookup_attributes
-    #   }
-    # end
   end
 end

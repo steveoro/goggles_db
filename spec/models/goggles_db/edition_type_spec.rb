@@ -1,40 +1,27 @@
 # frozen_string_literal: true
 
 require 'rails_helper'
+require 'support/shared_application_record_examples'
 require 'support/shared_localizable_examples'
 
 module GogglesDb
   RSpec.describe EditionType do
-    context 'any pre-seeded instance' do
-      subject { described_class.all.sample }
-
-      it 'is valid' do
-        expect(subject).to be_valid
-      end
-
-      it_behaves_like('Localizable')
-    end
-
     %w[ordinal roman none yearly seasonal].each do |word|
       describe "self.#{word}" do
-        it 'is has a #code' do
-          expect(subject.class.send(word)).to respond_to(:code)
-          expect(subject.class.send(word).code).to be_present
-        end
+        subject { described_class.send(word) }
 
-        it 'is a valid instance of the same class' do
-          expect(subject.class.send(word)).to be_a(subject.class).and be_valid
-        end
+        it_behaves_like('Localizable') # includes checking for #code
+        it_behaves_like('ApplicationRecord shared interface')
 
         it "has a corresponding (true, for having the same code) ##{word}? helper method" do
-          expect(subject.class.send(word).send("#{word}?")).to be true
+          expect(described_class.send(word).send("#{word}?")).to be true
         end
       end
     end
 
     describe 'self.validate_cached_rows' do
       it 'does not raise any errors' do
-        expect { subject.class.validate_cached_rows }.not_to raise_error
+        expect { described_class.validate_cached_rows }.not_to raise_error
       end
     end
   end

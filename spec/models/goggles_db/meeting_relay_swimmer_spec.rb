@@ -1,11 +1,11 @@
 # frozen_string_literal: true
 
 require 'rails_helper'
+require 'support/shared_application_record_examples'
 require 'support/shared_method_existance_examples'
 require 'support/shared_sorting_scopes_examples'
 require 'support/shared_filtering_scopes_examples'
 require 'support/shared_timing_manageable_examples'
-require 'support/shared_to_json_examples'
 
 module GogglesDb
   RSpec.describe MeetingRelaySwimmer do
@@ -29,18 +29,19 @@ module GogglesDb
       it_behaves_like(
         'responding to a list of methods',
         %i[minutes seconds hundredths
-           minimal_attributes swimmer_attributes
-           to_timing to_json]
+           swimmer_attributes
+           to_timing]
       )
-    end
 
+      it_behaves_like('ApplicationRecord shared interface')
+    end
     #-- ------------------------------------------------------------------------
     #++
 
-    let(:fixture_row) { FactoryBot.create(:meeting_relay_swimmer) }
+    let(:fixture_row) { described_class.last(100).sample }
 
     context 'any pre-seeded instance' do
-      subject { described_class.all.limit(20).sample }
+      subject { described_class.last(100).sample }
 
       it_behaves_like('a valid MeetingRelaySwimmer instance')
     end
@@ -50,13 +51,10 @@ module GogglesDb
 
       it_behaves_like('a valid MeetingRelaySwimmer instance')
     end
-    #-- ------------------------------------------------------------------------
-    #++
 
     # Sorting scopes:
     describe 'self.by_order' do
-      let(:fixture_row) { FactoryBot.create(:meeting_relay_result_with_swimmers) }
-      let(:result) { fixture_row.meeting_relay_swimmers.by_order }
+      let(:result) { described_class.limit(100).by_order }
 
       it_behaves_like('sorting scope by_<ANY_VALUE_NAME> (with prepared result)', described_class, 'relay_order')
     end
@@ -69,45 +67,55 @@ module GogglesDb
     describe 'self.with_no_time' do
       it_behaves_like('filtering scope with_no_time', described_class)
     end
+    #-- ------------------------------------------------------------------------
+    #++
 
     describe 'regarding the timing fields,' do
       # subject = fixture_row (can even be just built, not created)
-      it_behaves_like 'TimingManageable'
+      it_behaves_like('TimingManageable')
     end
 
-    describe '#minimal_attributes' do
-      subject { fixture_row.minimal_attributes }
-
-      it 'is an Hash' do
-        expect(subject).to be_an(Hash)
-      end
+    describe '#minimal_attributes (override)' do
+      subject(:result) { fixture_row.minimal_attributes }
 
       it 'includes the timing string' do
-        expect(subject['timing']).to eq(fixture_row.to_timing.to_s)
+        expect(result['timing']).to eq(fixture_row.to_timing.to_s)
       end
 
-      %w[gender_type stroke_type].each do |association_name|
-        it "includes the #{association_name} association key" do
-          expect(subject.keys).to include(association_name)
-        end
+      it 'includes the swimmer name & decorated label' do
+        expect(result['swimmer_name']).to eq(fixture_row.swimmer.complete_name)
+        expect(result['swimmer_label']).to eq(fixture_row.swimmer.decorate.display_label)
       end
-      it "contains the 'synthetized' swimmer details" do
-        expect(subject['swimmer']).to be_an(Hash).and be_present
-        expect(subject['swimmer']).to eq(fixture_row.swimmer_attributes)
+
+      it 'includes the team name & decorated label' do
+        expect(result['team_name']).to eq(fixture_row.team.editable_name)
+        expect(result['team_label']).to eq(fixture_row.team.decorate.display_label)
+      end
+
+      it 'includes the event label' do
+        expect(result['event_label']).to eq(fixture_row.event_type.label)
+      end
+
+      it 'includes the stroke code' do
+        expect(result['stroke_code']).to eq(fixture_row.stroke_type.code)
+      end
+
+      it 'includes the gender code' do
+        expect(result['gender_code']).to eq(fixture_row.gender_type.code)
       end
     end
 
-    describe '#to_json' do
-      subject { FactoryBot.create(:meeting_relay_swimmer) }
-
-      it 'includes the timing string' do
-        expect(JSON.parse(subject.to_json)['timing']).to eq(subject.to_timing.to_s)
-      end
+    describe '#to_hash' do
+      subject { fixture_row }
 
       # Required associations:
       it_behaves_like(
-        '#to_json when called on a valid instance',
+        '#to_hash when the entity has any 1:1 required association with',
         %w[meeting_relay_result team badge event_type stroke_type]
+      )
+      it_behaves_like(
+        '#to_hash when the entity has any 1:1 summarized association with',
+        %w[swimmer]
       )
     end
   end

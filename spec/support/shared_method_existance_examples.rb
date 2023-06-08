@@ -28,7 +28,7 @@ end
 
 shared_examples_for 'having one or more required & present attributes (invalid if missing)' do |attribute_name_array|
   attribute_name_array.each do |member_name|
-    it "is has a ##{member_name}" do
+    it "has a ##{member_name}" do
       expect(subject).to respond_to(member_name)
       expect(subject.send(member_name)).to be_present
     end

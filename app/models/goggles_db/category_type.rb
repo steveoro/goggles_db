@@ -49,7 +49,7 @@ module GogglesDb
     # included by <tt>#to_hash</tt> (and, consequently, by <tt>#to_json</tt>).
     #
     def single_associations
-      %i[season]
+      %w[season]
     end
 
     # Override: include some of the decorated fields in the output.

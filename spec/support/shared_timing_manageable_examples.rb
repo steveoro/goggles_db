@@ -3,7 +3,8 @@
 # subject = fixture_row.to_timing
 shared_examples_for '#to_timing valid result' do
   it 'is a Timing instance' do
-    expect(subject).to be_a(Timing).and be_present
+    # to_timing may also return a zero when the instance is not filled, so no presence check here:
+    expect(subject).to be_a(Timing)
   end
 
   it 'contains the same timing data than the original fixture' do

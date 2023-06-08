@@ -128,14 +128,14 @@ module GogglesDb
     # included by <tt>#to_hash</tt> (and, consequently, by <tt>#to_json</tt>).
     #
     def single_associations
-      %i[associated_user gender_type]
+      %w[associated_user gender_type]
     end
 
     # Override: returns the list of multiple association names (as symbols)
     # included by <tt>#to_hash</tt> (and, consequently, by <tt>#to_json</tt>).
     #
     def multiple_associations
-      %i[]
+      %w[]
     end
 
     # Override: include some of the decorated fields in the output.

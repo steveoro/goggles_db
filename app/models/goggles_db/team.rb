@@ -88,14 +88,14 @@ module GogglesDb
     # included by <tt>#to_hash</tt> (and, consequently, by <tt>#to_json</tt>).
     #
     def single_associations
-      %i[city]
+      %w[city]
     end
 
     # Override: returns the list of multiple association names (as symbols)
     # included by <tt>#to_hash</tt> (and, consequently, by <tt>#to_json</tt>).
     #
     def multiple_associations
-      %i[]
+      %w[]
     end
 
     # Override: include some of the decorated fields in the output.
@@ -112,7 +112,6 @@ module GogglesDb
     #
     def to_hash(options = nil)
       super(options).merge(
-        'badges' => recent_badges.map(&:minimal_attributes),
         'team_affiliations' => recent_affiliations.map(&:minimal_attributes)
       )
     end

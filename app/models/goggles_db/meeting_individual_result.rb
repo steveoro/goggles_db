@@ -114,7 +114,7 @@ module GogglesDb
     # included by <tt>#to_hash</tt> (and, consequently, by <tt>#to_json</tt>).
     #
     def single_associations
-      super + %i[team team_affiliation meeting meeting_session meeting_event meeting_program
+      super + %w[team team_affiliation meeting meeting_session meeting_event meeting_program
                  pool_type event_type category_type stroke_type]
     end
 
@@ -131,7 +131,7 @@ module GogglesDb
       )
     end
 
-    # Returns a commodity Hash wrapping the essential data that summarizes the Meeting
+    # (Override) Returns a commodity Hash wrapping the essential data that summarizes the Meeting
     # associated to this row.
     def meeting_attributes
       {

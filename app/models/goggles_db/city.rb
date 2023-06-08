@@ -128,7 +128,7 @@ module GogglesDb
     # A stringified value, taken with FIFO in precendence: 1) ISO City latitude, 2) 'latitude' column value
     def iso_latitude(iso_city = nil)
       chosen_city = iso_city || @iso_city
-      chosen_city&.latitude&.to_s || latitude
+      chosen_city&.latitude.to_s || latitude
     end
 
     # Retrieves either the currently set ISO longitude or the serialized value on the model.
@@ -140,7 +140,7 @@ module GogglesDb
     # A stringified value, taken with FIFO in precendence: 1) ISO City longitude, 2) 'longitude' column value
     def iso_longitude(iso_city = nil)
       chosen_city = iso_city || @iso_city
-      chosen_city&.longitude&.to_s || longitude
+      chosen_city&.longitude.to_s || longitude
     end
 
     # Returns the ISO Region name, if available (+nil+ otherwise).

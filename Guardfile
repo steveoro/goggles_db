@@ -49,7 +49,7 @@ end
 # == Rubocop ==
 rubocop_options = {
   cmd: 'spec/dummy/bin/rubocop',
-  cli: '-f fu'
+  cli: '-f pacman -a'
 }
 guard :rubocop, rubocop_options do
   watch(/.+\.rb$/)
@@ -85,7 +85,7 @@ end
 rspec_options = {
   cmd: 'spec/dummy/bin/rspec',
   # Exclude performance tests; to make it fail-fast, add option "--fail-fast":
-  cmd_additional_args: ' --color --profile 10 -f progress --order rand -t ~type:performance',
+  cmd_additional_args: ' --color --profile 10 -f progress --order rand -f RspecPacmanFormatter::Pacman -t ~type:performance',
   all_after_pass: false,
   failed_mode: :focus
 }

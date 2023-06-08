@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 require 'rails_helper'
+require 'support/shared_application_record_examples'
 require 'support/shared_method_existance_examples'
 
 module GogglesDb
@@ -23,13 +24,15 @@ module GogglesDb
         # Default value for factory constructor:
         expect(subject.maintenance?).to be false
       end
+
+      it_behaves_like('ApplicationRecord shared interface')
     end
 
     describe 'self.versioning_row' do
       subject { described_class.versioning_row }
 
       it 'is an instance of AppParameter' do
-        expect(subject).to be_an(described_class).and be_valid
+        expect(subject).to be_a(described_class).and be_valid
       end
 
       it 'has a non-empty string for DB versioning' do
@@ -57,7 +60,7 @@ module GogglesDb
       subject { described_class.config }
 
       it 'is an instance of AppParameter' do
-        expect(subject).to be_an(described_class).and be_valid
+        expect(subject).to be_a(described_class).and be_valid
       end
 
       AppParameter::SETTINGS_GROUPS.each do |setting_key|

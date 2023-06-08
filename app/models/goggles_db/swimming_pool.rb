@@ -82,7 +82,7 @@ module GogglesDb
     # included by <tt>#to_hash</tt> (and, consequently, by <tt>#to_json</tt>).
     #
     def single_associations
-      %i[city pool_type shower_type hair_dryer_type locker_cabinet_type]
+      %w[city pool_type shower_type hair_dryer_type locker_cabinet_type]
     end
 
     # Override: include some of the decorated fields in the output.
@@ -91,8 +91,8 @@ module GogglesDb
       super(locale).merge(
         'display_label' => decorate.display_label(locale),
         'short_label' => decorate.short_label(locale),
-        'city' => city.decorate.short_label,
         'city_name' => city.name,
+        'city_label' => city.decorate.short_label,
         'pool_code' => pool_type.code
       )
     end

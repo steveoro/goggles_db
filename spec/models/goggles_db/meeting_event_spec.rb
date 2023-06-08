@@ -1,9 +1,9 @@
 # frozen_string_literal: true
 
 require 'rails_helper'
+require 'support/shared_application_record_examples'
 require 'support/shared_method_existance_examples'
 require 'support/shared_sorting_scopes_examples'
-require 'support/shared_to_json_examples'
 
 module GogglesDb
   RSpec.describe MeetingEvent do
@@ -31,10 +31,10 @@ module GogglesDb
         %i[meeting_programs meeting_individual_results meeting_relay_results meeting_entries category_types
            begin_time notes autofilled? out_of_race? eventable?
            split_gender_start_list? split_category_start_list?
-           scheduled_date relay?
-           minimal_attributes
-           to_json]
+           scheduled_date relay?]
       )
+
+      it_behaves_like('ApplicationRecord shared interface')
     end
 
     #-- ------------------------------------------------------------------------
@@ -98,51 +98,25 @@ module GogglesDb
       end
     end
 
-    describe '#minimal_attributes' do
-      subject(:result) { existing_row.minimal_attributes }
+    describe '#minimal_attributes (override)' do
+      subject(:result) { fixture_row.minimal_attributes }
 
-      let(:existing_row) { described_class.limit(200).sample }
-
-      it 'is an Hash' do
-        expect(result).to be_an(Hash)
-      end
-
-      %w[event_type pool_type stroke_type heat_type].each do |association_name|
-        it "includes the #{association_name} association key" do
-          expect(result.keys).to include(association_name)
-        end
-      end
+      let(:fixture_row) { described_class.limit(200).sample }
 
       %w[display_label short_label].each do |method_name|
         it "includes the decorated '#{method_name}'" do
-          expect(result[method_name]).to eq(existing_row.decorate.send(method_name))
+          expect(result[method_name]).to eq(fixture_row.decorate.send(method_name))
         end
       end
     end
 
-    describe '#to_json' do
-      let(:json_hash) { JSON.parse(subject.to_json) }
-
-      # Required keys:
-      %w[
-        display_label short_label
-        meeting_session event_type pool_type stroke_type heat_type season season_type
-      ].each do |member_name|
-        it "includes the #{member_name} member key" do
-          expect(json_hash[member_name]).to be_present
-        end
-      end
-
-      %w[display_label short_label].each do |method_name|
-        it "includes the decorated '#{method_name}'" do
-          expect(json_hash[method_name]).to eq(subject.decorate.send(method_name))
-        end
-      end
+    describe '#to_hash' do
+      subject { described_class.limit(200).sample }
 
       # Required associations:
       it_behaves_like(
-        '#to_json when called on a valid instance',
-        %w[meeting_session event_type pool_type stroke_type heat_type season season_type]
+        '#to_hash when the entity has any 1:1 required association with',
+        %w[meeting_session season season_type event_type pool_type stroke_type heat_type]
       )
 
       # Collection associations:
@@ -153,10 +127,8 @@ module GogglesDb
           prg.meeting_event
         end
 
-        let(:json_hash) { JSON.parse(subject.to_json) }
-
         it_behaves_like(
-          '#to_json when the entity contains collection associations with',
+          '#to_hash when the entity has any 1:N collection association with',
           %w[meeting_programs]
         )
       end

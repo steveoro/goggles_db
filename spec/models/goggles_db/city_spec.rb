@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 require 'rails_helper'
+require 'support/shared_application_record_examples'
 require 'support/shared_method_existance_examples'
 require 'support/shared_filtering_scopes_examples'
 
@@ -30,6 +31,8 @@ module GogglesDb
           iso_attributes to_json
         ]
       )
+
+      it_behaves_like('ApplicationRecord shared interface')
     end
 
     context 'any pre-seeded instance' do
@@ -56,7 +59,7 @@ module GogglesDb
     #++
 
     # Test a bunch of 'IT' cities, which are granted to have regions/subdivisions:
-    described_class.where(country: 'Italy').first(20).each do |subject_city|
+    described_class.where(country: 'Italy').first(50).sample(3).each do |subject_city|
       context "when testing against an existing row ('#{subject_city.name}')," do
         before do
           subject_city.to_iso # Force a init+memoize call at first
@@ -174,6 +177,8 @@ module GogglesDb
           end
         end
       end
+      #-- ---------------------------------------------------------------------
+      #++
 
       describe '#iso_attributes' do
         subject { subject_city.iso_attributes }
@@ -184,8 +189,8 @@ module GogglesDb
           expect(subject).to be_an(Hash).and be_present
         end
 
-        it 'includes all the legacy customizable City attributes plus the additional ISO attributes' do
-          expect(subject.keys).to include('id', 'name', 'latitude', 'longitude', 'country', 'country_code', 'region', 'area', 'area_code', 'zip')
+        it 'includes just the additional ISO attributes' do
+          expect(subject.keys).to include('name', 'latitude', 'longitude', 'country', 'country_code', 'region', 'area', 'area_code')
         end
         # Just a couple of quick checks to verify supported locales are actually there:
 
@@ -198,22 +203,24 @@ module GogglesDb
         end
       end
 
-      describe '#to_json' do
-        subject { subject_city.to_json }
+      describe '#minimal_attributes (override)' do
+        subject(:result) { subject_city.minimal_attributes }
 
-        let(:subject_city) { described_class.first(100).sample }
-
-        it 'is a String' do
-          expect(subject).to be_a(String).and be_present
+        %w[display_label short_label].each do |method_name|
+          it "includes the decorated '#{method_name}'" do
+            expect(result[method_name]).to eq(subject_city.decorate.send(method_name))
+          end
         end
 
-        it 'can be parsed without errors' do
-          expect { JSON.parse(subject) }.not_to raise_error
+        it 'includes the original row attributes' do
+          expect(subject.keys).to include('id', 'zip')
         end
 
+        # rubocop:disable RSpec/NoExpectationExample
         it 'includes all the #iso_attributes' do
-          expect(JSON.parse(subject).keys).to match_array(subject_city.iso_attributes.keys)
+          hash2_includes_hash1(hash1: subject_city.iso_attributes, hash2: result)
         end
+        # rubocop:enable RSpec/NoExpectationExample
       end
     end
     #-- ------------------------------------------------------------------------

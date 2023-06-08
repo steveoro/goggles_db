@@ -64,12 +64,12 @@ module GogglesDb
     #
     def minimal_attributes(locale = I18n.locale)
       super(locale).merge(
+        'display_label' => decorate.display_label,
+        'short_label' => decorate.short_label,
         'swimmer_name' => swimmer.complete_name,
         'swimmer_label' => swimmer.decorate.display_label(locale),
         'team_name' => team.editable_name,
-        'team_label' => team.decorate.display_label,
-        'display_label' => decorate.display_label,
-        'short_label' => decorate.short_label
+        'team_label' => team.decorate.display_label
       )
     end
 

@@ -1,12 +1,12 @@
 # frozen_string_literal: true
 
 require 'rails_helper'
+require 'support/shared_abstract_lap_examples'
+require 'support/shared_application_record_examples'
 require 'support/shared_method_existance_examples'
 require 'support/shared_sorting_scopes_examples'
 require 'support/shared_filtering_scopes_examples'
 require 'support/shared_timing_manageable_examples'
-require 'support/shared_to_json_examples'
-require 'support/shared_abstract_lap_examples'
 
 module GogglesDb
   RSpec.describe Lap do
@@ -39,13 +39,13 @@ module GogglesDb
            meeting_attributes
            to_timing to_json]
       )
+
+      it_behaves_like('ApplicationRecord shared interface')
     end
     #-- ------------------------------------------------------------------------
     #++
 
-    # TimingManageable:
     let(:fixture_row) { FactoryBot.create(:lap) }
-    # Filtering scopes:
     let(:existing_row) do
       described_class.joins(:meeting_program)
                      .includes(:meeting_individual_result)
@@ -53,7 +53,7 @@ module GogglesDb
     end
 
     context 'any pre-seeded instance' do
-      subject { described_class.all.limit(20).sample }
+      subject { described_class.first(20).sample }
 
       it_behaves_like('a valid Lap instance')
     end
@@ -69,8 +69,10 @@ module GogglesDb
     # Sorting scopes:
     it_behaves_like('AbstractLap sorting scopes', described_class)
 
+    # Filtering scopes:
     it_behaves_like('AbstractLap filtering scopes', described_class)
 
+    # TimingManageable:
     describe 'regarding the timing fields,' do
       # subject = fixture_row (can even be just built, not created)
       it_behaves_like('TimingManageable')
@@ -81,26 +83,17 @@ module GogglesDb
     #-- ------------------------------------------------------------------------
     #++
 
-    describe '#to_json' do
+    describe '#to_hash' do
       subject { FactoryBot.create(:lap) }
-
-      let(:result) { JSON.parse(subject.to_json) }
-
-      it 'includes the timing string' do
-        expect(result['timing']).to eq(subject.to_timing.to_s)
-      end
-
-      it 'includes the timing string from the start of the race' do
-        expect(result['timing_from_start']).to eq(subject.timing_from_start.to_s)
-      end
 
       # Required associations:
       it_behaves_like(
-        '#to_json when called on a valid instance',
-        %w[meeting_program team meeting_individual_result event_type pool_type]
+        '#to_hash when the entity has any 1:1 required association with',
+        %w[gender_type team meeting_program meeting_individual_result event_type category_type]
       )
+
       it_behaves_like(
-        '#to_json when called on a valid instance with a synthetized association',
+        '#to_hash when the entity has any 1:1 summarized association with',
         %w[meeting swimmer]
       )
     end

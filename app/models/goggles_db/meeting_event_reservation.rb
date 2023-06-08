@@ -47,7 +47,7 @@ module GogglesDb
     # included by <tt>#to_hash</tt> (and, consequently, by <tt>#to_json</tt>).
     #
     def single_associations
-      %i[meeting meeting_event event_type badge team swimmer]
+      %w[meeting meeting_event event_type badge team swimmer]
     end
 
     # Override: include some of the decorated fields in the output.

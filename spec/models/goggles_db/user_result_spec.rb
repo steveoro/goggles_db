@@ -1,8 +1,9 @@
 # frozen_string_literal: true
 
 require 'rails_helper'
-require 'support/shared_method_existance_examples'
 require 'support/shared_abstract_result_examples'
+require 'support/shared_application_record_examples'
+require 'support/shared_method_existance_examples'
 
 module GogglesDb
   RSpec.describe UserResult do
@@ -47,6 +48,8 @@ module GogglesDb
            standard_timing meeting_attributes swimmer_attributes
            minimal_attributes to_json]
       )
+
+      it_behaves_like('ApplicationRecord shared interface')
     end
 
     context 'any pre-seeded instance' do
@@ -142,34 +145,45 @@ module GogglesDb
       described_class,
       %w[swimmer swimming_pool disqualification_code_type]
     )
-    #-- -----------------------------------------------------------------------
-    #++
 
-    describe '#to_json' do
-      subject { FactoryBot.create(:user_result) }
+    describe '#minimal_attributes (override)' do
+      subject(:result) { fixture_row.minimal_attributes }
 
-      it 'includes the timing string' do
-        expect(JSON.parse(subject.to_json)['timing']).to eq(subject.to_timing.to_s)
+      let(:fixture_row) { FactoryBot.create(:user_result) }
+
+      it 'includes the event label' do
+        expect(result['event_label']).to eq(fixture_row.event_type.label)
       end
+
+      it 'includes the category code & label' do
+        expect(result['category_code']).to eq(fixture_row.category_type.code)
+        expect(result['category_label']).to eq(fixture_row.category_type.decorate.short_label)
+      end
+
+      it 'includes the gender code' do
+        expect(result['gender_code']).to eq(fixture_row.gender_type.code)
+      end
+    end
+
+    describe '#to_hash' do
+      subject { FactoryBot.create(:user_result) }
 
       # Required associations:
       it_behaves_like(
-        '#to_json when called on a valid instance',
+        '#to_hash when the entity has any 1:1 required association with',
         %w[swimming_pool pool_type event_type category_type gender_type stroke_type]
       )
       it_behaves_like(
-        '#to_json when called on a valid instance with a synthetized association',
+        '#to_hash when the entity has any 1:1 summarized association with',
         %w[user_workshop swimmer]
       )
 
       # Collection associations:
       context 'when the entity contains collection associations,' do
-        subject         { FactoryBot.create(:user_result_with_laps) }
-
-        let(:json_hash) { JSON.parse(subject.to_json) }
+        subject { FactoryBot.create(:user_result_with_laps) }
 
         it_behaves_like(
-          '#to_json when the entity contains collection associations with',
+          '#to_hash when the entity has any 1:N collection association with',
           %w[laps]
         )
       end

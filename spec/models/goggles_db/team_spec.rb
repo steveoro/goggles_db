@@ -1,10 +1,10 @@
 # frozen_string_literal: true
 
 require 'rails_helper'
+require 'support/shared_application_record_examples'
 require 'support/shared_method_existance_examples'
 require 'support/shared_sorting_scopes_examples'
 require 'support/shared_filtering_scopes_examples'
-require 'support/shared_to_json_examples'
 
 module GogglesDb
   RSpec.describe Team do
@@ -30,6 +30,8 @@ module GogglesDb
            address phone_mobile phone_number fax_number e_mail contact_name
            home_page_url]
       )
+
+      it_behaves_like('ApplicationRecord shared interface')
     end
 
     #-- ------------------------------------------------------------------------
@@ -101,61 +103,29 @@ module GogglesDb
     #-- ------------------------------------------------------------------------
     #++
 
-    describe '#minimal_attributes' do
+    describe '#minimal_attributes (override)' do
       subject(:result) { fixture_row.minimal_attributes }
 
       let(:fixture_row) { FactoryBot.create(:team, city: GogglesDb::City.limit(20).sample) }
-
-      it 'is an Hash' do
-        expect(result).to be_an(Hash)
-      end
-
-      %w[city].each do |association_name|
-        it "includes the #{association_name} association key" do
-          expect(result.keys).to include(association_name)
-        end
-      end
 
       %w[display_label short_label].each do |method_name|
         it "includes the decorated '#{method_name}'" do
           expect(result[method_name]).to eq(fixture_row.decorate.send(method_name))
         end
       end
+
+      it 'includes the associated, decorated City display label' do
+        expect(result['city_name']).to eq(fixture_row.city.decorate.display_label)
+      end
     end
 
-    describe '#to_json' do
-      # Test a minimalistic instance first:
-      subject { FactoryBot.create(:team, city: nil) }
-
-      let(:json_hash) { JSON.parse(subject.to_json) }
-
-      %w[display_label short_label].each do |method_name|
-        it "includes the decorated '#{method_name}'" do
-          expect(json_hash[method_name]).to eq(subject.decorate.send(method_name))
-        end
-      end
-
-      # Required associations:
-      it_behaves_like(
-        '#to_json when called on a valid instance',
-        []
-      )
-      it_behaves_like(
-        '#to_json when called with unset optional associations',
-        %w[city]
-      )
-
+    describe '#to_hash' do
       # Optional associations:
       context 'when the entity contains other optional associations,' do
         subject { FactoryBot.create(:team, city: GogglesDb::City.limit(20).sample) }
 
-        let(:json_hash) do
-          expect(subject.city).to be_a(City).and be_valid
-          JSON.parse(subject.to_json)
-        end
-
         it_behaves_like(
-          '#to_json when the entity contains other optional associations with',
+          '#to_hash when the entity has any 1:1 optional association with',
           %w[city]
         )
       end
@@ -164,11 +134,9 @@ module GogglesDb
       context 'when the entity contains collection associations,' do
         subject { team_with_badges }
 
-        let(:json_hash) { JSON.parse(subject.to_json) }
-
         it_behaves_like(
-          '#to_json when the entity contains collection associations with',
-          %w[badges team_affiliations]
+          '#to_hash when the entity has any 1:N collection association with',
+          %w[team_affiliations]
         )
       end
     end

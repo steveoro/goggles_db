@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 require 'rails_helper'
+require 'support/shared_application_record_examples'
 require 'support/shared_method_existance_examples'
 
 module GogglesDb
@@ -25,6 +26,8 @@ module GogglesDb
         'responding to a list of methods',
         %i[name team_id]
       )
+
+      it_behaves_like('ApplicationRecord shared interface')
     end
     #-- ------------------------------------------------------------------------
     #++

@@ -1,17 +1,14 @@
 # frozen_string_literal: true
 
 require 'rails_helper'
+require 'support/shared_application_record_examples'
 require 'support/shared_method_existance_examples'
 require 'support/shared_sorting_scopes_examples'
 require 'support/shared_filtering_scopes_examples'
-require 'support/shared_to_json_examples'
 
 module GogglesDb
   RSpec.describe SwimmingPool do
-    #-- ------------------------------------------------------------------------
-    #++
-
-    subject { FactoryBot.create(:swimming_pool) }
+    subject { described_class.first(200).sample }
 
     shared_examples_for 'a valid SwimmingPool instance' do
       it 'is valid' do
@@ -23,7 +20,7 @@ module GogglesDb
         %i[city pool_type]
       )
 
-      # Presence of fields & requiredness:
+      # Presence of fields & required-ness:
       it_behaves_like(
         'having one or more required & present attributes (invalid if missing)',
         %i[name nick_name lanes_number]
@@ -44,8 +41,6 @@ module GogglesDb
     end
 
     context 'any pre-seeded instance' do
-      subject { described_class.all.sample }
-
       it_behaves_like('a valid SwimmingPool instance')
     end
 
@@ -85,77 +80,35 @@ module GogglesDb
 
       let(:fixture_row) { FactoryBot.create(:swimming_pool, city: GogglesDb::City.limit(20).sample) }
 
-      it 'is an Hash' do
-        expect(result).to be_an(Hash)
-      end
-
-      %w[city pool_type shower_type hair_dryer_type locker_cabinet_type].each do |association_name|
-        it "includes the #{association_name} association key" do
-          expect(result.keys).to include(association_name)
-        end
-      end
-
       %w[display_label short_label].each do |method_name|
         it "includes the decorated '#{method_name}'" do
           expect(result[method_name]).to eq(fixture_row.decorate.send(method_name))
         end
       end
+
+      it 'includes the city name & decorated label' do
+        expect(result['city_name']).to eq(fixture_row.city.name)
+        expect(result['city_label']).to eq(fixture_row.city.decorate.short_label)
+      end
+
+      it 'includes the pool_code' do
+        expect(result['pool_code']).to eq(fixture_row.pool_type.code)
+      end
     end
 
-    describe '#to_json' do
-      # Test a minimalistic instance first:
-      subject do
-        FactoryBot.create(
-          :swimming_pool,
-          city: GogglesDb::City.limit(20).sample,
-          shower_type: nil,
-          hair_dryer_type: nil,
-          locker_cabinet_type: nil
-        )
-      end
-
-      let(:json_hash) { JSON.parse(subject.to_json) }
-
-      # Required keys:
-      %w[
-        display_label short_label
-        city pool_type
-      ].each do |member_name|
-        it "includes the #{member_name} member key" do
-          expect(json_hash[member_name]).to be_present
-        end
-      end
-
-      %w[display_label short_label].each do |method_name|
-        it "includes the decorated '#{method_name}'" do
-          expect(json_hash[method_name]).to eq(subject.decorate.send(method_name))
-        end
-      end
-
+    describe '#to_hash' do
       # Required associations:
       it_behaves_like(
-        '#to_json when called on a valid instance',
+        '#to_hash when the entity has any 1:1 required association with',
         %w[city pool_type]
       )
 
       # Optional associations:
-      it_behaves_like(
-        '#to_json when called with unset optional associations',
-        %w[shower_type hair_dryer_type locker_cabinet_type]
-      )
-
       context 'when the entity contains other optional associations' do
-        subject { FactoryBot.create(:swimming_pool) }
-
-        let(:json_hash) do
-          expect(subject.shower_type).to be_a(ShowerType).and be_valid
-          expect(subject.hair_dryer_type).to be_a(HairDryerType).and be_valid
-          expect(subject.locker_cabinet_type).to be_a(LockerCabinetType).and be_valid
-          JSON.parse(subject.to_json)
-        end
+        subject { FactoryBot.create(:swimming_pool) } # full associations
 
         it_behaves_like(
-          '#to_json when the entity contains other optional associations with',
+          '#to_hash when the entity has any 1:1 optional association with',
           %w[shower_type hair_dryer_type locker_cabinet_type]
         )
       end
