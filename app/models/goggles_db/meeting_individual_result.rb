@@ -6,7 +6,7 @@ module GogglesDb
   #
   # = MeetingIndividualResult model
   #
-  #   - version:  7-0.5.10
+  #   - version:  7-0.5.11
   #   - author:   Steve A.
   #
   class MeetingIndividualResult < AbstractResult
@@ -39,6 +39,8 @@ module GogglesDb
 
     validates :goggle_cup_points, presence: true, numericality: true
     validates :team_points,       presence: true, numericality: true
+
+    delegate :name, :editable_name, to: :team, prefix: true
 
     # Sorting scopes:
     scope :by_date, ->(dir = :asc) { joins(:meeting_session).order('meeting_sessions.scheduled_date': dir) }

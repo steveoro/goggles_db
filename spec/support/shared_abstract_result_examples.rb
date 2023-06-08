@@ -7,12 +7,43 @@ require 'support/shared_sorting_scopes_examples'
 require 'support/shared_filtering_scopes_examples'
 require 'support/shared_timing_manageable_examples'
 
+# (no REQUIRES)
+shared_examples_for 'AbstractResult sorting scopes' do
+  describe 'delegated methods (used by the sorting scopes)' do
+    subject { described_class.first(50).sample }
+
+    it_behaves_like(
+      'responding to a list of methods',
+      %i[swimmer_first_name swimmer_last_name swimmer_complete_name
+         swimmer_year_of_birth swimmer_gender_type_id]
+    )
+  end
+
+  describe 'self.by_rank' do
+    let(:result) { described_class.by_rank.limit(20) }
+
+    it_behaves_like('sorting scope by_<ANY_VALUE_NAME> (with prepared result)', described_class, 'rank')
+  end
+
+  describe 'self.by_timing' do
+    let(:result) { described_class.by_timing.limit(20) }
+
+    it_behaves_like('sorting scope by_<ANY_VALUE_NAME> (with prepared result)', described_class, 'to_timing')
+  end
+
+  describe 'self.by_swimmer' do
+    let(:result) { described_class.by_swimmer.limit(20) }
+
+    it_behaves_like('sorting scope by_<ANY_VALUE_NAME> (with prepared result)', described_class, 'swimmer_complete_name')
+  end
+end
+
 # REQUIRES/ASSUMES:
-# - subject...: a valid fixture instance of the sibling class
+# - subject: a valid fixture instance of the sibling class
 # - the existance of some rows having set disqualified & out_of_race both true & false
 shared_examples_for 'AbstractResult filtering scopes' do |sibling_class|
   describe 'self.qualifications' do
-    let(:result) { subject.class.qualifications.order('disqualified DESC').limit(20) }
+    let(:result) { subject.class.qualifications.limit(20).order('disqualified DESC').limit(20) }
 
     it 'contains only qualified results' do
       expect(result.map(&:disqualified?).uniq).to all(be false)
