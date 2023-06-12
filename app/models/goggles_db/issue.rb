@@ -4,7 +4,7 @@ module GogglesDb
   #
   # = Issue model
   #
-  #   - version:  7-0.5.10
+  #   - version:  7-0.5.13
   #   - author:   Steve A.
   #
   class Issue < ApplicationRecord
@@ -25,7 +25,8 @@ module GogglesDb
     # - 3b:  change swimmer association (free select from existing swimmer)
     # - 3c:  free associated swimmer details edit
     # - 4:   generic application error/bug (w/ long description + context & desired goal)
-    SUPPORTED_CODES = %w[0 1a 1b 1b1 2b1 3b 3c 4].freeze
+    # - 5:   reactivate account
+    SUPPORTED_CODES = %w[0 1a 1b 1b1 2b1 3b 3c 4 5].freeze
 
     # Limit for supported priorities (0 normal, 1 prioritized, 2 urgent, 3 critical)
     MAX_PRIORITY = 3
@@ -138,6 +139,9 @@ module GogglesDb
     #
     # === '4', generic application error/bug (w/ long description + context & desired goal)
     # - expected, outcome, reproduce => free text
+    #
+    # === '5', reactivate account
+    # - email
     #
     def data
       parse_data if @data.nil?

@@ -224,7 +224,7 @@ GEM
       term-ansicolor
       yard (~> 0.9.12)
     json (2.6.3)
-    jwt (2.7.0)
+    jwt (2.7.1)
     launchy (2.5.2)
       addressable (~> 2.8)
     ledermann-rails-settings (2.5.0)
@@ -288,8 +288,9 @@ GEM
       omniauth (~> 2.0)
     orm_adapter (0.5.0)
     parallel (1.23.0)
-    parser (3.2.2.1)
+    parser (3.2.2.3)
       ast (~> 2.4.1)
+      racc
     plus_codes (0.2.1)
     pry (0.14.2)
       coderay (~> 1.1)
@@ -342,7 +343,7 @@ GEM
     rb-fsevent (0.11.2)
     rb-inotify (0.10.1)
       ffi (~> 1.0)
-    regexp_parser (2.8.0)
+    regexp_parser (2.8.1)
     request_store (1.5.1)
       rack (>= 1.4)
     responders (3.1.0)
@@ -374,10 +375,10 @@ GEM
     rspec_pacman_formatter (0.1.7)
       colorize
       rspec
-    rubocop (1.52.0)
+    rubocop (1.52.1)
       json (~> 2.3)
       parallel (~> 1.10)
-      parser (>= 3.2.0.0)
+      parser (>= 3.2.2.3)
       rainbow (>= 2.2.2, < 4.0)
       regexp_parser (>= 1.8, < 3.0)
       rexml (>= 3.2.5, < 4.0)

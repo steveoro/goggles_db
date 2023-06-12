@@ -23,7 +23,7 @@ end
 shared_examples_for('ApplicationRecord shared interface') do
   it_behaves_like(
     'responding to a list of methods',
-    %i[minimal_attributes all_associations
+    %i[model_attributes minimal_attributes all_associations
        single_associations multiple_associations
        to_hash to_json]
   )

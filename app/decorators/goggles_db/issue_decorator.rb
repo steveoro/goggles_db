@@ -56,6 +56,8 @@ module GogglesDb
         end
       when '4'    # generic bug
         h.tag.span h.tag.i(class: 'fa fa-bug')
+      when '5'    # reactivate account
+        h.tag.span h.tag.i(class: 'fa fa-user-times')
       end
     end
     # rubocop:enable Metrics/AbcSize, Metrics/CyclomaticComplexity
