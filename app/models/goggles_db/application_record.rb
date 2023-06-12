@@ -4,13 +4,26 @@ module GogglesDb
   #
   # = ApplicationRecord abstract model
   #
-  #   - version:  7-0.5.10
+  #   - version:  7-0.5.13
   #   - author:   Steve A.
   #
   # Shared methods container
   #
   class ApplicationRecord < ActiveRecord::Base
     self.abstract_class = true
+
+    # Returns the hash of model attributes (column keys and values) minus fields needed
+    # only for internal usage.
+    #
+    # As of this version, only the following fields will be filtered out:
+    # - lock_version
+    #
+    # == Returns:
+    # The filtered attribute hash
+    #
+    def model_attributes
+      attributes.except('lock_version')
+    end
 
     # Returns the attribute Hash stripped of any attribute used for internal management.
     # (lock_version, timestamps...).
@@ -20,7 +33,7 @@ module GogglesDb
     # - locale: a valid locale code or symbol ('it', 'en', ...) to be used as I18n.locale enforce/override
     #
     def minimal_attributes(locale = I18n.locale)
-      result_hash = attributes.except('lock_version', 'created_at', 'updated_at')
+      result_hash = model_attributes
       if respond_to?(:label) && respond_to?(:long_label) && respond_to?(:alt_label)
         result_hash.merge!(
           'label' => label(locale),

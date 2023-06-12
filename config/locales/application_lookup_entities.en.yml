@@ -49,6 +49,8 @@ en:
     long_label_3c: "Edit associated swimmer by hand"
     label_4: "Bug report"
     long_label_4: "Bug report"
+    label_5: "Reactivate account"
+    long_label_5: "Reactivate account"
     status_0: "New"
     status_1: "In review"
     status_2: "Accepted/in process"

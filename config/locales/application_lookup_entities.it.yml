@@ -49,6 +49,8 @@ it:
     long_label_3c: "Modifica dettagli nuotatore (a mano)"
     label_4: "Bug"
     long_label_4: "Segnalazione di errore per l'applicazione"
+    label_5: "Riattiva account"
+    long_label_5: "Riattiva account"
     status_0: "Nuovo"
     status_1: "In revisione"
     status_2: "Accettato/in lavorazione"
