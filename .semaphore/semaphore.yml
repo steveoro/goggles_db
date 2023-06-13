@@ -26,7 +26,7 @@ global_job_config:
       # Make sure we are using Bundler 2+:
       - gem i bundler
       # Use GogglesDb::VERSION as bundle version here, or force a minor version change to rebuild the cache:
-      - cache restore bundle-3.30-$(checksum Gemfile.lock)
+      - cache restore bundle-5.20-$(checksum Gemfile.lock)
 
 blocks:
   - name: Bundle cache store
@@ -37,12 +37,12 @@ blocks:
             - sem-version ruby 2.7
             # Bundler requires 'install' to run even though cache has been restored.
             # Installation will not actually run and command and will finish quickly if the cache has been hit:
-            - bundle config set path 'vendor/bundle'
+            - bundle config set path "vendor/bundle"
             - bundle install
             # Use this to log the actual bundle destination path for Semaphore 2.0 (currently uses Rbenv):
             # - bundle info rake --path
             # The cache will be updated with the new content just once for all blocks in the pipeline:
-            - cache store bundle-5.12-$(checksum Gemfile.lock) vendor/bundle
+            - cache store bundle-5.20-$(checksum Gemfile.lock) vendor/bundle
 
   - name: Code scanning
     task:
@@ -50,10 +50,11 @@ blocks:
         - name: check style + security
           commands:
             - sem-version ruby 2.7
-            - bundle config set path 'vendor/bundle'
+            - bundle config set path "vendor/bundle"
             - bundle install
-            - bundle exec rubocop
+            - bundle exec rubocop -f pacman
             - bundle exec brakeman -A6q -p spec/dummy
+            - bundle exec rails app:zeitwerk:check
 
   - name: RSpec tests
     task:
@@ -61,53 +62,70 @@ blocks:
         commands:
           - sem-version ruby 2.7
           - sem-service start mysql 5.7
-          - bundle config set path 'vendor/bundle'
+          - bundle config set path "vendor/bundle"
           - bundle install
           - curl -L https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64 > ./cc-test-reporter
           - chmod +x ./cc-test-reporter
           - cp spec/dummy/config/database.semaphore_2.yml spec/dummy/config/database.yml
-          - 'curl -L -o spec/dummy/db/dump/test.sql.bz2 "https://github.com/steveoro/goggles_db/raw/master/spec/dummy/db/dump/test.sql.bz2"'
-          - 'RAILS_ENV=test bin/rails app:db:rebuild from=test to=test'
-          - 'RAILS_ENV=test bin/rails db:migrate'
+          - curl -L -o spec/dummy/db/dump/test.sql.bz2 "https://github.com/steveoro/goggles_db/raw/master/spec/dummy/db/dump/test.sql.bz2"
+          - RAILS_ENV=test bin/rails app:db:rebuild from=test to=test
+          - RAILS_ENV=test bin/rails db:migrate
           - ./cc-test-reporter before-build
       jobs:
         - name: RSpec - models
           commands:
-            - 'bundle exec rspec -t type:model'
+            - bundle exec rspec -t type:model --order rand -f RspecPacmanFormatter::Pacman -f RspecJunitFormatter --out coverage/model.xml
             - cache delete cc-model-goggles_db
             - ./cc-test-reporter format-coverage -t simplecov -o coverage/cc-model.json
             - cache store cc-model-goggles_db coverage/cc-model.json
 
         - name: RSpec - commands
           commands:
-            - 'bundle exec rspec -t type:command'
+            - bundle exec rspec -t type:command --order rand -f RspecPacmanFormatter::Pacman -f RspecJunitFormatter --out coverage/command.xml
             - cache delete cc-command-goggles_db
             - ./cc-test-reporter format-coverage -t simplecov -o coverage/cc-command.json
             - cache store cc-command-goggles_db coverage/cc-command.json
 
         - name: RSpec - decorators
           commands:
-            - 'bundle exec rspec -t type:decorator'
+            - bundle exec rspec -t type:decorator --order rand -f RspecPacmanFormatter::Pacman -f RspecJunitFormatter --out coverage/decorator.xml
             - cache delete cc-decorator-goggles_db
             - ./cc-test-reporter format-coverage -t simplecov -o coverage/cc-decorator.json
             - cache store cc-decorator-goggles_db coverage/cc-decorator.json
 
         - name: RSpec - strategies
           commands:
-            - 'bundle exec rspec -t type:strategy'
+            - bundle exec rspec -t type:strategy --order rand -f RspecPacmanFormatter::Pacman -f RspecJunitFormatter --out coverage/strategy.xml
             - cache delete cc-strategy-goggles_db
             - ./cc-test-reporter format-coverage -t simplecov -o coverage/cc-strategy.json
             - cache store cc-strategy-goggles_db coverage/cc-strategy.json
 
         - name: RSpec - validators
           commands:
-            - 'bundle exec rspec -t type:validator'
+            - bundle exec rspec -t type:validator --order rand -f RspecPacmanFormatter::Pacman -f RspecJunitFormatter --out coverage/validator.xml
             - cache delete cc-validator-goggles_db
             - ./cc-test-reporter format-coverage -t simplecov -o coverage/cc-validator.json
             - cache store cc-validator-goggles_db coverage/cc-validator.json
+
+      # Publish all test results from coverage/*.xml and/or screenshots from tmp/cucumber/* on Semaphore
+      epilogue:
+        always:
+          commands:
+            # This won't be needed here as we won't have any:
+            # - artifact push workflow tmp/cucumber --force
+            - test-results publish coverage
 
 promotions:
   - name: Code coverage
     pipeline_file: semaphore_coverage_upload.yml
     auto_promote:
       when: branch = 'master' AND result = 'passed'
+
+after_pipeline:
+  task:
+    jobs:
+      - name: Publish Results
+        commands:
+          # Do this only if needed:
+          # - artifact pull workflow tmp/cucumber
+          - test-results gen-pipeline-report
