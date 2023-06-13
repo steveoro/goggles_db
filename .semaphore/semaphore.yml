@@ -23,8 +23,10 @@ global_job_config:
     commands:
       - checkout
       - mkdir -pv tmp coverage
-      # Make sure we are using Bundler 2+:
-      - gem i bundler
+      # Make sure we are using the Bundler version from the Gemfile:
+      - export BUNDLER_VERSION=$(cat Gemfile.lock | tail -1 | tr -d " ")
+      - gem i bundler -v $BUNDLER_VERSION
+      - echo "Current Bundler with version:" && which bundler && bundle --version
       # Use GogglesDb::VERSION as bundle version here, or force a minor version change to rebuild the cache:
       - cache restore bundle-5.20-$(checksum Gemfile.lock)
 
@@ -88,40 +90,15 @@ blocks:
           - RAILS_ENV=test bin/rails db:migrate
           - ./cc-test-reporter before-build
       jobs:
-        - name: RSpec - models
+        - name: RSpec / type
+          matrix:
+            - env_var: SPECS
+              values: [ "model", "command", "decorator", "strategy", "validator", "view" ]
           commands:
-            - bundle exec bin/rspec -t type:model --order rand -f RspecPacmanFormatter::Pacman -f RspecJunitFormatter --out coverage/model.xml
-            - cache delete cc-model-goggles_db
-            - ./cc-test-reporter format-coverage -t simplecov -o coverage/cc-model.json
-            - cache store cc-model-goggles_db coverage/cc-model.json
-
-        - name: RSpec - commands
-          commands:
-            - bundle exec bin/rspec -t type:command --order rand -f RspecPacmanFormatter::Pacman -f RspecJunitFormatter --out coverage/command.xml
-            - cache delete cc-command-goggles_db
-            - ./cc-test-reporter format-coverage -t simplecov -o coverage/cc-command.json
-            - cache store cc-command-goggles_db coverage/cc-command.json
-
-        - name: RSpec - decorators
-          commands:
-            - bundle exec bin/rspec -t type:decorator --order rand -f RspecPacmanFormatter::Pacman -f RspecJunitFormatter --out coverage/decorator.xml
-            - cache delete cc-decorator-goggles_db
-            - ./cc-test-reporter format-coverage -t simplecov -o coverage/cc-decorator.json
-            - cache store cc-decorator-goggles_db coverage/cc-decorator.json
-
-        - name: RSpec - strategies
-          commands:
-            - bundle exec bin/rspec -t type:strategy --order rand -f RspecPacmanFormatter::Pacman -f RspecJunitFormatter --out coverage/strategy.xml
-            - cache delete cc-strategy-goggles_db
-            - ./cc-test-reporter format-coverage -t simplecov -o coverage/cc-strategy.json
-            - cache store cc-strategy-goggles_db coverage/cc-strategy.json
-
-        - name: RSpec - validators
-          commands:
-            - bundle exec bin/rspec -t type:validator --order rand -f RspecPacmanFormatter::Pacman -f RspecJunitFormatter --out coverage/validator.xml
-            - cache delete cc-validator-goggles_db
-            - ./cc-test-reporter format-coverage -t simplecov -o coverage/cc-validator.json
-            - cache store cc-validator-goggles_db coverage/cc-validator.json
+            - bundle exec spec/dummy/bin/rspec -t type:$SPECS --order rand -f RspecPacmanFormatter::Pacman -f RspecJunitFormatter --out coverage/$SPECS.xml
+            - cache delete cc-$SPECS-goggles_db
+            - ./cc-test-reporter format-coverage -t simplecov -o coverage/cc-$SPECS.json
+            - cache store cc-$SPECS-goggles_db coverage/cc-$SPECS.json
 
       # Publish all test results from coverage/*.xml and/or screenshots from tmp/cucumber/* on Semaphore
       epilogue:
