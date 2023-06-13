@@ -67,5 +67,6 @@ group :test do
   # > cc-test-reporter before-build
   # > bundle exec rspec -t type:command
   # > cc-test-reporter format-coverage -t simplecov -o coverage/cc-command.json
+  gem 'rspec_junit_formatter' # required by new Semaphore test reports
   gem 'simplecov', '= 0.13.0', require: false
 end
