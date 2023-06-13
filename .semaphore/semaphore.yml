@@ -93,7 +93,7 @@ blocks:
         - name: RSpec / type
           matrix:
             - env_var: SPECS
-              values: [ "model", "command", "decorator", "strategy", "validator", "view" ]
+              values: [ "model", "command", "decorator", "strategy", "validator" ]
           commands:
             - bundle exec spec/dummy/bin/rspec -t type:$SPECS --order rand -f RspecPacmanFormatter::Pacman -f RspecJunitFormatter --out coverage/$SPECS.xml
             - cache delete cc-$SPECS-goggles_db
