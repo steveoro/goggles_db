@@ -90,35 +90,35 @@ blocks:
       jobs:
         - name: RSpec - models
           commands:
-            - bundle exec rspec -t type:model --order rand -f RspecPacmanFormatter::Pacman -f RspecJunitFormatter --out coverage/model.xml
+            - bundle exec bin/rspec -t type:model --order rand -f RspecPacmanFormatter::Pacman -f RspecJunitFormatter --out coverage/model.xml
             - cache delete cc-model-goggles_db
             - ./cc-test-reporter format-coverage -t simplecov -o coverage/cc-model.json
             - cache store cc-model-goggles_db coverage/cc-model.json
 
         - name: RSpec - commands
           commands:
-            - bundle exec rspec -t type:command --order rand -f RspecPacmanFormatter::Pacman -f RspecJunitFormatter --out coverage/command.xml
+            - bundle exec bin/rspec -t type:command --order rand -f RspecPacmanFormatter::Pacman -f RspecJunitFormatter --out coverage/command.xml
             - cache delete cc-command-goggles_db
             - ./cc-test-reporter format-coverage -t simplecov -o coverage/cc-command.json
             - cache store cc-command-goggles_db coverage/cc-command.json
 
         - name: RSpec - decorators
           commands:
-            - bundle exec rspec -t type:decorator --order rand -f RspecPacmanFormatter::Pacman -f RspecJunitFormatter --out coverage/decorator.xml
+            - bundle exec bin/rspec -t type:decorator --order rand -f RspecPacmanFormatter::Pacman -f RspecJunitFormatter --out coverage/decorator.xml
             - cache delete cc-decorator-goggles_db
             - ./cc-test-reporter format-coverage -t simplecov -o coverage/cc-decorator.json
             - cache store cc-decorator-goggles_db coverage/cc-decorator.json
 
         - name: RSpec - strategies
           commands:
-            - bundle exec rspec -t type:strategy --order rand -f RspecPacmanFormatter::Pacman -f RspecJunitFormatter --out coverage/strategy.xml
+            - bundle exec bin/rspec -t type:strategy --order rand -f RspecPacmanFormatter::Pacman -f RspecJunitFormatter --out coverage/strategy.xml
             - cache delete cc-strategy-goggles_db
             - ./cc-test-reporter format-coverage -t simplecov -o coverage/cc-strategy.json
             - cache store cc-strategy-goggles_db coverage/cc-strategy.json
 
         - name: RSpec - validators
           commands:
-            - bundle exec rspec -t type:validator --order rand -f RspecPacmanFormatter::Pacman -f RspecJunitFormatter --out coverage/validator.xml
+            - bundle exec bin/rspec -t type:validator --order rand -f RspecPacmanFormatter::Pacman -f RspecJunitFormatter --out coverage/validator.xml
             - cache delete cc-validator-goggles_db
             - ./cc-test-reporter format-coverage -t simplecov -o coverage/cc-validator.json
             - cache store cc-validator-goggles_db coverage/cc-validator.json
