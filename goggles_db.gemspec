@@ -55,7 +55,8 @@ Gem::Specification.new do |spec|
   spec.add_dependency 'omniauth-rails_csrf_protection'
   # Twitter disabled for the time being (supports only OAuth 1a)
   # spec.add_dependency 'omniauth-twitter'
-  spec.add_dependency 'plus_codes' # https://github.com/google/open-location-code/tree/master/ruby
+  spec.add_dependency 'plus_codes'      # https://github.com/google/open-location-code/tree/master/ruby
+  spec.add_dependency 'ruby2_keywords'  # needed to correct 'delegate' for some peculiar cases until Ruby 3.x is adopted (see: https://eregon.me/blog/2021/02/13/correct-delegation-in-ruby-2-27-3.html)
   spec.add_dependency 'sass-rails'
   spec.add_dependency 'scenic'
   spec.add_dependency 'simple_command'

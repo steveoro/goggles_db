@@ -3,7 +3,7 @@
 #
 # = Timing
 #
-#  - version:  7-0.5.01
+#  - version:  7-0.5.21
 #  - author:   Steve A.
 #
 #  Utility class to store timing data and to allow simple mathematical operations
@@ -60,13 +60,26 @@ class Timing
   end
 
   # Checks if the current instance is zero.
-  delegate :zero?, to: :to_hundredths
+  def zero?
+    # NOTE: 'delegate <METHOD>, to: <OTHER_METHOD>' is somewhat broken in Ruby 2.7.
+    # (See: https://eregon.me/blog/2021/02/13/correct-delegation-in-ruby-2-27-3.html)
+    # Using a simple 'delegate' does not break the current timing spec, but yields failures later on when the concern is applied
+    # to a shared abstract class like AbstractLap or AbstractResult during empty? or zero? checks where implicit blocks may be yield
+    # as unexpected parameters.
+    to_hundredths.zero?
+  end
 
   # Checks if the current instance is positive.
-  delegate :positive?, to: :to_hundredths
+  def positive?
+    # (See NOTE above)
+    to_hundredths.positive?
+  end
 
-  # Checks if the current instance is positive.
-  delegate :negative?, to: :to_hundredths
+  # Checks if the current instance is negative.
+  def negative?
+    # (See NOTE above)
+    to_hundredths.negative?
+  end
 
   alias empty? zero? # (new, old)
 

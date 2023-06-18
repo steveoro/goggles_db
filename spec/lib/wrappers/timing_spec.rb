@@ -119,6 +119,21 @@ describe Timing, type: :model do
 
       it_behaves_like('a valid Timing with all members assigned')
     end
+
+    # Test usage in includees of the concern:
+    [
+      GogglesDb::MeetingIndividualResult, GogglesDb::UserResult,
+      GogglesDb::Lap, GogglesDb::UserLap,
+      GogglesDb::MeetingEntry, GogglesDb::MeetingEventReservation,
+      GogglesDb::MeetingRelayResult, GogglesDb::MeetingRelaySwimmer,
+      GogglesDb::SeasonPersonalStandard, GogglesDb::StandardTiming
+    ].each do |sibling_class|
+      context "[a sibling #{sibling_class} including this concern]" do
+        subject { sibling_class.new.to_timing }
+
+        it_behaves_like('a valid Timing with all members at 0')
+      end
+    end
   end
   #-- -------------------------------------------------------------------------
   #++

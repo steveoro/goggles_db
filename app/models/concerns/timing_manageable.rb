@@ -5,7 +5,7 @@ require 'active_support'
 #
 # = TimingManageable
 #
-#   - version:  7.02.18
+#   - version:  7-0.5.21
 #   - author:   Steve A.
 #
 # Concrete Interface for Timing helper methods (@see lib/wrappers/timing.rb).
@@ -44,7 +44,12 @@ module TimingManageable
   #
   def to_timing
     # (MIR doesn't hold an "hour" column due to the typical short time span of the competition)
-    Timing.new(hundredths: hundredths, seconds: seconds, minutes: minutes % 60, hours: 60 * (minutes / 60))
+    Timing.new(
+      hundredths: hundredths.to_i, seconds: seconds.to_i,
+      minutes: minutes.to_i % 60,
+      hours: 60 * (minutes.to_i / 60),
+      days: 0
+    )
   end
 
   # Sets the internal #hundredths, #seconds & #minutes members according to the specified Timing value.
