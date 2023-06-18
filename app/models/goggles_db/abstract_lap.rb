@@ -6,7 +6,7 @@ module GogglesDb
   #
   # Encapsulates common behavior for Laps & User Laps.
   #
-  #   - version:  7-0.5.10
+  #   - version:  7-0.5.21
   #   - author:   Steve A.
   #
   class AbstractLap < ApplicationRecord
@@ -36,19 +36,21 @@ module GogglesDb
     scope :with_no_time, -> { where(minutes: 0, seconds: 0, hundredths: 0) }
 
     # All siblings laps:
-    scope :related_laps, ->(lap) { by_distance.where(lap.parent_result_where_condition) }
+    scope :related_laps, lambda { |lap|
+      includes(parent_association_sym, :swimmer, :event_type)
+        .where(lap.parent_result_where_condition)
+        .by_distance
+    }
     # All preceeding laps, including the current one:
-    scope :summing_laps, ->(lap) { related_laps(lap).where('length_in_meters <= ?', lap.length_in_meters) }
+    scope :summing_laps, ->(lap) { related_laps(lap).where("#{lap.class.table_name}.length_in_meters <= ?", lap.length_in_meters) }
     # Just the laps following the specified one:
-    scope :following_laps, ->(lap) { related_laps(lap).where('length_in_meters > ?', lap.length_in_meters) }
+    scope :following_laps, ->(lap) { related_laps(lap).where("#{lap.class.table_name}.length_in_meters > ?", lap.length_in_meters) }
     #-- -----------------------------------------------------------------------
     #++
 
-    # XXX TODO: SPEC this one:
-
     # Returns the single lap row preceeding this one by distance, if any; +nil+ otherwise.
     def previous_lap
-      self.class.related_laps(self).where('length_in_meters < ?', length_in_meters).last
+      self.class.related_laps(self).where("#{self.class.table_name}.length_in_meters < ?", length_in_meters).last
     end
 
     # ADD recompute_delta method using same strategy as in main
