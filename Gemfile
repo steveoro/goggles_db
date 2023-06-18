@@ -35,7 +35,7 @@ group :development do
   gem 'listen', '~> 3.2'
   gem 'rubocop'
   gem 'rubocop-performance'
-  gem 'rubocop-rails', require: false
+  gem 'rubocop-rails', '= 2.19', require: false # currently 2.20 introduces a bug with '#falsey_literal?'
   gem 'rubocop-rake'
   gem 'rubocop-rspec'
   gem 'spring'

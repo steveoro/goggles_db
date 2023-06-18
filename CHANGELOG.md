@@ -2,6 +2,7 @@
 
 _Please, add the latest build info on top of the list; use Version::MAJOR only after gold release; keep semantic versioning in line with framework's_
 
+- **0.5.22** [Steve A.] fixes & refactorings for AbstractLap; amend upgrade to Rubocop 2.20 which is currently having issues
 - **0.5.21** [Steve A.] fixes for TimingManageable & Timing; bundle update
 - **0.5.20** [Steve A.] re-added timestamps to #minimal_attributes output; added issue type #5; bundle update
 - **0.5.12** [Steve A.] added LastSeasonId view; DB vers. 2.00.0
