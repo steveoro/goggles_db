@@ -1,6 +1,5 @@
 # GogglesDb README
 
-[![Build Status](https://semaphoreci.com/api/v1/steveoro/goggles_db/branches/master/shields_badge.svg)](https://semaphoreci.com/steveoro/goggles_db)
 [![Build Status](https://steveoro.semaphoreci.com/badges/goggles_db/branches/master.svg)](https://steveoro.semaphoreci.com/projects/goggles_db)
 [![Maintainability](https://api.codeclimate.com/v1/badges/ba9e005076a6aa97f788/maintainability)](https://codeclimate.com/github/steveoro/goggles_db/maintainability)
 [![Test Coverage](https://api.codeclimate.com/v1/badges/ba9e005076a6aa97f788/test_coverage)](https://codeclimate.com/github/steveoro/goggles_db/test_coverage)

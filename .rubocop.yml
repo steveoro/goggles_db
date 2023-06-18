@@ -94,6 +94,9 @@ Performance/CollectionLiteralInLoop:
   Exclude:
     - 'spec/**/*'
 
+Rails/Delegate:
+  Exclude:
+    - 'lib/wrappers/timing.rb'
 
 Rails/SkipsModelValidations:
   Exclude:
