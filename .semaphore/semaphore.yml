@@ -104,8 +104,6 @@ blocks:
       epilogue:
         always:
           commands:
-            # This won't be needed here as we won't have any:
-            # - artifact push workflow tmp/cucumber --force
             - test-results publish coverage
 
 promotions:
@@ -119,6 +117,4 @@ after_pipeline:
     jobs:
       - name: Publish Results
         commands:
-          # Do this only if needed:
-          # - artifact pull workflow tmp/cucumber
           - test-results gen-pipeline-report
