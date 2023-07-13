@@ -39,7 +39,7 @@ namespace :normalize do
          meeting.edition_type_id == GogglesDb::EditionType::NONE_ID
         $stdout.write("\033[1;33;34m*\033[0m")
         puts " ID #{meeting.id}, edition_type: #{meeting.edition_type_id} => #{edition_type_id}"
-        meeting.update!(edition_type_id: edition_type_id) unless simulate
+        meeting.update!(edition_type_id:) unless simulate
       end
 
       # Check if edition number should be fixed:
@@ -47,7 +47,7 @@ namespace :normalize do
         $stdout.write("\033[1;33;34m*\033[0m")
         puts " ID #{meeting.id}, edition: #{meeting.edition} => #{edition} (#{meeting.description} " \
              "- #{meeting.edition_type.code})"
-        meeting.update!(edition: edition) unless simulate
+        meeting.update!(edition:) unless simulate
       end
       next unless std_code != meeting.code
 

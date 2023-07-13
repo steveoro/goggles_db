@@ -38,7 +38,7 @@ module GogglesDb
     scope :not_expired,     -> { not_cancelled.where('header_date >= ?', Time.zone.today) }
     scope :for_season_type, ->(season_type) { joins(:season_type).where(season_types: { id: season_type.id }) }
     scope :for_season,      ->(season) { joins(:season).where(season_id: season.id) }
-    scope :for_code,        ->(code) { where(code: code) }
+    scope :for_code,        ->(code) { where(code:) }
     #-- -----------------------------------------------------------------------
     #++
 

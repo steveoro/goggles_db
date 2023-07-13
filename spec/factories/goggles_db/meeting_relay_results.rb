@@ -4,7 +4,7 @@ FactoryBot.define do
 
     team             { FactoryBot.create(:team) }
     meeting_program  { FactoryBot.create(:meeting_program_relay) }
-    team_affiliation { FactoryBot.create(:team_affiliation, team: team, season: meeting_program.season) }
+    team_affiliation { FactoryBot.create(:team_affiliation, team:, season: meeting_program.season) }
     rank             { (0..25).to_a.sample }
     play_off         { true }
     out_of_race      { false }
