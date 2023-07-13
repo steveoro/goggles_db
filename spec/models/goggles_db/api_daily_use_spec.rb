@@ -33,7 +33,7 @@ module GogglesDb
     #++
 
     let(:minimum_domain) do
-      ((Time.zone.today - 7.days)..Time.zone.today).each { |day| FactoryBot.create(:api_daily_use, day: day) }
+      ((Time.zone.today - 7.days)..Time.zone.today).each { |day| FactoryBot.create(:api_daily_use, day:) }
       expect(described_class.count).to be >= 7
       # Add 1 more row just to have a static route to test:
       FactoryBot.create(:api_daily_use, route: 'GET /fake/route')

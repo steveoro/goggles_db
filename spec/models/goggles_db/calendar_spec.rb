@@ -106,7 +106,7 @@ module GogglesDb
         context 'when there are Calendar rows having the scheduled_date set in the future,' do
           before do
             future_meetings = FactoryBot.create_list(:meeting, 5, header_date: Time.zone.today + 2.months)
-            future_meetings.each { |meeting| FactoryBot.create(:calendar, meeting: meeting) }
+            future_meetings.each { |meeting| FactoryBot.create(:calendar, meeting:) }
           end
 
           let(:result) { described_class.still_open_at.limit(10) } # (default params: Time.zone.today)

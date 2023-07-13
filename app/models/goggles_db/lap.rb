@@ -69,7 +69,7 @@ module GogglesDb
 
     # Returns the association "where" condition for the parent result row.
     def parent_result_where_condition
-      { meeting_individual_result_id: meeting_individual_result_id }
+      { meeting_individual_result_id: }
     end
   end
 end

@@ -43,8 +43,8 @@ module GogglesDb
     # Prepare lists of both event types:
     let(:same_session_events) do
       meeting_session = FactoryBot.create(:meeting_session)
-      FactoryBot.create_list(:meeting_event_individual, 3, meeting_session: meeting_session)
-      FactoryBot.create_list(:meeting_event_relay, 3, meeting_session: meeting_session)
+      FactoryBot.create_list(:meeting_event_individual, 3, meeting_session:)
+      FactoryBot.create_list(:meeting_event_relay, 3, meeting_session:)
       meeting_session.meeting_events
     end
 

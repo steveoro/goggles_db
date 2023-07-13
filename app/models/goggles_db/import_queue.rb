@@ -147,7 +147,7 @@ module GogglesDb
     scope :with_batch_sql,    -> { where(batch_sql: true) }
     scope :without_batch_sql, -> { where(batch_sql: false) }
     scope :for_user,          ->(user) { where(user_id: user.id) }
-    scope :for_uid,           ->(uid) { where(uid: uid) }
+    scope :for_uid,           ->(uid) { where(uid:) }
     #-- ------------------------------------------------------------------------
     #++
 

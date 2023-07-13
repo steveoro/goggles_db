@@ -1,9 +1,9 @@
-version: v1.0
+version: 1.0
 name: Code coverage
 agent:
   machine:
-    type: e1-standard-2
-    os_image: ubuntu1804
+    type: e2-standard-2
+    os_image: ubuntu2204
 
 fail_fast:
   stop:
