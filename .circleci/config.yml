@@ -1,0 +1,133 @@
+version: 2.1
+orbs:
+  ruby: circleci/ruby@2.0.1
+
+# CI_OUTPUT: &CI_OUTPUT /tmp/ci-output
+
+common-config: &common-config
+  parallelism: 2
+  working_directory: ~/goggles_db
+  shell: /bin/bash --login
+  environment:
+    CI_OUTPUT: /tmp/ci-output
+  docker:
+    - image: cimg/ruby:3.1.4-node
+      environment:
+        RAILS_ENV: test
+        BUNDLE_JOBS: 2
+        BUNDLE_RETRY: 2
+        BUNDLE_PATH: vendor/bundle
+        PAGER: cat
+    - image: cimg/mariadb:10.6.12
+      environment:
+        PAGER: cat
+
+common-folder-struct: &common-folder-struct
+  name: Common folders & structure
+  command: |
+    mkdir -p $CI_OUTPUT/rubocop $CI_OUTPUT/brakeman $CI_OUTPUT/rspec tmp coverage
+    mv config/secrets.ci.yml config/secrets.yml
+    mv spec/dummy/config/database_ci.yml spec/dummy/config/database.yml
+
+common-bundle: &common-bundle
+  name: Common Bundle
+  command: |
+    echo "Current Bundler with version:" && which bundler && bundle --version
+    bundle config set path "vendor/bundle"
+    bundle install
+
+common-db-setup: &common-db-setup
+  name: DB setup
+  command: |
+    curl -L -o spec/dummy/db/dump/test.sql.bz2 "https://github.com/steveoro/goggles_db/raw/master/spec/dummy/db/dump/test.sql.bz2"
+    dockerize -wait tcp://localhost:5432 -timeout 1m
+    RAILS_ENV=test bin/rails app:db:rebuild from=test to=test
+    RAILS_ENV=test bin/rails db:migrate
+
+jobs:
+  rubocop:
+    <<: *common-config
+    steps:
+      - checkout
+      - run:
+          <<: *common-folder-struct
+      - ruby/install-deps:
+          app-dir: ~/goggles_db
+          key: goggles_db-v0600
+      - ruby/rubocop-check:
+          app-dir: ~/goggles_db
+          format: pacman
+          out-path: $CI_OUTPUT/rubocop/rubocop.xml
+
+  brakeman:
+    <<: *common-config
+    steps:
+      - checkout
+      - run:
+          <<: *common-folder-struct
+      - ruby/install-deps:
+          app-dir: ~/goggles_db
+          key: goggles_db-v0600
+      - run:
+          name: Brakeman
+          command: |
+            bundle exec brakeman -A --except CheckForceSSL
+      - store_test_results:
+          path: $CI_OUTPUT/brakeman
+
+  zeitwerk:
+    <<: *common-config
+    steps:
+      - checkout
+      - run:
+          <<: *common-folder-struct
+      - ruby/install-deps:
+          app-dir: ~/goggles_db
+          key: goggles_db-v0600
+      - run:
+          name: Zeitwerk check
+          command: |
+            bundle exec rake zeitwerk:check
+      - store_test_results:
+          path: $CI_OUTPUT
+
+  rspec:
+    <<: *common-config
+    steps:
+      - checkout
+      - run:
+          <<: *common-folder-struct
+      - ruby/install-deps:
+          app-dir: ~/goggles_db
+          key: goggles_db-v0600
+      - run:
+          <<: *common-db-setup
+      - ruby/rspec-test:
+          app-dir: ~/goggles_db
+          no_output_timeout: 5m
+          out-path: $CI_OUTPUT/rspec
+          tag: model
+
+  deploy:
+    # This is an example deploy job, not actually used by the workflow
+    docker:
+      - image: cimg/base:stable
+    steps:
+      # Replace this with steps to deploy to users
+      - run:
+          name: deploy
+          command: '#e.g. ./deploy.sh'
+
+workflows:
+  build:
+    jobs:
+      - brakeman
+      - rubocop
+      - zeitwerk
+      - rspec:
+          requires:
+            - brakeman
+            - rubocop
+    # - deploy:
+    #     requires:
+    #       - rspec
