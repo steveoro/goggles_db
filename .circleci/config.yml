@@ -40,7 +40,7 @@ common-db-setup: &common-db-setup
   name: DB setup
   command: |
     curl -L -o spec/dummy/db/dump/test.sql.bz2 "https://github.com/steveoro/goggles_db/raw/master/spec/dummy/db/dump/test.sql.bz2"
-    dockerize -wait tcp://localhost:5432 -timeout 1m
+    dockerize -wait tcp://localhost:3306 -timeout 1m
     RAILS_ENV=test bin/rails app:db:rebuild from=test to=test
     RAILS_ENV=test bin/rails db:migrate
 
@@ -87,7 +87,7 @@ jobs:
       - run:
           name: Zeitwerk check
           command: |
-            bundle exec rake zeitwerk:check
+            bundle exec rake app:zeitwerk:check
       - store_test_results:
           path: $CI_OUTPUT
 
