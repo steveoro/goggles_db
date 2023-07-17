@@ -26,7 +26,6 @@ common-folder-struct: &common-folder-struct
   name: Common folders & structure
   command: |
     mkdir -p $CI_OUTPUT/rubocop $CI_OUTPUT/brakeman $CI_OUTPUT/rspec tmp coverage
-    mv config/secrets.ci.yml config/secrets.yml
     mv spec/dummy/config/database_ci.yml spec/dummy/config/database.yml
 
 common-bundle: &common-bundle
