@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    goggles_db (0.5.22)
+    goggles_db (0.6.00)
       acts-as-taggable-on
       acts_as_votable
       cities
