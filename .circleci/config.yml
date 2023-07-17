@@ -39,7 +39,7 @@ common-bundle: &common-bundle
 common-db-setup: &common-db-setup
   name: DB setup
   command: |
-    sudo apt-get install default-mysql-client
+    sudo apt-get install mariadb-client
     # Test DB dump is already present inside goggles_db:
     ls -l spec/dummy/db/dump/
     # curl -L -o spec/dummy/db/dump/test.sql.bz2 "https://github.com/steveoro/goggles_db/raw/master/spec/dummy/db/dump/test.sql.bz2"
