@@ -20,6 +20,8 @@ common-config: &common-config
         PAGER: cat
     - image: cimg/mariadb:10.6.12
       environment:
+        DATABASE_NAME: goggles_test
+        DATABASE_USER: root
         PAGER: cat
 
 common-folder-struct: &common-folder-struct
@@ -39,7 +41,7 @@ common-bundle: &common-bundle
 common-db-setup: &common-db-setup
   name: DB setup
   command: |
-    sudo apt-get install mariadb-client
+    sudo apt-get install mariadb-client-core-10.6 mariadb-common
     # Test DB dump is already present inside goggles_db:
     ls -l spec/dummy/db/dump/
     # curl -L -o spec/dummy/db/dump/test.sql.bz2 "https://github.com/steveoro/goggles_db/raw/master/spec/dummy/db/dump/test.sql.bz2"
