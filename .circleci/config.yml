@@ -130,8 +130,8 @@ jobs:
       - attach_workspace:
           at: ~/goggles_db
       - run:
-        name: CodeClimate upload
-        command: ./tmp/cc-test-reporter sum-coverage -o - coverage/codeclimate.*.json | ./cc-test-reporter upload-coverage --debug --input -
+          name: CodeClimate upload
+          command: ./tmp/cc-test-reporter sum-coverage -o - coverage/codeclimate.*.json | ./cc-test-reporter upload-coverage --debug --input -
 
 
   rspec-command:
@@ -212,13 +212,13 @@ workflows:
   full-build:
     jobs:
       - persisted-data
-      - brakeman
+      - brakeman:
           requires:
             - persisted-data
-      - rubocop
+      - rubocop:
           requires:
             - persisted-data
-      - zeitwerk
+      - zeitwerk:
           requires:
             - persisted-data
 
