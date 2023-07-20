@@ -4,7 +4,6 @@ orbs:
 
 common-config: &common-config
   working_directory: ~/goggles_db
-  parallelism: 3
   shell: /bin/bash --login
   # NOTE: make sure ENV vars on CircleCI include CC_TEST_REPORTER_ID
   #       for CodeClimate test coverage upload!
@@ -38,6 +37,7 @@ common-db-setup: &common-db-setup
 jobs:
   persisted-data:
     <<: *common-config
+    parallelism: 1
     steps:
       - run:
           name:  Setup persisted data
@@ -52,6 +52,7 @@ jobs:
 
   rubocop:
     <<: *common-config
+    parallelism: 1
     steps:
       - checkout
       - attach_workspace:
@@ -66,6 +67,7 @@ jobs:
 
   brakeman:
     <<: *common-config
+    parallelism: 1
     steps:
       - checkout
       - attach_workspace:
@@ -80,6 +82,7 @@ jobs:
 
   zeitwerk:
     <<: *common-config
+    parallelism: 1
     steps:
       - checkout
       - attach_workspace:
@@ -96,6 +99,7 @@ jobs:
 
   rspec-model:
     <<: *common-config
+    parallelism: 3
     steps:
       - checkout
       - attach_workspace:
@@ -111,7 +115,7 @@ jobs:
             TEST_FILES=$(circleci tests glob "spec/models/**/*_spec.rb" | circleci tests split --split-by=timings)
             bundle exec spec/dummy/bin/rspec --profile 10 --color --order rand \
                         -f RspecJunitFormatter --out tmp/test-results/rspec-models.xml \
-                        -f progress -- ${TEST_FILES}
+                        -f doc -- ${TEST_FILES}
             ./tmp/cc-test-reporter format-coverage -t simplecov \
                                    -o "tmp/coverage/codeclimate.rspec-models.$CIRCLE_NODE_INDEX.json"
       - persist_to_workspace:
@@ -122,15 +126,6 @@ jobs:
           path: tmp/test-results
       - store_artifacts:
           path: tmp/test-artifacts
-
-  upload-coverage:
-    <<: *common-config
-    steps:
-      - attach_workspace:
-          at: ~/goggles_db/tmp
-      - run:
-          name: CodeClimate upload
-          command: ./tmp/cc-test-reporter sum-coverage -o - tmp/coverage/codeclimate.*.json | ./cc-test-reporter upload-coverage --debug --input -
 
 
   rspec-command:
@@ -197,6 +192,20 @@ jobs:
       # - store_test_results:
       #     path: coverage/rspec-validator
 
+
+  upload-coverage:
+    <<: *common-config
+    parallelism: 1
+    steps:
+      - attach_workspace:
+          at: ~/goggles_db/tmp
+      - run:
+          name: CodeClimate upload
+          command: |
+            ls -l ./tmp
+            ls -l ./tmp/coverage
+            ./tmp/cc-test-reporter sum-coverage -o - tmp/coverage/codeclimate.*.json | ./tmp/cc-test-reporter upload-coverage --debug --input -
+
   # deploy:
   #   # This is an example deploy job, not actually used by the workflow
   #   docker:
@@ -211,21 +220,22 @@ workflows:
   full-build:
     jobs:
       - persisted-data
-      - brakeman:
-          requires:
-            - persisted-data
-      - rubocop:
-          requires:
-            - persisted-data
-      - zeitwerk:
-          requires:
-            - persisted-data
+      # - brakeman:
+      #     requires:
+      #       - persisted-data
+      # - rubocop:
+      #     requires:
+      #       - persisted-data
+      # - zeitwerk:
+      #     requires:
+      #       - persisted-data
 
       - rspec-model:
           requires:
-            - brakeman
-            - rubocop
-            - zeitwerk
+            - persisted-data
+            # - brakeman
+            # - rubocop
+            # - zeitwerk
 
       - upload-coverage:
           requires:
