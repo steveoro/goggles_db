@@ -66,7 +66,6 @@ blocks:
           - bundle config set path "vendor/bundle"
           - bundle install
           - cp spec/dummy/config/database.semaphore_2.yml spec/dummy/config/database.yml
-          - curl -L -o spec/dummy/db/dump/test.sql.bz2 "https://github.com/steveoro/goggles_db/raw/master/spec/dummy/db/dump/test.sql.bz2"
           - RAILS_ENV=test bin/rails app:db:rebuild from=test to=test
           - RAILS_ENV=test bin/rails db:migrate
       jobs:
@@ -85,7 +84,6 @@ blocks:
           - curl -L https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64 > ./cc-test-reporter
           - chmod +x ./cc-test-reporter
           - cp spec/dummy/config/database.semaphore_2.yml spec/dummy/config/database.yml
-          - curl -L -o spec/dummy/db/dump/test.sql.bz2 "https://github.com/steveoro/goggles_db/raw/master/spec/dummy/db/dump/test.sql.bz2"
           - RAILS_ENV=test bin/rails app:db:rebuild from=test to=test
           - RAILS_ENV=test bin/rails db:migrate
           - ./cc-test-reporter before-build
