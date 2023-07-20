@@ -37,7 +37,7 @@ common-db-setup: &common-db-setup
 jobs:
   persisted-data:
     <<: *common-config
-    parallelism: 1
+    # parallelism: 1 (no actual need here)
     steps:
       - run:
           name:  Setup persisted data
@@ -52,7 +52,7 @@ jobs:
 
   rubocop:
     <<: *common-config
-    parallelism: 1
+    # parallelism: 1 (no actual need here)
     steps:
       - checkout
       - ruby/install-deps:
@@ -65,7 +65,7 @@ jobs:
 
   brakeman:
     <<: *common-config
-    parallelism: 1
+    # parallelism: 1 (no actual need here)
     steps:
       - checkout
       - ruby/install-deps:
@@ -78,7 +78,7 @@ jobs:
 
   zeitwerk:
     <<: *common-config
-    parallelism: 1
+    # parallelism: 1 (no actual need here)
     steps:
       - checkout
       - attach_workspace:
@@ -111,75 +111,116 @@ jobs:
           command: |
             TEST_FILES=$(circleci tests glob "spec/models/**/*_spec.rb" | circleci tests split --split-by=timings)
             bundle exec spec/dummy/bin/rspec --profile 10 --color --order rand \
-                        -f RspecJunitFormatter --out tmp/rspec-models.xml \
+                        -f RspecJunitFormatter --out ~/test-results/rspec-models.xml \
                         -f doc -- ${TEST_FILES}
             ./tmp/cc-test-reporter format-coverage -t simplecov \
-                                   -o "tmp/codeclimate.rspec-models.$CIRCLE_NODE_INDEX.json"
-            ls -l ./tmp
+                                   -o "./tmp/codeclimate.rspec-models.$CIRCLE_NODE_INDEX.json"
       - store_test_results:
-          path: tmp
+          path: ~/test-results
       - store_artifacts:
-          path: tmp
+          path: ~/test-artifacts
       - persist_to_workspace:
           root: tmp
           paths:
-            - tmp/codeclimate.*.json
+            - codeclimate.*.json
 
 
   rspec-command:
     <<: *common-config
+    parallelism: 2
     steps:
       - checkout
+      - attach_workspace:
+          at: ~/goggles_db/tmp
       - ruby/install-deps:
+          app-dir: ~/goggles_db
           key: goggles_db-v0600
       - run:
           <<: *common-db-setup
-      - ruby/rspec-test:
-          label: RSpec - commands
-          no_output_timeout: 5m
-          # out-path: coverage/rspec-command
-          tag: type:command
-      # - store_test_results:
-      #     path: coverage/rspec-command
+      - run:
+          name: RSpec - commands
+          command: |
+            TEST_FILES=$(circleci tests glob "spec/commands/**/*_spec.rb" | circleci tests split --split-by=timings)
+            bundle exec spec/dummy/bin/rspec --profile 10 --color --order rand \
+                        -f RspecJunitFormatter --out ~/test-results/rspec-commands.xml \
+                        -f doc -- ${TEST_FILES}
+            ./tmp/cc-test-reporter format-coverage -t simplecov \
+                                   -o "./tmp/codeclimate.rspec-commands.$CIRCLE_NODE_INDEX.json"
+      - store_test_results:
+          path: ~/test-results
+      - store_artifacts:
+          path: ~/test-artifacts
+      - persist_to_workspace:
+          root: tmp
+          paths:
+            - codeclimate.*.json
 
 
   rspec-decorator:
     <<: *common-config
+    parallelism: 2
     steps:
       - checkout
+      - attach_workspace:
+          at: ~/goggles_db/tmp
       - ruby/install-deps:
+          app-dir: ~/goggles_db
           key: goggles_db-v0600
       - run:
           <<: *common-db-setup
-      - ruby/rspec-test:
-          label: RSpec - decorators
-          no_output_timeout: 5m
-          # out-path: coverage/rspec-decorator
-          tag: type:decorator
-      # - store_test_results:
-      #     path: coverage/rspec-decorator
+      - run:
+          name: RSpec - decorators
+          command: |
+            TEST_FILES=$(circleci tests glob "spec/decorators/**/*_spec.rb" | circleci tests split --split-by=timings)
+            bundle exec spec/dummy/bin/rspec --profile 10 --color --order rand \
+                        -f RspecJunitFormatter --out ~/test-results/rspec-decorators.xml \
+                        -f doc -- ${TEST_FILES}
+            ./tmp/cc-test-reporter format-coverage -t simplecov \
+                                   -o "./tmp/codeclimate.rspec-decorators.$CIRCLE_NODE_INDEX.json"
+      - store_test_results:
+          path: ~/test-results
+      - store_artifacts:
+          path: ~/test-artifacts
+      - persist_to_workspace:
+          root: tmp
+          paths:
+            - codeclimate.*.json
 
 
   rspec-strategy:
     <<: *common-config
+    parallelism: 3
     steps:
       - checkout
+      - attach_workspace:
+          at: ~/goggles_db/tmp
       - ruby/install-deps:
+          app-dir: ~/goggles_db
           key: goggles_db-v0600
       - run:
           <<: *common-db-setup
-      - ruby/rspec-test:
-          label: RSpec - strategies
-          no_output_timeout: 5m
-          # out-path: coverage/rspec-strategy
-          tag: type:strategy
-      # - store_test_results:
-      #     path: coverage/rspec-strategy
+      - run:
+          name: RSpec - strategies
+          command: |
+            TEST_FILES=$(circleci tests glob "spec/strategies/**/*_spec.rb" | circleci tests split --split-by=timings)
+            bundle exec spec/dummy/bin/rspec --profile 10 --color --order rand \
+                        -f RspecJunitFormatter --out ~/test-results/rspec-strategies.xml \
+                        -f doc -- ${TEST_FILES}
+            ./tmp/cc-test-reporter format-coverage -t simplecov \
+                                   -o "./tmp/codeclimate.rspec-strategies.$CIRCLE_NODE_INDEX.json"
+      - store_test_results:
+          path: ~/test-results
+      - store_artifacts:
+          path: ~/test-artifacts
+      - persist_to_workspace:
+          root: tmp
+          paths:
+            - codeclimate.*.json
 
 
   rspec-validator:
     <<: *common-config
-    parallelism: 3
+    # parallelism: 1 (no actual need here)
     steps:
       - checkout
       - attach_workspace:
@@ -198,10 +239,6 @@ jobs:
                         -f doc -- ${TEST_FILES}
             ./tmp/cc-test-reporter format-coverage -t simplecov \
                                    -o "./tmp/codeclimate.rspec-validators.$CIRCLE_NODE_INDEX.json"
-            ls -l ./tmp
-            ls -l ~/test-results
-            ls -l ~/test-artifacts
-
       - store_test_results:
           path: ~/test-results
       - store_artifacts:
@@ -214,13 +251,14 @@ jobs:
 
   upload-coverage:
     <<: *common-config
-    parallelism: 1
+    # parallelism: 1 (no actual need here)
     steps:
       - attach_workspace:
           at: ~/goggles_db/tmp
       - run:
           name: CodeClimate upload
           command: |
+            echo "*** Persisted contents: ***"
             ls -l ./tmp
             ./tmp/cc-test-reporter sum-coverage -o - tmp/codeclimate.*.json | ./tmp/cc-test-reporter upload-coverage --debug --input -
 
@@ -238,50 +276,45 @@ workflows:
   full-build:
     jobs:
       - persisted-data
-      # - brakeman:
-      #     requires:
-      #       - persisted-data
-      # - rubocop:
-      #     requires:
-      #       - persisted-data
-      # - zeitwerk:
-      #     requires:
-      #       - persisted-data
-
-      - rspec-validator:
+      - brakeman:
           requires:
             - persisted-data
-            # - brakeman
-            # - rubocop
-            # - zeitwerk
+      - rubocop:
+          requires:
+            - persisted-data
+      - zeitwerk:
+          requires:
+            - persisted-data
+
+      - rspec-model:
+          requires:
+            - brakeman
+            - rubocop
+            - zeitwerk
+
+      - rspec-command:
+          requires:
+            - rspec-model
+      - rspec-decorator:
+          requires:
+            - rspec-model
+
+      - rspec-strategy:
+          requires:
+            - rspec-command
+            - rspec-decorator
+      - rspec-validator:
+          requires:
+            - rspec-command
+            - rspec-decorator
 
       - upload-coverage:
           requires:
+            - rspec-model
+            - rspec-command
+            - rspec-decorator
+            - rspec-strategy
             - rspec-validator
-
-      # - rspec-command:
-      #     requires:
-      #       - rspec-model
-      # - rspec-decorator:
-      #     requires:
-      #       - rspec-model
-
-      # - rspec-strategy:
-      #     requires:
-      #       - rspec-command
-      #       - rspec-decorator
-      # - rspec-validator:
-      #     requires:
-      #       - rspec-command
-      #       - rspec-decorator
-
-      # - coverage-upload:
-      #     requires:
-      #       - rspec-model
-      #       - rspec-command
-      #       - rspec-decorator
-      #       - rspec-strategy
-      #       - rspec-validator
 
     # - deploy:
     #     requires:
