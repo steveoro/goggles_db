@@ -27,7 +27,7 @@ common-db-setup: &common-db-setup
   command: |
     sudo apt update
     sudo apt-get install mysql-client
-    mkdir -p tmp/coverage tmp/test-results tmp/test-artifacts
+    mkdir -p tmp
     mv spec/dummy/config/database_ci.yml spec/dummy/config/database.yml
     dockerize -wait tcp://localhost:3306 -timeout 1m
     RAILS_ENV=test bin/rails app:db:rebuild from=test to=test
@@ -55,8 +55,6 @@ jobs:
     parallelism: 1
     steps:
       - checkout
-      - attach_workspace:
-          at: ~/goggles_db/tmp
       - ruby/install-deps:
           app-dir: ~/goggles_db
           key: goggles_db-v0600
@@ -70,8 +68,6 @@ jobs:
     parallelism: 1
     steps:
       - checkout
-      - attach_workspace:
-          at: ~/goggles_db/tmp
       - ruby/install-deps:
           app-dir: ~/goggles_db
           key: goggles_db-v0600
@@ -114,18 +110,20 @@ jobs:
           command: |
             TEST_FILES=$(circleci tests glob "spec/models/**/*_spec.rb" | circleci tests split --split-by=timings)
             bundle exec spec/dummy/bin/rspec --profile 10 --color --order rand \
-                        -f RspecJunitFormatter --out tmp/test-results/rspec-models.xml \
+                        -f RspecJunitFormatter --out tmp/rspec-models.xml \
                         -f doc -- ${TEST_FILES}
             ./tmp/cc-test-reporter format-coverage -t simplecov \
-                                   -o "tmp/coverage/codeclimate.rspec-models.$CIRCLE_NODE_INDEX.json"
+                                   -o "tmp/codeclimate.rspec-models.$CIRCLE_NODE_INDEX.json"
+            ls -l ./tmp
+
       - persist_to_workspace:
-          root: tmp/coverage
+          root: tmp
           paths:
-            - codeclimate.*.json
+            - tmp
       - store_test_results:
-          path: tmp/test-results
+          path: tmp
       - store_artifacts:
-          path: tmp/test-artifacts
+          path: tmp
 
 
   rspec-command:
@@ -203,8 +201,7 @@ jobs:
           name: CodeClimate upload
           command: |
             ls -l ./tmp
-            ls -l ./tmp/coverage
-            ./tmp/cc-test-reporter sum-coverage -o - tmp/coverage/codeclimate.*.json | ./tmp/cc-test-reporter upload-coverage --debug --input -
+            ./tmp/cc-test-reporter sum-coverage -o - tmp/codeclimate.*.json | ./tmp/cc-test-reporter upload-coverage --debug --input -
 
   # deploy:
   #   # This is an example deploy job, not actually used by the workflow
