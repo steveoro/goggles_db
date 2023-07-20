@@ -28,6 +28,7 @@ common-db-setup: &common-db-setup
   command: |
     sudo apt update
     sudo apt-get install mysql-client
+    mkdir -p tmp coverage tmp/test-results tmp/test-artifacts
     mv spec/dummy/config/database_ci.yml spec/dummy/config/database.yml
     dockerize -wait tcp://localhost:3306 -timeout 1m
     RAILS_ENV=test bin/rails app:db:rebuild from=test to=test
@@ -41,15 +42,13 @@ jobs:
       - run:
           name:  Setup persisted data
           command: |
-            mkdir -p tmp tmp/test-results tmp/test-artifacts
+            mkdir -p tmp
             curl -L https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64 > ./tmp/cc-test-reporter
             chmod +x ./tmp/cc-test-reporter
       - persist_to_workspace:
           root: tmp
           paths:
             - cc-test-reporter
-            - tmp/test-results/*
-            - tmp/test-artifacts/*
 
   rubocop:
     <<: *common-config
