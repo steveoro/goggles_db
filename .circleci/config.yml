@@ -28,7 +28,7 @@ common-db-setup: &common-db-setup
   command: |
     sudo apt update
     sudo apt-get install mysql-client
-    mkdir -p tmp coverage tmp/test-results tmp/test-artifacts
+    mkdir -p tmp/coverage tmp/test-results tmp/test-artifacts
     mv spec/dummy/config/database_ci.yml spec/dummy/config/database.yml
     dockerize -wait tcp://localhost:3306 -timeout 1m
     RAILS_ENV=test bin/rails app:db:rebuild from=test to=test
@@ -55,7 +55,7 @@ jobs:
     steps:
       - checkout
       - attach_workspace:
-          at: ~/goggles_db
+          at: ~/goggles_db/tmp
       - ruby/install-deps:
           app-dir: ~/goggles_db
           key: goggles_db-v0600
@@ -69,7 +69,7 @@ jobs:
     steps:
       - checkout
       - attach_workspace:
-          at: ~/goggles_db
+          at: ~/goggles_db/tmp
       - ruby/install-deps:
           app-dir: ~/goggles_db
           key: goggles_db-v0600
@@ -83,7 +83,7 @@ jobs:
     steps:
       - checkout
       - attach_workspace:
-          at: ~/goggles_db
+          at: ~/goggles_db/tmp
       - ruby/install-deps:
           app-dir: ~/goggles_db
           key: goggles_db-v0600
@@ -99,7 +99,7 @@ jobs:
     steps:
       - checkout
       - attach_workspace:
-          at: ~/goggles_db
+          at: ~/goggles_db/tmp
       - ruby/install-deps:
           app-dir: ~/goggles_db
           key: goggles_db-v0600
@@ -113,9 +113,9 @@ jobs:
                         -f RspecJunitFormatter --out tmp/test-results/rspec-models.xml \
                         -f progress -- ${TEST_FILES}
             ./tmp/cc-test-reporter format-coverage -t simplecov \
-                                   -o "coverage/codeclimate.rspec-models.$CIRCLE_NODE_INDEX.json"
+                                   -o "tmp/coverage/codeclimate.rspec-models.$CIRCLE_NODE_INDEX.json"
       - persist_to_workspace:
-          root: coverage
+          root: tmp/coverage
           paths:
             - codeclimate.*.json
       - store_test_results:
@@ -127,10 +127,10 @@ jobs:
     <<: *common-config
     steps:
       - attach_workspace:
-          at: ~/goggles_db
+          at: ~/goggles_db/tmp
       - run:
           name: CodeClimate upload
-          command: ./tmp/cc-test-reporter sum-coverage -o - coverage/codeclimate.*.json | ./cc-test-reporter upload-coverage --debug --input -
+          command: ./tmp/cc-test-reporter sum-coverage -o - tmp/coverage/codeclimate.*.json | ./cc-test-reporter upload-coverage --debug --input -
 
 
   rspec-command:
