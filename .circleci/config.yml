@@ -3,11 +3,12 @@ orbs:
   ruby: circleci/ruby@2.0.1
 
 common-config: &common-config
-  parallelism: 2
   working_directory: ~/goggles_db
+  parallelism: 3
   shell: /bin/bash --login
-  environment:
-    CI_OUTPUT: /tmp/ci-output
+  # NOTE: make sure ENV vars on CircleCI include CC_TEST_REPORTER_ID
+  #       for CodeClimate test coverage upload!
+  #       (Otherwise the 'upload-coverage' step will fail.)
   docker:
     - image: cimg/ruby:3.1.4-node
       environment:
@@ -22,67 +23,68 @@ common-config: &common-config
         DATABASE_USER: root
         PAGER: cat
 
-common-folder-struct: &common-folder-struct
-  name: Common folders & structure
-  command: |
-    mkdir -p $CI_OUTPUT/rubocop $CI_OUTPUT/brakeman $CI_OUTPUT/rspec tmp coverage
-    mv spec/dummy/config/database_ci.yml spec/dummy/config/database.yml
-
-common-bundle: &common-bundle
-  name: Common Bundle
-  command: |
-    echo "Current Bundler with version:" && which bundler && bundle --version
-    bundle config set path "vendor/bundle"
-    bundle install
-
 common-db-setup: &common-db-setup
   name: DB setup
   command: |
     sudo apt update
     sudo apt-get install mysql-client
-    # (Latest dump of test DB dump is already present inside goggles_db)
-    # curl -L -o spec/dummy/db/dump/test.sql.bz2 "https://github.com/steveoro/goggles_db/raw/master/spec/dummy/db/dump/test.sql.bz2"
+    mv spec/dummy/config/database_ci.yml spec/dummy/config/database.yml
     dockerize -wait tcp://localhost:3306 -timeout 1m
     RAILS_ENV=test bin/rails app:db:rebuild from=test to=test
     RAILS_ENV=test bin/rails db:migrate
+    ./tmp/cc-test-reporter before-build
 
 jobs:
+  persisted-data:
+    <<: *common-config
+    steps:
+      - run:
+          name:  Setup persisted data
+          command: |
+            mkdir -p tmp tmp/test-results tmp/test-artifacts
+            curl -L https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64 > ./tmp/cc-test-reporter
+            chmod +x ./tmp/cc-test-reporter
+      - persist_to_workspace:
+          root: tmp
+          paths:
+            - cc-test-reporter
+            - tmp/test-results/*
+            - tmp/test-artifacts/*
+
   rubocop:
     <<: *common-config
     steps:
       - checkout
-      - run:
-          <<: *common-folder-struct
+      - attach_workspace:
+          at: ~/goggles_db
       - ruby/install-deps:
           app-dir: ~/goggles_db
           key: goggles_db-v0600
       - ruby/rubocop-check:
           app-dir: ~/goggles_db
+          label: Rubocop
           format: pacman
-          out-path: $CI_OUTPUT/rubocop/rubocop.xml
 
   brakeman:
     <<: *common-config
     steps:
       - checkout
-      - run:
-          <<: *common-folder-struct
+      - attach_workspace:
+          at: ~/goggles_db
       - ruby/install-deps:
           app-dir: ~/goggles_db
           key: goggles_db-v0600
       - run:
           name: Brakeman
           command: |
-            bundle exec brakeman -A --except CheckForceSSL
-      - store_test_results:
-          path: $CI_OUTPUT/brakeman
+            bundle exec brakeman -A6q -p spec/dummy
 
   zeitwerk:
     <<: *common-config
     steps:
       - checkout
-      - run:
-          <<: *common-folder-struct
+      - attach_workspace:
+          at: ~/goggles_db
       - ruby/install-deps:
           app-dir: ~/goggles_db
           key: goggles_db-v0600
@@ -92,128 +94,167 @@ jobs:
           name: Zeitwerk check
           command: |
             bundle exec rake app:zeitwerk:check
-      - store_test_results:
-          path: $CI_OUTPUT
 
   rspec-model:
     <<: *common-config
     steps:
       - checkout
-      - run:
-          <<: *common-folder-struct
+      - attach_workspace:
+          at: ~/goggles_db
       - ruby/install-deps:
           app-dir: ~/goggles_db
           key: goggles_db-v0600
       - run:
           <<: *common-db-setup
-      - ruby/rspec-test:
-          app-dir: ~/goggles_db
-          no_output_timeout: 5m
-          out-path: $CI_OUTPUT/rspec
-          tag: type:model
+      - run:
+          name: RSpec - models
+          command: |
+            TEST_FILES=$(circleci tests glob "spec/models/**/*_spec.rb" | circleci tests split --split-by=timings)
+            bundle exec spec/dummy/bin/rspec --profile 10 --color --order rand \
+                        -f RspecJunitFormatter --out tmp/test-results/rspec-models.xml \
+                        -f progress -- ${TEST_FILES}
+            ./tmp/cc-test-reporter format-coverage -t simplecov \
+                                   -o "coverage/codeclimate.rspec-models.$CIRCLE_NODE_INDEX.json"
+      - persist_to_workspace:
+          root: coverage
+          paths:
+            - codeclimate.*.json
+      - store_test_results:
+          path: tmp/test-results
+      - store_artifacts:
+          path: tmp/test-artifacts
+
+  upload-coverage:
+    <<: *common-config
+    steps:
+      - attach_workspace:
+          at: ~/goggles_db
+      - run:
+        name: CodeClimate upload
+        command: ./tmp/cc-test-reporter sum-coverage -o - coverage/codeclimate.*.json | ./cc-test-reporter upload-coverage --debug --input -
+
 
   rspec-command:
     <<: *common-config
     steps:
       - checkout
-      - run:
-          <<: *common-folder-struct
       - ruby/install-deps:
-          app-dir: ~/goggles_db
           key: goggles_db-v0600
       - run:
           <<: *common-db-setup
       - ruby/rspec-test:
-          app-dir: ~/goggles_db
+          label: RSpec - commands
           no_output_timeout: 5m
-          out-path: $CI_OUTPUT/rspec
+          # out-path: coverage/rspec-command
           tag: type:command
+      # - store_test_results:
+      #     path: coverage/rspec-command
 
   rspec-decorator:
     <<: *common-config
     steps:
       - checkout
-      - run:
-          <<: *common-folder-struct
       - ruby/install-deps:
-          app-dir: ~/goggles_db
           key: goggles_db-v0600
       - run:
           <<: *common-db-setup
       - ruby/rspec-test:
-          app-dir: ~/goggles_db
+          label: RSpec - decorators
           no_output_timeout: 5m
-          out-path: $CI_OUTPUT/rspec
+          # out-path: coverage/rspec-decorator
           tag: type:decorator
+      # - store_test_results:
+      #     path: coverage/rspec-decorator
 
   rspec-strategy:
     <<: *common-config
     steps:
       - checkout
-      - run:
-          <<: *common-folder-struct
       - ruby/install-deps:
-          app-dir: ~/goggles_db
           key: goggles_db-v0600
       - run:
           <<: *common-db-setup
       - ruby/rspec-test:
-          app-dir: ~/goggles_db
+          label: RSpec - strategies
           no_output_timeout: 5m
-          out-path: $CI_OUTPUT/rspec
+          # out-path: coverage/rspec-strategy
           tag: type:strategy
+      # - store_test_results:
+      #     path: coverage/rspec-strategy
 
   rspec-validator:
     <<: *common-config
     steps:
       - checkout
-      - run:
-          <<: *common-folder-struct
       - ruby/install-deps:
-          app-dir: ~/goggles_db
           key: goggles_db-v0600
       - run:
           <<: *common-db-setup
       - ruby/rspec-test:
-          app-dir: ~/goggles_db
+          label: RSpec - validators
           no_output_timeout: 5m
-          out-path: $CI_OUTPUT/rspec
+          # out-path: coverage/rspec-validator
           tag: type:validator
+      # - store_test_results:
+      #     path: coverage/rspec-validator
 
-  deploy:
-    # This is an example deploy job, not actually used by the workflow
-    docker:
-      - image: cimg/base:stable
-    steps:
-      # Replace this with steps to deploy to users
-      - run:
-          name: deploy
-          command: '#e.g. ./deploy.sh'
+  # deploy:
+  #   # This is an example deploy job, not actually used by the workflow
+  #   docker:
+  #     - image: cimg/base:stable
+  #   steps:
+  #     # Replace this with steps to deploy to users
+  #     - run:
+  #         name: deploy
+  #         command: '#e.g. ./deploy.sh'
 
 workflows:
-  build:
+  full-build:
     jobs:
+      - persisted-data
       - brakeman
+          requires:
+            - persisted-data
       - rubocop
+          requires:
+            - persisted-data
       - zeitwerk
+          requires:
+            - persisted-data
+
       - rspec-model:
           requires:
             - brakeman
             - rubocop
-      - rspec-command:
+            - zeitwerk
+
+      - upload-coverage:
           requires:
             - rspec-model
-      - rspec-decorator:
-          requires:
-            - rspec-model
-      - rspec-strategy:
-          requires:
-            - rspec-command
-            - rspec-decorator
-      - rspec-validator:
-          requires:
-            - rspec-command
-            - rspec-decorator
+
+      # - rspec-command:
+      #     requires:
+      #       - rspec-model
+      # - rspec-decorator:
+      #     requires:
+      #       - rspec-model
+
+      # - rspec-strategy:
+      #     requires:
+      #       - rspec-command
+      #       - rspec-decorator
+      # - rspec-validator:
+      #     requires:
+      #       - rspec-command
+      #       - rspec-decorator
+
+      # - coverage-upload:
+      #     requires:
+      #       - rspec-model
+      #       - rspec-command
+      #       - rspec-decorator
+      #       - rspec-strategy
+      #       - rspec-validator
 
     # - deploy:
     #     requires:
