@@ -27,7 +27,7 @@ common-db-setup: &common-db-setup
   command: |
     sudo apt update
     sudo apt-get install mysql-client
-    mkdir -p tmp
+    mkdir -p tmp ~/test-results ~/test-artifacts
     mv spec/dummy/config/database_ci.yml spec/dummy/config/database.yml
     dockerize -wait tcp://localhost:3306 -timeout 1m
     RAILS_ENV=test bin/rails app:db:rebuild from=test to=test
@@ -93,6 +93,7 @@ jobs:
           command: |
             bundle exec rake app:zeitwerk:check
 
+
   rspec-model:
     <<: *common-config
     parallelism: 3
@@ -141,6 +142,7 @@ jobs:
       # - store_test_results:
       #     path: coverage/rspec-command
 
+
   rspec-decorator:
     <<: *common-config
     steps:
@@ -156,6 +158,7 @@ jobs:
           tag: type:decorator
       # - store_test_results:
       #     path: coverage/rspec-decorator
+
 
   rspec-strategy:
     <<: *common-config
@@ -173,21 +176,40 @@ jobs:
       # - store_test_results:
       #     path: coverage/rspec-strategy
 
+
   rspec-validator:
     <<: *common-config
+    parallelism: 3
     steps:
       - checkout
+      - attach_workspace:
+          at: ~/goggles_db/tmp
       - ruby/install-deps:
+          app-dir: ~/goggles_db
           key: goggles_db-v0600
       - run:
           <<: *common-db-setup
-      - ruby/rspec-test:
-          label: RSpec - validators
-          no_output_timeout: 5m
-          # out-path: coverage/rspec-validator
-          tag: type:validator
-      # - store_test_results:
-      #     path: coverage/rspec-validator
+      - run:
+          name: RSpec - validators
+          command: |
+            TEST_FILES=$(circleci tests glob "spec/validators/**/*_spec.rb" | circleci tests split --split-by=timings)
+            bundle exec spec/dummy/bin/rspec --profile 10 --color --order rand \
+                        -f RspecJunitFormatter --out ~/test-results/rspec-validators.xml \
+                        -f doc -- ${TEST_FILES}
+            ./tmp/cc-test-reporter format-coverage -t simplecov \
+                                   -o "./tmp/codeclimate.rspec-validators.$CIRCLE_NODE_INDEX.json"
+            ls -l ./tmp
+            ls -l ~/test-results
+            ls -l ~/test-artifacts
+
+      - store_test_results:
+          path: ~/test-results
+      - store_artifacts:
+          path: ~/test-artifacts
+      - persist_to_workspace:
+          root: tmp
+          paths:
+            - codeclimate.*.json
 
 
   upload-coverage:
@@ -226,7 +248,7 @@ workflows:
       #     requires:
       #       - persisted-data
 
-      - rspec-model:
+      - rspec-validator:
           requires:
             - persisted-data
             # - brakeman
@@ -235,7 +257,7 @@ workflows:
 
       - upload-coverage:
           requires:
-            - rspec-model
+            - rspec-validator
 
       # - rspec-command:
       #     requires:
