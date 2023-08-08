@@ -16,6 +16,8 @@ Gem::Specification.new do |spec|
   spec.description = 'contains just the models and the DB structure required to run the main Goggles app'
   spec.license     = 'LGPL-3.0-or-later'
 
+  spec.required_ruby_version = '>= 3.1.4'
+
   # Prevent pushing this gem to RubyGems.org. To allow pushes either set the 'allowed_push_host'
   # to allow pushing to a single host or delete this section to allow pushing to any host.
   if spec.respond_to?(:metadata)

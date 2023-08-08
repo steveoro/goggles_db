@@ -3,12 +3,12 @@
 #
 # = Version module
 #
-#   - version:  7-0.5.22
+#   - version:  7-0.6.00
 #   - author:   Steve A.
 #
 module GogglesDb
   # Public gem version (uses Semantic versioning)
-  VERSION = '0.5.22'
+  VERSION = '0.6.00'
 
   # == Versioning codes
   #
@@ -20,15 +20,15 @@ module GogglesDb
   module Version
     CORE  = 'C7'
     MAJOR = '0'
-    MINOR = '5'
-    PATCH = '22'
-    BUILD = '20230618'
+    MINOR = '6'
+    PATCH = '00'
+    BUILD = '20230717'
 
     # Full label
-    FULL = "#{MAJOR}.#{MINOR}.#{PATCH} (#{CORE}-#{BUILD})"
+    FULL = "#{MAJOR}.#{MINOR}.#{PATCH} (#{CORE}-#{BUILD})".freeze
 
     # Compact label
-    SEMANTIC = "#{MAJOR}.#{MINOR}.#{PATCH}"
+    SEMANTIC = "#{MAJOR}.#{MINOR}.#{PATCH}".freeze
     DB = '2.00.0' # Internal DB structure (frozen @ <minor>.<patch>.<seq> from last migration)
 
     # Pointless UNICODE emojis (just for fun):

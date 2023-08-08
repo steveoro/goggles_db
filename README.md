@@ -1,6 +1,7 @@
 # GogglesDb README
 
-[![Build Status](https://steveoro.semaphoreci.com/badges/goggles_db/branches/master.svg)](https://steveoro.semaphoreci.com/projects/goggles_db)
+[![CircleCI](https://dl.circleci.com/status-badge/img/gh/steveoro/goggles_db/tree/ruby-3%2E1.svg?style=svg)](https://dl.circleci.com/status-badge/redirect/gh/steveoro/goggles_db/tree/ruby-3%2E1)
+
 [![Maintainability](https://api.codeclimate.com/v1/badges/ba9e005076a6aa97f788/maintainability)](https://codeclimate.com/github/steveoro/goggles_db/maintainability)
 [![Test Coverage](https://api.codeclimate.com/v1/badges/ba9e005076a6aa97f788/test_coverage)](https://codeclimate.com/github/steveoro/goggles_db/test_coverage)
 [![codecov](https://codecov.io/gh/steveoro/goggles_db/branch/master/graph/badge.svg?token=G4E7NVC4T4)](https://codecov.io/gh/steveoro/goggles_db)
@@ -18,9 +19,9 @@ Official Framework Wiki, [here](https://github.com/steveoro/goggles_db/wiki) (v.
 
 ## Requires
 
-- Ruby 2.7.2
+- Ruby 3.1.4
 - Rails 6.0.6.1+
-- MariaDb 10.3.25+ or any other MySql equivalent version
+- MariaDb 10.6.12+ or any other MySql equivalent version
 
 
 

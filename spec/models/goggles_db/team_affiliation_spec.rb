@@ -9,7 +9,7 @@ module GogglesDb
   RSpec.describe TeamAffiliation do
     let(:fixture_manager) do
       manager = FactoryBot.create(:user)
-      FactoryBot.create(:managed_affiliation, team_affiliation: affiliation_with_badges, manager: manager)
+      FactoryBot.create(:managed_affiliation, team_affiliation: affiliation_with_badges, manager:)
       affiliation_with_badges.reload
       manager
     end

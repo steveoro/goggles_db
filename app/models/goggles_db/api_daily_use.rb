@@ -24,7 +24,7 @@ module GogglesDb
 
     # Filtering scopes:
     scope :for_date,  ->(date = Time.zone.today) { where(day: date).order(:route) }
-    scope :for_route, ->(route) { where(route: route).order(:day) }
+    scope :for_route, ->(route) { where(route:).order(:day) }
     #-- ------------------------------------------------------------------------
     #++
 
@@ -44,7 +44,7 @@ module GogglesDb
     #
     # rubocop:disable Rails/SkipsModelValidations
     def self.increase_for!(route, day = Time.zone.today)
-      counter_row = APIDailyUse.create_or_find_by!(route: route, day: day)
+      counter_row = APIDailyUse.create_or_find_by!(route:, day:)
       counter_row.increment!(:count)
     end
     # rubocop:enable Rails/SkipsModelValidations

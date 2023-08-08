@@ -38,7 +38,7 @@ RSpec.describe GogglesDb::IssueDecorator, type: :decorator do
   describe '#code_flag' do
     GogglesDb::Issue::SUPPORTED_CODES.each do |code|
       context "when the row has code #{code} ('#{I18n.t("issues.label_#{code}")}')" do
-        subject { FactoryBot.build(:issue, code: code).decorate.code_flag }
+        subject { FactoryBot.build(:issue, code:).decorate.code_flag }
 
         it 'is present' do
           expect(subject).to be_present
