@@ -195,7 +195,7 @@ module GogglesDb
           first_name: swimmer.first_name,
           last_name: swimmer.last_name,
           year_of_birth: swimmer.year_of_birth,
-          swimmer: swimmer
+          swimmer:
         )
       end
 
@@ -564,7 +564,7 @@ module GogglesDb
               first_name: names_hash[:user_first],
               last_name: names_hash[:user_last],
               description: "#{names_hash[:user_last]} #{names_hash[:user_first]}",
-              email: email,
+              email:,
               year_of_birth: fixture_swimmer1.year_of_birth
             )
           end

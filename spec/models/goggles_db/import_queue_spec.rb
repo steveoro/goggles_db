@@ -277,9 +277,9 @@ module GogglesDb
         it 'has the values set in the request data' do
           expect(subject.req_timing).to eq(
             Timing.new(
-              minutes: minutes,
-              seconds: seconds,
-              hundredths: hundredths
+              minutes:,
+              seconds:,
+              hundredths:
             )
           )
         end

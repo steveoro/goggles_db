@@ -265,7 +265,7 @@ class Timing
     remainder = total_seconds.to_i % 3600
     minutes = remainder / 60
     seconds = remainder % 60
-    to_compact_s(seconds: seconds, minutes: minutes, hours: hours)
+    to_compact_s(seconds:, minutes:, hours:)
   end
 
   # Outputs the specified value of seconds in a minute-format (M'SS").
@@ -277,7 +277,7 @@ class Timing
   def self.to_minute_string(total_seconds)
     minutes = total_seconds.to_i / 60
     seconds = total_seconds.to_i % 60
-    to_compact_s(seconds: seconds, minutes: minutes)
+    to_compact_s(seconds:, minutes:)
   end
 
   # Outputs the specified value of seconds in a "pause in seconds" format (P.SS").

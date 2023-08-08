@@ -14,9 +14,9 @@ module GogglesDb
           description = descriptions[index]
           meeting = FactoryBot.build(
             :meeting,
-            description: description,
-            edition: edition,
-            edition_type_id: edition_type_id
+            description:,
+            edition:,
+            edition_type_id:
           )
 
           expect { meeting.edition_label }.not_to raise_error

@@ -1,4 +1,5 @@
 require:
+  - rubocop-factory_bot
   - rubocop-performance
   - rubocop-rails
   - rubocop-rake
@@ -19,19 +20,13 @@ inherit_from: .rubocop_todo.yml
 
 AllCops:
   NewCops: enable
-  TargetRubyVersion: 2.7.2
+  TargetRubyVersion: 3.1.4
   Exclude:
     - 'spec/dummy/db/schema.rb'
     - 'vendor/**/*'
 
 FactoryBot:
   Enabled: false
-
-# Configuration parameters: Include.
-# Include: **/*.gemspec
-Gemspec/RequiredRubyVersion:
-  Exclude:
-    - 'goggles_db.gemspec'
 
 # Cop supports --auto-correct.
 # Configuration parameters: AutoCorrect, AllowHeredoc, AllowURI, URISchemes, IgnoreCopDirectives, IgnoredPatterns.

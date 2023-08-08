@@ -100,7 +100,7 @@ shared_examples_for('ApplicationRecord shared interface') do
   end
 
   describe '#to_hash' do
-    let(:result) { subject.to_hash(max_siblings: max_siblings, locale: locale_override) }
+    let(:result) { subject.to_hash(max_siblings:, locale: locale_override) }
 
     it 'supports both :locale override & :max_siblings as options, returning always an Hash' do
       expect(result).to be_an(Hash).and be_present
@@ -153,7 +153,7 @@ shared_examples_for('ApplicationRecord shared interface') do
   end
 
   describe '#to_json' do
-    let(:result) { subject.to_json(max_siblings: max_siblings) }
+    let(:result) { subject.to_json(max_siblings:) }
 
     it 'is a String' do
       expect(result).to be_a(String).and be_present
@@ -164,7 +164,7 @@ shared_examples_for('ApplicationRecord shared interface') do
     end
 
     it 'is equal to the JSONified output of #to_hash' do
-      expect(result).to eq(subject.to_hash(max_siblings: max_siblings).to_json)
+      expect(result).to eq(subject.to_hash(max_siblings:).to_json)
     end
   end
 end

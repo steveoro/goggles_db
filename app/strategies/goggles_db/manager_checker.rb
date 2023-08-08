@@ -32,7 +32,7 @@ module GogglesDb
                                       'team_affiliations.season_id': season_id)
                                .map { |ma| ma.team_affiliation.team_id }
                                .uniq
-      @managed_swimmer_ids = GogglesDb::Badge.where(season_id: season_id, team_id: @managed_teams_ids)
+      @managed_swimmer_ids = GogglesDb::Badge.where(season_id:, team_id: @managed_teams_ids)
                                              .pluck(:swimmer_id)
                                              .uniq
     end
@@ -51,7 +51,7 @@ module GogglesDb
       GrantChecker.admin?(user) ||
         GrantChecker.crud?(user, 'Team') ||
         GrantChecker.crud?(user, 'TeamAffiliation') ||
-        GogglesDb::ManagedAffiliation.exists?(user_id: user.id, team_affiliation_id: team_affiliation_id)
+        GogglesDb::ManagedAffiliation.exists?(user_id: user.id, team_affiliation_id:)
     end
 
     # Similarly to <tt>self.for_affiliation?()</tt>, returns +true+ if the specified User

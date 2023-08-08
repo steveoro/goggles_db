@@ -177,19 +177,13 @@ module GogglesDb
       #++
 
       # Discriminates between any edition number OR year included inside any Meeting description
-      unless defined?(REGEXP_EDITION_OR_YEAR)
-        REGEXP_EDITION_OR_YEAR = /(?<roman>^[IXVLMCD]+[°^oa]?\W)|(?<arabic>^\d{1,2}[°^oa]?\W)|(?<year>\b\d{2}\b|\b\d{4}\b)/ui.freeze
-      end
+      REGEXP_EDITION_OR_YEAR = /(?<roman>^[IXVLMCD]+[°^oa]?\W)|(?<arabic>^\d{1,2}[°^oa]?\W)|(?<year>\b\d{2}\b|\b\d{4}\b)/ui unless defined?(REGEXP_EDITION_OR_YEAR)
 
       # Matches any yearly-type of description ("CAMPIONATO REGIONALE ...", "DISTANZE SPECIALI ...", YYYY may be/not missing from name)
-      unless defined?(REGEXP_YEARLY_DESC)
-        REGEXP_YEARLY_DESC = /(((?<!Prova\W|Meeting\W)Camp.+\W(Reg.+\W)?)|(distanze\sspec)|italiani|mondiali|europei|\s\d{4}$)/ui.freeze
-      end
+      REGEXP_YEARLY_DESC = /(((?<!Prova\W|Meeting\W)Camp.+\W(Reg.+\W)?)|(distanze\sspec)|italiani|mondiali|europei|\s\d{4}$)/ui unless defined?(REGEXP_YEARLY_DESC)
 
       # Matches any seasonal-type of description ("2a PROVA REGIONALE ..." or "II PROVA REGIONALE ...")
-      unless defined?(REGEXP_SEASONAL_DESC)
-        REGEXP_SEASONAL_DESC = /(prova\W(camp.+\W)?(reg.+\W)?|meeting\W(camp.+\W)?(reg.+\W)|final.\W(camp.+\W)?(reg.+\W)?)/ui.freeze
-      end
+      REGEXP_SEASONAL_DESC = /(prova\W(camp.+\W)?(reg.+\W)?|meeting\W(camp.+\W)?(reg.+\W)|final.\W(camp.+\W)?(reg.+\W)?)/ui unless defined?(REGEXP_SEASONAL_DESC)
 
       # Tries to extract (or parse) the value of an edition number from a meeting descripion.
       # Assumes the edition is in the front part of the description.

@@ -74,7 +74,7 @@ module GogglesDb
     scope :critical,    -> { processable.where(priority: 3) }
 
     scope :for_user,    ->(user) { where(user_id: user.id) }
-    scope :for_code,    ->(code) { where(code: code) }
+    scope :for_code,    ->(code) { where(code:) }
     #-- ------------------------------------------------------------------------
     #++
 
