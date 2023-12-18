@@ -108,14 +108,14 @@ shared_examples_for 'filtering scope for_<ANY_ENTITY_NAME>' do |subject_class, e
                    .limit(20).sample
                    .send(entity_name)
     end
-    let(:result) { subject_class.send("for_#{entity_name}", chosen_filter).limit(10) }
+    let(:result) { subject_class.send(:"for_#{entity_name}", chosen_filter).limit(10) }
 
     it "is a relation containing only #{subject_class.to_s.pluralize} belonging to the specified #{entity_name.camelcase}" do
       expect(result).to be_a(ActiveRecord::Relation)
       expect(result).to all be_a(subject_class)
       # Does subject class have a 1st-level relationship with 'entity_name'?
       # (:belongs_to or :has_one, no 'through's - which is handled by the 'else' case)
-      if subject_class.new.respond_to?("#{entity_name}_id")
+      if subject_class.new.respond_to?(:"#{entity_name}_id")
         expect(result.map(&:"#{entity_name}_id").uniq).to all eq(chosen_filter.id)
       else
         expect(result.map { |row| row.send(entity_name).id }.uniq).to all eq(chosen_filter.id)
@@ -142,7 +142,7 @@ shared_examples_for 'filtering scope for_<PLURAL_ENTITY_NAME>' do |subject_class
                    .map(&:"#{entity_name}")
     end
     # Do not limit the result rows here, or we may encur in filtering out chosen filter IDs:
-    let(:result) { subject_class.send("for_#{entity_name.pluralize}", chosen_filters) }
+    let(:result) { subject_class.send(:"for_#{entity_name.pluralize}", chosen_filters) }
 
     it "is a relation containing only #{subject_class.to_s.pluralize} belonging to the specified #{entity_name.camelcase}" do
       expect(result).to be_a(ActiveRecord::Relation)

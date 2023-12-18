@@ -93,11 +93,11 @@ class Timing
     @days = hundredths_value / 8_640_000
     remainder = hundredths_value % 8_640_000
     @hours = remainder / 360_000
-    remainder = remainder % 360_000
+    remainder %= 360_000
     @minutes = remainder / 6000
-    remainder = remainder % 6000
+    remainder %= 6000
     @seconds = remainder / 100
-    remainder = remainder % 100
+    remainder %= 100
     @hundredths = remainder
     self
   end
@@ -180,13 +180,11 @@ class Timing
   def ==(other)
     return false unless other.instance_of?(Timing)
 
-    (
-      @days == other.days &&
+    @days == other.days &&
       @hours == other.hours &&
       @minutes == other.minutes &&
       @seconds == other.seconds &&
       @hundredths == other.hundredths
-    )
   end
 
   # Comparable operator. Returns -1, 0, or 1 depending on the order between the

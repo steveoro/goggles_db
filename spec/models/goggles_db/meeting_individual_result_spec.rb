@@ -21,7 +21,7 @@ module GogglesDb
            pool_type event_type category_type gender_type federation_type stroke_type]
       )
 
-      # Presence of fields & requiredness:
+      # Presence of fields & requirements:
       it_behaves_like(
         'having one or more required & present attributes (invalid if missing)',
         %i[rank standard_points meeting_points goggle_cup_points team_points

@@ -34,7 +34,7 @@ module GogglesDb
         %i[user team home_team season season_type federation_type edition_type timing_type]
       )
 
-      # Presence of fields & requiredness:
+      # Presence of fields & requirements:
       it_behaves_like(
         'having one or more required & present attributes (invalid if missing)',
         %i[code header_date header_year edition description]

@@ -39,12 +39,11 @@ module GogglesDb
     validates :relay_order, presence: { length: { within: 1..3, allow_nil: false } }, numericality: true
     validates :reaction_time, presence: true, numericality: true
 
+    has_many :relay_laps, -> { order('relay_laps.length_in_meters') },
+             inverse_of: :meeting_relay_swimmer, dependent: :delete_all
+
     # Sorting scopes:
     scope :by_order, ->(dir = :asc) { order(relay_order: dir) }
-    # TODO: CLEAR UNUSED
-    # scope :by_swimmer, ->(dir = :asc) { joins(:swimmer).order('swimmers.last_name': dir, 'swimmers.first_name': dir) }
-    # scope :by_badge,   ->(dir = :asc) { joins(:badge).order('badges.number': dir) }
-    # scope :by_stroke_type, ->(dir = :asc) { joins(:stroke_type).order('stroke_types.code': dir) }
 
     # Filtering scopes:
     scope :with_time,    -> { where('(minutes > 0) OR (seconds > 0) OR (hundredths > 0)') }

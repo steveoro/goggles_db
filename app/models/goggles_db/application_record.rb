@@ -52,7 +52,7 @@ module GogglesDb
     #                    leave default value for no filters.
     #
     def all_associations(filter = nil)
-      self.class.reflect_on_all_associations(filter).map(&:name).map(&:to_s)
+      self.class.reflect_on_all_associations(filter).map { |a| a.name.to_s }
     end
 
     # Returns the list of single association names (as Strings), be it belongs_to (N:1 or has_one (1:1)

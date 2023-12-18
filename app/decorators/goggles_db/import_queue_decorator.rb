@@ -14,7 +14,8 @@ module GogglesDb
       return '🟢' if done? # (about to be deleted)
       return '' if process_runs.zero? # (not-yet processed => no status)
       return "▶ #{process_runs}" if process_runs.positive? && process_runs.to_i < 90 # (processing)
-      return "🆘 #{process_runs}" if process_runs.positive? # (basically halted)
+
+      "🆘 #{process_runs}" if process_runs.positive? # (basically halted)
     end
 
     # Returns the a bespoke text label describing this row, depending on the

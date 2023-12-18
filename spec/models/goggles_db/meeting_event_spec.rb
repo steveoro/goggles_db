@@ -20,7 +20,7 @@ module GogglesDb
            season meeting pool_type season_type stroke_type]
       )
 
-      # Presence of fields & requiredness:
+      # Presence of fields & requirements:
       it_behaves_like(
         'having one or more required & present attributes (invalid if missing)',
         %i[event_order]

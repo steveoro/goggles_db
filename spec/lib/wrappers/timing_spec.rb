@@ -17,11 +17,25 @@ describe Timing, type: :model do
       expect(subject).to be_an_instance_of(described_class)
     end
 
-    it 'has 0 days'     do expect(subject.days).to eq(0); end
-    it 'has 0 hours'    do expect(subject.hours).to eq(0); end
-    it 'has 0 minutes'  do expect(subject.minutes).to eq(0); end
-    it 'has 0 seconds'  do expect(subject.seconds).to eq(0); end
-    it 'has 0 hundredths' do expect(subject.hundredths).to eq(0); end
+    it 'has 0 days' do
+      expect(subject.days).to eq(0)
+    end
+
+    it 'has 0 hours' do
+      expect(subject.hours).to eq(0)
+    end
+
+    it 'has 0 minutes' do
+      expect(subject.minutes).to eq(0)
+    end
+
+    it 'has 0 seconds' do
+      expect(subject.seconds).to eq(0)
+    end
+
+    it 'has 0 hundredths' do
+      expect(subject.hundredths).to eq(0)
+    end
 
     describe '#zero?' do
       it 'is true' do
@@ -53,11 +67,25 @@ describe Timing, type: :model do
       expect(subject).to be_an_instance_of(described_class)
     end
 
-    it 'has 0 days'     do expect(subject.days).to eq(fix1_days); end
-    it 'has 0 hours'    do expect(subject.hours).to eq(fix1_hours); end
-    it 'has 0 minutes'  do expect(subject.minutes).to eq(fix1_mins); end
-    it 'has 0 seconds'  do expect(subject.seconds).to eq(fix1_secs); end
-    it 'has 0 hundredths' do expect(subject.hundredths).to eq(fix1_hundredths); end
+    it 'has 0 days' do
+      expect(subject.days).to eq(fix1_days)
+    end
+
+    it 'has 0 hours' do
+      expect(subject.hours).to eq(fix1_hours)
+    end
+
+    it 'has 0 minutes' do
+      expect(subject.minutes).to eq(fix1_mins)
+    end
+
+    it 'has 0 seconds' do
+      expect(subject.seconds).to eq(fix1_secs)
+    end
+
+    it 'has 0 hundredths' do
+      expect(subject.hundredths).to eq(fix1_hundredths)
+    end
 
     describe '#zero?' do
       it 'is false' do

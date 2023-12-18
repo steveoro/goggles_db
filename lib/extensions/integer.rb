@@ -31,7 +31,7 @@ class Integer
     roman = ''
     ROMAN_NUMBERS.each do |value, letter|
       roman << (letter * (n / value))
-      n = n % value
+      n %= value
     end
     roman
   end

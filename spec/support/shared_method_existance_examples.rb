@@ -34,7 +34,7 @@ shared_examples_for 'having one or more required & present attributes (invalid i
     end
 
     it "is not valid without ##{member_name}" do
-      subject.send("#{member_name}=", nil)
+      subject.send(:"#{member_name}=", nil)
       expect(subject).not_to be_valid
     end
   end
