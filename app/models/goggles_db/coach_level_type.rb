@@ -23,11 +23,11 @@ module GogglesDb
     (MIN_LEVEL_ID..MAX_LEVEL_ID).each do |level_id|
       class_eval do
         # Define a Memoized instance using the finder with the corresponding constant ID value:
-        instance_variable_set("@level_#{level_id}", find_by(id: level_id))
+        instance_variable_set(:"@level_#{level_id}", find_by(id: level_id))
         # Define an helper class method to get the memoized value row:
-        define_singleton_method("level_#{level_id}".to_sym) do
+        define_singleton_method(:"level_#{level_id}") do
           validate_cached_rows
-          instance_variable_get("@level_#{level_id}")
+          instance_variable_get(:"@level_#{level_id}")
         end
       end
     end
@@ -35,7 +35,7 @@ module GogglesDb
     # Checks the existance of all the required value rows; raises an error for any missing row.
     def self.validate_cached_rows
       (MIN_LEVEL_ID..MAX_LEVEL_ID).each do |level_id|
-        raise "Missing required #{name} row with ID #{level_id}" if instance_variable_get("@level_#{level_id}").blank?
+        raise "Missing required #{name} row with ID #{level_id}" if instance_variable_get(:"@level_#{level_id}").blank?
       end
     end
   end

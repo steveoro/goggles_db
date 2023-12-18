@@ -29,7 +29,7 @@ module GogglesDb
            manual?]
       )
 
-      # Presence of fields & requiredness:
+      # Presence of fields & requirements:
       it_behaves_like(
         'having one or more required & present attributes (invalid if missing)',
         %i[payment_date amount]

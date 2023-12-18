@@ -16,7 +16,7 @@ module GogglesDb
         %i[team]
       )
 
-      # Presence of fields & requiredness:
+      # Presence of fields & requirements:
       it_behaves_like(
         'having one or more required & present attributes (invalid if missing)',
         %i[name team_id]

@@ -14,7 +14,7 @@ module GogglesDb
 
     include TimingManageable
 
-    # Absolute distance from the start. (Delta length can be computed only when knowing the preceeding lap.)
+    # Absolute distance from the start. (Delta length can be computed only when knowing the preceding lap.)
     validates :length_in_meters, presence: { length: { within: 1..5, allow_nil: false } },
                                  numericality: true
 
@@ -41,14 +41,14 @@ module GogglesDb
         .where(lap.parent_result_where_condition)
         .by_distance
     }
-    # All preceeding laps, including the current one:
+    # All preceding laps, including the current one:
     scope :summing_laps, ->(lap) { related_laps(lap).where("#{lap.class.table_name}.length_in_meters <= ?", lap.length_in_meters) }
     # Just the laps following the specified one:
     scope :following_laps, ->(lap) { related_laps(lap).where("#{lap.class.table_name}.length_in_meters > ?", lap.length_in_meters) }
     #-- -----------------------------------------------------------------------
     #++
 
-    # Returns the single lap row preceeding this one by distance, if any; +nil+ otherwise.
+    # Returns the single lap row preceding this one by distance, if any; +nil+ otherwise.
     def previous_lap
       self.class.related_laps(self).where("#{self.class.table_name}.length_in_meters < ?", length_in_meters).last
     end
@@ -61,7 +61,7 @@ module GogglesDb
     # absolute timing using all deltas
     #
     # (Note that this will imply 3 summing queries and it may fail to yield correct values
-    #  if the preceeding deltas are not set.)
+    #  if the preceding deltas are not set.)
     def timing_from_start
       # Quick way to detect if the timing from start is already set:
       amount = minutes_from_start.to_i + hundredths_from_start.to_i + seconds_from_start.to_i

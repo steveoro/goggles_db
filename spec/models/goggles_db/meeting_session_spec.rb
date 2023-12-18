@@ -22,7 +22,7 @@ module GogglesDb
         %i[meeting_events event_types meeting_programs meeting_entries]
       )
 
-      # Presence of fields & requiredness:
+      # Presence of fields & requirements:
       it_behaves_like(
         'having one or more required & present attributes (invalid if missing)',
         %i[session_order scheduled_date description]

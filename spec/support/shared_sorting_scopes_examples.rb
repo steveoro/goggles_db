@@ -6,7 +6,7 @@
 # REQUIRES/ASSUMES:
 # - subject_class...: subject.class to be tested (usually 'described_class') having a proper non-empty domain
 shared_examples_for 'sorting scope by_<ANY_VALUE_NAME>' do |subject_class, value_name, comparable_method|
-  let(:result) { subject_class.send("by_#{value_name}").limit(20) }
+  let(:result) { subject_class.send(:"by_#{value_name}").limit(20) }
 
   it "is a #{subject_class} relation" do
     expect(result).to be_a(ActiveRecord::Relation)
@@ -41,7 +41,7 @@ end
 # REQUIRES/ASSUMES:
 # - subject_class...: subject.class to be tested (usually 'described_class') having a proper non-empty domain
 shared_examples_for 'sorting scope by_<ANY_ENTITY_NAME>' do |subject_class, entity_name, comparable_method|
-  let(:result) { subject_class.send("by_#{entity_name}").limit(50) }
+  let(:result) { subject_class.send(:"by_#{entity_name}").limit(50) }
 
   it "is a #{subject_class} relation" do
     expect(result).to be_a(ActiveRecord::Relation)

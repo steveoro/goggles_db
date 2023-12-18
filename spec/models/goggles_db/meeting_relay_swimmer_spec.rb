@@ -20,7 +20,7 @@ module GogglesDb
            meeting meeting_session meeting_event meeting_program event_type team]
       )
 
-      # Presence of fields & requiredness:
+      # Presence of fields & requirements:
       it_behaves_like(
         'having one or more required & present attributes (invalid if missing)',
         %i[relay_order reaction_time]
@@ -71,6 +71,8 @@ module GogglesDb
     #++
 
     describe 'regarding the timing fields,' do
+      before { expect(fixture_row).to be_valid }
+
       # subject = fixture_row (can even be just built, not created)
       it_behaves_like('TimingManageable')
     end

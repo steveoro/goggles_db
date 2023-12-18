@@ -105,12 +105,12 @@ shared_examples_for 'AbstractLap filtering scopes' do |sibling_class|
 
       let(:result) { existing_row.previous_lap }
 
-      # [Update 20230403] selected existing lap may be the first or don't have any other preceeding lap:
+      # [Update 20230403] selected existing lap may be the first or don't have any other preceding lap:
       it "is either nil or an instance of #{sibling_class}" do
         expect(result).to be_a(sibling_class).or be_nil
       end
 
-      it 'the last preceeding row by distance (when available)' do
+      it 'the last preceding row by distance (when available)' do
         expect(result)
           .to eq(sibling_class.related_laps(existing_row).where('length_in_meters < ?', existing_row.length_in_meters).last)
       end

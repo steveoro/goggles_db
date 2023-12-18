@@ -14,7 +14,7 @@ module GogglesDb
         it_behaves_like('ApplicationRecord shared interface')
 
         it "has a corresponding (true, for having the same code) ##{word}? helper method" do
-          expect(described_class.send(word).send("#{word}?")).to be true
+          expect(described_class.send(word).send(:"#{word}?")).to be true
         end
       end
     end

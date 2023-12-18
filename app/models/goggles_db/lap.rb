@@ -10,9 +10,13 @@ module GogglesDb
   #   - author:   Steve A.
   #
   # == Note:
-  # Lap is currently dedicated to MIRs *only*: use MeetingRelaySwimmer (MRS)
-  # to store lap data for MRRs.
+  # Lap is currently dedicated to MIRs *only*.
+  # For relays, use MeetingRelaySwimmer (MRS) + RelayLap.
   #
+  # Avoid adding a Lap for the final result timing and always use the MIR as
+  # overall result.
+  #
+  # E.g.: 200m => 3x Lap + 1x MIR
   class Lap < AbstractLap
     self.table_name = 'laps'
 

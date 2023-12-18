@@ -1,18 +1,26 @@
 # frozen_string_literal: true
 
 # subject = fixture_row.to_timing
-shared_examples_for '#to_timing valid result' do
+shared_examples_for '#to_timing valid result' do |from_start|
   it 'is a Timing instance' do
     # to_timing may also return a zero when the instance is not filled, so no presence check here:
     expect(subject).to be_a(Timing)
   end
 
   it 'contains the same timing data than the original fixture' do
-    expect(subject.hundredths).to eq(fixture_row.hundredths)
-    expect(subject.seconds).to eq(fixture_row.seconds)
-    expect(subject.minutes).to eq(fixture_row.minutes % 60)
-    expect(subject.hours).to eq(60 * (fixture_row.minutes / 60))
-    # (Don't care about days)
+    if from_start && fixture_row.respond_to?(:hundredths_from_start)
+      expect(subject.hundredths).to eq(fixture_row.hundredths_from_start.to_i)
+      expect(subject.seconds).to eq(fixture_row.seconds_from_start.to_i)
+      expect(subject.minutes).to eq(fixture_row.minutes_from_start.to_i % 60)
+      expect(subject.hours).to eq(60 * (fixture_row.minutes_from_start.to_i / 60))
+      # (Don't care about days)
+    else
+      expect(subject.hundredths).to eq(fixture_row.hundredths.to_i)
+      expect(subject.seconds).to eq(fixture_row.seconds.to_i)
+      expect(subject.minutes).to eq(fixture_row.minutes.to_i % 60)
+      expect(subject.hours).to eq(60 * (fixture_row.minutes.to_i / 60))
+      # (Don't care about days)
+    end
   end
 end
 
@@ -26,14 +34,20 @@ shared_examples_for 'TimingManageable' do
   end
 
   describe '#to_timing' do
-    subject { fixture_row.to_timing }
+    context 'when from_start is false (default),' do
+      subject { fixture_row.to_timing }
 
-    it_behaves_like('#to_timing valid result')
+      it_behaves_like('#to_timing valid result', false)
+    end
+
+    context 'when from_start is true,' do
+      subject { fixture_row.to_timing(from_start: true) }
+
+      it_behaves_like('#to_timing valid result', true)
+    end
   end
 
   describe '#from_timing' do
-    subject { fixture_row.from_timing(new_timing) }
-
     let(:new_hundredths) { ((rand * 100) % 99).to_i }
     let(:new_seconds) { ((rand * 100) % 59).to_i }
     let(:new_minutes) { ((rand * 100) % 59).to_i }
@@ -41,17 +55,40 @@ shared_examples_for 'TimingManageable' do
     let(:new_days) { ((rand * 100) % 5).to_i }
     let(:new_timing) { Timing.new(hundredths: new_hundredths, seconds: new_seconds, minutes: new_minutes, hours: new_hours, days: new_days) }
 
-    it 'returns self' do
-      expect(subject).to eq(fixture_row)
+    context 'when from_start is false (default),' do
+      subject { fixture_row.from_timing(new_timing) }
+
+      it 'returns self' do
+        expect(subject).to eq(fixture_row)
+      end
+
+      it 'sets the internal time members with the data from the fixture' do
+        expect(subject.hundredths).to eq(new_hundredths)
+        expect(subject.seconds).to eq(new_seconds)
+        expect(subject.minutes).to eq(new_minutes)
+        # Skip the higher order checks if the original fixture_row doesn't support them:
+        expect(subject.hours).to eq(new_hours) if fixture_row.respond_to?(:hours=)
+        expect(subject.days).to eq(new_days) if fixture_row.respond_to?(:days=)
+      end
     end
 
-    it 'sets the internal time members with the data from the fixture' do
-      expect(subject.hundredths).to eq(new_hundredths)
-      expect(subject.seconds).to eq(new_seconds)
-      expect(subject.minutes).to eq(new_minutes)
-      # Skip the higher order checks if the original fixture_row doesn't support them:
-      expect(subject.hours).to eq(new_hours) if fixture_row.respond_to?(:hours=)
-      expect(subject.days).to eq(new_days) if fixture_row.respond_to?(:days=)
+    context 'when from_start is true,' do
+      subject { fixture_row.from_timing(new_timing, from_start: true) }
+
+      it 'returns self' do
+        expect(subject).to eq(fixture_row)
+      end
+
+      it 'sets the internal \'XXX_from_start\' time members with the data from the fixture (when these columns are supported)' do
+        if fixture_row.respond_to?(:hundredths_from_start)
+          expect(subject.hundredths_from_start).to eq(new_hundredths)
+          expect(subject.seconds_from_start).to eq(new_seconds)
+          expect(subject.minutes_from_start).to eq(new_minutes)
+          # Skip the higher order checks if the original fixture_row doesn't support them:
+          expect(subject.hours_from_start).to eq(new_hours) if fixture_row.respond_to?(:hours_from_start=)
+          expect(subject.days_from_start).to eq(new_days) if fixture_row.respond_to?(:days_from_start=)
+        end
+      end
     end
   end
 end

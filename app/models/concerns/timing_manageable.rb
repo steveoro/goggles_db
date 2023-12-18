@@ -42,25 +42,63 @@ module TimingManageable
   # Returns a new Timing instance initialized with the timing data from this row
   # (@see lib/wrappers/timing.rb)
   #
-  def to_timing
-    # (MIR doesn't hold an "hour" column due to the typical short time span of the competition)
+  # == Params:
+  # - <tt>from_start</tt>: when true, the resulting Timing instance will be
+  #   created using the <tt>XXX_from_start</tt> attributes instead of
+  #   the default ones.
+  #
+  def to_timing(from_start: false)
+    # Note that:
+    # - MIR, Lap, etc don't hold an "hour" column due to the typical short time span of the competition)
+    # - Always return timing based on legacy columns unless specified by params & supported too
+    unless from_start && respond_to?(:hundredths_from_start)
+      # Return timing based on delta columns:
+      return Timing.new(
+        hundredths: hundredths.to_i,
+        seconds: seconds.to_i,
+        minutes: minutes.to_i % 60,
+        hours: 60 * (minutes.to_i / 60),
+        days: 0
+      )
+    end
+
+    # Return timing based on "absolute" columns:
     Timing.new(
-      hundredths: hundredths.to_i, seconds: seconds.to_i,
-      minutes: minutes.to_i % 60,
-      hours: 60 * (minutes.to_i / 60),
+      hundredths: hundredths_from_start.to_i,
+      seconds: seconds_from_start.to_i,
+      minutes: minutes_from_start.to_i % 60,
+      hours: 60 * (minutes_from_start.to_i / 60),
       days: 0
     )
   end
 
   # Sets the internal #hundredths, #seconds & #minutes members according to the specified Timing value.
-  # Supports even hours & days(@see lib/wrappers/timing.rb)
+  # Supports even hours & days(@see lib/wrappers/timing.rb).
+  # Works also for the #XXX_from_start sibling members (without the hours or days resolution)
   #
-  def from_timing(timing)
-    self.hundredths = timing.hundredths
-    self.seconds = timing.seconds
-    self.minutes = timing.minutes
-    self.hours = timing.hours if respond_to?(:hours=)
-    self.days = timing.days if respond_to?(:days=)
+  # == Params:
+  # - <tt>timing</tt>: a Timing instance holding the values to be set into the
+  #   destination members.
+  #
+  # - <tt>from_start</tt>: when +true+, the destination members will be
+  #   the <tt>XXX_from_start</tt> attributes instead of the default ones.
+  #
+  def from_timing(timing, from_start: false) # rubocop:disable Metrics/AbcSize
+    if from_start && respond_to?(:hundredths_from_start)
+      self.hundredths_from_start = timing.hundredths.to_i
+      self.seconds_from_start = timing.seconds.to_i
+      self.minutes_from_start = timing.minutes.to_i
+      # Currently unused:
+      self.hours_from_start = timing.hours.to_i if respond_to?(:hours_from_start=)
+      self.days_from_start = timing.days.to_i if respond_to?(:days_from_start=)
+    else
+      self.hundredths = timing.hundredths.to_i
+      self.seconds = timing.seconds.to_i
+      self.minutes = timing.minutes.to_i
+      self.hours = timing.hours.to_i if respond_to?(:hours=)
+      self.days = timing.days.to_i if respond_to?(:days=)
+    end
+
     self
   end
   #-- ------------------------------------------------------------------------

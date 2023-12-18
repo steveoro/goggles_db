@@ -44,7 +44,7 @@ module GogglesDb
            event_type pool_type]
       )
 
-      # Presence of fields & requiredness:
+      # Presence of fields & requirements:
       it_behaves_like(
         'having one or more required & present attributes (invalid if missing)',
         %i[length_in_meters minutes seconds hundredths]

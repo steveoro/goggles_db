@@ -35,15 +35,15 @@ module GogglesDb
        exe_starting exe_lapturns exe_power exe_generic rel_intermixed].each do |word|
       class_eval do
         # Define a Memoized instance using the finder with the corresponding constant ID value:
-        instance_variable_set("@#{word}", find_by(id: "#{name}::#{word.upcase}_ID".constantize))
+        instance_variable_set(:"@#{word}", find_by(id: "#{name}::#{word.upcase}_ID".constantize))
         # Define an helper class method to get the memoized value row:
         define_singleton_method(word.to_sym) do
           validate_cached_rows
-          instance_variable_get("@#{word}")
+          instance_variable_get(:"@#{word}")
         end
       end
       # Define an helper instance method that returns true if the ID corresponds to the word token:
-      define_method("#{word}?".to_sym) { id == "#{self.class.name}::#{word.upcase}_ID".constantize }
+      define_method(:"#{word}?") { id == "#{self.class.name}::#{word.upcase}_ID".constantize }
     end
 
     # "Virtual" scope. Returns an Array of all eventable row types.
@@ -56,7 +56,7 @@ module GogglesDb
     # Although the result is not a relation, the memoized version doesn't need to issue a query.
     #++
     def self.all_eventable
-      EVENTABLE_NAMES.map { |word| instance_variable_get("@#{word}") }
+      EVENTABLE_NAMES.map { |word| instance_variable_get(:"@#{word}") }
     end
     #-- ------------------------------------------------------------------------
     #++
@@ -66,7 +66,7 @@ module GogglesDb
       %w[freestyle butterfly backstroke breaststroke intermixed
          exe_starting exe_lapturns exe_power exe_generic rel_intermixed].each do |word|
         code_value = "#{name}::#{word.upcase}_ID".constantize
-        raise "Missing required #{name} row with code #{code_value}" if instance_variable_get("@#{word}").blank?
+        raise "Missing required #{name} row with code #{code_value}" if instance_variable_get(:"@#{word}").blank?
       end
     end
   end

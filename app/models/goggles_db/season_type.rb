@@ -50,19 +50,19 @@ module GogglesDb
       class_eval do
         row = find_by(id: "#{name}::#{word.upcase}_ID".constantize)
         # Define a Memoized instance using the finder with the corresponding constant ID value:
-        instance_variable_set("@#{word}", row)
+        instance_variable_set(:"@#{word}", row)
         @all_masters ||= []
         @all_masters << row if row&.masters?
 
         # Define an helper class method to get the memoized value row:
         define_singleton_method(word.to_sym) do
           validate_cached_rows
-          instance_variable_get("@#{word}")
+          instance_variable_get(:"@#{word}")
         end
       end
 
       # Define an helper instance method that returns true if the ID corresponds to the word token:
-      define_method("#{word}?".to_sym) { id == "#{self.class.name}::#{word.upcase}_ID".constantize }
+      define_method(:"#{word}?") { id == "#{self.class.name}::#{word.upcase}_ID".constantize }
     end
     #-- ------------------------------------------------------------------------
     #++
@@ -80,7 +80,7 @@ module GogglesDb
     def self.validate_cached_rows
       %w[mas_fin mas_csi mas_uisp ago_fin ago_csi ago_uisp mas_len mas_fina].each do |word|
         code_value = "#{name}::#{word.upcase}_ID".constantize
-        raise "Missing required #{name} row with code #{code_value}" if instance_variable_get("@#{word}").blank?
+        raise "Missing required #{name} row with code #{code_value}" if instance_variable_get(:"@#{word}").blank?
       end
     end
     #-- ------------------------------------------------------------------------

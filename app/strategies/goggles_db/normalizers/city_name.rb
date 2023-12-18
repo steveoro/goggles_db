@@ -119,7 +119,7 @@ module GogglesDb
         # "Normalize" the attributes with their corresponding ISO value:
         %w[name latitude longitude area country country_code].each do |attribute_name|
           output_if_differs?(attribute_name, attribute_name)
-          @city.send("#{attribute_name}=", iso_attributes[attribute_name])
+          @city.send(:"#{attribute_name}=", iso_attributes[attribute_name])
         end
       end
     end

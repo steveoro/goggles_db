@@ -13,7 +13,7 @@ module GogglesDb
         expect(subject).to be_a(described_class).and be_valid
       end
 
-      # Presence of fields & requiredness:
+      # Presence of fields & requirements:
       it_behaves_like(
         'having one or more required & present attributes (invalid if missing)',
         %i[name editable_name]

@@ -66,6 +66,6 @@ module Localizable
 
   # Search for an I18n translation, given the method name and a possible locale override.
   def possible_localization(caller_name, locale_override)
-    I18n.t("#{caller_name}_#{code}".to_sym, scope: [self.class.scope_sym], locale: locale_override)
+    I18n.t(:"#{caller_name}_#{code}", scope: [self.class.scope_sym], locale: locale_override)
   end
 end

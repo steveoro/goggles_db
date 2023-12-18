@@ -18,7 +18,7 @@ module GogglesDb
            pool_type event_type category_type gender_type stroke_type]
       )
 
-      # Presence of fields & requiredness:
+      # Presence of fields & requirements:
       it_behaves_like(
         'having one or more required & present attributes (invalid if missing)',
         %i[event_order]

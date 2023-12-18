@@ -68,14 +68,14 @@ shared_examples_for('ApplicationRecord shared interface') do
     end
 
     it 'is the map of all the associations names as strings' do
-      expect(result).to match_array(subject.class.reflect_on_all_associations.map(&:name).map(&:to_s))
+      expect(result).to match_array(subject.class.reflect_on_all_associations.map { |a| a.name.to_s })
     end
 
     %i[has_many has_one belongs_to].each do |filtering_sym|
       describe "when using a '#{filtering_sym}' filtering parameter," do
         it "is the map of just the '#{filtering_sym}' associations names" do
           expect(subject.all_associations(filtering_sym))
-            .to match_array(subject.class.reflect_on_all_associations(filtering_sym).map(&:name).map(&:to_s))
+            .to match_array(subject.class.reflect_on_all_associations(filtering_sym).map { |a| a.name.to_s })
         end
       end
     end
@@ -207,7 +207,7 @@ shared_examples_for '#to_hash when the entity has any 1:1 summarized association
   synth_associations.each do |association_name|
     it "contains the attributes of its #{association_name}" do
       expect(result[association_name]).to be_an(Hash).and be_present
-      expect(result[association_name]).to eq(subject.send("#{association_name}_attributes"))
+      expect(result[association_name]).to eq(subject.send(:"#{association_name}_attributes"))
     end
   end
 end

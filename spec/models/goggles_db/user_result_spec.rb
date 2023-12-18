@@ -34,7 +34,7 @@ module GogglesDb
            gender_type stroke_type]
       )
 
-      # Presence of fields & requiredness:
+      # Presence of fields & requirements:
       it_behaves_like(
         'having one or more required & present attributes (invalid if missing)',
         %i[rank standard_points meeting_points reaction_time minutes seconds hundredths]
