@@ -45,7 +45,7 @@ module Localizable
   def alt_label(locale_override = I18n.locale)
     result = possible_localization('alt_label', locale_override)
     # 'alt_label' is optional most of the times; we fall back to the default 'label' result:
-    return label(locale_override) if result.starts_with?('translation missing:')
+    return label(locale_override) if result.downcase.starts_with?('translation missing:')
 
     result
   end
