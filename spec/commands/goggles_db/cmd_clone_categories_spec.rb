@@ -4,7 +4,11 @@ require 'rails_helper'
 
 module GogglesDb
   RSpec.describe CmdCloneCategories, type: :command do
-    let(:src_season) { GogglesDb::CategoryType.includes(:season).where('season_id > 0').last(200).sample.season }
+    let(:src_season) do
+      GogglesDb::CategoryType.includes(:season).joins(:season)
+                             .where('season_id > 0').last(200)
+                             .sample.season
+    end
     let(:dest_season) { FactoryBot.create(:season) }
     let(:src_categories) { src_season.category_types }
 
@@ -16,7 +20,7 @@ module GogglesDb
 
     context 'when using valid parameters,' do
       describe '#call' do
-        subject { described_class.call(src_season, dest_season) }
+        subject { Prosopite.pause { described_class.call(src_season, dest_season) } }
 
         it 'returns itself' do
           expect(subject).to be_a(described_class)

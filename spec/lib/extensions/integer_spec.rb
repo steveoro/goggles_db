@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 require 'rails_helper'
-require 'support/shared_method_existance_examples'
+require 'support/shared_method_existence_examples'
 
 describe 'Roman numeral extension for Integer', type: :model do
   context 'given a valid Integer' do

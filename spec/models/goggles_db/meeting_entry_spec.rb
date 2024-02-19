@@ -2,7 +2,7 @@
 
 require 'rails_helper'
 require 'support/shared_application_record_examples'
-require 'support/shared_method_existance_examples'
+require 'support/shared_method_existence_examples'
 require 'support/shared_sorting_scopes_examples'
 require 'support/shared_filtering_scopes_examples'
 require 'support/shared_timing_manageable_examples'
@@ -60,7 +60,9 @@ module GogglesDb
     describe 'self.by_number' do
       let(:fixture_prg) do
         prg = FactoryBot.create(:meeting_program)
-        FactoryBot.create_list(:meeting_entry, 5, meeting_program: prg)
+        Prosopite.pause do
+          FactoryBot.create_list(:meeting_entry, 5, meeting_program: prg)
+        end
         expect(prg.meeting_entries.count).to eq(5)
         prg
       end
@@ -74,8 +76,10 @@ module GogglesDb
         event = FactoryBot.create(:meeting_event_individual)
         prg_male = FactoryBot.create(:meeting_program_individual, meeting_event: event, gender_type: GogglesDb::GenderType.male)
         prg_female = FactoryBot.create(:meeting_program_individual, meeting_event: event, gender_type: GogglesDb::GenderType.female)
-        FactoryBot.create_list(:meeting_entry, 3, meeting_program: prg_male)
-        FactoryBot.create_list(:meeting_entry, 3, meeting_program: prg_female)
+        Prosopite.pause do
+          FactoryBot.create_list(:meeting_entry, 3, meeting_program: prg_male)
+          FactoryBot.create_list(:meeting_entry, 3, meeting_program: prg_female)
+        end
         expect(prg_male.meeting_entries.count).to eq(3)
         expect(prg_female.meeting_entries.count).to eq(3)
         expect(event.meeting_entries.count).to eq(6)

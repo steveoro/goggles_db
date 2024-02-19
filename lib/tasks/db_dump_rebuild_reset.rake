@@ -40,7 +40,7 @@ task(check_needed_dirs: :environment) do
     DB_DUMP_DIR
     # (add here any other needed folder)
   ].each do |folder|
-    puts "Checking existance of #{folder} (and creating it if missing)..."
+    puts "Checking existence of #{folder} (and creating it if missing)..."
     FileUtils.mkdir_p(folder) unless File.directory?(folder)
   end
   puts "\r\n"

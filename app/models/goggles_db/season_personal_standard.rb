@@ -6,7 +6,7 @@ module GogglesDb
   #
   # = SeasonPersonalStandard model
   #
-  #   - version:  7.036
+  #   - version:  7-0.6.30
   #   - author:   Steve A.
   #
   # Standard timings used to compute event scores during a specific season and relative
@@ -26,6 +26,13 @@ module GogglesDb
     validates_associated :event_type
 
     has_one :season_type, through: :season
+
+    default_scope do
+      includes(
+        :swimmer, :pool_type, :event_type,
+        :season, :season_type
+      )
+    end
 
     # Sorting scopes:
     scope :by_season,     ->(dir = :asc) { joins(:season).order('seasons.header_year': dir) }

@@ -100,7 +100,7 @@ module GogglesDb
     end
 
     # Returns the latest available (defined) <tt>CategoryType</tt> for the given <tt>SeasonType</tt>,
-    # regardless the actual existance of a badge for this swimmer.
+    # regardless the actual existence of a badge for this swimmer.
     # Only <tt>CategoryType</tt> for individuals are taken into consideration.
     #
     # == Params

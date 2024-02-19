@@ -6,7 +6,7 @@ module GogglesDb
   #
   # Legacy name: "FINCalendar"
   #
-  #   - version:  7.0.5.10
+  #   - version:  7-0.6.30
   #   - author:   Steve A.
   #
   class Calendar < ApplicationRecord
@@ -14,11 +14,18 @@ module GogglesDb
 
     belongs_to :season
     belongs_to :meeting, optional: true
-    has_one :season_type, through: :season
 
     validates_associated :season
 
-    default_scope { left_outer_joins(:meeting).includes(season: [season_type: [:federation_type]]) }
+    has_one :season_type, through: :season
+    has_one :edition_types, through: :season
+    has_one :timing_type, through: :season
+    has_one :federation_type, through: :season_type
+
+    default_scope do
+      includes(:season, :meeting, :season_type, :edition_types, :timing_type, :federation_type)
+        .left_outer_joins(:meeting, :season)
+    end
 
     # Attach PDFs or images directly to the record, if needed:
     has_one_attached :manifest_file # (use #manifest for converted text only)
@@ -41,12 +48,15 @@ module GogglesDb
     scope :not_cancelled,   -> { where(cancelled: false) }
 
     scope :still_open_at, lambda { |date = Time.zone.today|
-      ids = where(cancelled: false).joins(:meeting).includes(:meeting)
+      ids = where(cancelled: false).joins(:meeting)
+                                   .includes(:meeting)
                                    .where('(meetings.cancelled = false) AND (meetings.header_date > ?)', date)
                                    .pluck(:id)
       ids << where(cancelled: false, meeting: nil).pluck(:id)
       ids.uniq!
-      where(id: ids).by_meeting(:desc)
+      where(id: ids)
+        .includes(:meeting, :season_type, :edition_types, :timing_type)
+        .by_meeting(:desc)
     }
     #-- ------------------------------------------------------------------------
     #++

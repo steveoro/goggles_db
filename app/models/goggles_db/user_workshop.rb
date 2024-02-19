@@ -4,7 +4,7 @@ module GogglesDb
   #
   # = UserWorkshop model
   #
-  #   - version:  7-0.5.10
+  #   - version:  7-0.6.30
   #   - author:   Steve A.
   #
   # Allows to manage user-driven or team-driven swimming workshops
@@ -28,7 +28,7 @@ module GogglesDb
     validates_associated :team
     alias home_team team # (new, old)
 
-    default_scope { includes(:user, :team) }
+    default_scope { includes(:user, :team, :season, :season_type) }
 
     has_one :season_type, through: :season
     has_one :federation_type, through: :season

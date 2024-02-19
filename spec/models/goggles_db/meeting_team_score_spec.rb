@@ -2,7 +2,7 @@
 
 require 'rails_helper'
 require 'support/shared_application_record_examples'
-require 'support/shared_method_existance_examples'
+require 'support/shared_method_existence_examples'
 require 'support/shared_filtering_scopes_examples'
 
 module GogglesDb
@@ -47,11 +47,13 @@ module GogglesDb
       let(:fixture_meeting) do
         # Create a list with 5 team scores, 1 zero + 4 positive:
         first_score = FactoryBot.create(:meeting_team_score, season_points: 0, season_relay_points: 0, season_team_points: 0)
-        FactoryBot.create_list(
-          :meeting_team_score, 4,
-          meeting: first_score.meeting,
-          season: first_score.season
-        )
+        Prosopite.pause do
+          FactoryBot.create_list(
+            :meeting_team_score, 4,
+            meeting: first_score.meeting,
+            season: first_score.season
+          )
+        end
         first_score.meeting
       end
       let(:result) { fixture_meeting.meeting_team_scores.with_season_score }

@@ -26,11 +26,13 @@ module GogglesDb
     # Make sure domain is coherent with expected context:
 
     before do
+      Prosopite.pause
       expect(fixture_pool_type).to be_a(GogglesDb::PoolType).and be_valid
       expect(fixture_event_type).to be_a(GogglesDb::EventType).and be_valid
       expect(fixture_mir).to be_a(GogglesDb::MeetingIndividualResult).and be_valid
       expect(fixture_meeting).to be_a(GogglesDb::Meeting).and be_valid
       expect(fixture_swimmer).to be_a(GogglesDb::Swimmer).and be_valid
+      Prosopite.resume
     end
 
     context 'when using valid parameters with a swimmer having previous MIRs,' do

@@ -2,7 +2,7 @@
 
 require 'rails_helper'
 require 'support/shared_application_record_examples'
-require 'support/shared_method_existance_examples'
+require 'support/shared_method_existence_examples'
 require 'support/shared_sorting_scopes_examples'
 
 module GogglesDb
@@ -43,8 +43,10 @@ module GogglesDb
     # Prepare lists of both event types:
     let(:same_session_events) do
       meeting_session = FactoryBot.create(:meeting_session)
+      Prosopite.pause
       FactoryBot.create_list(:meeting_event_individual, 3, meeting_session:)
       FactoryBot.create_list(:meeting_event_relay, 3, meeting_session:)
+      Prosopite.resume
       meeting_session.meeting_events
     end
 

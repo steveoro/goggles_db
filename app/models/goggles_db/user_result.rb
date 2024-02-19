@@ -4,7 +4,7 @@ module GogglesDb
   #
   # = UserResult model
   #
-  #   - version:  7-0.5.10
+  #   - version:  7-0.6.30
   #   - author:   Steve A.
   #
   # User results are swimming event timings:
@@ -46,6 +46,15 @@ module GogglesDb
 
     has_many :user_laps, -> { order('user_laps.length_in_meters') }, dependent: :delete_all
     alias laps user_laps # (new, old)
+
+    default_scope do
+      includes(
+        :user_workshop, :user, :swimmer, :gender_type,
+        :category_type, :event_type, :stroke_type,
+        :swimming_pool, :pool_type,
+        :season, :season_type
+      )
+    end
 
     # Sorting scopes:
     scope :by_date, ->(dir = :asc) { joins(:user_workshop).order('user_workshops.header_date': dir) }

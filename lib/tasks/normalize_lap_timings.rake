@@ -267,7 +267,7 @@ namespace :normalize do
     lap.save!
   end
 
-  # Process fiMetrics/CyclomaticComplexityx case #3 (BLUE colored; d: delta, a: abs).
+  # Process fix case #3 (BLUE colored; d: delta, a: abs).
   # 'delta' == 'from_start' (abs timing) AND previous lap available
   #
   # == Params:

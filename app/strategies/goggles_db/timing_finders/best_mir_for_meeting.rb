@@ -11,7 +11,7 @@ module GogglesDb
     #
     class BestMIRForMeeting < BaseStrategy
       # Finds the "relative best" MeetingIndividualResult row for the specified event, pool type
-      # and inside a restricted subset of Meetings, which should all beloging to the same edition type.
+      # and inside a restricted subset of Meetings, which should all belonging to the same edition type.
       #
       # == Returns:
       #

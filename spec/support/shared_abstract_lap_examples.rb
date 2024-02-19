@@ -2,7 +2,7 @@
 
 require 'rails_helper'
 require 'support/shared_application_record_examples'
-require 'support/shared_method_existance_examples'
+require 'support/shared_method_existence_examples'
 require 'support/shared_sorting_scopes_examples'
 require 'support/shared_filtering_scopes_examples'
 require 'support/shared_timing_manageable_examples'
@@ -122,7 +122,7 @@ end
 
 # REQUIRES/ASSUMES:
 # - fixture_row...: a valid fixture instance of the sibling class
-# - the existance of some rows with the timing from start values zeroed out
+# - the existence of some rows with the timing from start values zeroed out
 shared_examples_for 'AbstractLap #timing_from_start' do |sibling_class|
   describe '#timing_from_start' do
     context 'with an instance having the "_from_start" values,' do

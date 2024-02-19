@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require 'support/shared_method_existance_examples'
+require 'support/shared_method_existence_examples'
 
 # Compares any 2 attributes Hashes (allegedly from any base model or association model instance
 # attributes) and fails if something is different or not included in the second Hash as a corresponding match.
@@ -172,7 +172,12 @@ end
 #++
 
 shared_examples_for '#to_hash when the entity has any 1:1 required association with' do |required_associations|
-  let(:result) { subject.to_hash(max_siblings: 3) } # limit sibling rows
+  let(:result) do
+    Prosopite.pause
+    result_hash = subject.to_hash(max_siblings: 3) # limit sibling rows
+    Prosopite.resume
+    result_hash
+  end
 
   required_associations.each do |association_name|
     it "contains the attributes of its #{association_name}" do
@@ -183,7 +188,12 @@ shared_examples_for '#to_hash when the entity has any 1:1 required association w
 end
 
 shared_examples_for '#to_hash when the entity has any 1:1 optional association with' do |optional_associations|
-  let(:result) { subject.to_hash(max_siblings: 3) } # limit sibling rows
+  let(:result) do
+    Prosopite.pause
+    result_hash = subject.to_hash(max_siblings: 3) # limit sibling rows
+    Prosopite.resume
+    result_hash
+  end
 
   optional_associations.each do |association_name|
     it "contains the attributes of its '#{association_name}' *only* if the association is set" do
@@ -202,18 +212,30 @@ end
 # Assumes the "summarized association" uses a public method that has a name like '<ENTITY>_attributes'
 # (as in 'meeting' => meeting_attributes) which "summarizes" the original (minimal_) attributes output.
 shared_examples_for '#to_hash when the entity has any 1:1 summarized association with' do |synth_associations|
-  let(:result) { subject.to_hash(max_siblings: 3) } # limit sibling rows
+  let(:result) do
+    Prosopite.pause
+    result_hash = subject.to_hash(max_siblings: 3) # limit sibling rows
+    Prosopite.resume
+    result_hash
+  end
 
   synth_associations.each do |association_name|
     it "contains the attributes of its #{association_name}" do
-      expect(result[association_name]).to be_an(Hash).and be_present
-      expect(result[association_name]).to eq(subject.send(:"#{association_name}_attributes"))
+      Prosopite.pause do
+        expect(result[association_name]).to be_an(Hash).and be_present
+        expect(result[association_name]).to eq(subject.send(:"#{association_name}_attributes"))
+      end
     end
   end
 end
 
 shared_examples_for '#to_hash when the entity has any 1:N collection association with' do |collection_associations|
-  let(:result) { subject.to_hash(max_siblings: 3) } # limit sibling rows
+  let(:result) do
+    Prosopite.pause
+    result_hash = subject.to_hash(max_siblings: 3) # limit sibling rows
+    Prosopite.resume
+    result_hash
+  end
 
   collection_associations.each do |association_name|
     it "contains a list of Hash, each one with the 'summarized' attributes of its #{association_name}" do

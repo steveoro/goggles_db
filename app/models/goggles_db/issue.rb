@@ -4,7 +4,7 @@ module GogglesDb
   #
   # = Issue model
   #
-  #   - version:  7-0.5.13
+  #   - version:  7-0.6.30
   #   - author:   Steve A.
   #
   class Issue < ApplicationRecord

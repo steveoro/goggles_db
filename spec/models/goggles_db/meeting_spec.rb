@@ -3,7 +3,7 @@
 require 'rails_helper'
 require 'support/shared_abstract_meeting_examples'
 require 'support/shared_application_record_examples'
-require 'support/shared_method_existance_examples'
+require 'support/shared_method_existence_examples'
 require 'support/shared_sorting_scopes_examples'
 require 'support/shared_filtering_scopes_examples'
 
@@ -12,6 +12,13 @@ module GogglesDb
     shared_examples_for 'a valid Meeting instance' do
       it 'is valid' do
         expect(subject).to be_a(described_class).and be_valid
+      end
+
+      # Tests the validity of the default_scope when there's an optional association involved:
+      it 'does not raise errors when selecting a random row with a field name' do
+        %w[home_team_id season_id edition_type_id timing_type_id individual_score_computation_type_id].each do |field_name|
+          expect { described_class.unscoped.select(field_name).limit(100).sample }.not_to raise_error
+        end
       end
 
       it_behaves_like(
@@ -69,7 +76,9 @@ module GogglesDb
     # Filtering scopes:
     describe 'self.only_manifest' do
       context 'when there are Meeting rows having the meeting manifest w/o acquired results,' do
-        before { FactoryBot.create_list(:meeting, 5, manifest: true, results_acquired: false) }
+        before do
+          Prosopite.pause { FactoryBot.create_list(:meeting, 5, manifest: true, results_acquired: false) }
+        end
 
         let(:result) { described_class.only_manifest.limit(10) }
 
@@ -84,7 +93,9 @@ module GogglesDb
 
     describe 'self.only_startlist' do
       context 'when there are Meeting rows having the meeting startlist w/o acquired results,' do
-        before { FactoryBot.create_list(:meeting, 5, startlist: true, results_acquired: false) }
+        before do
+          Prosopite.pause { FactoryBot.create_list(:meeting, 5, startlist: true, results_acquired: false) }
+        end
 
         let(:result) { described_class.only_startlist.limit(10) }
 
@@ -109,7 +120,9 @@ module GogglesDb
 
     describe 'self.not_closed' do
       context 'when there are Meeting rows having the header_date set in the future,' do
-        before { FactoryBot.create_list(:meeting, 5, header_date: Time.zone.today + 2.months, results_acquired: false) }
+        before do
+          Prosopite.pause { FactoryBot.create_list(:meeting, 5, header_date: Time.zone.today + 2.months, results_acquired: false) }
+        end
 
         let(:result) { described_class.not_closed.limit(10) }
 
@@ -126,7 +139,9 @@ module GogglesDb
 
     describe 'self.still_open_at(date)' do
       context 'when there are Meeting rows having the header_date AND the entry_deadline set in the future,' do
-        before { FactoryBot.create_list(:meeting, 5, header_date: Time.zone.today + 2.months) }
+        before do
+          Prosopite.pause { FactoryBot.create_list(:meeting, 5, header_date: Time.zone.today + 2.months) }
+        end
 
         let(:result) { described_class.still_open_at(Time.zone.today).limit(10) }
 
@@ -163,7 +178,8 @@ module GogglesDb
 
     describe 'self.for_team' do
       let(:chosen_filter) do
-        described_class.includes(:meeting_individual_results).joins(:meeting_individual_results)
+        described_class.includes(:meeting_individual_results)
+                       .joins(:meeting_individual_results)
                        .select(:team_id).distinct
                        .limit(20).sample
                        .meeting_individual_results.first
@@ -188,6 +204,7 @@ module GogglesDb
         it 'is a relation containing only Meetings attended by the specified Team' do
           expect(result).to be_a(ActiveRecord::Relation)
           expect(result).to all be_a(described_class)
+          Prosopite.pause
 
           all_rows_have_same_team = result.all? do |meeting|
             GogglesDb::MeetingIndividualResult.includes(:meeting).joins(:meeting)
@@ -195,6 +212,7 @@ module GogglesDb
               GogglesDb::MeetingRelayResult.includes(:meeting).joins(:meeting)
                                            .exists?('meetings.id': meeting.id, team_id: chosen_filter.id)
           end
+          Prosopite.resume
           expect(all_rows_have_same_team).to be true
         end
       end
@@ -226,6 +244,7 @@ module GogglesDb
         it 'is a relation containing only Meetings attended by the specified Swimmer' do
           expect(result).to be_a(ActiveRecord::Relation)
           expect(result).to all be_a(described_class)
+          Prosopite.pause
 
           all_rows_have_same_swimmer = result.all? do |meeting|
             GogglesDb::MeetingIndividualResult.includes(:meeting).joins(:meeting)
@@ -233,6 +252,7 @@ module GogglesDb
               GogglesDb::MeetingRelaySwimmer.includes(:meeting).joins(:meeting)
                                             .exists?('meetings.id': meeting.id, swimmer_id: chosen_filter.id)
           end
+          Prosopite.resume
           expect(all_rows_have_same_swimmer).to be true
         end
       end

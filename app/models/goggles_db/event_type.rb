@@ -4,7 +4,7 @@ module GogglesDb
   #
   # = EventType model
   #
-  #   - version:  7.035
+  #   - version:  7-0.6.30
   #   - author:   Steve A.
   #
   class EventType < AbstractLookupEntity
@@ -12,6 +12,8 @@ module GogglesDb
 
     belongs_to :stroke_type
     validates_associated :stroke_type
+
+    default_scope { includes(:stroke_type) }
 
     validates :code, presence: { length: { within: 1..10 }, allow_nil: false },
                      uniqueness: { case_sensitive: true, message: :already_exists }
@@ -25,24 +27,12 @@ module GogglesDb
                             numericality: true
 
     # TODO: remove unneeded
-    # has_many :meeting_events
-    # has_many :meeting_sessions, through: :meeting_events
-    # has_many :meetings,         through: :meeting_sessions
-    # has_many :seasons,          through: :meetings
-    # has_many :season_types,     through: :seasons
-    # has_many :events_by_pool_types
-    # has_many :pool_types,       through: :events_by_pool_types
-    #
     # scope :sort_by_style,       -> { order('style_order') }
     # scope :for_fin_calculation, -> { where('((length_in_meters % 50) = 0) AND (length_in_meters <= 1500)') }
     # scope :for_ironmaster,      -> { where('(not is_a_relay and length_in_meters between 50 and 1500)') }
 
-    # TODO: Needs a working full-chain relation with a Meeting to work:
-    # scope :for_season_type, ->(season_type) { joins(:season_types).where('season_types.id': season_type.id) }
-    # scope :for_season,      ->(season_id)   { joins(:seasons).where('season_id': season_id) }
-
     # Memoize all values for virtual scopes:
-    all.joins(:stroke_type).includes(:stroke_type).order(:style_order).each do |row|
+    all.joins(:stroke_type).order(:style_order).each do |row|
       class_eval do
         @all_eventable ||= []
         @all_eventable << row if row&.stroke_type&.eventable?

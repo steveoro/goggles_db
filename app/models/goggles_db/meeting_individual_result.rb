@@ -6,7 +6,7 @@ module GogglesDb
   #
   # = MeetingIndividualResult model
   #
-  #   - version:  7-0.5.11
+  #   - version:  7-0.6.30
   #   - author:   Steve A.
   #
   class MeetingIndividualResult < AbstractResult
@@ -28,10 +28,19 @@ module GogglesDb
     has_one :federation_type, through: :season_type
     has_one :stroke_type,     through: :event_type
 
-    has_many :laps, -> { order('laps.length_in_meters') }, dependent: :delete_all
-
     belongs_to :team
     validates_associated :team
+
+    default_scope do
+      includes(
+        :swimmer, :team, :category_type, :gender_type,
+        :meeting_program, :meeting_session, :meeting,
+        :pool_type, :meeting_event, :event_type,
+        season: [:season_type]
+      )
+    end
+
+    has_many :laps, -> { order('laps.length_in_meters') }, dependent: :delete_all
 
     # These additional reference fields may be filled-in later (thus not validated upon creation):
     belongs_to :team_affiliation, optional: true
@@ -41,9 +50,10 @@ module GogglesDb
     validates :team_points,       presence: true, numericality: true
 
     delegate :name, :editable_name, to: :team, prefix: true
+    delegate :length_in_meters, to: :event_type, prefix: false
 
     # Sorting scopes:
-    scope :by_date, ->(dir = :asc) { joins(:meeting_session).order('meeting_sessions.scheduled_date': dir) }
+    scope :by_date, ->(dir = :asc) { includes(:meeting_session).joins(:meeting_session).order('meeting_sessions.scheduled_date': dir) }
     # TODO: CLEAR UNUSED
     # scope :by_meeting, ->(dir){ order("meeting_programs.meeting_session_id #{dir}, swimmers.last_name #{dir}, swimmers.first_name #{dir}") }
     # scope :by_swimmer, ->(dir = :asc) { joins(:swimmer).order("swimmers.complete_name #{dir}, meeting_individual_results.rank #{dir}") }
@@ -155,7 +165,7 @@ module GogglesDb
       }
     end
 
-    # AbstractLap overrides:
+    # AbstractResult overrides:
     alias_attribute :parent_meeting, :meeting # (old, new)
   end
 end

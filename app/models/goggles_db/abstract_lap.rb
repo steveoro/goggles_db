@@ -6,7 +6,7 @@ module GogglesDb
   #
   # Encapsulates common behavior for Laps & User Laps.
   #
-  #   - version:  7-0.5.21
+  #   - version:  7-0.6.30
   #   - author:   Steve A.
   #
   class AbstractLap < ApplicationRecord
@@ -37,7 +37,7 @@ module GogglesDb
 
     # All siblings laps:
     scope :related_laps, lambda { |lap|
-      includes(parent_association_sym, :swimmer, :event_type)
+      includes(parent_association_sym, :swimmer, :gender_type, :event_type)
         .where(lap.parent_result_where_condition)
         .by_distance
     }

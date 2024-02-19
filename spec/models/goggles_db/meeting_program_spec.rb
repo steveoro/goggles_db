@@ -2,7 +2,7 @@
 
 require 'rails_helper'
 require 'support/shared_application_record_examples'
-require 'support/shared_method_existance_examples'
+require 'support/shared_method_existence_examples'
 require 'support/shared_sorting_scopes_examples'
 
 module GogglesDb
@@ -10,6 +10,13 @@ module GogglesDb
     shared_examples_for 'a valid MeetingProgram instance' do
       it 'is valid' do
         expect(subject).to be_a(described_class).and be_valid
+      end
+
+      # Tests the validity of the default_scope when there's an optional association involved:
+      it 'does not raise errors when selecting a random row with a field name' do
+        %w[event_order meeting_event_id].each do |field_name|
+          expect { described_class.unscoped.select(field_name).limit(100).sample }.not_to raise_error
+        end
       end
 
       it_behaves_like(
@@ -36,7 +43,7 @@ module GogglesDb
     end
 
     context 'any pre-seeded instance' do
-      subject { described_class.all.limit(20).sample }
+      subject { described_class.last(50).sample }
 
       it_behaves_like('a valid MeetingProgram instance')
     end
@@ -60,7 +67,7 @@ module GogglesDb
 
     # Filtering scopes:
     describe 'self.relays' do
-      let(:result) { subject.class.relays.limit(20) }
+      let(:result) { subject.class.relays.first(20) }
 
       it 'contains only relay events' do
         expect(result).to all(be_relay)
@@ -68,7 +75,7 @@ module GogglesDb
     end
 
     describe 'self.individuals' do
-      let(:result) { subject.class.individuals.limit(20) }
+      let(:result) { subject.class.individuals.first(20) }
 
       it 'contains only individual events' do
         expect(result.map(&:relay?)).to all(be false)
@@ -120,7 +127,12 @@ module GogglesDb
             mir.meeting_program
           end
 
-          let(:result) { subject.to_hash(max_siblings: 3) } # limit sibling rows
+          let(:result) do
+            Prosopite.pause
+            result_hash = subject.to_hash(max_siblings: 3) # limit sibling rows
+            Prosopite.resume
+            result_hash
+          end
 
           it "doesn't contain the MRR list" do
             expect(result['meeting_relay_results']).to be_nil
@@ -134,12 +146,17 @@ module GogglesDb
 
         context 'when the entity has MRRs,' do
           subject do
-            mrr = GogglesDb::MeetingRelayResult.limit(200).sample
+            mrr = GogglesDb::MeetingRelayResult.last(200).sample
             expect(mrr.meeting_program).to be_a(described_class).and be_valid
             mrr.meeting_program
           end
 
-          let(:result) { subject.to_hash(max_siblings: 3) } # limit sibling rows
+          let(:result) do
+            Prosopite.pause
+            result_hash = subject.to_hash(max_siblings: 3) # limit sibling rows
+            Prosopite.resume
+            result_hash
+          end
 
           it "doesn't contain the MIR list" do
             expect(result['meeting_individual_results']).to be_nil

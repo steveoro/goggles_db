@@ -3,7 +3,7 @@
 require 'rails_helper'
 require 'support/shared_application_record_examples'
 require 'support/shared_localizable_examples'
-require 'support/shared_method_existance_examples'
+require 'support/shared_method_existence_examples'
 
 module GogglesDb
   RSpec.describe DisqualificationCodeType do

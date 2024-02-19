@@ -4,7 +4,7 @@ module GogglesDb
   #
   # = MeetingEventReservation model
   #
-  #   - version:  7-0.5.10
+  #   - version:  7-0.6.30
   #   - author:   Steve A.
   #
   # Event reservations are individual event registrations, added personally by each athlete.
@@ -35,6 +35,15 @@ module GogglesDb
     has_one :meeting_session, through: :meeting_event
     has_one :category_type,   through: :badge
     has_one :gender_type,     through: :swimmer
+
+    default_scope do
+      includes(
+        :meeting_reservation, :meeting, :meeting_event,
+        :badge, :team, :swimmer,
+        :meeting_session, :event_type, :category_type, :gender_type,
+        :season, :season_type
+      )
+    end
 
     validates :accepted, inclusion: { in: [true, false] }
 

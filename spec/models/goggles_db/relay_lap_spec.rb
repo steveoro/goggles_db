@@ -3,7 +3,7 @@
 require 'rails_helper'
 require 'support/shared_abstract_lap_examples'
 require 'support/shared_application_record_examples'
-require 'support/shared_method_existance_examples'
+require 'support/shared_method_existence_examples'
 require 'support/shared_sorting_scopes_examples'
 require 'support/shared_filtering_scopes_examples'
 require 'support/shared_timing_manageable_examples'
@@ -13,6 +13,13 @@ module GogglesDb
     shared_examples_for 'a valid Lap instance' do
       it 'is valid' do
         expect(subject).to be_a(described_class).and be_valid
+      end
+
+      # Tests the validity of the default_scope when there's an optional association involved:
+      it 'does not raise errors when selecting a random row with a field name' do
+        %w[stroke_cycles breath_cycles swimmer_id].each do |field_name|
+          expect { described_class.unscoped.select(field_name).limit(100).sample }.not_to raise_error
+        end
       end
 
       it_behaves_like(
@@ -50,7 +57,12 @@ module GogglesDb
     # No pre-seeded rows for this recent model. We'll use the factory anyway here
     # as 'existing_row' is still needed by the shared examples below.
     let(:existing_row) do
-      list = FactoryBot.create_list(:relay_lap, 5, meeting_relay_swimmer: GogglesDb::MeetingRelaySwimmer.last(200).sample)
+      Prosopite.pause
+      list = FactoryBot.create_list(
+        :relay_lap, 5,
+        meeting_relay_swimmer: GogglesDb::MeetingRelaySwimmer.last(200).sample
+      )
+      Prosopite.resume
       list.sample
     end
     #-- ------------------------------------------------------------------------
@@ -83,6 +95,7 @@ module GogglesDb
     describe '#timing_from_start' do
       # Create some fixtures needed by this test:
       before do
+        Prosopite.pause
         FactoryBot.create_list(:relay_lap, 3, meeting_relay_swimmer: GogglesDb::MeetingRelaySwimmer.last(200).sample)
         FactoryBot.create_list(
           :relay_lap, 3,
@@ -90,6 +103,7 @@ module GogglesDb
           seconds_from_start: 0,
           minutes_from_start: 0
         )
+        Prosopite.resume
       end
 
       it_behaves_like('AbstractLap #timing_from_start', described_class)

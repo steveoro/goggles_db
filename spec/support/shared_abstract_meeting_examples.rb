@@ -2,7 +2,7 @@
 
 require 'rails_helper'
 require 'support/shared_application_record_examples'
-require 'support/shared_method_existance_examples'
+require 'support/shared_method_existence_examples'
 require 'support/shared_sorting_scopes_examples'
 require 'support/shared_filtering_scopes_examples'
 require 'support/shared_timing_manageable_examples'
@@ -245,7 +245,7 @@ end
 #++
 
 # REQUIRES/ASSUMES:
-# - the existance of some fixture rows
+# - the existence of some fixture rows
 shared_examples_for 'AbstractMeeting #minimal_attributes' do |sibling_class|
   subject(:result) { fixture_row.minimal_attributes }
 
@@ -266,7 +266,7 @@ end
 #++
 
 # REQUIRES/ASSUMES:
-# - the existance of some fixture rows
+# - the existence of some fixture rows
 shared_examples_for 'AbstractMeeting sorting & filtering scopes' do |factory_name_sym|
   # Sorting scopes:
   describe 'self.by_date' do
@@ -285,7 +285,9 @@ shared_examples_for 'AbstractMeeting sorting & filtering scopes' do |factory_nam
 
   describe 'self.not_expired' do
     context 'when there are uncancelled meetings having the header_date set in the future,' do
-      before { FactoryBot.create_list(factory_name_sym, 3, header_date: Time.zone.today + 2.months) }
+      before do
+        Prosopite.pause { FactoryBot.create_list(factory_name_sym, 3, header_date: Time.zone.today + 2.months) }
+      end
 
       let(:result) { described_class.not_expired.limit(10) }
 

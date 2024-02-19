@@ -32,7 +32,7 @@ module GogglesDb
       end
     end
 
-    # Checks the existance of all the required value rows; raises an error for any missing row.
+    # Checks the existence of all the required value rows; raises an error for any missing row.
     def self.validate_cached_rows
       (MIN_LEVEL_ID..MAX_LEVEL_ID).each do |level_id|
         raise "Missing required #{name} row with ID #{level_id}" if instance_variable_get(:"@level_#{level_id}").blank?

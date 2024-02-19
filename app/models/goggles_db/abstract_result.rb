@@ -6,7 +6,7 @@ module GogglesDb
   #
   # Encapsulates common behavior for MIRs & User Results.
   #
-  #   - version:  7-0.5.11
+  #   - version:  7-0.6.21
   #   - author:   Steve A.
   #
   class AbstractResult < ApplicationRecord
@@ -42,7 +42,7 @@ module GogglesDb
         Arel.sql('minutes * 6000 + seconds * 100 + hundredths') => dir.to_s.downcase.to_sym
         # Using an all in one computed column with Arel for ordering is about the same order of speed
         # than using 3 separate as (minutes: :desc, seconds: :desc, hundredths: :desc), but
-        # yields slighlty faster results a bit more often. (Tested with benchmarks or real data)
+        # yields slightly faster results a bit more often. (Tested with benchmarks on real data)
       )
     }
 

@@ -9,6 +9,7 @@ module GogglesDb
 
     context 'when testing any label internal helper method using fixtures' do
       it 'does not raise errors due to empty tokens' do
+        Prosopite.pause
         list_of_editions_and_names.each_with_index do |edition_and_name, index|
           edition, _name, edition_type_id = edition_and_name
           description = descriptions[index]
@@ -36,6 +37,7 @@ module GogglesDb
           expect(meeting.name_with_edition).to be_present
           expect(meeting.condensed_name).to be_present
         end
+        Prosopite.resume
       end
     end
   end

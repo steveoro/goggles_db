@@ -1,14 +1,13 @@
 # frozen_string_literal: true
 
 require 'rails_helper'
-require 'support/shared_method_existance_examples'
+require 'support/shared_method_existence_examples'
 
 module GogglesDb
   RSpec.describe TimingFinders::BaseStrategy, type: :strategy do
     let(:fixture_swimmer) { fixture_mir.swimmer }
     let(:fixture_mir) do
-      GogglesDb::MeetingIndividualResult.includes(:pool_type, :event_type)
-                                        .joins(:pool_type, :event_type)
+      GogglesDb::MeetingIndividualResult.joins(:pool_type, :event_type)
                                         .qualifications
                                         .where(
                                           'pool_types.id': fixture_pool_type.id,
@@ -26,10 +25,12 @@ module GogglesDb
     # Make sure domain is coherent with expected context:
 
     before do
+      Prosopite.pause
       expect(fixture_pool_type).to be_a(GogglesDb::PoolType).and be_valid
       expect(fixture_event_type).to be_a(GogglesDb::EventType).and be_valid
       expect(fixture_mir).to be_a(GogglesDb::MeetingIndividualResult).and be_valid
       expect(fixture_swimmer).to be_a(GogglesDb::Swimmer).and be_valid
+      Prosopite.resume
     end
 
     it_behaves_like('responding to a list of methods', %i[search_by])

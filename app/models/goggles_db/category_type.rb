@@ -4,7 +4,7 @@ module GogglesDb
   #
   # = CategoryType model
   #
-  #   - version:  7-0.3.33
+  #   - version:  7-0.6.30
   #   - author:   Steve A.
   #
   class CategoryType < ApplicationRecord
@@ -15,6 +15,8 @@ module GogglesDb
 
     has_one :season_type, through: :season
     has_one :federation_type, through: :season_type
+
+    default_scope { includes(:season, :season_type, :federation_type) }
 
     validates :code, presence: { length: { within: 1..7 }, allow_nil: false }
     validates :federation_code, length: { within: 1..2 }
@@ -33,8 +35,8 @@ module GogglesDb
     scope :individuals,       -> { where(relay: false) }
     scope :only_undivided,    -> { where(undivided: true) }
     scope :only_gender_split, -> { where(undivided: false) }
-    scope :for_season_type,   ->(season_type) { includes(:season_type).joins(:season_type).where('season_types.id': season_type.id) }
-    scope :for_season,        ->(season)      { includes(:season).joins(:season).where(season_id: season.id) }
+    scope :for_season_type,   ->(season_type) { joins(:season_type).where('season_types.id': season_type.id) }
+    scope :for_season,        ->(season)      { joins(:season).where(season_id: season.id) }
     #-- ------------------------------------------------------------------------
     #++
 

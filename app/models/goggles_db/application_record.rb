@@ -122,10 +122,12 @@ module GogglesDb
     #
     def map_single_associations_attributes(locale_override)
       result_hash = {}
-      single_associations.each do |key|
-        next unless send(key).respond_to?(:minimal_attributes)
+      serialized_self = readonly? ? self : self.class.includes(single_associations).find(id)
 
-        result_hash[key.to_s] = map_attributes_from_model(send(key), locale_override)
+      single_associations.each do |key|
+        next unless serialized_self.send(key).respond_to?(:minimal_attributes)
+
+        result_hash[key.to_s] = map_attributes_from_model(serialized_self.send(key), locale_override)
       end
       result_hash
     end

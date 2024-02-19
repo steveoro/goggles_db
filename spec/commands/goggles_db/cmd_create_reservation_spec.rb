@@ -7,7 +7,7 @@ module GogglesDb
     let(:fixture_meeting) do
       # To assure that the selected meeting has indeed events, we'll start from the
       # events themselves:
-      mev = GogglesDb::MeetingEvent.limit(200).sample
+      mev = GogglesDb::MeetingEvent.includes(:meeting).joins(:meeting).limit(200).sample
       mev.meeting
     end
     let(:fixture_user)     { GogglesDb::User.limit(30).sample }
@@ -41,7 +41,7 @@ module GogglesDb
     context 'when using valid parameters (including a Meeting w/ events),' do
       describe '#call' do
         # This will select one of the already populated Meetings (with events & categories):
-        subject { described_class.call(fixture_badge, fixture_meeting, fixture_user) }
+        subject { Prosopite.pause { described_class.call(fixture_badge, fixture_meeting, fixture_user) } }
 
         it 'returns itself' do
           expect(subject).to be_a(described_class)
@@ -72,7 +72,7 @@ module GogglesDb
 
     context 'when using valid constructor parameters but that would yield a duplicated MeetingReservation,' do
       describe '#call' do
-        subject { described_class.call(existing_row.badge, existing_row.meeting, existing_row.user) }
+        subject { Prosopite.pause { described_class.call(existing_row.badge, existing_row.meeting, existing_row.user) } }
 
         let(:existing_row) { GogglesDb::MeetingReservation.limit(30).sample }
 

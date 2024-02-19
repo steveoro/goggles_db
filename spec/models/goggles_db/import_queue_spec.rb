@@ -3,7 +3,7 @@
 require 'rails_helper'
 require 'support/shared_active_storage_examples'
 require 'support/shared_application_record_examples'
-require 'support/shared_method_existance_examples'
+require 'support/shared_method_existence_examples'
 require 'support/shared_filtering_scopes_examples'
 
 module GogglesDb
@@ -50,10 +50,12 @@ module GogglesDb
     after { described_class.with_batch_sql.each { |row| row.data_file.purge } }
 
     let(:minimum_domain) do
+      Prosopite.pause
       FactoryBot.create_list(:import_queue_with_static_data_file, 3)
       FactoryBot.create_list(:import_queue_existing_swimmer, 3, uid: 'FAKE-1')
       FactoryBot.create_list(:import_queue_existing_team, 3, process_runs: 1)
       FactoryBot.create_list(:import_queue_existing_team, 2, process_runs: 1, done: true)
+      Prosopite.resume
       described_class.all
     end
 
@@ -101,7 +103,7 @@ module GogglesDb
           # expect(minimum_domain.count).to be_positive
           expect(parent_row).to be_a(described_class).and be_valid
           # previous_count = parent_row.sibling_rows.count
-          FactoryBot.create_list(:import_queue_existing_swimmer, 3, import_queue_id: parent_row.id, uid: 'FAKE-2')
+          Prosopite.pause { FactoryBot.create_list(:import_queue_existing_swimmer, 3, import_queue_id: parent_row.id, uid: 'FAKE-2') }
           parent_row.reload
           expect(parent_row.sibling_rows.count).to eq(3)
         end

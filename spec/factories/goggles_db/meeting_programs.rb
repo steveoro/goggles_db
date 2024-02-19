@@ -9,7 +9,11 @@ FactoryBot.define do
     pool_type     { meeting_event.meeting_session.swimming_pool.pool_type }
     # This will yield a coherent category according to the event type, but regardless of season:
     category_type do
-      meeting_event.relay? ? GogglesDb::CategoryType.eventable.relays.sample : GogglesDb::CategoryType.eventable.individuals.sample
+      if meeting_event.relay?
+        GogglesDb::CategoryType.eventable.relays.sample
+      else
+        GogglesDb::CategoryType.eventable.individuals.sample
+      end
     end
 
     factory :meeting_program_individual do

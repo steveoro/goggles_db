@@ -2,7 +2,7 @@
 
 require 'rails_helper'
 require 'support/shared_application_record_examples'
-require 'support/shared_method_existance_examples'
+require 'support/shared_method_existence_examples'
 require 'support/shared_sorting_scopes_examples'
 require 'support/shared_filtering_scopes_examples'
 
@@ -49,6 +49,7 @@ module GogglesDb
     let(:fixture_user) { GogglesDb::User.first(50).sample }
 
     let(:minimum_domain) do
+      Prosopite.pause
       FactoryBot.create_list(:issue, 5)
 
       # Scrambled list of statuses:
@@ -63,6 +64,7 @@ module GogglesDb
 
       # List of issues with a specific code:
       FactoryBot.create_list(:issue_type4, 3)
+      Prosopite.resume
       described_class.all
     end
 

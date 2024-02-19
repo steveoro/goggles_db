@@ -6,7 +6,7 @@ module GogglesDb
   #
   # = MeetingEntry model
   #
-  #   - version:  7-0.5.10
+  #   - version:  7-0.6.30
   #   - author:   Steve A.
   #
   # This model should be used for *individual* startlist entries only,
@@ -31,13 +31,16 @@ module GogglesDb
     validates_associated :team
     validates_associated :team_affiliation
 
-    default_scope { left_outer_joins(:swimmer) }
-
-    has_one :meeting,         through: :meeting_program
     has_one :meeting_session, through: :meeting_program
+    has_one :meeting,         through: :meeting_program
+    has_one :season,          through: :meeting
+    has_one :season_type,     through: :season
+    has_one :edition_type,    through: :meeting
+    has_one :timing_type,     through: :meeting
+
     has_one :meeting_event,   through: :meeting_program
+    has_one :event_type,      through: :meeting_event
     has_one :pool_type,       through: :meeting_program
-    has_one :event_type,      through: :meeting_program
     has_one :category_type,   through: :meeting_program
     has_one :gender_type,     through: :meeting_program
 
@@ -45,6 +48,11 @@ module GogglesDb
     belongs_to :swimmer, optional: true
     belongs_to :badge, optional: true
     belongs_to :entry_time_type, optional: true
+
+    default_scope do
+      includes(:meeting_program, :meeting_event, :event_type, :category_type, :gender_type)
+        .left_outer_joins(:swimmer)
+    end
 
     delegate :relay?,      to: :event_type, prefix: false, allow_nil: false
     delegate :intermixed?, to: :gender_type, prefix: false, allow_nil: false

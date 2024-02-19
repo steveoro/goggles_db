@@ -6,11 +6,12 @@ module GogglesDb
   #
   # = MeetingRelayResult model
   #
-  #   - version:  7-0.5.10
+  #   - version:  7-0.6.21
   #   - author:   Steve A.
   #
   class MeetingRelayResult < ApplicationRecord
     self.table_name = 'meeting_relay_results'
+
     include TimingManageable
 
     belongs_to :meeting_program
@@ -37,11 +38,31 @@ module GogglesDb
 
     has_many :meeting_relay_swimmers, dependent: :delete_all
 
+    has_many :relay_laps, -> { order('relay_laps.length_in_meters') },
+             inverse_of: :meeting_relay_result, dependent: :delete_all
+
+    default_scope do
+      includes(
+        :team, :team_affiliation,
+        meeting_program: [
+          :meeting,
+          :category_type,
+          :gender_type,
+          {
+            meeting_event: [:event_type],
+            season: [:season_type]
+          }
+        ]
+      )
+    end
+
     validates :relay_code, length: { maximum: 60 }, allow_blank: true
     validates :rank, presence: { length: { within: 1..4, allow_nil: false }, numericality: true }
     validates :standard_points, presence: true, numericality: true
     validates :meeting_points, presence: true, numericality: true
     validates :reaction_time, presence: true, numericality: true
+
+    delegate :length_in_meters, :phase_length_in_meters, :phases, to: :event_type, prefix: false
 
     # Sorting scopes:
     scope :by_rank, -> { order(disqualified: :asc, standard_points: :desc, meeting_points: :desc, rank: :asc) }
@@ -117,5 +138,8 @@ module GogglesDb
         'scheduled_date' => meeting_session.scheduled_date
       }
     end
+
+    # AbstractResult overrides:
+    alias_attribute :parent_meeting, :meeting # (old, new)
   end
 end

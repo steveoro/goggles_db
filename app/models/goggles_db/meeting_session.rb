@@ -4,7 +4,7 @@ module GogglesDb
   #
   # = MeetingSession model
   #
-  #   - version:  7-0.5.10
+  #   - version:  7-0.6.30
   #   - author:   Steve A.
   #
   class MeetingSession < ApplicationRecord
@@ -16,17 +16,22 @@ module GogglesDb
 
     validates_associated :meeting
 
-    default_scope { includes(:meeting) }
-
     has_one  :season,      through: :meeting
     has_one  :season_type, through: :meeting
     has_one  :pool_type,   through: :swimming_pool
 
     has_many :meeting_events, -> { order(:event_order) }, dependent: :delete_all
-    has_many :event_types,    through: :meeting_events
-    has_many :meeting_programs,           through: :meeting_events
-    has_many :meeting_entries,            through: :meeting_events
+    has_many :event_types,       through: :meeting_events
+    has_many :meeting_programs,  through: :meeting_events
+    has_many :meeting_entries,   through: :meeting_events
     # has_many :meeting_individual_results, through: :meeting_programs
+
+    default_scope do
+      includes(
+        :meeting, :swimming_pool, :day_part_type,
+        :season, :season_type, :pool_type
+      )
+    end
 
     validates :session_order,  presence: { length: { within: 1..2, allow_nil: false } }
     validates :scheduled_date, presence: true
@@ -40,7 +45,9 @@ module GogglesDb
     # == Params
     # - dir: :asc|:desc
     def self.by_meeting(dir = :asc)
-      includes(:pool_type).joins(:meeting).order('meetings.description': dir, session_order: dir)
+      includes(:meeting, :pool_type)
+        .joins(:meeting)
+        .order('meetings.description': dir, session_order: dir)
     end
     #-- ------------------------------------------------------------------------
     #++

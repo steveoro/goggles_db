@@ -2,7 +2,7 @@
 
 require 'rails_helper'
 require 'support/shared_application_record_examples'
-require 'support/shared_method_existance_examples'
+require 'support/shared_method_existence_examples'
 require 'support/shared_sorting_scopes_examples'
 require 'support/shared_filtering_scopes_examples'
 
@@ -11,6 +11,10 @@ module GogglesDb
     shared_examples_for 'a valid CategoryType instance' do
       it 'is valid' do
         expect(subject).to be_a(described_class).and be_valid
+      end
+
+      it 'does not raise errors when selecting a random row with a field name' do
+        expect { described_class.unscoped.select(:season_id).limit(100).sample }.not_to raise_error
       end
 
       it_behaves_like(

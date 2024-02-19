@@ -58,3 +58,5 @@ send_coverage.sh
 /vendor/assets/bower_components
 *.bowerrc
 bower.json
+
+/config/credentials/development.key

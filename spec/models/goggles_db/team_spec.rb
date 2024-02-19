@@ -2,7 +2,7 @@
 
 require 'rails_helper'
 require 'support/shared_application_record_examples'
-require 'support/shared_method_existance_examples'
+require 'support/shared_method_existence_examples'
 require 'support/shared_sorting_scopes_examples'
 require 'support/shared_filtering_scopes_examples'
 
@@ -37,7 +37,7 @@ module GogglesDb
     #-- ------------------------------------------------------------------------
     #++
 
-    let(:team_with_badges) { FactoryBot.create(:team_with_badges) }
+    let(:team_with_badges) { Prosopite.pause { FactoryBot.create(:team_with_badges) } }
 
     context 'any pre-seeded instance' do
       subject { described_class.all.limit(20).sample }

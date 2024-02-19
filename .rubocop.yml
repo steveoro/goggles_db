@@ -147,6 +147,7 @@ Style/Documentation:
     - 'app/mailers/goggles_db/application_mailer.rb'
     - 'app/models/goggles_db/application_record.rb'
     - 'app/models/goggles_db/user.rb'
+    - 'app/models/goggles_db/relay_lap.rb'
     - 'lib/goggles_db.rb'
     - 'lib/goggles_db/engine.rb'
 

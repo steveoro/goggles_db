@@ -4,7 +4,7 @@ module GogglesDb
   #
   # = MeetingEvent model
   #
-  #   - version:  7-0.5.10
+  #   - version:  7-0.6.30
   #   - author:   Steve A.
   #
   class MeetingEvent < ApplicationRecord
@@ -32,6 +32,13 @@ module GogglesDb
     has_many :meeting_event_reservations, dependent: :delete_all
     has_many :meeting_relay_reservations, dependent: :delete_all
 
+    default_scope do
+      includes(
+        :meeting_session, :event_type, :heat_type,
+        :season, :meeting, :season_type, :pool_type, :stroke_type
+      )
+    end
+
     validates :event_order, presence: { length: { within: 1..3, allow_nil: false } }
 
     delegate :scheduled_date, to: :meeting_session, prefix: false, allow_nil: false
@@ -41,8 +48,8 @@ module GogglesDb
     scope :by_order, ->(dir = :asc) { order(event_order: dir) }
 
     # Filtering scopes:
-    scope :relays,      -> { joins(:event_type).includes(:event_type).where('event_types.relay': true) }
-    scope :individuals, -> { joins(:event_type).includes(:event_type).where('event_types.relay': false) }
+    scope :relays,      -> { joins(:event_type).where('event_types.relay': true) }
+    scope :individuals, -> { joins(:event_type).where('event_types.relay': false) }
     #-- ------------------------------------------------------------------------
     #++
 

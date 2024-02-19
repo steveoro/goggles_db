@@ -2,7 +2,7 @@
 
 require 'rails_helper'
 require 'support/shared_application_record_examples'
-require 'support/shared_method_existance_examples'
+require 'support/shared_method_existence_examples'
 require 'support/shared_sorting_scopes_examples'
 require 'support/shared_filtering_scopes_examples'
 
@@ -61,7 +61,7 @@ module GogglesDb
 
     describe 'self.templates_for' do
       let(:sample_length) { [100, 200, 400, 800].sample }
-      # Retrieve & use existing test fixtures to guarantee result existance:
+      # Retrieve & use existing test fixtures to guarantee result existence:
       let(:fixture_template) { described_class.where(length_in_meters: sample_length).to_a.sample }
       let(:fixture_team) { fixture_template.team }
       let(:fixture_pool) { fixture_template.pool_type }

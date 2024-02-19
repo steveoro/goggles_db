@@ -4,7 +4,7 @@ module GogglesDb
   #
   # = MeetingTeamScore model
   #
-  #   - version:  7.070
+  #   - version:  7-0.6.30
   #   - author:   Steve A.
   #
   # Stores the overall scoring computed for all Team results in a single Meeting.
@@ -20,6 +20,15 @@ module GogglesDb
     validates_associated :team_affiliation
     validates_associated :meeting
     validates_associated :season
+
+    has_one :season_type, through: :season
+
+    default_scope do
+      includes(
+        :meeting, :team, :team_affiliation,
+        :season, :season_type
+      )
+    end
 
     validates :rank, presence: true, numericality: true
     validates :sum_individual_points, presence: true, numericality: true

@@ -47,10 +47,11 @@ end
 group :development, :test do
   gem 'awesome_print' # color output formatter for Ruby objects
   gem 'brakeman'
-  gem 'bullet'
+  gem 'bullet' # Currently, has issues with #reset_counters
   # gem 'byebug' # Uncomment and call 'byebug' anywhere in the code to stop execution and get a debugger console
   gem 'ffaker'
   gem 'letter_opener'
+  gem 'prosopite' # Bullet alternative
   gem 'pry'
   gem 'pry-byebug'
   gem 'pry-stack_explorer'

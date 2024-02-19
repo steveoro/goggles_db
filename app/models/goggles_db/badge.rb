@@ -4,7 +4,7 @@ module GogglesDb
   #
   # = Badge model
   #
-  #   - version:  7-0.5.10
+  #   - version:  7-0.6.30
   #   - author:   Steve A.
   #
   class Badge < ApplicationRecord
@@ -29,7 +29,12 @@ module GogglesDb
     validates_associated :category_type
     validates_associated :entry_time_type
 
-    default_scope { includes(:swimmer, :team, { season: :season_type }, :team_affiliation, :category_type, :entry_time_type) }
+    default_scope do
+      includes(
+        :swimmer, :gender_type, :team, :season, :season_type,
+        :team_affiliation, :category_type, :entry_time_type
+      )
+    end
 
     # TODO: unused yet
     # has_many :meeting_individual_results
