@@ -6,7 +6,7 @@ module GogglesDb
   #
   # = RelayLap model
   #
-  #   - version:  7-0.6.10
+  #   - version:  7-0.6.30
   #   - author:   Steve A.
   #
   # == Note:
@@ -19,25 +19,37 @@ module GogglesDb
   # - linked RelayLap => each available lap timing except the last one (i.e.: each 25 or 50 m.)
   #
   # This is also the same lap recording protocol used for MIRs & Laps.
+  #
+  # E.g.: 4x200m => 4x(3x RelayLap + 1x MRS) + 1x MRR
+
   class RelayLap < AbstractLap
     self.table_name = 'relay_laps'
 
     belongs_to :swimmer
     belongs_to :team
     belongs_to :meeting_relay_result
-    belongs_to :meeting_relay_swimmer
+    belongs_to :meeting_relay_swimmer, counter_cache: true
 
     validates_associated :swimmer
     validates_associated :team
     validates_associated :meeting_relay_result
     validates_associated :meeting_relay_swimmer
 
+    has_one :season,          through: :meeting_relay_result
     has_one :meeting,         through: :meeting_relay_result
     has_one :meeting_program, through: :meeting_relay_result
     has_one :event_type,      through: :meeting_relay_result
     has_one :category_type,   through: :meeting_relay_result
     has_one :gender_type,     through: :swimmer
     has_one :pool_type,       through: :meeting_relay_result
+
+    default_scope do
+      includes(
+        :team, :meeting_relay_swimmer,
+        :swimmer, :gender_type,
+        meeting_relay_result: %i[season meeting meeting_event event_type meeting_program]
+      )
+    end
 
     validates :stroke_cycles, length: { within: 1..3 }, allow_nil: true
     validates :breath_cycles, length: { within: 1..3 }, allow_nil: true

@@ -2,10 +2,15 @@
 
 require 'rails_helper'
 require 'support/shared_application_record_examples'
-require 'support/shared_method_existance_examples'
+require 'support/shared_method_existence_examples'
 
 module GogglesDb
   RSpec.describe SeasonType do
+    it_behaves_like(
+      'responding to a list of methods',
+      %i[masters? code_to_instance_var_name]
+    )
+
     %w[mas_fin mas_csi mas_uisp ago_fin ago_csi ago_uisp mas_len mas_fina].each do |word|
       # Redefine the subject on a specific instance in order to use the shared_examples:
       subject { described_class.send(word) }
@@ -14,10 +19,7 @@ module GogglesDb
         'having one or more required associations',
         %i[federation_type]
       )
-      it_behaves_like(
-        'responding to a list of methods',
-        ["#{word}?"]
-      )
+      it_behaves_like('responding to a list of methods', ["#{word}?"])
 
       it 'has a valid FederationType' do
         expect(subject.federation_type).to be_a(FederationType).and be_valid

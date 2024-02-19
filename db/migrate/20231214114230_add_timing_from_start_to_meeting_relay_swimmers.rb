@@ -2,9 +2,11 @@
 
 class AddTimingFromStartToMeetingRelaySwimmers < ActiveRecord::Migration[6.0]
   def change
-    add_column :meeting_relay_swimmers, :length_in_meters, :integer
-    add_column :meeting_relay_swimmers, :minutes_from_start, :integer, limit: 3
-    add_column :meeting_relay_swimmers, :seconds_from_start, :integer, limit: 2
-    add_column :meeting_relay_swimmers, :hundredths_from_start, :integer, limit: 2
+    change_table :meeting_relay_swimmers, bulk: true do |t|
+      t.integer :length_in_meters, null: false, default: 0, index: true
+      t.integer :minutes_from_start, null: false, default: 0, limit: 3
+      t.integer :seconds_from_start, null: false, default: 0, limit: 2
+      t.integer :hundredths_from_start, null: false, default: 0, limit: 2
+    end
   end
 end

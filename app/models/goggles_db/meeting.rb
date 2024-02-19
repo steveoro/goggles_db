@@ -4,14 +4,14 @@ module GogglesDb
   #
   # = Meeting model
   #
-  #   - version:  7-0.5.10
+  #   - version:  7-0.6.30
   #   - author:   Steve A.
   #
   class Meeting < AbstractMeeting
     self.table_name = 'meetings'
 
     belongs_to :home_team, optional: true, class_name: 'Team' # Legacy name: "organization_team"
-    belongs_to :calendar, optional: true
+    has_one :calendar, inverse_of: :meeting
 
     has_one :season_type, through: :season
     has_one :federation_type, through: :season
@@ -26,6 +26,13 @@ module GogglesDb
     has_many :meeting_reservations,       dependent: :delete_all
     has_many :meeting_event_reservations, dependent: :delete_all
     has_many :meeting_relay_reservations, dependent: :delete_all
+
+    default_scope do
+      includes(
+        :edition_type, :timing_type, :season, :calendar,
+        :season_type, :federation_type
+      )
+    end
 
     # Nth-level children:
     has_many :meeting_events,             through: :meeting_sessions

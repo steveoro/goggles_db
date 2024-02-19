@@ -14,7 +14,7 @@ module GogglesDb
 
     context 'when using valid parameters,' do
       describe '#call' do
-        subject { described_class.call(meeting_source, actual_dest_season) }
+        subject { Prosopite.pause { described_class.call(meeting_source, actual_dest_season) } }
 
         let(:actual_dest_season) { [season_dest, nil].sample }
 
@@ -60,7 +60,9 @@ module GogglesDb
         end
 
         it 'creates the same number of sessions as the source Meeting' do
-          expect(subject.result.meeting_sessions.count).to eq(meeting_source.meeting_sessions.count)
+          Prosopite.pause do
+            expect(subject.result.meeting_sessions.count).to eq(meeting_source.meeting_sessions.count)
+          end
         end
 
         it 'clears the autofilled flag from all the created sessions' do

@@ -6,7 +6,7 @@ module GogglesDb
   #
   # = Lap model
   #
-  #   - version:  7-0.5.10
+  #   - version:  7-0.6.30
   #   - author:   Steve A.
   #
   # == Note:
@@ -36,6 +36,14 @@ module GogglesDb
     has_one :category_type, through: :meeting_program
     has_one :gender_type,   through: :meeting_program
     has_one :pool_type,     through: :meeting_program
+
+    default_scope do
+      includes(
+        :meeting_individual_result, :meeting_program,
+        :team, :event_type, :category_type,
+        { swimmer: :gender_type }
+      )
+    end
 
     validates :stroke_cycles, length: { within: 1..3 }, allow_nil: true
     validates :breath_cycles, length: { within: 1..3 }, allow_nil: true

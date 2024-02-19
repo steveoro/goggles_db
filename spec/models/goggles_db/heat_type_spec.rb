@@ -19,6 +19,13 @@ module GogglesDb
       end
     end
 
+    # Scopes & "virtual" scopes:
+    describe 'self.all_eventable' do
+      it 'returns a selection Array of the described class instances' do
+        expect(subject.class.all_eventable).to all(be_a(described_class))
+      end
+    end
+
     describe 'self.validate_cached_rows' do
       it 'does not raise any errors' do
         expect { described_class.validate_cached_rows }.not_to raise_error

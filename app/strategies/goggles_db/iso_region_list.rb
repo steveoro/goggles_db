@@ -8,7 +8,7 @@ module GogglesDb
   #   - author....: Steve A.
   #   - build.....: 20201214
   #
-  # Assumes the existance of a "regions-COUNTRY_ALPHA2_CODE.json" file stored in 'db/data'.
+  # Assumes the existence of a "regions-COUNTRY_ALPHA2_CODE.json" file stored in 'db/data'.
   # The regions data format must be:
   #
   #      { "ISO-3166-2_code 1" => "ISO region name 1 in native language", "code2" => "name2", ... }

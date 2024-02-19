@@ -4,9 +4,8 @@ module GogglesDb
   #
   # = "Manager checker" wrapper/strategy object
   #
-  #   - file vers.: 7.05.01
+  #   - version...: 7-0.6.30
   #   - author....: Steve A.
-  #   - build.....: 20230328
   #
   #  Checks if the specified User instance can manage or handle the
   #  specific instances supplied as parameters.
@@ -23,9 +22,10 @@ module GogglesDb
 
       @user = user
       @season_id = season_id
-      @admin_grants = GrantChecker.admin?(user)
-      @team_crud_grants = GrantChecker.crud?(user, 'Team') || GrantChecker.crud?(user, 'TeamAffiliation')
-      @swimmer_crud_grants = GrantChecker.crud?(user, 'Swimmer') || GrantChecker.crud?(user, 'Badge')
+      @grant_checker = GrantChecker.new(user)
+      @admin_grants = @grant_checker.admin?
+      @team_crud_grants = @grant_checker.crud?('Team') || @grant_checker.crud?('TeamAffiliation')
+      @swimmer_crud_grants = @grant_checker.crud?('Swimmer') || @grant_checker.crud?('Badge')
       @managed_teams_ids = user.managed_affiliations.includes(team_affiliation: %i[team season])
                                .joins(team_affiliation: %i[team season])
                                .where(user_id: user.id,
@@ -48,9 +48,8 @@ module GogglesDb
     def self.for_affiliation?(user, team_affiliation_id)
       return false unless user.instance_of?(User) && GogglesDb::TeamAffiliation.exists?(team_affiliation_id)
 
-      GrantChecker.admin?(user) ||
-        GrantChecker.crud?(user, 'Team') ||
-        GrantChecker.crud?(user, 'TeamAffiliation') ||
+      grant_checker = GrantChecker.new(user)
+      grant_checker.admin? || grant_checker.crud?('Team') || grant_checker.crud?('TeamAffiliation') ||
         GogglesDb::ManagedAffiliation.exists?(user_id: user.id, team_affiliation_id:)
     end
 
@@ -64,9 +63,8 @@ module GogglesDb
     def self.any_for?(user, season_id)
       return false unless user.instance_of?(User) && GogglesDb::Season.exists?(season_id)
 
-      GrantChecker.admin?(user) ||
-        GrantChecker.crud?(user, 'Team') ||
-        GrantChecker.crud?(user, 'TeamAffiliation') ||
+      grant_checker = GrantChecker.new(user)
+      grant_checker.admin? || grant_checker.crud?('Team') || grant_checker.crud?('TeamAffiliation') ||
         GogglesDb::ManagedAffiliation.includes(:team_affiliation).joins(:team_affiliation)
                                      .exists?(user_id: user.id, 'team_affiliations.season_id': season_id)
     end

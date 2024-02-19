@@ -4,9 +4,8 @@ module GogglesDb
   #
   # = SwimmerStat parametric query wrapper
   #
-  #   - version:  7-0.3.45
+  #   - version:  7-0.6.30
   #   - author:   Steve A.
-  #   - build:    20220224
   #
   class SwimmerStat
     attr_reader :swimmer, :sql, :result
@@ -119,11 +118,12 @@ module GogglesDb
       add_subhash_for_points(@result, 'min_fin_points', split_data)
 
       split_data = @result['teams_name_and_ids'].split(',')
-      @result['teams'] = split_data.map do |token|
+      # Collect the IDs first, then do a single query to retrieve all filtered Teams:
+      team_ids = split_data.filter_map do |token|
         team_id = token.split(':').last.to_i
-        GogglesDb::Team.find(team_id) if team_id.positive?
+        team_id if team_id.positive?
       end
-      @result['teams'].compact!
+      @result['teams'] = GogglesDb::Team.where(id: team_ids)
 
       split_data = @result['first_meeting_data'].split(':')
       add_subhash_for_meeting(@result, 'first_meeting', split_data)

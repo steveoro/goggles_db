@@ -35,6 +35,31 @@ FactoryBot.define do
         FactoryBot.create(:meeting_relay_swimmer, meeting_relay_result: created_instance, relay_order: 4)
       end
     end
+
+    # Includes sublap creation (3x RelayLap + 1 MRS)
+    factory :meeting_relay_result_4x200 do
+      meeting_program do
+        mev = FactoryBot.create(
+          :meeting_event_relay,
+          event_type: GogglesDb::EventType.where(code: %w[S4X200SL M4X200SL]).sample
+        )
+        FactoryBot.create(:meeting_program_relay, meeting_event: mev)
+      end
+
+      after(:create) do |created_instance|
+        4.times do |swimmer_idx|
+          mrs = FactoryBot.create(:meeting_relay_swimmer, meeting_relay_result: created_instance, relay_order: swimmer_idx + 1)
+          (1..3).each do |sublap_idx|
+            FactoryBot.create(
+              :relay_lap,
+              meeting_relay_swimmer: mrs,
+              meeting_relay_result: created_instance,
+              length_in_meters: (sublap_idx * 50) + (swimmer_idx * 200)
+            )
+          end
+        end
+      end
+    end
     #-- -----------------------------------------------------------------------
     #++
   end

@@ -4,7 +4,7 @@ module GogglesDb
   #
   # = User model
   #
-  #   - version:  7-0.5.10
+  #   - version:  7-0.6.30
   #   - author:   Steve A.
   #
   class User < ApplicationRecord
@@ -44,6 +44,8 @@ module GogglesDb
     belongs_to :swimmer, optional: true
     belongs_to :swimmer_level_type, optional: true
     belongs_to :coach_level_type, optional: true
+
+    default_scope { includes(:swimmer, :swimmer_level_type, :coach_level_type) }
 
     has_many :admin_grants, dependent: :destroy
     has_many :import_queues, dependent: :destroy

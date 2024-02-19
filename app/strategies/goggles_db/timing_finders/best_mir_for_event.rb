@@ -13,7 +13,7 @@ module GogglesDb
       # Finds the absolute personal-best's MeetingIndividualResult instance associated with
       # the specified event and pool type.
       #
-      # The result will be indipendent from the actual setting of the 'personal_best' flag column
+      # The result will be independent from the actual setting of the 'personal_best' flag column
       # on the MIR row (uses the sorting order by timing on the scoped result).
       #
       # === Returns:
@@ -33,7 +33,7 @@ module GogglesDb
       # This procedure lives on a dedicated rake task (Admin app) that, in turn, needs to be run at least after each
       # Meeting results acquisition (typically, at the end of each the data-import procedure run).
       #
-      # This method purposedly doesn't check this flag and can be used even in between data-import
+      # This method purposely doesn't check this flag and can be used even in between data-import
       # cycles.
       #
       def search_by(swimmer, meeting, event_type, pool_type)

@@ -2,7 +2,7 @@
 
 require 'rails_helper'
 require 'support/shared_application_record_examples'
-require 'support/shared_method_existance_examples'
+require 'support/shared_method_existence_examples'
 require 'support/shared_sorting_scopes_examples'
 require 'support/shared_filtering_scopes_examples'
 require 'support/shared_timing_manageable_examples'
@@ -12,6 +12,13 @@ module GogglesDb
     shared_examples_for 'a valid MeetingRelayResult instance' do
       it 'is valid' do
         expect(subject).to be_a(described_class).and be_valid
+      end
+
+      # Tests the validity of the default_scope when there's an optional association involved:
+      it 'does not raise errors when selecting a random row with a field name' do
+        %w[relay_code entry_time_type_id disqualification_code_type_id].each do |field_name|
+          expect { described_class.unscoped.select(field_name).limit(100).sample }.not_to raise_error
+        end
       end
 
       it_behaves_like(
@@ -28,7 +35,7 @@ module GogglesDb
 
       it_behaves_like(
         'responding to a list of methods',
-        %i[minutes seconds hundredths
+        %i[minutes seconds hundredths length_in_meters
            entry_minutes entry_seconds entry_hundredths
            out_of_race? disqualified? valid_for_ranking?
            to_timing to_json]

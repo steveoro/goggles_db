@@ -2,7 +2,7 @@
 
 require 'rails_helper'
 require 'support/shared_application_record_examples'
-require 'support/shared_method_existance_examples'
+require 'support/shared_method_existence_examples'
 require 'support/shared_filtering_scopes_examples'
 
 module GogglesDb
@@ -268,7 +268,7 @@ module GogglesDb
     end
 
     describe '#to_hash' do
-      subject { described_class.limit(100).sample }
+      subject { described_class.last(100).sample }
 
       # Required associations:
       it_behaves_like(
@@ -279,7 +279,7 @@ module GogglesDb
       # Collection associations:
       context 'when the entity contains collection associations,' do
         subject do
-          category = GogglesDb::CategoryType.joins(:season).limit(300).sample
+          category = GogglesDb::CategoryType.joins(:season).last(300).sample
           expect(category.season).to be_a(described_class).and be_valid
           category.season
         end

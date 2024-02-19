@@ -4,7 +4,7 @@ module GogglesDb
   #
   # = UserLap model
   #
-  #   - version:  7-0.5.10
+  #   - version:  7-0.6.30
   #   - author:   Steve A.
   #
   # User laps refer exclusively to user results (& user workshops)
@@ -21,6 +21,17 @@ module GogglesDb
     has_one :user_workshop, through: :user_result
     has_one :event_type, through: :user_result
     has_one :pool_type,  through: :user_result
+
+    has_one :season,      through: :user_workshop
+    has_one :season_type, through: :season
+
+    default_scope do
+      includes(
+        :user_result, :swimmer, :gender_type,
+        :user_workshop, :event_type, :pool_type,
+        :season, :season_type
+      )
+    end
     #-- ------------------------------------------------------------------------
     #++
 

@@ -40,7 +40,7 @@ module GogglesDb
 
     # Scopes & "virtual" scopes:
     describe 'self.all_eventable' do
-      it 'contains only eventable stroke types' do
+      it 'contains only eventable types' do
         expect(subject.class.all_eventable).to all(be_eventable)
       end
     end

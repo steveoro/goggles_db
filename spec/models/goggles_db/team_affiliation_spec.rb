@@ -2,7 +2,7 @@
 
 require 'rails_helper'
 require 'support/shared_application_record_examples'
-require 'support/shared_method_existance_examples'
+require 'support/shared_method_existence_examples'
 require 'support/shared_filtering_scopes_examples'
 
 module GogglesDb
@@ -16,7 +16,7 @@ module GogglesDb
     #-- ------------------------------------------------------------------------
     #++
 
-    let(:affiliation_with_badges) { FactoryBot.create(:affiliation_with_badges) }
+    let(:affiliation_with_badges) { Prosopite.pause { FactoryBot.create(:affiliation_with_badges) } }
 
     context 'when using the factory, the resulting instance' do
       subject { FactoryBot.create(:team_affiliation) }

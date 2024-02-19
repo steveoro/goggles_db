@@ -2,7 +2,7 @@
 
 require 'rails_helper'
 require 'support/shared_application_record_examples'
-require 'support/shared_method_existance_examples'
+require 'support/shared_method_existence_examples'
 require 'support/shared_sorting_scopes_examples'
 require 'support/shared_filtering_scopes_examples'
 require 'support/shared_timing_manageable_examples'
@@ -40,7 +40,7 @@ end
 
 # REQUIRES/ASSUMES:
 # - subject: a valid fixture instance of the sibling class
-# - the existance of some rows having set disqualified & out_of_race both true & false
+# - the existence of some rows having set disqualified & out_of_race both true & false
 shared_examples_for 'AbstractResult filtering scopes' do |sibling_class|
   describe 'self.qualifications' do
     let(:result) { subject.class.qualifications.limit(20).order('disqualified DESC').limit(20) }
@@ -104,7 +104,7 @@ end
 #++
 
 # REQUIRES/ASSUMES:
-# - the existance of some fixture rows
+# - the existence of some fixture rows
 shared_examples_for 'AbstractResult #minimal_attributes' do |sibling_class, _min_associations_list|
   subject { fixture_row.minimal_attributes }
 

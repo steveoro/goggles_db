@@ -4,7 +4,7 @@ module GogglesDb
   #
   # = MeetingReservation model
   #
-  #   - version:  7-0.5.10
+  #   - version:  7-0.6.30
   #   - author:   Steve A.
   #
   # Reservations are individual Meeting registrations, associated just to a specific
@@ -27,11 +27,18 @@ module GogglesDb
     validates_associated :user
 
     has_one  :season,           through: :meeting
-    has_one  :season_type,      through: :meeting
+    has_one  :season_type,      through: :season
     has_many :meeting_sessions, through: :meeting
 
     has_many :meeting_event_reservations, dependent: :delete_all
     has_many :meeting_relay_reservations, dependent: :delete_all
+
+    default_scope do
+      includes(
+        :meeting, :badge, :team, :swimmer, :user,
+        :season, :season_type
+      )
+    end
 
     validates :not_coming, inclusion: { in: [true, false] }
     validates :confirmed, inclusion: { in: [true, false] }

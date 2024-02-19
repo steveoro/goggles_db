@@ -4,7 +4,7 @@ require 'rails_helper'
 require 'support/shared_active_storage_examples'
 require 'support/shared_application_record_examples'
 require 'support/shared_sorting_scopes_examples'
-require 'support/shared_method_existance_examples'
+require 'support/shared_method_existence_examples'
 require 'support/shared_filtering_scopes_examples'
 
 module GogglesDb
@@ -105,7 +105,7 @@ module GogglesDb
       describe 'self.still_open_at(date)' do
         context 'when there are Calendar rows having the scheduled_date set in the future,' do
           before do
-            future_meetings = FactoryBot.create_list(:meeting, 5, header_date: Time.zone.today + 2.months)
+            future_meetings = Prosopite.pause { FactoryBot.create_list(:meeting, 5, header_date: Time.zone.today + 2.months) }
             future_meetings.each { |meeting| FactoryBot.create(:calendar, meeting:) }
           end
 

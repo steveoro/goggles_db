@@ -4,7 +4,7 @@ module GogglesDb
   #
   # = TeamLapTemplate model
   #
-  #   - version:  7.036
+  #   - version:  7-0.6.30
   #   - author:   Steve A.
   #
   class TeamLapTemplate < ApplicationRecord
@@ -19,6 +19,8 @@ module GogglesDb
     validates_associated :event_type
 
     has_one :stroke_type, through: :event_type
+
+    default_scope { includes(:team, :pool_type, :event_type, :stroke_type) }
 
     # Sorting scopes:
     scope :by_length, -> { order(:length_in_meters) }

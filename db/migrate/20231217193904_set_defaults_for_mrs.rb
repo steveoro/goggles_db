@@ -2,11 +2,6 @@
 
 class SetDefaultsForMrs < ActiveRecord::Migration[6.0]
   def self.up
-    change_column_default(:meeting_relay_swimmers, :length_in_meters, 0)
-    change_column_default(:meeting_relay_swimmers, :minutes_from_start, 0)
-    change_column_default(:meeting_relay_swimmers, :seconds_from_start, 0)
-    change_column_default(:meeting_relay_swimmers, :hundredths_from_start, 0)
-
     change_column_default(:relay_laps, :length_in_meters, 0)
     change_column_default(:relay_laps, :minutes, 0)
     change_column_default(:relay_laps, :seconds, 0)

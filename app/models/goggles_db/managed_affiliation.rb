@@ -6,7 +6,7 @@ module GogglesDb
   #
   # (formerly known as "TeamManager")
   #
-  #   - version:  7-0.5.10
+  #   - version:  7-0.6.30
   #   - author:   Steve A.
   #
   class ManagedAffiliation < ApplicationRecord
@@ -17,6 +17,8 @@ module GogglesDb
 
     belongs_to :team_affiliation
     validates_associated :team_affiliation
+
+    default_scope { includes(:manager, :team_affiliation) }
 
     has_one  :team, through: :team_affiliation
     has_one  :season, through: :team_affiliation
