@@ -67,6 +67,8 @@ Rails.application.configure do
   # (see https://github.com/charkost/prosopite)
   # ============================================================================
   config.after_initialize do
+    # [Steve, 20240221] Leave Prosopite disabled if it complains too much.
+    # Prosopite.enabled = false # default: true
     Prosopite.rails_logger = true
     # Prosopite.prosopite_logger = true # default: false
     Prosopite.raise = false # default: false
@@ -77,6 +79,7 @@ Rails.application.configure do
     # (see https://github.com/flyerhzm/bullet)
     # ============================================================================
     # [Steve, 20210128] Note: Bullet doesn't support ActiveRecord 6.1 yet
+    # [Steve, 20240221] Leave Bullet disabled if it complains too much.
     Bullet.enable = true
 
     # Pop up a JavaScript alert in the browser:
