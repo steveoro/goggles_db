@@ -29,7 +29,7 @@ Gem::Specification.new do |spec|
 
   spec.files = Dir['{app,config,db,lib}/**/*', 'LICENSE', 'Rakefile', 'README.md']
 
-  # Base Rails dependancy:
+  # Base Rails dependency:
   # [20210128] ActiveRecord 6.1 introduces too many changes for the current implementation
   spec.add_dependency 'rails', '>= 6.0.6.1', '< 6.1.0'
   spec.add_dependency 'rails-i18n', '~> 6.0'
