@@ -227,7 +227,7 @@ GEM
       term-ansicolor
       yard (~> 0.9.12)
     json (2.7.1)
-    jwt (2.8.0)
+    jwt (2.8.1)
       base64
     language_server-protocol (3.17.0.3)
     launchy (2.5.2)
@@ -236,7 +236,7 @@ GEM
       activerecord (>= 4.2)
     letter_opener (1.9.0)
       launchy (>= 2.2, < 3)
-    listen (3.8.0)
+    listen (3.9.0)
       rb-fsevent (~> 0.10, >= 0.10.3)
       rb-inotify (~> 0.9, >= 0.9.10)
     loofah (2.22.0)
@@ -248,7 +248,7 @@ GEM
       net-imap
       net-pop
       net-smtp
-    marcel (1.0.2)
+    marcel (1.0.3)
     method_source (1.0.0)
     mini_magick (4.12.0)
     mini_mime (1.1.5)
@@ -299,6 +299,7 @@ GEM
       ast (~> 2.4.1)
       racc
     plus_codes (0.2.1)
+    prism (0.24.0)
     prosopite (1.4.2)
     pry (0.14.2)
       coderay (~> 1.1)
@@ -311,7 +312,7 @@ GEM
       pry (~> 0.13)
     public_suffix (5.0.4)
     racc (1.7.3)
-    rack (2.2.8)
+    rack (2.2.8.1)
     rack-protection (3.2.0)
       base64 (>= 0.1.0)
       rack (~> 2.2, >= 2.2.4)
@@ -381,13 +382,13 @@ GEM
       rspec-expectations (~> 3.10)
       rspec-mocks (~> 3.10)
       rspec-support (~> 3.10)
-    rspec-support (3.13.0)
+    rspec-support (3.13.1)
     rspec_junit_formatter (0.6.0)
       rspec-core (>= 2, < 4, != 2.12.0)
     rspec_pacman_formatter (0.1.7)
       colorize
       rspec
-    rubocop (1.60.2)
+    rubocop (1.61.0)
       json (~> 2.3)
       language_server-protocol (>= 3.17.0)
       parallel (~> 1.10)
@@ -398,8 +399,9 @@ GEM
       rubocop-ast (>= 1.30.0, < 2.0)
       ruby-progressbar (~> 1.7)
       unicode-display_width (>= 2.4.0, < 3.0)
-    rubocop-ast (1.30.0)
-      parser (>= 3.2.1.0)
+    rubocop-ast (1.31.0)
+      parser (>= 3.3.0.4)
+      prism (>= 0.24.0)
     rubocop-capybara (2.20.0)
       rubocop (~> 1.41)
     rubocop-factory_bot (2.25.1)
@@ -466,7 +468,7 @@ GEM
     temple (0.10.3)
     term-ansicolor (1.7.1)
       tins (~> 1.0)
-    thor (1.3.0)
+    thor (1.3.1)
     thread_safe (0.3.6)
     tilt (2.3.0)
     timeout (0.4.1)
@@ -484,7 +486,7 @@ GEM
     websocket-driver (0.7.6)
       websocket-extensions (>= 0.1.0)
     websocket-extensions (0.1.5)
-    yard (0.9.34)
+    yard (0.9.35)
     zeitwerk (2.6.13)
 
 PLATFORMS
