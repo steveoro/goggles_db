@@ -31,7 +31,7 @@ Gem::Specification.new do |spec|
 
   # Base Rails dependency:
   # [20210128] ActiveRecord 6.1 introduces too many changes for the current implementation
-  spec.add_dependency 'rails', '>= 6.0.6.1', '< 6.1.0'
+  spec.add_dependency 'rails', '>= 6.0.6.1', '< 7.2.0'
   spec.add_dependency 'rails-i18n', '~> 6.0'
 
   spec.add_dependency 'acts-as-taggable-on'
