@@ -87,7 +87,7 @@ module GogglesDb
     end
 
     describe 'self.for_user' do
-      let(:chosen_filter) { described_class.includes(:user).joins(:user).select(:user_id).distinct.limit(20).sample }
+      let(:chosen_filter) { described_class.includes(:user).joins(:user).distinct(:user_id).limit(20).sample }
 
       context 'given the chosen User has any UserWorkshops associated to it,' do
         let(:result) { described_class.for_user(chosen_filter).limit(10) }
@@ -103,7 +103,7 @@ module GogglesDb
     end
 
     describe 'self.for_team' do
-      let(:chosen_filter) { described_class.includes(:team).joins(:team).select(:team_id).distinct.limit(20).sample }
+      let(:chosen_filter) { described_class.includes(:team).joins(:team).distinct(:team_id).limit(20).sample }
 
       context 'given the chosen Team has any UserWorkshops associated to it,' do
         let(:result) { described_class.for_team(chosen_filter).limit(10) }

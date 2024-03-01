@@ -31,8 +31,8 @@ Gem::Specification.new do |spec|
 
   # Base Rails dependency:
   # [20210128] ActiveRecord 6.1 introduces too many changes for the current implementation
-  spec.add_dependency 'rails', '>= 6.0.6.1', '< 7.2.0'
-  spec.add_dependency 'rails-i18n', '~> 6.0'
+  spec.add_dependency 'rails', '>= 6.1.7', '< 7'
+  spec.add_dependency 'rails-i18n', '~> 6'
 
   spec.add_dependency 'acts-as-taggable-on'
   spec.add_dependency 'acts_as_votable'
@@ -57,8 +57,7 @@ Gem::Specification.new do |spec|
   spec.add_dependency 'omniauth-rails_csrf_protection'
   # Twitter disabled for the time being (supports only OAuth 1a)
   # spec.add_dependency 'omniauth-twitter'
-  spec.add_dependency 'plus_codes'      # https://github.com/google/open-location-code/tree/master/ruby
-  spec.add_dependency 'ruby2_keywords'  # needed to correct 'delegate' for some peculiar cases until Ruby 3.x is adopted (see: https://eregon.me/blog/2021/02/13/correct-delegation-in-ruby-2-27-3.html)
+  spec.add_dependency 'plus_codes' # https://github.com/google/open-location-code/tree/master/ruby
   spec.add_dependency 'sass-rails'
   spec.add_dependency 'scenic'
   spec.add_dependency 'simple_command'
