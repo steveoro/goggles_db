@@ -55,7 +55,7 @@ module GogglesDb
       # Scrambled list of statuses:
       (0..6).to_a.sample(7).each { |i| FactoryBot.create(:issue, status: i) }
       # Scrambled list of priorities:
-      (0..GogglesDb::Issue::MAX_PRIORITY).to_a.sample(GogglesDb::Issue::MAX_PRIORITY + 1).each do |i|
+      (0..described_class::MAX_PRIORITY).to_a.sample(described_class::MAX_PRIORITY + 1).each do |i|
         FactoryBot.create(:issue, priority: i)
       end
 
@@ -132,7 +132,7 @@ module GogglesDb
 
     describe '#deletable? & #processable' do
       context 'when #status is beyond the processable range' do
-        subject { FactoryBot.build(:issue, status: ((GogglesDb::Issue::MAX_PROCESSABLE_STATE + 1)..9).to_a.sample) }
+        subject { FactoryBot.build(:issue, status: ((described_class::MAX_PROCESSABLE_STATE + 1)..9).to_a.sample) }
 
         it 'is deletable' do
           expect(subject).to be_deletable
@@ -144,7 +144,7 @@ module GogglesDb
       end
 
       context 'when #status is within the processable range' do
-        subject { FactoryBot.build(:issue, status: (0..GogglesDb::Issue::MAX_PROCESSABLE_STATE).to_a.sample) }
+        subject { FactoryBot.build(:issue, status: (0..described_class::MAX_PROCESSABLE_STATE).to_a.sample) }
 
         it 'is NOT deletable' do
           expect(subject).not_to be_deletable
@@ -158,7 +158,7 @@ module GogglesDb
 
     describe '#critical?' do
       context 'when #priority is MAX' do
-        subject { FactoryBot.build(:issue, priority: GogglesDb::Issue::MAX_PRIORITY) }
+        subject { FactoryBot.build(:issue, priority: described_class::MAX_PRIORITY) }
 
         it 'is critical' do
           expect(subject).to be_critical
@@ -166,7 +166,7 @@ module GogglesDb
       end
 
       context 'when #priority is not MAX' do
-        subject { FactoryBot.build(:issue, priority: (0...GogglesDb::Issue::MAX_PRIORITY).to_a.sample) }
+        subject { FactoryBot.build(:issue, priority: (0...described_class::MAX_PRIORITY).to_a.sample) }
 
         it 'is NOT critical' do
           expect(subject).not_to be_critical

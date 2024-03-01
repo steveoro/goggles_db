@@ -17,7 +17,7 @@ module GogglesDb
       it_behaves_like('ApplicationRecord shared interface')
     end
 
-    (CoachLevelType::MIN_LEVEL_ID..CoachLevelType::MAX_LEVEL_ID).each do |level_id|
+    (described_class::MIN_LEVEL_ID..described_class::MAX_LEVEL_ID).each do |level_id|
       describe "self.level_#{level_id}" do
         let(:method_name) { "level_#{level_id}" }
 
