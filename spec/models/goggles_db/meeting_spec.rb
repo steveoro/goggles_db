@@ -180,7 +180,7 @@ module GogglesDb
       let(:chosen_filter) do
         described_class.includes(:meeting_individual_results)
                        .joins(:meeting_individual_results)
-                       .select(:team_id).distinct
+                       .distinct(:team_id)
                        .limit(20).sample
                        .meeting_individual_results.first
                        .team
@@ -221,7 +221,7 @@ module GogglesDb
     describe 'self.for_swimmer' do
       let(:chosen_filter) do
         described_class.includes(:meeting_relay_swimmers).joins(:meeting_relay_swimmers)
-                       .select(:swimmer_id).distinct
+                       .distinct(:swimmer_id)
                        .limit(20).sample
                        .meeting_relay_swimmers.first
                        .swimmer
@@ -263,7 +263,7 @@ module GogglesDb
     describe 'self.team_presence?' do
       let(:chosen_result) do
         described_class.includes(:meeting_individual_results).joins(:meeting_individual_results)
-                       .select(:team_id).distinct
+                       .distinct(:team_id)
                        .limit(20).sample
                        .meeting_individual_results.sample
       end
@@ -287,7 +287,7 @@ module GogglesDb
     describe 'self.swimmer_presence?' do
       let(:chosen_result) do
         described_class.includes(:meeting_individual_results).joins(:meeting_individual_results)
-                       .select(:swimmer_id).distinct
+                       .distinct(:swimmer_id)
                        .limit(20).sample
                        .meeting_individual_results.sample
       end

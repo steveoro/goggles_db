@@ -143,7 +143,9 @@ RSpec.describe GogglesDb::MeetingDecorator, type: :decorator do
       subject(:result) { decorated_instance.event_list }
 
       it 'returns the list of all the uniquely defined events' do
-        expect(result).to match_array(fixture_row.meeting_sessions.by_order.map(&:meeting_events).flatten)
+        expect(result).to match_array(
+          fixture_row.meeting_sessions.includes(:meeting_events).by_order.map(&:meeting_events).flatten
+        )
       end
     end
 
@@ -161,7 +163,9 @@ RSpec.describe GogglesDb::MeetingDecorator, type: :decorator do
       subject(:result) { decorated_instance.event_type_list }
 
       it 'returns the list of all the uniquely defined event types' do
-        expect(result).to match_array(decorated_instance.event_list.map(&:event_type))
+        expect(result).to match_array(
+          decorated_instance.event_list.map(&:event_type)
+        )
       end
     end
 

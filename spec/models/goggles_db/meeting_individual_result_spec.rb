@@ -105,7 +105,7 @@ module GogglesDb
       let(:meeting_filter) do
         # Filter out unique IDs quick, then load the whole row:
         Meeting.includes(:meeting_individual_results).joins(:meeting_individual_results)
-               .select(:id).distinct.limit(20).sample
+               .distinct(:id).limit(20).sample
       end
       let(:result) { described_class.for_meeting_code(meeting_filter).limit(20) }
 

@@ -5,7 +5,7 @@ require 'rails_helper'
 RSpec.describe GogglesDb::UserWorkshopDecorator, type: :decorator do
   subject(:decorated_instance) { described_class.decorate(fixture_row) }
 
-  let(:fixture_row) { FactoryBot.create(:workshop_with_results) }
+  let(:fixture_row) { Prosopite.pause { FactoryBot.create(:workshop_with_results) } }
 
   before do
     expect(fixture_row).to be_a(GogglesDb::UserWorkshop).and be_valid

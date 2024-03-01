@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    goggles_db (0.6.30)
+    goggles_db (0.7.00)
       acts-as-taggable-on
       acts_as_votable
       cities
@@ -23,9 +23,8 @@ PATH
       omniauth-facebook
       omniauth-rails_csrf_protection
       plus_codes
-      rails (>= 6.0.6.1, < 7.2.0)
-      rails-i18n (~> 6.0)
-      ruby2_keywords
+      rails (>= 6.1.7, < 7)
+      rails-i18n (~> 6)
       sass-rails
       scenic
       simple_command
@@ -100,8 +99,8 @@ GEM
       minitest (>= 5.1)
       tzinfo (~> 2.0)
       zeitwerk (~> 2.3)
-    acts-as-taggable-on (9.0.1)
-      activerecord (>= 6.0, < 7.1)
+    acts-as-taggable-on (10.0.0)
+      activerecord (>= 6.1, < 7.2)
     acts_as_votable (0.14.0)
     addressable (2.8.6)
       public_suffix (>= 2.0.2, < 6.0)
@@ -236,8 +235,8 @@ GEM
     language_server-protocol (3.17.0.3)
     launchy (2.5.2)
       addressable (~> 2.8)
-    ledermann-rails-settings (2.5.0)
-      activerecord (>= 4.2)
+    ledermann-rails-settings (2.6.1)
+      activerecord (>= 6.1)
     letter_opener (1.9.0)
       launchy (>= 2.2, < 3)
     listen (3.9.0)
@@ -378,14 +377,14 @@ GEM
     rspec-mocks (3.13.0)
       diff-lcs (>= 1.2.0, < 2.0)
       rspec-support (~> 3.13.0)
-    rspec-rails (5.1.2)
-      actionpack (>= 5.2)
-      activesupport (>= 5.2)
-      railties (>= 5.2)
-      rspec-core (~> 3.10)
-      rspec-expectations (~> 3.10)
-      rspec-mocks (~> 3.10)
-      rspec-support (~> 3.10)
+    rspec-rails (6.1.1)
+      actionpack (>= 6.1)
+      activesupport (>= 6.1)
+      railties (>= 6.1)
+      rspec-core (~> 3.12)
+      rspec-expectations (~> 3.12)
+      rspec-mocks (~> 3.12)
+      rspec-support (~> 3.12)
     rspec-support (3.13.1)
     rspec_junit_formatter (0.6.0)
       rspec-core (>= 2, < 4, != 2.12.0)

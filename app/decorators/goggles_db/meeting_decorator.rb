@@ -42,7 +42,7 @@ module GogglesDb
     # Returns the list of SwimmingPool defined for this meeting, ordered by session.
     # Returns +nil+ whenever the sessions or the pools are missing.
     def meeting_pools
-      meeting_sessions.by_order.map(&:swimming_pool).uniq
+      meeting_sessions.includes(:swimming_pool).by_order.map(&:swimming_pool).uniq
     end
 
     # Returns the first representative SwimmingPool for this meeting.
@@ -55,7 +55,7 @@ module GogglesDb
     # ordered by session & event order.
     # (Assumes both sessions & events as properly set.)
     def event_list
-      meeting_sessions.by_order.map(&:meeting_events).flatten
+      meeting_sessions.includes(:meeting_events).by_order.map(&:meeting_events).flatten
     end
 
     # Returns the list of all defined +EventType+s for this instance,
