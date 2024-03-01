@@ -59,7 +59,7 @@ jobs:
       - checkout
       - ruby/install-deps:
           app-dir: ~/goggles_db
-          key: goggles_db-v0600
+          key: goggles_db-v0700
       - ruby/rubocop-check:
           app-dir: ~/goggles_db
           label: Rubocop
@@ -72,7 +72,7 @@ jobs:
       - checkout
       - ruby/install-deps:
           app-dir: ~/goggles_db
-          key: goggles_db-v0600
+          key: goggles_db-v0700
       - run:
           name: Brakeman
           command: |
@@ -87,7 +87,7 @@ jobs:
           at: ~/goggles_db/tmp
       - ruby/install-deps:
           app-dir: ~/goggles_db
-          key: goggles_db-v0600
+          key: goggles_db-v0700
       - run:
           <<: *common-db-setup
       - run:
@@ -105,7 +105,7 @@ jobs:
           at: ~/goggles_db/tmp
       - ruby/install-deps:
           app-dir: ~/goggles_db
-          key: goggles_db-v0600
+          key: goggles_db-v0700
       - run:
           <<: *common-db-setup
       - run:
@@ -135,7 +135,7 @@ jobs:
           at: ~/goggles_db/tmp
       - ruby/install-deps:
           app-dir: ~/goggles_db
-          key: goggles_db-v0600
+          key: goggles_db-v0700
       - run:
           <<: *common-db-setup
       - run:
@@ -165,7 +165,7 @@ jobs:
           at: ~/goggles_db/tmp
       - ruby/install-deps:
           app-dir: ~/goggles_db
-          key: goggles_db-v0600
+          key: goggles_db-v0700
       - run:
           <<: *common-db-setup
       - run:
@@ -195,7 +195,7 @@ jobs:
           at: ~/goggles_db/tmp
       - ruby/install-deps:
           app-dir: ~/goggles_db
-          key: goggles_db-v0600
+          key: goggles_db-v0700
       - run:
           <<: *common-db-setup
       - run:
@@ -225,7 +225,7 @@ jobs:
           at: ~/goggles_db/tmp
       - ruby/install-deps:
           app-dir: ~/goggles_db
-          key: goggles_db-v0600
+          key: goggles_db-v0700
       - run:
           <<: *common-db-setup
       - run:
