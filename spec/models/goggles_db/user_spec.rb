@@ -94,12 +94,12 @@ module GogglesDb
 
         it 'moves any UserWorkshop association to the placeholder user' do
           fixture_workshop.reload
-          expect(fixture_workshop.user_id).to eq(User::PLACEHOLDER_ID)
+          expect(fixture_workshop.user_id).to eq(described_class::PLACEHOLDER_ID)
         end
 
         it 'moves any UserResult association to the placeholder user' do
           fixture_result.reload
-          expect(fixture_result.user_id).to eq(User::PLACEHOLDER_ID)
+          expect(fixture_result.user_id).to eq(described_class::PLACEHOLDER_ID)
         end
       end
     end

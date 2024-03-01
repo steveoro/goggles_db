@@ -36,11 +36,11 @@ module GogglesDb
       end
 
       it 'has a non-empty string for DB versioning' do
-        expect(subject.send(AppParameter::DB_VERSION_FIELDNAME)).to be_present
+        expect(subject.send(described_class::DB_VERSION_FIELDNAME)).to be_present
       end
 
       it 'has a non-empty string for full App versioning' do
-        expect(subject.send(AppParameter::FULL_VERSION_FIELDNAME)).to be_present
+        expect(subject.send(described_class::FULL_VERSION_FIELDNAME)).to be_present
       end
 
       it 'has the maintenance mode flag toggled off' do
@@ -63,7 +63,7 @@ module GogglesDb
         expect(subject).to be_a(described_class).and be_valid
       end
 
-      AppParameter::SETTINGS_GROUPS.each do |setting_key|
+      described_class::SETTINGS_GROUPS.each do |setting_key|
         it "includes the :#{setting_key} settings key" do
           expect(subject.settings(setting_key)).to be_a(RailsSettings::SettingObject)
           expect(subject.settings(setting_key).value).to be_an(Hash)
