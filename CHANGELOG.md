@@ -2,6 +2,7 @@
 
 _Please, add the latest build info on top of the list; use Version::MAJOR only after gold release; keep semantic versioning in line with framework's_
 
+- **0.7.06** [Steve A.] query fix for SwimmerStat
 - **0.7.00** [Steve A.] update to Rails 6.1; specs adjustments
 - **0.6.30** [Steve A.] counter_cache for MRR-MRS-RL chain association; added Prosopite gem for additional query checks; improved default scopes for all AR Models; added GrantChecker helpers for the instance in case of multiple consequent checks for the same user; data-fix migration for existing MRS with zero timing "from_start" & length_in_meters; added delegation for length_in_meters for MRR & MRS & alias for MRS#meeting_relay_result as #parent_result
 - **0.6.21** [Steve A.] minor data-fix: removed some null ranks in MRRs; improvements to default scopes due to missing includes() & MRR factories; added missing helpers to MRR-MRS-RelayLap association chain

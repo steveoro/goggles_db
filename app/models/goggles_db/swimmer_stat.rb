@@ -4,7 +4,7 @@ module GogglesDb
   #
   # = SwimmerStat parametric query wrapper
   #
-  #   - version:  7-0.6.30
+  #   - version:  7-0.7.06
   #   - author:   Steve A.
   #
   class SwimmerStat
@@ -48,7 +48,7 @@ module GogglesDb
     #               "current_categories" => nil,
     #
     #                   "max_fin_points" => {
-    #             "standard_points" => "876.67",
+    #             "standard_points" => 876.67,
     #                  "meeting_id" => "18211",
     #                  "event_code" => "50RA",
     #                  "event_date" => "2019-06-28",
@@ -56,7 +56,7 @@ module GogglesDb
     #         "meeting_description" => "CAMPIONATI ITALIANI FIN"
     #     },
     #                   "min_fin_points" => {
-    #             "standard_points" => "673.37",
+    #             "standard_points" => 673.37,
     #                  "meeting_id" => "18",
     #                  "event_code" => "50FA",
     #                  "event_date" => "2004-03-06",
@@ -145,7 +145,7 @@ module GogglesDb
     # }
     def add_subhash_for_points(hash, subhash_key, values)
       hash[subhash_key] = {
-        'standard_points' => values[0],
+        'standard_points' => values[0].to_f,
         'meeting_id' => values[1],
         'event_code' => values[2],
         'event_date' => values[3],
@@ -188,7 +188,8 @@ module GogglesDb
           SUM(sbs.individual_meters) AS individual_meters,
           SUM(sbs.individual_disqualified_count) AS individual_disqualified_count,
           MAX(sbs.max_points) AS max_fin_points_data,
-          MIN(CASE WHEN sbs.fed_code = 'FIN' AND substr(sbs.min_points, 1, 4) <> '0.00' THEN sbs.min_points ELSE '9999:99999999' END) AS min_fin_points_data,
+          -- Detect FIN vs. CSI scoring
+          MIN(CASE WHEN sbs.fed_code = 'FIN' AND substr(sbs.min_points, 1, 9) <> '000000.00' THEN sbs.min_points ELSE '---' END) AS min_fin_points_data,
           SUM(CASE WHEN sbs.fed_code = 'FIN' AND sbs.event_count >= 18 THEN 1 ELSE 0 END) AS irons_count,
           GROUP_CONCAT(DISTINCT sbs.team_name_and_id separator ', ') AS teams_name_and_ids,
           MIN(sbs.min_date) AS first_meeting_data,
@@ -201,10 +202,10 @@ module GogglesDb
           SUM(sbr.relay_disqualified_count) AS relay_disqualified_count,
           GROUP_CONCAT(crb.current_team separator ', ') AS current_teams,
           GROUP_CONCAT(crb.current_category separator ', ') AS current_categories
-        -- Individual results
         FROM (
+          -- Individual results (assumes always existing for a registered swimmer)
           SELECT mir.swimmer_id, mir.badge_id, ft.code AS fed_code,
-          CONCAT(t.editable_name, ':', t.id) AS team_name_and_id,
+            CONCAT(t.editable_name, ':', t.id) AS team_name_and_id,
             COUNT(DISTINCT ms.meeting_id) AS meeting_count,
             COUNT(mir.id) AS mir_count,
             SUM(mir.standard_points) AS total_points,
@@ -213,11 +214,12 @@ module GogglesDb
             SUM(mir.hundredths) AS individual_hundredths,
             SUM(et.length_in_meters) AS individual_meters,
             SUM(mir.disqualified) AS individual_disqualified_count,
-            MAX(CONCAT(mir.standard_points, ':', m.id, ':', et.code, ':', ms.scheduled_date, ':', ft.code, ':', m.description)) AS max_points,
-            MIN(CONCAT(mir.standard_points, ':', m.id, ':', et.code, ':', ms.scheduled_date, ':', ft.code, ':', m.description)) AS min_points,
+            -- Format scores so that can be min-maxed as strings, no thousands separators, with leading zeroes in 9 digits:
+            MAX(CONCAT(LPAD(REPLACE(FORMAT(mir.standard_points, 2), ',', ''), 9, '0'), ':', m.id, ':', et.code, ':', ms.scheduled_date, ':', ft.code, ':', m.description)) AS max_points,
+            MIN(CONCAT(LPAD(REPLACE(FORMAT(mir.standard_points, 2), ',', ''), 9, '0'), ':', m.id, ':', et.code, ':', ms.scheduled_date, ':', ft.code, ':', m.description)) AS min_points,
             COUNT(DISTINCT et.code) AS event_count,
-          MIN(CONCAT(ms.scheduled_date, ':', m.id, ':', m.description, ':', ft.code)) AS min_date,
-          MAX(CONCAT(ms.scheduled_date, ':', m.id, ':', m.description, ':', ft.code)) AS max_date
+            MIN(CONCAT(ms.scheduled_date, ':', m.id, ':', m.description, ':', ft.code)) AS min_date,
+            MAX(CONCAT(ms.scheduled_date, ':', m.id, ':', m.description, ':', ft.code)) AS max_date
           FROM meeting_individual_results mir
             JOIN meeting_programs mp ON mp.id = mir.meeting_program_id
             JOIN meeting_events me ON me.id = mp.meeting_event_id
@@ -230,11 +232,11 @@ module GogglesDb
             JOIN federation_types ft ON ft.id = st.federation_type_id
             JOIN badges b ON b.id = mir.badge_id
             JOIN teams t ON t.id = b.team_id
-          WHERE mir.swimmer_id = #{swimmer_id}
+          WHERE (mir.swimmer_id = #{swimmer_id})
           GROUP BY mir.swimmer_id, mir.badge_id, ft.code, CONCAT(t.editable_name, ':', t.id)
         ) AS sbs
-        -- Relays
-        LEFT JOIN (
+        -- Relay results (may not exist)
+        LEFT OUTER JOIN (
           SELECT mrs.swimmer_id, mrs.badge_id,
             COUNT(mrr.id) AS mrr_count,
             SUM(mrs.minutes) AS relay_minutes,
@@ -247,11 +249,11 @@ module GogglesDb
             JOIN meeting_programs mp ON mp.id = mrr.meeting_program_id
             JOIN meeting_events me ON me.id = mp.meeting_event_id
             JOIN event_types et ON et.id = me.event_type_id
-          WHERE mrs.swimmer_id = #{swimmer_id}
+          WHERE (mrs.swimmer_id = #{swimmer_id})
           GROUP BY mrs.swimmer_id, mrs.badge_id
         ) AS sbr ON sbr.badge_id = sbs.badge_id
-        -- Current team and category
-        LEFT JOIN (
+        -- Current team and category (may not exist)
+        LEFT OUTER JOIN (
           SELECT b.id AS badge_id,
             CONCAT(t.editable_name, ':', t.id) AS current_team,
           ct.code AS current_category
@@ -259,10 +261,9 @@ module GogglesDb
           JOIN seasons s ON s.id = b.season_id
           JOIN category_types ct ON ct.id = b.category_type_id
           JOIN teams t ON t.id = b.team_id
-          WHERE b.swimmer_id = #{swimmer_id}
-            AND s.end_date > curdate()
+          WHERE (b.swimmer_id = #{swimmer_id}) AND (s.end_date > curdate())
         ) AS crb ON crb.badge_id = sbs.badge_id
-        WHERE sbs.swimmer_id = #{swimmer_id}
+        WHERE (sbs.swimmer_id = #{swimmer_id})
         GROUP BY sbs.swimmer_id;
       SQL
     end
