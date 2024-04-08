@@ -132,7 +132,7 @@ namespace :db do
     #  version can result more compressed due to the replicated strings, and it is
     #  indeed much more readable and editable...)
     cmd = "mysqldump --host=#{db_host} -u #{db_user} --password=\"#{db_pwd}\" --add-drop-table --triggers " \
-          "--routines --single-transaction #{db_name} >> #{file_name}"
+          "--routines --events --triggers --single-transaction #{db_name} >> #{file_name}"
     sh cmd
     append_sql_transaction_footer(file_name)
     puts "\r\nRecovery dump created."

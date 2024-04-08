@@ -49,6 +49,9 @@ module GogglesDb
     validates :relays_due, inclusion: { in: [true, false] }
 
     delegate :header_year, to: :season
+    delegate :year_of_birth, :first_name, :last_name, :complete_name, to: :swimmer
+    delegate :name, :editable_name, to: :team
+    delegate :male?, :female?, :intermixed?, to: :gender_type
 
     # Sorting scopes:
     scope :by_season,        ->(dir = :asc)  { joins(:season).order('seasons.begin_date': dir) }
