@@ -3,12 +3,12 @@
 #
 # = Version module
 #
-#   - version:  7-0.7.06
+#   - version:  7-0.7.07
 #   - author:   Steve A.
 #
 module GogglesDb
   # Public gem version (uses Semantic versioning)
-  VERSION = '0.7.06'
+  VERSION = '0.7.07'
 
   # == Versioning codes
   #
@@ -21,8 +21,8 @@ module GogglesDb
     CORE  = 'C7'
     MAJOR = '0'
     MINOR = '7'
-    PATCH = '06'
-    BUILD = '20240327'
+    PATCH = '07'
+    BUILD = '20240404'
 
     # Full label
     FULL = "#{MAJOR}.#{MINOR}.#{PATCH} (#{CORE}-#{BUILD})".freeze
