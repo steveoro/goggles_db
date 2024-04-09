@@ -274,12 +274,9 @@ module GogglesDb
     # Returns an Array of SQL "LIKE" String conditions, one for each name "particle" extracted by splitting
     # the given name by spaces.
     def prepare_matching_or_condition(first_or_last_name, column_name)
-      or_condition = []
-      first_or_last_name.to_s.split.each do |name_token|
-        or_condition << ActiveRecord::Base.sanitize_sql_for_conditions(["swimmers.#{column_name} LIKE ?", "%#{name_token}%"])
+      first_or_last_name.to_s.split.map do |name_token|
+        ActiveRecord::Base.sanitize_sql_for_conditions(["swimmers.#{column_name} LIKE ?", "%#{name_token}%"])
       end
-
-      or_condition
     end
   end
 end
