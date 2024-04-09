@@ -38,6 +38,7 @@ group :development do
   gem 'rubocop-rails', '= 2.19', require: false # currently 2.20 introduces a bug with '#falsey_literal?'
   gem 'rubocop-rake'
   gem 'rubocop-rspec'
+  gem 'rubocop-rspec_rails'
   gem 'spring'
   gem 'spring-commands-rspec'
   gem 'spring-commands-rubocop'
