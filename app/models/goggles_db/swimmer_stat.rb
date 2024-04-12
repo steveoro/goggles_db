@@ -189,7 +189,8 @@ module GogglesDb
           SUM(sbs.individual_disqualified_count) AS individual_disqualified_count,
           MAX(sbs.max_points) AS max_fin_points_data,
           -- Detect FIN vs. CSI scoring
-          MIN(CASE WHEN sbs.fed_code = 'FIN' AND substr(sbs.min_points, 1, 9) <> '000000.00' THEN sbs.min_points ELSE '---' END) AS min_fin_points_data,
+          -- (use a false maximum for CSI scoring to get the sorting right for the lowest value)
+          MIN(CASE WHEN sbs.fed_code = 'FIN' AND substr(sbs.min_points, 1, 9) <> '000000.00' THEN sbs.min_points ELSE '999999.00' END) AS min_fin_points_data,
           SUM(CASE WHEN sbs.fed_code = 'FIN' AND sbs.event_count >= 18 THEN 1 ELSE 0 END) AS irons_count,
           GROUP_CONCAT(DISTINCT sbs.team_name_and_id separator ', ') AS teams_name_and_ids,
           MIN(sbs.min_date) AS first_meeting_data,
@@ -216,7 +217,18 @@ module GogglesDb
             SUM(mir.disqualified) AS individual_disqualified_count,
             -- Format scores so that can be min-maxed as strings, no thousands separators, with leading zeroes in 9 digits:
             MAX(CONCAT(LPAD(REPLACE(FORMAT(mir.standard_points, 2), ',', ''), 9, '0'), ':', m.id, ':', et.code, ':', ms.scheduled_date, ':', ft.code, ':', m.description)) AS max_points,
-            MIN(CONCAT(LPAD(REPLACE(FORMAT(mir.standard_points, 2), ',', ''), 9, '0'), ':', m.id, ':', et.code, ':', ms.scheduled_date, ':', ft.code, ':', m.description)) AS min_points,
+            -- Use a false maximum here too to prevent null or zero scores to hit the minimum:
+            MIN(
+              CONCAT(
+                LPAD(
+                  REPLACE(
+                    FORMAT(
+                		  CASE WHEN mir.standard_points > 0 THEN mir.standard_points ELSE 999999.0 END, 2
+              			), ',', ''
+              		), 9, '0'
+                ), ':', m.id, ':', et.code, ':', ms.scheduled_date, ':', ft.code, ':', m.description
+              )
+            ) AS min_points,
             COUNT(DISTINCT et.code) AS event_count,
             MIN(CONCAT(ms.scheduled_date, ':', m.id, ':', m.description, ':', ft.code)) AS min_date,
             MAX(CONCAT(ms.scheduled_date, ':', m.id, ':', m.description, ':', ft.code)) AS max_date
