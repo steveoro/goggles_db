@@ -20,14 +20,14 @@ module GogglesDb
     MAJOR = '0'
     MINOR = '7'
     PATCH = '09'
-    BUILD = '20240412'
+    BUILD = '20240415'
 
     # Full label
     FULL = "#{MAJOR}.#{MINOR}.#{PATCH} (#{CORE}-#{BUILD})".freeze
 
     # Compact label
     SEMANTIC = "#{MAJOR}.#{MINOR}.#{PATCH}".freeze
-    DB = '2.07.1' # Internal DB structure (frozen @ <minor>.<patch>.<seq> from last migration)
+    DB = '2.07.2' # Internal DB structure (frozen @ <minor>.<patch>.<seq> from last migration)
 
     # Pointless UNICODE emojis (just for fun):
     EMOJI_BUTTERFLY    = 'з== ( ▀ ͜͞ʖ▀) ==ε'

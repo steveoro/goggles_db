@@ -4,7 +4,7 @@ module GogglesDb
   #
   # = Team model
   #
-  #   - version:  7-0.6.30
+  #   - version:  7-0.7.09
   #   - author:   Steve A.
   #
   class Team < ApplicationRecord
@@ -55,11 +55,12 @@ module GogglesDb
     # Fulltext search by name with additional domain inclusion by using standard "LIKE"s
     scope :for_name, lambda { |name|
       like_query = "%#{name}%"
-      where(
-        '(MATCH(teams.name, teams.editable_name, teams.name_variations) AGAINST(?)) OR ' \
-        '(teams.name LIKE ?) OR (teams.editable_name LIKE ?) OR (teams.name_variations LIKE ?)',
-        name, like_query, like_query, like_query
-      )
+      where('MATCH(teams.name) AGAINST(?)', name)
+        .or(where('MATCH(teams.editable_name) AGAINST(?)', name))
+        .or(where('MATCH(teams.name_variations) AGAINST(?)', name))
+        .or(where('teams.name like ?', like_query))
+        .or(where('teams.editable_name like ?', like_query))
+        .or(where('teams.name_variations like ?', like_query))
     }
 
     # TODO: CLEAR UNUSED

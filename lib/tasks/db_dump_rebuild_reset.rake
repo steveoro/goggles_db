@@ -8,7 +8,7 @@ require 'fileutils'
 #
 # = Local Deployment helper tasks
 #
-#   - (p) FASAR Software 2007-2020
+#   - (p) FASAR Software 2007-2024
 #   - for Goggles framework vers.: 7.00
 #   - author: Steve A.
 #
@@ -131,7 +131,7 @@ namespace :db do
     # (The Resulting SQL file will be much longer, though -- but the bzipped
     #  version can result more compressed due to the replicated strings, and it is
     #  indeed much more readable and editable...)
-    cmd = "mysqldump --host=#{db_host} -u #{db_user} --password=\"#{db_pwd}\" --add-drop-table --triggers " \
+    cmd = "mysqldump --host=#{db_host} -u #{db_user} --password=\"#{db_pwd}\" --add-drop-table " \
           "--routines --events --triggers --single-transaction #{db_name} >> #{file_name}"
     sh cmd
     append_sql_transaction_footer(file_name)

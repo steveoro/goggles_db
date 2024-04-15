@@ -4,9 +4,8 @@ module GogglesDb
   #
   # = Swimmer model
   #
-  #   - version:  7-0.5.10
-  #   - author:   Steve A.
-  #   - build:    20220804
+  # - version:  7-0.7.09
+  # - author:   Steve A.
   #
   class Swimmer < ApplicationRecord
     self.table_name = 'swimmers'
@@ -51,11 +50,13 @@ module GogglesDb
     # Fulltext search with additional domain inclusion by using standard "LIKE"s
     scope :for_name, lambda { |name|
       like_query = "%#{name}%"
-      where(
-        '(MATCH(swimmers.last_name, swimmers.first_name, swimmers.complete_name) AGAINST(?)) OR ' \
-        '(swimmers.last_name LIKE ?) OR (swimmers.first_name LIKE ?) OR (swimmers.complete_name LIKE ?)',
-        name, like_query, like_query, like_query
-      ).order(:complete_name, :year_of_birth)
+      # NOTE: Avoid/don't use:
+      # 1. "MATCH(swimmers.complete_name)" => yields too many different results for short names
+      # 2. 'CONCAT(swimmers.first_name, swimmers.last_name) LIKE ?' => doesn't work well
+      # 3. order(:last_name) or (:complete_name) => alters the result list moving best matches away from the top
+      where('swimmers.complete_name LIKE ?', like_query)
+        .or(where('MATCH(swimmers.last_name) AGAINST(?)', name))
+        .or(where('swimmers.last_name LIKE ?', like_query))
     }
     scope :for_first_name,    ->(name) { where('swimmers.first_name like ?', "%#{name}%") }
     scope :for_last_name,     ->(name) { where('swimmers.last_name like ?', "%#{name}%") }
