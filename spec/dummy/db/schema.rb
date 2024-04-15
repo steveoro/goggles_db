@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2024_03_01_123811) do
+ActiveRecord::Schema.define(version: 2024_04_15_111509) do
 
   create_table "achievement_rows", id: :integer, charset: "utf8mb3", collation: "utf8mb3_general_ci", force: :cascade do |t|
     t.integer "lock_version", default: 0
@@ -865,7 +865,7 @@ ActiveRecord::Schema.define(version: 2024_03_01_123811) do
     t.integer "team_affiliation_id"
     t.integer "entry_time_type_id"
     t.string "disqualification_notes"
-    t.integer "meeting_relay_swimmers_count"
+    t.integer "meeting_relay_swimmers_count", default: 0, null: false
     t.index ["disqualification_code_type_id"], name: "idx_mrr_disqualification_code_type"
     t.index ["entry_time_type_id"], name: "fk_meeting_relay_results_entry_time_types"
     t.index ["meeting_program_id", "rank"], name: "results_x_relay"
@@ -886,12 +886,13 @@ ActiveRecord::Schema.define(version: 2024_03_01_123811) do
     t.integer "seconds", limit: 2, default: 0
     t.integer "hundredths", limit: 2, default: 0
     t.integer "meeting_relay_result_id"
-    t.integer "length_in_meters", default: 0
-    t.integer "minutes_from_start", limit: 3, default: 0
-    t.integer "seconds_from_start", limit: 2, default: 0
-    t.integer "hundredths_from_start", limit: 2, default: 0
-    t.integer "relay_laps_count"
+    t.integer "length_in_meters", default: 0, null: false
+    t.integer "minutes_from_start", limit: 3, default: 0, null: false
+    t.integer "seconds_from_start", limit: 2, default: 0, null: false
+    t.integer "hundredths_from_start", limit: 2, default: 0, null: false
+    t.integer "relay_laps_count", default: 0, null: false
     t.index ["badge_id"], name: "fk_meeting_relay_swimmers_badges"
+    t.index ["length_in_meters"], name: "index_meeting_relay_swimmers_on_length_in_meters"
     t.index ["meeting_relay_result_id"], name: "fk_meeting_relay_swimmers_meeting_relay_results"
     t.index ["relay_order"], name: "relay_order"
     t.index ["stroke_type_id"], name: "fk_meeting_relay_swimmers_stroke_types"
@@ -1006,7 +1007,9 @@ ActiveRecord::Schema.define(version: 2024_03_01_123811) do
     t.decimal "event_fee", precision: 10, scale: 2
     t.decimal "relay_fee", precision: 10, scale: 2
     t.index ["code", "edition"], name: "idx_meetings_code"
+    t.index ["code"], name: "meeting_code", type: :fulltext
     t.index ["description", "code"], name: "meeting_name", type: :fulltext
+    t.index ["description"], name: "meeting_desc", type: :fulltext
     t.index ["edition_type_id"], name: "fk_meetings_edition_types"
     t.index ["entry_deadline"], name: "index_meetings_on_entry_deadline"
     t.index ["header_date"], name: "idx_meetings_header_date"
@@ -1462,8 +1465,11 @@ ActiveRecord::Schema.define(version: 2024_03_01_123811) do
     t.string "home_page_url", limit: 150
     t.index ["city_id"], name: "fk_teams_cities"
     t.index ["editable_name"], name: "index_teams_on_editable_name"
+    t.index ["editable_name"], name: "team_editable_name", type: :fulltext
     t.index ["name", "editable_name", "name_variations"], name: "team_name", type: :fulltext
     t.index ["name"], name: "index_teams_on_name"
+    t.index ["name"], name: "team_only_name", type: :fulltext
+    t.index ["name_variations"], name: "team_name_variations", type: :fulltext
   end
 
   create_table "timing_types", id: :integer, charset: "utf8mb3", collation: "utf8mb3_general_ci", force: :cascade do |t|
@@ -1684,7 +1690,9 @@ ActiveRecord::Schema.define(version: 2024_03_01_123811) do
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
     t.index ["code"], name: "index_user_workshops_on_code"
+    t.index ["code"], name: "workshop_code", type: :fulltext
     t.index ["description", "code"], name: "workshop_name", type: :fulltext
+    t.index ["description"], name: "workshop_desc", type: :fulltext
     t.index ["edition_type_id"], name: "index_user_workshops_on_edition_type_id"
     t.index ["header_date"], name: "index_user_workshops_on_header_date"
     t.index ["header_year"], name: "index_user_workshops_on_header_year"

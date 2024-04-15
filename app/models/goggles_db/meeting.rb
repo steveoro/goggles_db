@@ -4,7 +4,7 @@ module GogglesDb
   #
   # = Meeting model
   #
-  #   - version:  7-0.6.30
+  #   - version:  7-0.7.09
   #   - author:   Steve A.
   #
   class Meeting < AbstractMeeting
@@ -75,9 +75,10 @@ module GogglesDb
     scope :for_name, lambda { |name|
       like_query = "%#{name}%"
       includes(:edition_type)
-        .where('MATCH(meetings.description, meetings.code) AGAINST(?)', name)
-        .or(includes([:edition_type]).where('meetings.description like ?', like_query))
-        .or(includes([:edition_type]).where('meetings.code like ?', like_query))
+        .where('MATCH(meetings.description) AGAINST(?)', name)
+        .or(where('meetings.description like ?', like_query))
+        .or(where('MATCH(meetings.code) AGAINST(?)', name))
+        .or(where('meetings.code like ?', like_query))
         .by_date(:desc)
     }
     scope :for_team, lambda { |team|

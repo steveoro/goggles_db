@@ -4,7 +4,7 @@ module GogglesDb
   #
   # = UserWorkshop model
   #
-  #   - version:  7-0.6.30
+  #   - version:  7-0.7.09
   #   - author:   Steve A.
   #
   # Allows to manage user-driven or team-driven swimming workshops
@@ -53,10 +53,17 @@ module GogglesDb
     # Fulltext search with additional domain inclusion by using standard "LIKE"s
     scope :for_name, lambda { |name|
       like_query = "%#{name}%"
-      includes([:edition_type])
-        .where('MATCH(user_workshops.description, user_workshops.code) AGAINST(?)', name)
-        .or(includes([:edition_type]).where('user_workshops.description like ?', like_query))
-        .or(includes([:edition_type]).where('user_workshops.code like ?', like_query))
+      # TODO: split fulltext index into 2 fields for better results; in the meantime, just use a simple LIKE
+      # includes([:edition_type])
+      #   .where('MATCH(user_workshops.description, user_workshops.code) AGAINST(?)', name)
+      #   .or(includes([:edition_type]).where('user_workshops.description like ?', like_query))
+      #   .or(includes([:edition_type]).where('user_workshops.code like ?', like_query))
+      #   .by_date(:desc)
+      includes(:edition_type)
+        .where('MATCH(user_workshops.description) AGAINST(?)', name)
+        .or(where('user_workshops.description like ?', like_query))
+        .or(where('MATCH(user_workshops.code) AGAINST(?)', name))
+        .or(where('user_workshops.code like ?', like_query))
         .by_date(:desc)
     }
 
