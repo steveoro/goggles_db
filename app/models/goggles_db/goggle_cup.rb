@@ -2,13 +2,16 @@
 
 module GogglesDb
   #
-  # = GoggleCup model
+  # = GogglesDb::GoggleCup
   #
-  #   - version:  7.030
-  #   - author:   Steve A.
+  # - version:  7-0.7.10
+  # - author:   Steve A.
   #
   class GoggleCup < ApplicationRecord
     self.table_name = 'goggle_cups'
+
+    belongs_to :team
+    validates_associated :team
 
     # TODO
   end

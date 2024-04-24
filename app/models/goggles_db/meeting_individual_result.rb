@@ -4,10 +4,10 @@ require 'wrappers/timing'
 
 module GogglesDb
   #
-  # = MeetingIndividualResult model
+  # = GogglesDb::MeetingIndividualResult
   #
-  #   - version:  7-0.6.30
-  #   - author:   Steve A.
+  # - version:  7-0.7.10
+  # - author:   Steve A.
   #
   class MeetingIndividualResult < AbstractResult
     self.table_name = 'meeting_individual_results'
@@ -30,6 +30,8 @@ module GogglesDb
 
     belongs_to :team
     validates_associated :team
+
+    has_many :individual_records, inverse_of: :meeting_individual_result
 
     default_scope do
       includes(
@@ -85,7 +87,6 @@ module GogglesDb
     # TODO: CLEAR UNUSED
     # scope :season_type_bests,        -> { where(season_type_best: true) }
     # scope :for_season_type,          ->(season_type)          { joins(:season_type).where(['season_types.id = ?', season_type.id]) }
-    # scope :for_team,                 ->(team)                 { where(team_id: team.id) }
     # scope :for_category_type,        ->(category_type)        { joins(:category_type).where(['category_types.id = ?', category_type.id]) }
     # scope :for_category_code,        ->(category_code)        { joins(:category_type).where(['category_types.code = ?', category_code]) }
     # scope :for_date_range,           ->(date_begin, date_end) { joins(:meeting).where(['meetings.header_date between ? and ?', date_begin, date_end]) }
