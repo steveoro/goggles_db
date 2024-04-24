@@ -21,6 +21,8 @@ module GogglesDb
     has_many :season_types, through: :team_affiliations
 
     has_many :managed_affiliations,  through: :team_affiliations
+    has_many :individual_records, dependent: :delete_all
+
     # has_many :meeting_individual_results
     # has_many :meetings, through: :meeting_individual_results
     # has_many :meeting_relay_results

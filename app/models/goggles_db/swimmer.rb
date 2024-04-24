@@ -2,9 +2,9 @@
 
 module GogglesDb
   #
-  # = Swimmer model
+  # = GogglesDb::Swimmer
   #
-  # - version:  7-0.7.09
+  # - version:  7-0.7.10
   # - author:   Steve A.
   #
   class Swimmer < ApplicationRecord
@@ -33,6 +33,7 @@ module GogglesDb
     has_many :meeting_relay_results, through: :meeting_relay_swimmers
     has_many :user_results, dependent: :delete_all
     has_many :user_laps, dependent: :delete_all
+    has_many :individual_records, dependent: :delete_all
 
     validates :complete_name, presence: { length: { within: 1..100, allow_nil: false } }
     validates :last_name, length: { maximum: 50 }
