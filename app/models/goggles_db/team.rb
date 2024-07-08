@@ -104,7 +104,7 @@ module GogglesDb
     # Override: include some of the decorated fields in the output.
     #
     def minimal_attributes(locale = I18n.locale)
-      super(locale).merge(
+      super.merge(
         'display_label' => decorate.display_label,
         'short_label' => decorate.short_label,
         'city_name' => city&.decorate&.display_label
@@ -114,7 +114,7 @@ module GogglesDb
     # Override: include only some of the rows from multiple_associations in the output.
     #
     def to_hash(options = nil)
-      super(options).merge(
+      super.merge(
         'team_affiliations' => recent_affiliations.map(&:minimal_attributes)
       )
     end

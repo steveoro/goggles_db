@@ -153,7 +153,7 @@ module GogglesDb
     # Override: include some of the decorated fields in the output.
     #
     def minimal_attributes(locale = I18n.locale)
-      super(locale).merge(
+      super.merge(
         'status_label' => status_label,
         'processable' => processable?
       )

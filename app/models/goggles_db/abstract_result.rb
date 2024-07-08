@@ -85,7 +85,7 @@ module GogglesDb
     # Override: include some of the decorated fields in the output.
     #
     def minimal_attributes(locale = I18n.locale)
-      super(locale).merge(
+      super.merge(
         'timing' => to_timing.to_s,
         'swimmer_name' => swimmer.complete_name,
         'swimmer_label' => swimmer.decorate.display_label(locale)

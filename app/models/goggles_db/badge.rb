@@ -86,7 +86,7 @@ module GogglesDb
     # Override: include some of the decorated fields in the output.
     #
     def minimal_attributes(locale = I18n.locale)
-      super(locale).merge(
+      super.merge(
         'display_label' => decorate.display_label(locale),
         'short_label' => decorate.short_label
       )
