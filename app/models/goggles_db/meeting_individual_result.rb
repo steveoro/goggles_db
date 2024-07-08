@@ -134,7 +134,7 @@ module GogglesDb
     # Override: include some of the decorated fields in the output.
     #
     def minimal_attributes(locale = I18n.locale)
-      super(locale).merge(
+      super.merge(
         'team_name' => team.editable_name,
         'team_label' => team.decorate.display_label,
         'event_label' => event_type.label(locale),

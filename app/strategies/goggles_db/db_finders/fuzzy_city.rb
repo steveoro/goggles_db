@@ -32,9 +32,9 @@ module GogglesDb
       # Returns a stripped-down, pure ASCII 7-bit version of the specified name/value,
       # removing also the most common words.
       def normalize_value(value)
-        super(value).gsub(/\bdi\b|\bdal\b|\bne'?\b|\bnei\b|\bnel(l')?\b/i, '')
-                    .gsub(/\s+/, ' ').strip
-                    .downcase
+        super.gsub(/\bdi\b|\bdal\b|\bne'?\b|\bnei\b|\bnel(l')?\b/i, '')
+             .gsub(/\s+/, ' ').strip
+             .downcase
       end
       #-- --------------------------------------------------------------------------
       #++

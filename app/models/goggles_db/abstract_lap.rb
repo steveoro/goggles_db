@@ -93,7 +93,7 @@ module GogglesDb
     # Override: include some of the decorated fields in the output.
     #
     def minimal_attributes(locale = I18n.locale)
-      super(locale).merge(
+      super.merge(
         'timing' => to_timing.to_s,
         'timing_from_start' => timing_from_start.to_s
       )

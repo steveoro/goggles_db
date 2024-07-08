@@ -18,7 +18,7 @@ require 'fileutils'
 #++
 
 # DB Dumps have the same name as current environment and are considered as "current":
-DB_DUMP_DIR = Rails.root.join('db', 'dump').freeze unless defined? DB_DUMP_DIR
+DB_DUMP_DIR = Rails.root.join('db/dump').freeze unless defined? DB_DUMP_DIR
 # (add here any other needed folder as additional constants)
 #-- ---------------------------------------------------------------------------
 #++

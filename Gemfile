@@ -34,6 +34,7 @@ group :development do
   gem 'inch', require: false # grades source documentation
   gem 'listen', '~> 3.2'
   gem 'rubocop'
+  gem 'rubocop-factory_bot', require: false
   gem 'rubocop-performance'
   gem 'rubocop-rails', '= 2.19', require: false # currently 2.20 introduces a bug with '#falsey_literal?'
   gem 'rubocop-rake'

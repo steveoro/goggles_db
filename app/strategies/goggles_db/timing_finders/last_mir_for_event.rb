@@ -21,7 +21,7 @@ module GogglesDb
       #    not found? => 2) No-time (a new, empty MIR).
       #
       def search_by(swimmer, meeting, event_type, pool_type)
-        result = super(swimmer, meeting, event_type, pool_type)
+        result = super
         return NoTimeForEvent.new.search_by(swimmer, meeting, event_type, pool_type) if result.blank?
 
         result.by_date(:desc).first

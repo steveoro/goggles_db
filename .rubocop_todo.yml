@@ -29,14 +29,6 @@ RSpec/BeforeAfterAll:
 RSpec/ContextWording:
   Enabled: false
 
-# Offense count: 2
-# Configuration parameters: Include, CustomTransform, IgnoreMethods, SpecSuffixOnly.
-# Include: **/*_spec*rb*, **/spec/**/*
-RSpec/FilePath:
-  Exclude:
-    - 'spec/models/concerns/localizable_spec.rb'
-    - 'spec/models/concerns/timing_manageable_spec.rb'
-
 # Offense count: 5
 RSpec/IteratedExpectation:
   Exclude:
@@ -66,6 +58,8 @@ RSpec/RepeatedExampleGroupDescription:
 Rails/FilePath:
   Exclude:
     - 'lib/tasks/db_dump_rebuild_reset.rake'
+    - 'spec/models/concerns/localizable_spec.rb'
+    - 'spec/models/concerns/timing_manageable_spec.rb'
 
 # Offense count: 20
 # Configuration parameters: Include.
