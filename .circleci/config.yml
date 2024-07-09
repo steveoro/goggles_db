@@ -18,7 +18,7 @@ common-config: &common-config
         BUNDLE_RETRY: 2
         BUNDLE_PATH: vendor/bundle
         PAGER: cat
-    - image: cimg/mariadb:10.6.18
+    - image: cimg/mariadb:11.4.1
       environment:
         DATABASE_NAME: goggles_test
         DATABASE_USER: root
