@@ -71,11 +71,13 @@ module GogglesDb
       # - <tt>:bias</tt>: override for the <tt>DEFAULT_MATCH_BIAS</tt> used to decide
       #   if a resulting weight is a match (">=").
       #
-      def initialize(model_klass, search_terms = {}, search_method = :for_name, bias = DEFAULT_MATCH_BIAS)
+      def initialize(model_klass, search_terms = {}, search_method = :for_name, bias = DEFAULT_MATCH_BIAS) # rubocop:disable Metrics/CyclomaticComplexity
         @toggle_debug = search_terms[:toggle_debug] || false
         search_terms.reject! { |key, _v| key == :toggle_debug }
-        raise(ArgumentError, 'No search term specified') if search_terms.blank?
+        raise(ArgumentError, 'No search term specified') if search_terms.blank? || !search_terms.is_a?(Hash)
         raise(ArgumentError, 'No model class specified') if model_klass.blank?
+        # (NOTE: blank search values shall be handled later on by prepare_values())
+        raise(ArgumentError, 'Blank target column (key) name specified') if search_terms.keys.first.blank?
 
         @model_klass = model_klass
         @target_key, @target_value = search_terms.first
@@ -86,12 +88,12 @@ module GogglesDb
         @matches = []
       end
 
-      # Returns a stripped-down, pure ASCII 7-bit version of the specified value.
+      # Returns a stripped-down, pure ASCII 7-bit version of the specified value. Handles possible nil values.
       # In its base implementation just removes foreign accented letters and downcases the result string.
       # == Params
       # - +value+: the string value to be "normalized".
       def normalize_value(value)
-        value.tr('à', 'a').gsub('[èé]', 'e').tr('ì', 'i')
+        value.to_s.tr('à', 'a').gsub('[èé]', 'e').tr('ì', 'i')
              .tr('ò', 'o').tr('ù', 'u').tr('ç', 'c')
              .downcase
       end
@@ -186,7 +188,7 @@ module GogglesDb
         target_namespace = @filtering_terms.values.join('/')
         curr_namespace = @filtering_terms.map { |key, _value| candidate_row.send(key) }
         [
-          "#{target_namespace}/#{@target_value.downcase}",
+          "#{target_namespace}/#{@target_value.to_s.downcase}",
           "#{curr_namespace}/#{candidate_row.send(@target_key).downcase}",
           "#{target_namespace}/#{normalize_value(@target_value)}",
           "#{curr_namespace}/#{normalize_value(candidate_row.send(@target_key))}"

@@ -2,6 +2,7 @@
 
 _Please, add the latest build info on top of the list; use Version::MAJOR only after gold release; keep semantic versioning in line with framework's_
 
+- **0.7.14** [Steve A.] handle nil search values in DbFinders::BaseStrategy
 - **0.7.12** [Steve A.] fixed MariaDB required version for CircleCI build
 - **0.7.11** [Steve A.] bundle update & minor rubocop adjustments; added missing catch-all U100 relay categories for seasons 182, 192, 202, 212, 222, 232;
 - **0.7.10** [Steve A.] added IndividualRecord with specs; improved skeleton models for future GoggleCups implementation;
