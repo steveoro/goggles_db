@@ -18,6 +18,17 @@ common-config: &common-config
         BUNDLE_RETRY: 2
         BUNDLE_PATH: vendor/bundle
         PAGER: cat
+    # NOTE: until 11.4.2 is released, each updated test DB dump needs to be
+    # edited to remove the sandbox mode parameter which isn't recognized by the DB container
+    #
+    # To remove the sandbox parameter (usually at line 7) from the dump file:
+    # 1. unzip the test DB dump & open bash in the same folder
+    # 2. "head -n 6 test.sql > t1.sql"
+    # 3. "tail -n +8 test.sql > t2.sql"
+    # 4. "cat t?.sql > test.sql"
+    # 5. To verify the removal: "head -n 10 test.sql"
+    # 6. Remove the old file: "rm test.sql.bz2"
+    # 7. Create a new dump file: "bzip2 test.sql"
     - image: cimg/mariadb:11.4.1
       environment:
         DATABASE_NAME: goggles_test
