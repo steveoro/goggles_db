@@ -19,7 +19,7 @@ Official Framework Wiki, [here](https://github.com/steveoro/goggles_db/wiki) (v.
 ## Requires
 
 - Ruby 3.1.4
-- Rails 6.1.7.7+
+- Rails 6.1.7.9+
 - MariaDb 15.1 dist. 10.6.16+ or any other MySql equivalent version
 
 
