@@ -552,6 +552,8 @@ en:
     long_label_M8X25MI: "MIXED 8x25 INTERMIXED RELAY (4 swimmers)"
     label_A8X25MI: "MX 8x25 IM (x8)"
     long_label_A8X25MI: "MIXED 8x25 INTERMIXED RELAY (8 swimmers)"
+    label_M6X50SL: "MS 6x50 FS"
+    long_label_M6X50SL: "MIXED 6x50 FREESTYLE RELAY (6 swimmers)"
 
   disqualification_code_types:
     code: "code"

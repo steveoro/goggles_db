@@ -552,6 +552,8 @@ it:
     long_label_M8X25MI: "MISTAFFETTA 8x25 MISTA (4 nuotatori)"
     label_A8X25MI: "MS 8x25 MI (x8)"
     long_label_A8X25MI: "MISTAFFETTA 8x25 MISTA (8 nuotatori)"
+    label_M6X50SL: "MS 6x50 SL"
+    long_label_M6X50SL: "MISTAFFETTA 6x50 STILE (6 nuotatori)"
 
   disqualification_code_types:
     code: "Cod."
