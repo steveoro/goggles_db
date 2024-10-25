@@ -2,6 +2,7 @@
 
 _Please, add the latest build info on top of the list; use Version::MAJOR only after gold release; keep semantic versioning in line with framework's_
 
+- **0.7.23** [Steve A.] bundle updates
 - **0.7.20** [Steve A.] bundle updates; added a missing/new EventType used for Coopernuoto meetings ('6X50SL')
 - **0.7.19** [Steve A.] bundle updates; added new Seasons & categories for 2024-2025
 - **0.7.18** [Steve A.] bundle updates & misc specs adjustments; removed Patreon links for sponsorship
