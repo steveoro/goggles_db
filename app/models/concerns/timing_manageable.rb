@@ -5,7 +5,7 @@ require 'active_support'
 #
 # = TimingManageable
 #
-#   - version:  7-0.5.21
+#   - version:  7-0.7.24
 #   - author:   Steve A.
 #
 # Concrete Interface for Timing helper methods (@see lib/wrappers/timing.rb).
@@ -38,6 +38,30 @@ module TimingManageable
   #   end
   # end
   # ---8<---
+  #-- ------------------------------------------------------------------------
+  #++
+
+  # Returns +true+ if the timing associated with this result is positive.
+  # If the includee responds (at least) also to #hundredths_from_start,
+  # this will check all the <tt>XXX_from_start</tt> columns as well.
+  def positive?
+    base_timing_positive = minutes.positive? || seconds.positive? || hundredths.positive?
+    return base_timing_positive unless respond_to?(:hundredths_from_start)
+
+    base_timing_positive || minutes_from_start.positive? || seconds_from_start.positive? || hundredths_from_start.positive?
+  end
+
+  # Make sure only positive timings will be considered as "present":
+  alias present? positive? # (new, old)
+
+  # Returns +true+ if the timing associated with this result is zero.
+  # If the includee responds (at least) also to #hundredths_from_start,
+  # this will check all the <tt>XXX_from_start</tt> columns as well.
+  def zero?
+    !positive?
+  end
+  #-- ------------------------------------------------------------------------
+  #++
 
   # Returns a new Timing instance initialized with the timing data from this row
   # (@see lib/wrappers/timing.rb)

@@ -4,7 +4,7 @@ module GogglesDb
   #
   # = UserResult model
   #
-  #   - version:  7-0.6.30
+  #   - version:  7-0.7.24
   #   - author:   Steve A.
   #
   # User results are swimming event timings:
@@ -64,10 +64,10 @@ module GogglesDb
     #-- ------------------------------------------------------------------------
     #++
 
-    # Returns +true+ if this result can be scored into the overall ranking.
-    def valid_for_ranking?
-      !disqualified?
-    end
+    # AbstractResult overrides:
+    alias_attribute :parent_meeting, :user_workshop # (old, new)
+
+    alias user_workshop_attributes meeting_attributes # (new, old)
     #-- ------------------------------------------------------------------------
     #++
 
@@ -88,9 +88,14 @@ module GogglesDb
         'gender_code' => gender_type.code
       )
     end
+    #-- ------------------------------------------------------------------------
+    #++
 
-    # AbstractLap overrides:
-    alias_attribute :parent_meeting, :user_workshop # (old, new)
-    alias user_workshop_attributes meeting_attributes # (new, old)
+    # Returns +true+ if this result can be scored into the overall ranking.
+    def valid_for_ranking?
+      !disqualified? && positive?
+    end
+    #-- ------------------------------------------------------------------------
+    #++
   end
 end

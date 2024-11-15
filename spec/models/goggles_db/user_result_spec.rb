@@ -53,7 +53,7 @@ module GogglesDb
     end
 
     context 'any pre-seeded instance' do
-      subject { described_class.all.limit(10).sample }
+      subject { described_class.limit(10).sample }
 
       it_behaves_like('a valid UserResult instance')
     end

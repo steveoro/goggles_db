@@ -120,7 +120,7 @@ module GogglesDb
     #++
 
     describe '#valid_for_ranking?' do
-      context 'for any MIR concurring in-race and not disqualified' do
+      context 'for any MIR concurring in-race, not disqualified and with positive time' do
         subject { mir_fixture.valid_for_ranking? }
 
         let(:mir_fixture) { FactoryBot.build(:meeting_individual_result, out_of_race: false, disqualified: false) }

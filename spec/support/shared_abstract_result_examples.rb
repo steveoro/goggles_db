@@ -15,7 +15,7 @@ shared_examples_for 'AbstractResult sorting scopes' do
     it_behaves_like(
       'responding to a list of methods',
       %i[swimmer_first_name swimmer_last_name swimmer_complete_name
-         swimmer_year_of_birth swimmer_gender_type_id]
+         swimmer_year_of_birth swimmer_gender_type_id present? positive? zero?]
     )
   end
 

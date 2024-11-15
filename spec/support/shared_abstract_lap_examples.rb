@@ -112,7 +112,7 @@ shared_examples_for 'AbstractLap filtering scopes' do |sibling_class|
 
       it 'the last preceding row by distance (when available)' do
         expect(result)
-          .to eq(sibling_class.related_laps(existing_row).where('length_in_meters < ?', existing_row.length_in_meters).last)
+          .to eq(sibling_class.related_laps(existing_row).where(length_in_meters: ...existing_row.length_in_meters).last)
       end
     end
   end

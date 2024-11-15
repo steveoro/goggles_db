@@ -6,7 +6,7 @@ module GogglesDb
   #
   # Encapsulates common behavior for Laps & User Laps.
   #
-  #   - version:  7-0.6.30
+  #   - version:  7-0.7.24
   #   - author:   Steve A.
   #
   class AbstractLap < ApplicationRecord
@@ -48,41 +48,6 @@ module GogglesDb
     #-- -----------------------------------------------------------------------
     #++
 
-    # Returns the single lap row preceding this one by distance, if any; +nil+ otherwise.
-    def previous_lap
-      self.class.related_laps(self).where("#{self.class.table_name}.length_in_meters < ?", length_in_meters).last
-    end
-
-    # ADD recompute_delta method using same strategy as in main
-
-    # Returns the Timing instance storing the lap timing from the start of the race.
-    #
-    # If the "_from_start" fields have not been filled in, this will try to recompute the
-    # absolute timing using all deltas
-    #
-    # (Note that this will imply 3 summing queries and it may fail to yield correct values
-    #  if the preceding deltas are not set.)
-    def timing_from_start
-      # Quick way to detect if the timing from start is already set:
-      amount = minutes_from_start.to_i + hundredths_from_start.to_i + seconds_from_start.to_i
-      if amount.positive?
-        Timing.new(
-          hundredths: hundredths_from_start,
-          seconds: seconds_from_start,
-          minutes: minutes_from_start
-        )
-      else
-        laps = self.class.summing_laps(self)
-        Timing.new(
-          hundredths: laps.sum(:hundredths),
-          seconds: laps.sum(:seconds),
-          minutes: laps.sum(:minutes)
-        )
-      end
-    end
-    #-- ------------------------------------------------------------------------
-    #++
-
     # Override: returns the list of single association names (as symbols)
     # included by <tt>#to_hash</tt> (and, consequently, by <tt>#to_json</tt>).
     #
@@ -94,8 +59,8 @@ module GogglesDb
     #
     def minimal_attributes(locale = I18n.locale)
       super.merge(
-        'timing' => to_timing.to_s,
-        'timing_from_start' => timing_from_start.to_s
+        'timing' => to_timing.to_s, # (delta timing)
+        'timing_from_start' => timing_from_start.to_s # (actual lap timing)
       )
     end
 
@@ -129,6 +94,43 @@ module GogglesDb
         'year_guessed' => swimmer.year_guessed
       }
     end
+    #-- ------------------------------------------------------------------------
+    #++
+
+    # Returns the single lap row preceding this one by distance, if any; +nil+ otherwise.
+    def previous_lap
+      self.class.related_laps(self).where("#{self.class.table_name}.length_in_meters < ?", length_in_meters).last
+    end
+
+    # ADD recompute_delta method using same strategy as in main
+
+    # Returns the Timing instance storing the lap timing from the start of the race.
+    #
+    # If the "_from_start" fields have not been filled in, this will try to recompute the
+    # absolute timing using all deltas
+    #
+    # (Note that this will imply 3 summing queries and it may fail to yield correct values
+    #  if the preceding deltas are not set.)
+    def timing_from_start
+      # Quick way to detect if the timing from start is already set:
+      lap_present = minutes_from_start.positive? || seconds_from_start.positive? || hundredths_from_start.positive?
+      if lap_present
+        Timing.new(
+          hundredths: hundredths_from_start,
+          seconds: seconds_from_start,
+          minutes: minutes_from_start
+        )
+      else
+        laps = self.class.summing_laps(self)
+        Timing.new(
+          hundredths: laps.sum(:hundredths),
+          seconds: laps.sum(:seconds),
+          minutes: laps.sum(:minutes)
+        )
+      end
+    end
+    #-- ------------------------------------------------------------------------
+    #++
 
     protected
 

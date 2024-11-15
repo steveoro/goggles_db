@@ -36,7 +36,7 @@ module GogglesDb
     end
 
     context 'when using valid parameters with a swimmer having previous MIRs,' do
-      EntryTimeType.all.each do |entry_time_type|
+      EntryTimeType.find_each do |entry_time_type|
         describe "#call (EntryTimeType '#{entry_time_type.code}')" do
           subject { described_class.call(fixture_swimmer, fixture_meeting, fixture_event_type, fixture_pool_type, entry_time_type) }
 
@@ -86,7 +86,7 @@ module GogglesDb
         expect(new_meeting).to be_a(GogglesDb::Meeting).and be_valid
       end
 
-      EntryTimeType.all.each do |entry_time_type|
+      EntryTimeType.find_each do |entry_time_type|
         describe "#call (EntryTimeType '#{entry_time_type.code}')" do
           subject { described_class.call(new_swimmer, new_meeting, fixture_event_type, fixture_pool_type, entry_time_type) }
 

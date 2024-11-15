@@ -25,8 +25,8 @@ namespace :normalize do
 
     puts "\r\n==> Processing Meetings (tot. #{GogglesDb::Meeting.count})"
     domain = limit_rows.positive? ? GogglesDb::Meeting.limit(limit_rows) : GogglesDb::Meeting.all
-    domain.includes(meeting_sessions: { swimming_pool: %i[city pool_type] }).each do |meeting|
-      city = meeting.swimming_pools&.first&.city&.name
+    domain.includes(meeting_sessions: { swimming_pool: %i[city pool_type] }).find_each do |meeting|
+      city = meeting.swimming_pools.present? ? meeting.swimming_pools.first&.city&.name : nil
       std_code = GogglesDb::Normalizers::CodedName.for_meeting(meeting.description, city)
       edition, _name_no_edition, edition_type_id = GogglesDb::Normalizers::CodedName.edition_split_from(meeting.description)
       # Ignore peculiar case:
@@ -60,7 +60,7 @@ namespace :normalize do
     puts "\r\n\r\n==> Processing Swimming pools (tot. #{GogglesDb::SwimmingPool.count})"
     duplicated_code_ids = []
     domain = limit_rows.positive? ? GogglesDb::SwimmingPool.limit(limit_rows) : GogglesDb::SwimmingPool.all
-    domain.includes(%i[city pool_type]).each do |swimming_pool|
+    domain.includes(%i[city pool_type]).find_each do |swimming_pool|
       city = swimming_pool&.city&.name
       std_code = GogglesDb::Normalizers::CodedName.for_pool(swimming_pool.name, city, swimming_pool.pool_type.code)
       next unless std_code != swimming_pool.nick_name

@@ -33,7 +33,7 @@ module GogglesDb
     #++
 
     context 'any pre-seeded instance' do
-      subject { described_class.all.limit(20).sample }
+      subject { described_class.limit(20).sample }
 
       it_behaves_like('a valid SwimmerAlias instance')
     end

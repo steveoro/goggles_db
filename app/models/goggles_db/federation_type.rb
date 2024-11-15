@@ -27,7 +27,7 @@ module GogglesDb
 
     # Dynamically define class methods for each of the memoized value rows:
     class_eval do
-      all.find_each do |row|
+      find_each do |row|
         # Define a Memoized instance using the finder with the corresponding constant ID value:
         instance_variable_set(:"@#{row.code.downcase}", row)
 

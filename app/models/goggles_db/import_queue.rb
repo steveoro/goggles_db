@@ -4,7 +4,7 @@ module GogglesDb
   #
   # = ImportQueue model
   #
-  #   - version:  7-0.5.01
+  #   - version:  7-0.7.24
   #   - author:   Steve A.
   #
   # Stores '/import' API requests and generic import micro- & macro- transactions steps.
@@ -206,7 +206,9 @@ module GogglesDb
     # Returns the associated Swimmer complete name at root-key depth of the request, if any,
     # or +nil+ when not set.
     def req_swimmer_name
-      req&.fetch(root_key, nil)&.fetch('swimmer', nil)&.fetch('complete_name', nil)
+      return if req.blank?
+
+      req.fetch(root_key, nil)&.fetch('swimmer', nil)&.fetch('complete_name', nil)
     end
 
     # == Microtransaction management helper.
@@ -220,15 +222,18 @@ module GogglesDb
     # 2. /<anything> => /swimmer => <field_name> (but not deeper)
     #
     def req_swimmer_year_of_birth
-      return req&.fetch(root_key, nil)&.fetch('year_of_birth', nil) if root_key == 'swimmer'
+      return if req.blank?
+      return req.fetch(root_key, nil)&.fetch('year_of_birth', nil) if root_key == 'swimmer'
 
-      req&.fetch(root_key, nil)&.fetch('swimmer', nil)&.fetch('year_of_birth', nil)
+      req.fetch(root_key, nil)&.fetch('swimmer', nil)&.fetch('year_of_birth', nil)
     end
 
     # == Microtransaction management helper.
     # Returns the associated EventType at root-key depth of the request, if any, or +nil+ when not set.
     def req_event_type
-      event_type_id = req&.fetch(root_key, nil)&.fetch(result_parent_key, nil)&.fetch('event_type_id', nil)
+      return if req.blank?
+
+      event_type_id = req.fetch(root_key, nil)&.fetch(result_parent_key, nil)&.fetch('event_type_id', nil)
       @req_event_type ||= GogglesDb::EventType.find_by(id: event_type_id)
     end
 

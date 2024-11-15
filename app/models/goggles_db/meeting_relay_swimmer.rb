@@ -6,7 +6,7 @@ module GogglesDb
   #
   # = MeetingRelaySwimmer (MRS) model
   #
-  #   - version:  7-0.6.21
+  #   - version:  7-0.7.24
   #   - author:   Steve A.
   #
   # == Note:
@@ -71,7 +71,13 @@ module GogglesDb
     #-- ------------------------------------------------------------------------
     #++
 
-    alias_attribute :parent_result, :meeting_relay_result
+    # Replicate part of AbstractLap behavior:
+    alias_attribute :parent_result, :meeting_relay_result # (old, new)
+
+    # Replicate AbstractResult behavior:
+    alias_attribute :parent_meeting, :meeting # (old, new)
+    #-- ------------------------------------------------------------------------
+    #++
 
     # Override: include some of the decorated fields in the output.
     #
@@ -99,8 +105,17 @@ module GogglesDb
         'first_name' => swimmer.first_name,
         'year_of_birth' => swimmer.year_of_birth,
         'year_guessed' => swimmer.year_guessed,
-        'associated_user_label' => swimmer&.associated_user&.decorate&.short_label
+        'associated_user_label' => swimmer.present? ? swimmer.associated_user&.decorate&.short_label : nil
       }
     end
+    #-- ------------------------------------------------------------------------
+    #++
+
+    # Returns +true+ if this result can be scored into the overall ranking.
+    def valid_for_ranking?
+      !out_of_race? && !disqualified? && positive?
+    end
+    #-- ------------------------------------------------------------------------
+    #++
   end
 end

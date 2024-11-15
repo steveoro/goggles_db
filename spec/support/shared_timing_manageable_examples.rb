@@ -30,7 +30,66 @@ shared_examples_for 'TimingManageable' do
   context 'by including this concern, the sibling:' do
     subject { fixture_row }
 
-    it_behaves_like('responding to a list of methods', %i[hundredths seconds minutes to_timing from_timing])
+    it_behaves_like('responding to a list of methods', %i[hundredths seconds minutes to_timing from_timing positive? present? zero?])
+  end
+
+  context 'for any result with positive time,' do
+    subject do
+      # Make sure the fixture_row has at least a column with positive time:
+      fixture_row.seconds = 1
+      fixture_row
+    end
+
+    describe '#positive?' do
+      it 'is true' do
+        expect(subject.positive?).to be true
+      end
+    end
+
+    describe '#present?' do
+      it 'is true' do
+        expect(subject.present?).to be true
+      end
+    end
+
+    describe '#zero?' do
+      it 'is false' do
+        expect(subject.zero?).to be false
+      end
+    end
+  end
+
+  context 'for any result with zero time,' do
+    subject do
+      # Make sure the fixture_row has all columns with zero time:
+      fixture_row.hundredths = 0
+      fixture_row.seconds = 0
+      fixture_row.minutes = 0
+      if fixture_row.respond_to?(:hundredths_from_start=)
+        fixture_row.hundredths_from_start = 0
+        fixture_row.seconds_from_start = 0
+        fixture_row.minutes_from_start = 0
+      end
+      fixture_row
+    end
+
+    describe '#positive?' do
+      it 'is false' do
+        expect(subject.positive?).to be false
+      end
+    end
+
+    describe '#present?' do
+      it 'is false' do
+        expect(subject.present?).to be false
+      end
+    end
+
+    describe '#zero?' do
+      it 'is true' do
+        expect(subject.zero?).to be true
+      end
+    end
   end
 
   describe '#to_timing' do

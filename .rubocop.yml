@@ -141,6 +141,11 @@ RSpec/PendingWithoutReason:
   Exclude:
     - 'spec/models/goggles_db/goggle_cup*'
 
+# Yields an error with:
+# - v. 1.68.0 (using Parser 3.3.6.0, rubocop-ast 1.36.1, analyzing as Ruby 3.1, running on ruby 3.1.4)
+Style/BitwisePredicate:
+  Enabled: false
+
 Style/Documentation:
   Exclude:
     - 'db/migrate/**/*'

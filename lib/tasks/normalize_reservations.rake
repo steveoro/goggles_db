@@ -46,7 +46,7 @@ namespace :normalize do
   # tuples.
   def collect_meeting_reservation_ids_for(meeting_id_badge_id_tuple_list)
     meeting_id_badge_id_tuple_list.map do |id_pair|
-      GogglesDb::MeetingReservation.where(meeting_id: id_pair.first, badge_id: id_pair.second).select(:id).map(&:id)
+      GogglesDb::MeetingReservation.where(meeting_id: id_pair.first, badge_id: id_pair.second).pluck(:id)
     end.flatten
   end
 end
