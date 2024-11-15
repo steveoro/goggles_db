@@ -35,10 +35,10 @@ class DataFixRemoveDuplicatesInReservationTables < ActiveRecord::Migration[6.0]
     Rails.logger.debug { "\r\n--> Found #{dup_event_res_list.count} groups with #{klass} duplicates; deleting:" }
     dup_event_res_list.each do |tuple|
       badge_id, meeting_event_id = tuple
-      duplicate_ids = klass.select(:id)
-                           .where(badge_id:, meeting_event_id:)
-                           .order(:updated_at)
-                           .map(&:id)
+      duplicate_ids = klass
+                      .where(badge_id:, meeting_event_id:)
+                      .order(:updated_at)
+                      .pluck(:id)
       # Keep the last ID found in the group, by removing from the to-be-deleted list:
       # (hopefully, the last one will be the one updated more recently - but most duplicates have the same timestamps)
       duplicate_ids.pop

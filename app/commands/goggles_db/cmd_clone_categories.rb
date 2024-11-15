@@ -30,7 +30,7 @@ module GogglesDb
       return unless internal_members_valid?
 
       # @from_season.category_types.each do |category_type|
-      GogglesDb::CategoryType.includes(:season).where(season_id: @from_season.id).each do |category_type|
+      GogglesDb::CategoryType.includes(:season).where(season_id: @from_season.id).find_each do |category_type|
         GogglesDb::CategoryType.create!(
           reject_common_columns(category_type.attributes)
             .merge(season_id: @to_season.id)

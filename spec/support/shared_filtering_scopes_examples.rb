@@ -147,7 +147,7 @@ shared_examples_for 'filtering scope for_<PLURAL_ENTITY_NAME>' do |subject_class
     it "is a relation containing only #{subject_class.to_s.pluralize} belonging to the specified #{entity_name.camelcase}" do
       expect(result).to be_a(ActiveRecord::Relation)
       expect(result).to all be_a(subject_class)
-      expect(result.map(&:"#{entity_name}_id").uniq.sort).to match(chosen_filters.map(&:id).sort)
+      expect(result.map(&:"#{entity_name}_id").uniq.sort).to match(chosen_filters.map(&:id).uniq.sort)
     end
   end
 end

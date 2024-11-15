@@ -6,7 +6,7 @@ module GogglesDb
   #
   # = MeetingRelayResult model
   #
-  #   - version:  7-0.6.21
+  #   - version:  7-0.7.24
   #   - author:   Steve A.
   #
   class MeetingRelayResult < ApplicationRecord
@@ -77,7 +77,7 @@ module GogglesDb
     # scope :by_meeting_relay, ->(dir)         { order("meeting_program_id #{dir}, rank #{dir}") }
 
     # Filtering scopes:
-    scope :valid_for_ranking, -> { where(out_of_race: false, disqualified: false) }
+    scope :valid_for_ranking, -> { with_time.where(out_of_race: false, disqualified: false) }
     scope :qualifications,    -> { where(disqualified: false) }
     scope :disqualifications, -> { where(disqualified: true) }
 
@@ -95,10 +95,8 @@ module GogglesDb
     #-- ------------------------------------------------------------------------
     #++
 
-    # Returns +true+ if this result can be scored into the overall ranking.
-    def valid_for_ranking?
-      !out_of_race? && !disqualified?
-    end
+    # Replicate AbstractResult behavior:
+    alias_attribute :parent_meeting, :meeting # (old, new)
     #-- ------------------------------------------------------------------------
     #++
 
@@ -138,8 +136,14 @@ module GogglesDb
         'scheduled_date' => meeting_session.scheduled_date
       }
     end
+    #-- ------------------------------------------------------------------------
+    #++
 
-    # AbstractResult overrides:
-    alias_attribute :parent_meeting, :meeting # (old, new)
+    # Returns +true+ if this result can be scored into the overall ranking.
+    def valid_for_ranking?
+      !out_of_race? && !disqualified? && positive?
+    end
+    #-- ------------------------------------------------------------------------
+    #++
   end
 end

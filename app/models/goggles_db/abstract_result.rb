@@ -118,6 +118,8 @@ module GogglesDb
         'year_guessed' => swimmer&.year_guessed
       }
     end
+    #-- ------------------------------------------------------------------------
+    #++
 
     protected
 

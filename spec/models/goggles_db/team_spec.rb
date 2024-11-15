@@ -40,7 +40,7 @@ module GogglesDb
     let(:team_with_badges) { Prosopite.pause { FactoryBot.create(:team_with_badges) } }
 
     context 'any pre-seeded instance' do
-      subject { described_class.all.limit(20).sample }
+      subject { described_class.limit(20).sample }
 
       it_behaves_like('a valid Team instance')
 

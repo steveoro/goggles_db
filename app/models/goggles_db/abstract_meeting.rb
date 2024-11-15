@@ -6,7 +6,7 @@ module GogglesDb
   #
   # Encapsulates common behavior for Meetings & User Workshops.
   #
-  #   - version:  7-0.5.10
+  #   - version:  7-0.7.24
   #   - author:   Steve A.
   #
   class AbstractMeeting < ApplicationRecord
@@ -35,7 +35,7 @@ module GogglesDb
 
     # Filtering scopes:
     scope :not_cancelled,   -> { where(cancelled: false) }
-    scope :not_expired,     -> { not_cancelled.where('header_date >= ?', Time.zone.today) }
+    scope :not_expired,     -> { not_cancelled.where(header_date: Time.zone.today..) }
     scope :for_season_type, ->(season_type) { joins(:season_type).where(season_types: { id: season_type.id }) }
     scope :for_season,      ->(season) { joins(:season).where(season_id: season.id) }
     scope :for_code,        ->(code) { where(code:) }
@@ -95,16 +95,14 @@ module GogglesDb
     # - <tt>meeting_name</tt>: the meeting name to be processed;
     #   defaults to +description+.
     #
-    # rubocop:disable Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
     def condensed_name(meeting_name = description)
       tokens = split_description_in_tokens(name_without_edition(meeting_name))
       # Fallback to using the notes if we have them and the splitting above does not yield tokens:
       tokens = split_description_in_tokens(notes) if tokens.blank? && notes.present?
       # Remove spaces, split in shorter tokens, delete blanks and take just the first 3:
-      tokens = tokens&.to_s&.strip&.split(/\s|,/)&.reject(&:blank?)
+      tokens = tokens.to_s.strip.split(/\s|,/).compact_blank if tokens.present?
       tokens.is_a?(Array) ? tokens[0..3]&.join(' ') : tokens.to_s
     end
-    # rubocop:enable Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
     #++
 
     # Returns +true+ if this abstract meeting has either been cancelled or closed for due time.

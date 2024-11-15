@@ -27,9 +27,9 @@ module GogglesDb
 
     # Memoize all values for virtual scopes:
     class_eval do
-      all.includes(:pool_type, :event_type, :stroke_type)
-         .joins(:pool_type, :event_type, :stroke_type).order(:style_order)
-         .find_each do |row|
+      includes(:pool_type, :event_type, :stroke_type)
+        .joins(:pool_type, :event_type, :stroke_type).order(:style_order)
+        .find_each do |row|
         @all_relays ||= []
         @all_relays << row if row&.relay?
         @all_individuals ||= []

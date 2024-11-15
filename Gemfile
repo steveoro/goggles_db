@@ -36,7 +36,7 @@ group :development do
   gem 'rubocop'
   gem 'rubocop-factory_bot', require: false
   gem 'rubocop-performance'
-  gem 'rubocop-rails', '= 2.19', require: false # currently 2.20 introduces a bug with '#falsey_literal?'
+  gem 'rubocop-rails'
   gem 'rubocop-rake'
   gem 'rubocop-rspec'
   gem 'rubocop-rspec_rails'

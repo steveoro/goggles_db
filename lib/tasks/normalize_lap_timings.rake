@@ -328,7 +328,7 @@ namespace :normalize do
   #
   def delete_orphan_rows!(updated_rows)
     puts "\r\nOrphan laps were found: scanning for MIR IDs that do not have an existing MIR row anymore..."
-    mir_ids = GogglesDb::Lap.select(:meeting_individual_result_id).distinct.map(&:meeting_individual_result_id)
+    mir_ids = GogglesDb::Lap.distinct.pluck(:meeting_individual_result_id)
     missing_ids = mir_ids.reject { |id| GogglesDb::MeetingIndividualResult.exists?(id) }
     orphan_rows = GogglesDb::Lap.where(meeting_individual_result_id: missing_ids)
     puts "Found #{missing_ids.count} association(s). Deleting #{orphan_rows.count} associated orphan rows..."

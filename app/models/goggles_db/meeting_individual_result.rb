@@ -6,7 +6,7 @@ module GogglesDb
   #
   # = GogglesDb::MeetingIndividualResult
   #
-  # - version:  7-0.7.10
+  # - version:  7-0.7.24
   # - author:   Steve A.
   #
   class MeetingIndividualResult < AbstractResult
@@ -80,7 +80,7 @@ module GogglesDb
     # }
 
     # Filtering scopes:
-    scope :valid_for_ranking, -> { where(out_of_race: false, disqualified: false) }
+    scope :valid_for_ranking, -> { with_time.where(out_of_race: false, disqualified: false) }
     scope :personal_bests,    -> { where(personal_best: true) }
     scope :for_meeting_code,  ->(meeting) { joins(:meeting).where('meetings.code': meeting&.code) }
     scope :for_team,          ->(team)    { where(team_id: team.id) }
@@ -116,10 +116,8 @@ module GogglesDb
     #-- ------------------------------------------------------------------------
     #++
 
-    # Returns +true+ if this result can be scored into the overall ranking.
-    def valid_for_ranking?
-      !out_of_race? && !disqualified?
-    end
+    # AbstractResult overrides:
+    alias_attribute :parent_meeting, :meeting # (old, new)
     #-- ------------------------------------------------------------------------
     #++
 
@@ -165,8 +163,14 @@ module GogglesDb
         'scheduled_date' => meeting_session.scheduled_date
       }
     end
+    #-- ------------------------------------------------------------------------
+    #++
 
-    # AbstractResult overrides:
-    alias_attribute :parent_meeting, :meeting # (old, new)
+    # Returns +true+ if this result can be scored into the overall ranking.
+    def valid_for_ranking?
+      !out_of_race? && !disqualified? && positive?
+    end
+    #-- ------------------------------------------------------------------------
+    #++
   end
 end
