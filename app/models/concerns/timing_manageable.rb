@@ -51,9 +51,6 @@ module TimingManageable
     base_timing_positive || minutes_from_start.positive? || seconds_from_start.positive? || hundredths_from_start.positive?
   end
 
-  # Make sure only positive timings will be considered as "present":
-  alias present? positive? # (new, old)
-
   # Returns +true+ if the timing associated with this result is zero.
   # If the includee responds (at least) also to #hundredths_from_start,
   # this will check all the <tt>XXX_from_start</tt> columns as well.

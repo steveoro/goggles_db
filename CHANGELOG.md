@@ -2,6 +2,7 @@
 
 _Please, add the latest build info on top of the list; use Version::MAJOR only after gold release; keep semantic versioning in line with framework's_
 
+- **0.7.25** [Steve A.] amend dumb idea of aliasing #present? to positive? in all TimingManageable sibling classes
 - **0.7.24** [Steve A.] bundle updates & rubocop updates; moved zero?, positive? & present? helpers directly into TimingManageable; specs updates
 - **0.7.23** [Steve A.] bundle updates
 - **0.7.20** [Steve A.] bundle updates; added a missing/new EventType used for Coopernuoto meetings ('6X50SL')
