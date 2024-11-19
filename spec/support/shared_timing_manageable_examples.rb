@@ -30,7 +30,7 @@ shared_examples_for 'TimingManageable' do
   context 'by including this concern, the sibling:' do
     subject { fixture_row }
 
-    it_behaves_like('responding to a list of methods', %i[hundredths seconds minutes to_timing from_timing positive? present? zero?])
+    it_behaves_like('responding to a list of methods', %i[hundredths seconds minutes to_timing from_timing positive? zero?])
   end
 
   context 'for any result with positive time,' do
@@ -47,7 +47,7 @@ shared_examples_for 'TimingManageable' do
     end
 
     describe '#present?' do
-      it 'is true' do
+      it 'is always true' do
         expect(subject.present?).to be true
       end
     end
@@ -80,8 +80,8 @@ shared_examples_for 'TimingManageable' do
     end
 
     describe '#present?' do
-      it 'is false' do
-        expect(subject.present?).to be false
+      it 'is always true' do
+        expect(subject.present?).to be true
       end
     end
 
@@ -91,6 +91,17 @@ shared_examples_for 'TimingManageable' do
       end
     end
   end
+
+  context 'a new instance with zero timing' do
+    subject { described_class.new }
+
+    it 'is always #present?, even if #zero? is true' do
+      expect(subject.zero?).to be true
+      expect(subject.present?).to be true
+    end
+  end
+  #-- ------------------------------------------------------------------------
+  #++
 
   describe '#to_timing' do
     context 'when from_start is false (default),' do
