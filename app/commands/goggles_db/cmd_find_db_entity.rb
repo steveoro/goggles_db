@@ -6,9 +6,10 @@ require 'fuzzystringmatch'
 module GogglesDb
   #
   # = Generic DB entity fuzzy-finder command
-  #   - version:  7-0.5.01
+  #
+  #   - version:  7-0.8.00
   #   - author:   Steve A.
-  #   - build:    20230401
+  #   - build:    20241223
   #
   # Uses the DbFinders::Factory to create a specific fuzzy-finder for
   # the specified DB entity.
@@ -53,6 +54,7 @@ module GogglesDb
     #   the verbose search output on the console (default: false); this will be removed from
     #   the search terms.
     #
+    # - <tt>bias</tt>: fuzzy search bias for a match (default: BaseStrategy::DEFAULT_MATCH_BIAS)
     #
     # == Example usage:
     #
@@ -68,9 +70,9 @@ module GogglesDb
     #   > cmd.result
     #   => #<GogglesDb::Team id: 1, ...>
     #
-    def initialize(model_klass, search_terms = {})
+    def initialize(model_klass, search_terms = {}, bias = DbFinders::BaseStrategy::DEFAULT_MATCH_BIAS)
       @search_terms = search_terms
-      @finder = DbFinders::Factory.for(model_klass, search_terms)
+      @finder = DbFinders::Factory.for(model_klass, search_terms, bias)
       @matches = []
     end
 

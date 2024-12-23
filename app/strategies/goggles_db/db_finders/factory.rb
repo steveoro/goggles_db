@@ -7,9 +7,9 @@ module GogglesDb
     #
     # = DbFinders singleton factory
     #
-    #   - version:  7-0.4.01
+    #   - version:  7-0.8.00
     #   - author:   Steve A.
-    #   - build:    20220804
+    #   - build:    20241223
     #
     # Allows to create a plug-in strategy object for finding a specific entity given the search
     # parameters.
@@ -34,34 +34,36 @@ module GogglesDb
       #   the verbose search output on the console (default: false); this will be removed from
       #   the search terms (as all other column names non valid as search terms).
       #
+      # - <tt>bias</tt>: fuzzy search bias for a match (default: BaseStrategy::DEFAULT_MATCH_BIAS)
+      #
       # == Returns
       # A <tt>DbFinders::BaseStrategy</tt> sibling
       #
       # rubocop:disable Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
-      def self.for(model_klass, search_terms = {})
+      def self.for(model_klass, search_terms = {}, bias = BaseStrategy::DEFAULT_MATCH_BIAS)
         raise(ArgumentError, 'No search term specified') if search_terms.blank? ||
                                                             search_terms.except(:toggle_debug).blank?
 
         if model_klass == GogglesDb::Swimmer
           # Add also strict parameter checking for the search terms in all models, like this:
           search_terms.keep_if { |key, _v| %i[complete_name year_of_birth gender_type_id toggle_debug].include?(key) }
-          FuzzySwimmer.new(search_terms)
+          FuzzySwimmer.new(search_terms, bias)
 
         elsif model_klass == GogglesDb::Team
           search_terms.keep_if { |key, _v| %i[name editable_name name_variations city_id toggle_debug].include?(key) }
-          FuzzyTeam.new(search_terms)
+          FuzzyTeam.new(search_terms, bias)
 
         elsif model_klass == GogglesDb::SwimmingPool
           search_terms.keep_if { |key, _v| %i[name nick_name pool_type_id city_id toggle_debug].include?(key) }
-          FuzzyPool.new(search_terms)
+          FuzzyPool.new(search_terms, bias)
 
         elsif model_klass == GogglesDb::Meeting
           search_terms.keep_if { |key, _v| %i[description code header_year season_id toggle_debug].include?(key) }
-          FuzzyMeeting.new(search_terms)
+          FuzzyMeeting.new(search_terms, bias)
 
         elsif model_klass == GogglesDb::City
           search_terms.keep_if { |key, _v| %i[name area country country_code toggle_debug].include?(key) }
-          FuzzyCity.new(search_terms)
+          FuzzyCity.new(search_terms, bias)
 
         else
           raise(ArgumentError, 'New, unsupported or unimplemented model class!')

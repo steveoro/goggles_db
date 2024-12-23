@@ -75,6 +75,26 @@ module GogglesDb
       end
     end
 
+    describe '#age_for_category_range' do
+      let(:fixture_swimmer) { described_class.new(year_of_birth: 2000) }
+      let(:first_half_month) { (1 + (rand * 8)).to_i }  # months: 1..8
+      let(:second_half_month) { (9 + (rand * 4)).to_i } # months: 9..12
+
+      context 'with a date falling in the first 8 months of the year,' do
+        it 'returns the current age of the swimmer' do
+          expect(fixture_swimmer.age_for_category_range(Date.parse("#{Time.zone.today.year}-#{first_half_month}-01")))
+            .to eq(fixture_swimmer.age)
+        end
+      end
+
+      context 'with a date falling in the second half of the year (after season start),' do
+        it 'returns the current age +1 of the swimmer' do
+          expect(fixture_swimmer.age_for_category_range(Date.parse("#{Time.zone.today.year}-#{second_half_month}-01")))
+            .to eq(fixture_swimmer.age + 1)
+        end
+      end
+    end
+
     describe '#associated_team_ids' do
       context 'with a swimmer having existing badges,' do
         let(:result) { swimmer_with_badge.associated_team_ids }

@@ -31,9 +31,9 @@ module GogglesDb
       describe '#scan_for_matches finding a single result (1:1),' do
         [
           # 1:1 matches:
-          'Alloro Stefano', 'Ligabue'
+          ' Alloro Stefano', 'Ligabue Marco'
         ].each do |fixture_value|
-          describe "#call ('#{fixture_value}')" do
+          describe "#scan_for_matches ('#{fixture_value}')" do
             subject { described_class.new(complete_name: fixture_value) }
 
             before { subject.scan_for_matches }
