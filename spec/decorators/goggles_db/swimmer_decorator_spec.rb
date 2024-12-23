@@ -34,6 +34,20 @@ RSpec.describe GogglesDb::SwimmerDecorator, type: :decorator do
       end
     end
 
+    context 'with a row that is missing the gender type,' do
+      subject(:result) do
+        new_row = GogglesDb::Swimmer.new
+        # Makes new no defaults are set for the gender_type:
+        new_row.gender_type = nil
+        described_class.decorate(new_row).display_label
+      end
+
+      it 'does not raise an error and is a non-empty String' do
+        expect { result }.not_to raise_error
+        expect(result).to be_a(String).and be_present
+      end
+    end
+
     context 'with an alternative locale & a valid row,' do
       subject(:result) { decorated_instance.display_label(alternative_locale) }
 

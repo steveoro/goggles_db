@@ -5,9 +5,9 @@ module GogglesDb
     #
     # = FuzzyTeam finder strategy
     #
-    #   - version:  7-0.4.01
+    #   - version:  7-0.8.00
     #   - author:   Steve A.
-    #   - build:    20220823
+    #   - build:    20241223
     #
     class FuzzyTeam < BaseStrategy
       # Creates a new search strategy instance given the parameters.
@@ -20,7 +20,9 @@ module GogglesDb
       #   the verbose search output on the console (default: false); this will be removed from
       #   the search terms.
       #
-      def initialize(search_terms = {})
+      # - <tt>bias</tt>: fuzzy search bias for a match (default: 0.74)
+      #
+      def initialize(search_terms = {}, _bias = 0.74)
         # Use a less restrictive bias (0.75 allows for just a partial name)
         super(GogglesDb::Team, search_terms, :for_name, 0.74)
       end

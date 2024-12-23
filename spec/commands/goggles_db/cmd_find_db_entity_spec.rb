@@ -50,7 +50,7 @@ module GogglesDb
 
     context 'when using valid parameters' do
       context 'matching the specified value,' do
-        subject { described_class.call(GogglesDb::Swimmer, complete_name: 'Smith Bao') }
+        subject { described_class.call(GogglesDb::Swimmer, complete_name: 'Smith Lavone') }
 
         it_behaves_like('CmdFindDbEntity successful #call', GogglesDb::Swimmer, :complete_name, nil) # disable debug output with nil
       end
@@ -59,14 +59,14 @@ module GogglesDb
         [
           # 1:1 matches:
           { klass: GogglesDb::Swimmer, params: { complete_name: 'Alloro Stefano' } },
-          { klass: GogglesDb::Swimmer, params: { complete_name: 'Ligabue' } },
-          { klass: GogglesDb::Swimmer, params: { complete_name: 'Smith Bao' } },
+          { klass: GogglesDb::Swimmer, params: { complete_name: 'Ligabue Marco' } },
+          { klass: GogglesDb::Swimmer, params: { complete_name: 'Smith Lavone' } },
 
           { klass: GogglesDb::City, params: { name: 'Bologna' } },
           { klass: GogglesDb::City, params: { name: 'Carpi' } },
           { klass: GogglesDb::City, params: { name: 'London' } },
           { klass: GogglesDb::City, params: { name: 'Parma' } },
-          { klass: GogglesDb::City, params: { name: 'Reggio Emilia' } },
+          { klass: GogglesDb::City, params: { name: 'Reggio nell Emilia' } },
           { klass: GogglesDb::City, params: { name: 'Riccione' } },
           { klass: GogglesDb::City, params: { name: 'Verolanuova' } },
 

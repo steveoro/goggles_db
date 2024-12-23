@@ -5,9 +5,9 @@ module GogglesDb
     #
     # = FuzzyCity finder strategy
     #
-    #   - version:  7-0.3.53
+    #   - version:  7-0.8.00
     #   - author:   Steve A.
-    #   - build:    20220526
+    #   - build:    20241223
     #
     class FuzzyCity < BaseStrategy
       # Creates a new search strategy instance given the parameters.
@@ -23,8 +23,10 @@ module GogglesDb
       #   the verbose search output on the console (default: false); this will be removed from
       #   the search terms.
       #
-      def initialize(search_terms = {})
-        super(GogglesDb::City, search_terms, :for_name, 0.8)
+      # - <tt>bias</tt>: fuzzy search bias for a match (default: BaseStrategy::DEFAULT_MATCH_BIAS)
+      #
+      def initialize(search_terms = {}, bias = BaseStrategy::DEFAULT_MATCH_BIAS)
+        super(GogglesDb::City, search_terms, :for_name, bias)
       end
       #-- --------------------------------------------------------------------------
       #++

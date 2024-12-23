@@ -5,9 +5,9 @@ module GogglesDb
     #
     # = FuzzyMeeting finder strategy
     #
-    #   - version:  7-0.4.01
+    #   - version:  7-0.8.00
     #   - author:   Steve A.
-    #   - build:    20220823
+    #   - build:    20241223
     #
     class FuzzyMeeting < BaseStrategy
       # Creates a new search strategy instance given the parameters.
@@ -20,8 +20,10 @@ module GogglesDb
       #   the verbose search output on the console (default: false); this will be removed from
       #   the search terms.
       #
-      def initialize(search_terms = {})
-        super(GogglesDb::Meeting, search_terms, :for_name, DEFAULT_MATCH_BIAS)
+      # - <tt>bias</tt>: fuzzy search bias for a match (default: BaseStrategy::DEFAULT_MATCH_BIAS)
+      #
+      def initialize(search_terms = {}, bias = BaseStrategy::DEFAULT_MATCH_BIAS)
+        super(GogglesDb::Meeting, search_terms, :for_name, bias)
       end
       #-- --------------------------------------------------------------------------
       #++
