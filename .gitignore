@@ -60,3 +60,6 @@ send_coverage.sh
 bower.json
 
 /config/credentials/development.key
+
+# windsurf rules
+.windsurfrules
