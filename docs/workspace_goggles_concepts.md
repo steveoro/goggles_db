@@ -10,7 +10,20 @@ Although both applications have an imperative multi-locale support, data is curr
 (There is only 1 maintainer, which is also the main developer.)
 Being a very specific domain application, further details may be required to better understand its operating principles.
 
-## Data description and data flow
+## Data flow
+- The main client (deployed on remote) is read-only.
+- The admin client (run and used only locally) is read-write.
+- The API backend (deployed on remote) is read-write and is used by the both the main UI client and the admin client for data synchronization and exchange.
+- The main UI client and the API share the same physical database and models by using the same database engine as a gem dependency.
+- The local admin client reuses the same database engine gem (so, same structure and models), but works on a localhost copy of the same remote database.
+
+### Actual flow:
+1. data import (local admin client)
+2. data review and manual adjustment (local admin client)
+3. data exchange (local -> remote, via API)
+
+
+## Data description
 Each swimming competition is usually held in "Meetings". Each Meeting may hold several Events.
 Each Event will have its own results, divided according to type of event, age and gender of the swimmer.
 Swimmer age is grouped in range of 5 years, usually starting a 20+ years of age.
@@ -33,8 +46,8 @@ When referred as a framework, Goggles is composed of these projects:
   - may contain some outdated info that needs to be updated sooner or later
 
 2. `goggles_db`: a namespaced Rails Engine storing the whole database structure for Goggles with its models, most of its Business Logic, several strategy classes and "data-oriented" decorators.
-  - a.k.a. the "DB"
-  - referenced and used by the API, the Main app and the Admin app
+  - a.k.a. the "DB", includes all database models and most of the Business Logic reused in goggles_main, goggles_api and goggles_admin2 as a gem dependency.
+  - the database defined herein is reused in all other parts of the framework
 
 3. `goggles_api`: a stand-alone Rails application that holds all the API endpoints with JWT-based authentication.
   - a.k.a. the "API"
