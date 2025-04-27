@@ -163,10 +163,10 @@ module GogglesDb
       #-- ---------------------------------------------------------------------
       #++
 
-      private
-
       # Internal instance of the metric used to compute text distance
       METRIC = FuzzyStringMatch::JaroWinkler.create(:native)
+
+      private
 
       # Returns the target search value, the current match candidate and its corresponding
       # normalized value all "namespaced" using the relevant filtering terms, so that the string metric

@@ -208,7 +208,7 @@ module GogglesDb
     def req_swimmer_name
       return if req.blank?
 
-      req.fetch(root_key, nil)&.fetch('swimmer', nil)&.fetch('complete_name', nil)
+      req.dig(root_key, 'swimmer', 'complete_name')
     end
 
     # == Microtransaction management helper.
@@ -223,9 +223,9 @@ module GogglesDb
     #
     def req_swimmer_year_of_birth
       return if req.blank?
-      return req.fetch(root_key, nil)&.fetch('year_of_birth', nil) if root_key == 'swimmer'
+      return req.dig(root_key, 'year_of_birth') if root_key == 'swimmer'
 
-      req.fetch(root_key, nil)&.fetch('swimmer', nil)&.fetch('year_of_birth', nil)
+      req.dig(root_key, 'swimmer', 'year_of_birth')
     end
 
     # == Microtransaction management helper.
@@ -233,7 +233,7 @@ module GogglesDb
     def req_event_type
       return if req.blank?
 
-      event_type_id = req.fetch(root_key, nil)&.fetch(result_parent_key, nil)&.fetch('event_type_id', nil)
+      event_type_id = req.dig(root_key, result_parent_key, 'event_type_id')
       @req_event_type ||= GogglesDb::EventType.find_by(id: event_type_id)
     end
 
