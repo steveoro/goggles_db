@@ -119,13 +119,13 @@ module GogglesDb
     #-- --------------------------------------------------------------------------
     #++
 
-    private
-
     # Internal instance of the metric used to compute text distance
     METRIC = FuzzyStringMatch::JaroWinkler.create(:native)
 
     # Any text distance >= MATCH_BIAS will be considered viable as a match
     MATCH_BIAS = 0.98
+
+    private
 
     # Returns the array of ISO3166::Country instances used for the "search mode".
     def opinionated_country_search_list

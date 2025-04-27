@@ -2,6 +2,7 @@
 
 _Please, add the latest build info on top of the list; use Version::MAJOR only after gold release; keep semantic versioning in line with framework's_
 
+- **0.8.01** [Steve A.] added Best50mResult Scenic view with dedicated model and specs; DB vers. 2.08.01
 - **0.8.00** [Steve A.] safe navigation in SwimmerDecorator#display_label when gender is not defined; added bias parameter in CmdFindDBEntity <- DbFinders::FuzzySwimmer because sometimes the default 0.8 doesn't fit the case; refactored Swimmer#age_for_category_range from [Admin2]PdfResults::L2Converter; bundle update
 - **0.7.25** [Steve A.] amend dumb idea of aliasing #present? to positive? in all TimingManageable sibling classes
 - **0.7.24** [Steve A.] bundle updates & rubocop updates; moved zero?, positive? & present? helpers directly into TimingManageable; specs updates

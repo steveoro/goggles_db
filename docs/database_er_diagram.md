@@ -125,11 +125,10 @@ erDiagram
     
     MEETING_PROGRAM {
         int id PK
-        int meeting_id FK
+        int meeting_event_id FK
         int event_order
         int category_type_id FK
         int gender_type_id FK
-        int event_type_id FK
         int pool_type_id FK
     }
     
@@ -243,27 +242,26 @@ erDiagram
     SWIMMER }o--|| GENDER_TYPE : "has"
     
     %% Competition hierarchy
-    SEASON ||--o{ CALENDAR : "contains"
-    CALENDAR ||--o{ MEETING : "schedules"
-    MEETING ||--o{ MEETING_SESSION : "divides into"
-    MEETING_SESSION ||--o{ MEETING_EVENT : "schedules"
+    SEASON ||--o{ MEETING : "contains"
+    MEETING ||--o{ MEETING_SESSION : "has sessions"
+    MEETING_SESSION ||--o{ MEETING_EVENT : "has events"
+    MEETING_EVENT ||--o{ MEETING_PROGRAM : "has programs"
     MEETING ||--o{ MEETING_PROGRAM : "organizes"
     
     %% Result connections
-    MEETING_PROGRAM ||--o{ MEETING_INDIVIDUAL_RESULT : "produces"
-    MEETING_PROGRAM ||--o{ MEETING_RELAY_RESULT : "produces"
+    MEETING_PROGRAM ||--o{ MEETING_INDIVIDUAL_RESULT : "yields"
+    MEETING_PROGRAM ||--o{ MEETING_RELAY_RESULT : "yields"
     MEETING_INDIVIDUAL_RESULT ||--o{ LAP : "records"
     MEETING_RELAY_RESULT ||--o{ MEETING_RELAY_SWIMMER : "includes"
     MEETING_RELAY_SWIMMER ||--o{ RELAY_LAP : "records"
     
     %% Classification connections
-    MEETING_PROGRAM }o--|| CATEGORY_TYPE : "restricted to"
-    MEETING_PROGRAM }o--|| GENDER_TYPE : "restricted to"
-    MEETING_PROGRAM }o--|| EVENT_TYPE : "features"
-    MEETING_PROGRAM }o--|| POOL_TYPE : "held in"
+    MEETING_PROGRAM }o--|| CATEGORY_TYPE : "groups by category"
+    MEETING_PROGRAM }o--|| GENDER_TYPE : "groups by gender"
+    MEETING_PROGRAM }o--|| POOL_TYPE : "uses pool"
     EVENT_TYPE }o--|| STROKE_TYPE : "uses"
     EVENT_TYPE }o--|| POOL_TYPE : "requires"
-    MEETING_EVENT }o--|| EVENT_TYPE : "features"
+    MEETING_EVENT }o--|| EVENT_TYPE : "is of type"
     
     %% Venue connections
     MEETING }o--|| SWIMMING_POOL : "held at"
