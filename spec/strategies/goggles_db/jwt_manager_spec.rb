@@ -8,7 +8,6 @@ module GogglesDb
     let(:fixture_key)     { "fake_base_key #{rand * 10_000}" }
     let(:fixture_user_id) { (rand * 10_000).to_i }
     let(:fixture_text)    { 'whatever!' }
-    let(:fixture_key)     { 'fake_base_key' }
     let(:fixture_payload) { { my_user_id: fixture_user_id, other_stuff: fixture_text } }
 
     context 'when using valid construction parameters,' do
