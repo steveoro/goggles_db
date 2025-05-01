@@ -27,8 +27,9 @@ common-config: &common-config
     # 3. "tail -n +8 test.sql > t2.sql"
     # 4. "cat t?.sql > test.sql"
     # 5. To verify the removal: "head -n 10 test.sql"
-    # 6. Remove the old file: "rm test.sql.bz2"
-    # 7. Create a new dump file: "bzip2 test.sql"
+    # 6. Remove the old dump file: "rm test.sql.bz2"
+    # 7. Remove the old dump file parts: "rm t?.sql"
+    # 8. Create a new dump file: "bzip2 test.sql"
     - image: cimg/mariadb:11.4.1
       environment:
         DATABASE_NAME: goggles_test
@@ -70,7 +71,7 @@ jobs:
       - checkout
       - ruby/install-deps:
           app-dir: ~/goggles_db
-          key: goggles_db-v0801
+          key: goggles_db-v0803
       - run:
           name: Apply ActiveSupport logger patch
           # Patch the logger loading order issue in activesupport 6.1.7.10
@@ -88,7 +89,7 @@ jobs:
       - checkout
       - ruby/install-deps:
           app-dir: ~/goggles_db
-          key: goggles_db-v0801
+          key: goggles_db-v0803
       - run:
           name: Apply ActiveSupport logger patch
           # Patch the logger loading order issue in activesupport 6.1.7.10
@@ -108,7 +109,7 @@ jobs:
           at: ~/goggles_db/tmp
       - ruby/install-deps:
           app-dir: ~/goggles_db
-          key: goggles_db-v0801
+          key: goggles_db-v0803
       - run:
           name: Apply ActiveSupport logger patch
           # Patch the logger loading order issue in activesupport 6.1.7.10
@@ -131,7 +132,7 @@ jobs:
           at: ~/goggles_db/tmp
       - ruby/install-deps:
           app-dir: ~/goggles_db
-          key: goggles_db-v0801
+          key: goggles_db-v0803
       - run:
           name: Apply ActiveSupport logger patch
           # Patch the logger loading order issue in activesupport 6.1.7.10
@@ -166,7 +167,7 @@ jobs:
           at: ~/goggles_db/tmp
       - ruby/install-deps:
           app-dir: ~/goggles_db
-          key: goggles_db-v0801
+          key: goggles_db-v0803
       - run:
           name: Apply ActiveSupport logger patch
           # Patch the logger loading order issue in activesupport 6.1.7.10
@@ -201,7 +202,7 @@ jobs:
           at: ~/goggles_db/tmp
       - ruby/install-deps:
           app-dir: ~/goggles_db
-          key: goggles_db-v0801
+          key: goggles_db-v0803
       - run:
           name: Apply ActiveSupport logger patch
           # Patch the logger loading order issue in activesupport 6.1.7.10
@@ -236,7 +237,7 @@ jobs:
           at: ~/goggles_db/tmp
       - ruby/install-deps:
           app-dir: ~/goggles_db
-          key: goggles_db-v0801
+          key: goggles_db-v0803
       - run:
           name: Apply ActiveSupport logger patch
           # Patch the logger loading order issue in activesupport 6.1.7.10
@@ -271,7 +272,7 @@ jobs:
           at: ~/goggles_db/tmp
       - ruby/install-deps:
           app-dir: ~/goggles_db
-          key: goggles_db-v0801
+          key: goggles_db-v0803
       - run:
           name: Apply ActiveSupport logger patch
           # Patch the logger loading order issue in activesupport 6.1.7.10
