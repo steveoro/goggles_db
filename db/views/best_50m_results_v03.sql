@@ -1,10 +1,10 @@
--- CTE to get the IDs of the two most recent 'FIN' (ID=1) seasons
+-- CTE to get the IDs of the 3 most recent 'FIN' (ID=1) seasons
 WITH RecentSeasons AS (
   SELECT id
   FROM seasons
   WHERE season_type_id = 1 -- Filter for FIN season type
   ORDER BY header_year DESC, id DESC
-  LIMIT 2
+  LIMIT 3
 ),
 -- CTE to rank the results within the desired seasons, events, and pools
 RankedResults AS (
