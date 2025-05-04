@@ -224,4 +224,53 @@ namespace :db do
   end
   #-- -------------------------------------------------------------------------
   #++
+
+  desc <<~DESC
+      Fixes the current gzipped DB dump so that it can be used with older MariaDB versions used
+    by CircleCI.
+
+    Until CircleCI adopts releases a usable container for MariaDB with vers. 11.4.2+,
+    each updated test DB dump needs to be edited to remove the sandbox mode parameter which isn't
+    recognized by older MariaDB versions.
+
+    The task extracts the dump in its folder, removes the sandbox parameter special comment
+    (usually at line 7 of the SQL dump), and then re-zips the file overwriting the original one.
+
+    Options: [Rails.env=#{Rails.env}]
+             [from=dump_base_name|<#{Rails.env}>]
+
+      - from: when not specified, the source dump base name will be the same of the
+            current Rails.env
+
+  DESC
+  task(dump_remove_sandbox: [:check_needed_dirs]) do
+    puts '*** Task: DB dump_remove_sandbox ***'
+    dump_basename = ENV.include?('from') ? ENV['from'] : Rails.env
+    file_name = File.join(DB_DUMP_DIR, "#{dump_basename}.sql.bz2")
+    sql_file_name = File.join('tmp', "#{dump_basename}.sql")
+
+    puts "\r\nUncompressing dump file '#{file_name}' => '#{sql_file_name}'..."
+    sh("bunzip2 -ck #{file_name} > #{sql_file_name}")
+    puts("\r\nFirst 10 lines of the dump file:\r\n-----8<-----")
+    sh("head -n 10 #{sql_file_name}")
+    puts("-----8<-----\r\n")
+
+    puts("\r\nRemoving line 7 with the special sandbox parameter...")
+    sh("head -n 6 #{sql_file_name} > t1.sql")
+    sh("tail -n +8 #{sql_file_name} > t2.sql")
+
+    puts("\r\nRejoining the split parts into new destination dump file...")
+    sh("cat t1.sql t2.sql > #{sql_file_name}")
+
+    puts("\r\nConfirmation that the special comment line has been removed (first 10 lines):\r\n-----8<-----")
+    sh("head -n 10 #{sql_file_name}")
+    puts("-----8<-----\r\n")
+
+    puts("\r\nRemoving temp files and bzipping the dump...")
+    sh("rm #{file_name}")
+    sh('rm t?.sql')
+    sh("bzip2 #{sql_file_name}")
+  end
+  #-- -------------------------------------------------------------------------
+  #++
 end

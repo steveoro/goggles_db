@@ -66,6 +66,7 @@ group :development, :test do
 end
 
 group :test do
+  gem 'shoulda-matchers', require: false
   # For CodeClimate: use the stand-alone 'cc-test-reporter' from the command line.
   gem 'codecov', require: false
   # SimpleCov >= 0.17 seems to break parsing for CodeClimate test reporter
