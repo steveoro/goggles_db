@@ -247,7 +247,7 @@ namespace :db do
     puts '*** Task: DB dump_remove_sandbox ***'
     dump_basename = ENV.include?('from') ? ENV['from'] : Rails.env
     file_name = File.join(DB_DUMP_DIR, "#{dump_basename}.sql.bz2")
-    sql_file_name = File.join('tmp', "#{dump_basename}.sql")
+    sql_file_name = File.join(DB_DUMP_DIR, "#{dump_basename}.sql")
 
     puts "\r\nUncompressing dump file '#{file_name}' => '#{sql_file_name}'..."
     sh("bunzip2 -ck #{file_name} > #{sql_file_name}")
@@ -267,8 +267,8 @@ namespace :db do
     puts("-----8<-----\r\n")
 
     puts("\r\nRemoving temp files and bzipping the dump...")
-    sh("rm #{file_name}")
     sh('rm t?.sql')
+    sh("rm #{file_name}")
     sh("bzip2 #{sql_file_name}")
   end
   #-- -------------------------------------------------------------------------
