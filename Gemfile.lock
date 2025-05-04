@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    goggles_db (0.8.03)
+    goggles_db (0.8.05)
       acts-as-taggable-on
       acts_as_votable
       cities
@@ -463,6 +463,8 @@ GEM
     scenic-mysql_adapter (1.1.0)
       scenic (>= 1.4.0)
     shellany (0.0.1)
+    shoulda-matchers (6.5.0)
+      activesupport (>= 5.2.0)
     simple_command (1.0.1)
     simplecov (0.13.0)
       docile (~> 1.1.0)
@@ -563,6 +565,7 @@ DEPENDENCIES
   rubocop-rspec_rails
   scenic
   scenic-mysql_adapter
+  shoulda-matchers
   simplecov (= 0.13.0)
   spring
   spring-commands-rspec

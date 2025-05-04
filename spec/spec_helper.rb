@@ -104,6 +104,6 @@ RSpec.configure do |config|
   end
 
   config.after do # (:each)
-    Prosopite.finish
+    Prosopite.finish unless @skip_prosopite_finish
   end
 end

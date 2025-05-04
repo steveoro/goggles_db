@@ -38,49 +38,9 @@ module GogglesDb
   # - team_id (Team under which the best result was achieved)
   # - team_name
   #
-  class Best50mResult < ApplicationRecord
+  class Best50mResult < AbstractBestResult
     # Tell Rails this model is backed by a view, not a table
     self.primary_key = :meeting_individual_result_id
     self.table_name = 'best_50m_results'
-
-    # Define associations for easier data access (optional but helpful)
-    belongs_to :swimmer
-    belongs_to :event_type
-    belongs_to :pool_type
-    belongs_to :season
-    belongs_to :gender_type
-    belongs_to :meeting
-    belongs_to :meeting_individual_result # Link back to the original result record
-    belongs_to :team # Team associated with the result itself
-
-    # --- Read-only View ---
-    # Prevent accidental attempts to write to the view
-    def readonly?
-      true
-    end
-
-    # --- Helper Methods ---
-
-    # Returns the timing formatted as a string (e.g., "0'58\"45")
-    # using the Timing wrapper class.
-    def timing
-      Timing.new(minutes: minutes, seconds: seconds, hundredths: hundredths).to_s
-    end
-
-    # Simple scope to filter results by swimmers belonging to a specific team in a specific season
-    # This is the primary way this view will be used.
-    #
-    # Usage:
-    #   GogglesDb::Best50mResult.for_team_id(team_id)
-    #
-    scope :for_team_id, ->(team_id) { where(team_id: team_id).distinct }
-
-    # Simple scope to filter results by swimmers belonging to a specific team in a specific season
-    # This is the primary way this view will be used.
-    #
-    # Usage:
-    #   GogglesDb::Best50mResult.for_team_and_season_ids(team_id, season_id)
-    #
-    scope :for_team_and_season_ids, ->(team_id, season_id) { where(team_id: team_id, season_id: season_id).distinct }
   end
 end
