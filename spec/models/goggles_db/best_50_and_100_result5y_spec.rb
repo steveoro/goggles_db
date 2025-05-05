@@ -4,7 +4,7 @@ require 'rails_helper'
 require 'support/shared_abstract_best_result_examples'
 
 module GogglesDb
-  RSpec.describe Best50mResult do
+  RSpec.describe Best50And100Result5y do
     context 'shared behaviors' do
       # Include shared examples for common AbstractBestResult behavior
       it_behaves_like('an AbstractBestResult descendant', described_class)
@@ -14,6 +14,6 @@ module GogglesDb
       it_behaves_like('AbstractBestResult sorting scopes', described_class)
     end
 
-    # Add specific tests for Best50mResult if needed in the future
+    # Add specific tests for Best50And100Result5y if needed in the future
   end
 end

@@ -2,6 +2,7 @@
 
 _Please, add the latest build info on top of the list; use Version::MAJOR only after gold release; keep semantic versioning in line with framework's_
 
+- **0.8.06** [Steve A.] added more "Best Result" views; DB vers. 2.08.06; vers. 0.8.06
 - **0.8.05** [Steve A.] updated all "Best Result" views common abstract base; improved specs; added db:dump_remove_sandbox task; DB vers. 2.08.05; vers. 0.8.05
 - **0.8.04** [Steve A.] added "Best Result" family of views with models and abstract base; DB vers. 2.08.03
 - **0.8.03** [Steve A.] applied patch for ActiveSupport logger; bundle updated
