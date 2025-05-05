@@ -59,6 +59,8 @@ RSpec.shared_context 'AbstractBestResult scopes setup' do
     [
       GogglesDb::Best50mResult,
       GogglesDb::Best50And100Result,
+      GogglesDb::Best50And100Result5y,
+      GogglesDb::BestSwimmer3yResult,
       GogglesDb::BestSwimmer5yResult
     ]
   end
@@ -66,16 +68,20 @@ RSpec.shared_context 'AbstractBestResult scopes setup' do
   # Create necessary data ONLY for time-sensitive views before running scope examples
   before do
     # Only run data creation if the model being tested is time-sensitive
+    # puts '--> [DEBUG] BEFORE creation checks'
     if time_sensitive_models.include?(described_class)
       # 0. Skip the data creation block below if a returned domain for the model is already present
+      # puts '--> [DEBUG] Skipping creation step: domain already present.' if base_scope.count.positive?
       next if base_scope.count.positive?
 
       # 1. Find the latest 'FIN' season (ID=1) from the test data dump (there should be always one)
       latest_fin_season = GogglesDb::Season.where(season_type_id: 1).order(header_year: :desc, id: :desc).first
+      # puts "--> [DEBUG] Latest FIN season: #{latest_fin_season&.id}"
       next unless latest_fin_season
 
       # 2. Find target team from the dump
       team_for_creation = GogglesDb::Team.find_by(id: chosen_team_id)
+      # puts "--> [DEBUG] Target team: #{team_for_creation&.id}"
       next unless team_for_creation
 
       # 3. Find target swimmers for the chosen team from any existing results for the chosen team:
@@ -85,21 +91,22 @@ RSpec.shared_context 'AbstractBestResult scopes setup' do
       female_swimmer = GogglesDb::MeetingIndividualResult.includes(:gender_type)
                                                          .where(team_id: chosen_team_id, 'gender_types.id': male_gender.id)
                                                          .last(10).sample.swimmer
+      # puts "--> [DEBUG] Target swimmers: #{male_swimmer&.id}, #{female_swimmer&.id}"
       next unless male_swimmer && female_swimmer
 
       # 4. Select the possible Event Types returned by the view, based on the actual view model being tested
       event_types = case described_class.name
                     when 'GogglesDb::Best50mResult'
                       GogglesDb::EventType.where(id: [2, 11, 15, 19]) # All 50m x stroke type
-                    when 'GogglesDb::Best50And100Result'
+                    when 'GogglesDb::Best50And100Result', 'GogglesDb::Best50And100Result5y'
                       GogglesDb::EventType.where(id: [2, 3, 11, 12, 15, 16, 19, 20, 22]) # All (50m + 100m) x stroke type + '100MI'
-                    when 'GogglesDb::BestSwimmer5yResult'
-                      # 5Y will consider all individual events, except the non-standard lengths:
+                    when 'GogglesDb::BestSwimmer3yResult', 'GogglesDb::BestSwimmer5yResult', 'GogglesDb::BestSwimmerAllTimeResult'
+                      # "BestSwimmer"-type views will consider all individual events except the non-standard lengths:
                       GogglesDb::EventType.all_individuals.select { |ev| ev.length_in_meters.between?(50, 1500) }
                     else
                       [] # Should not happen if shared examples "includee" is correct
                     end
-      unless event_types.any?
+      if event_types.blank?
         warn "[WARN] No event codes supported for data creation for #{described_class}."
         next
       end
@@ -120,8 +127,11 @@ RSpec.shared_context 'AbstractBestResult scopes setup' do
           create(:meeting_individual_result, meeting_program: program_female, swimmer: female_swimmer, team: team_for_creation,
                                              minutes: 0, seconds: rand(28..50), hundredths: rand(0..99))
         end
+        # puts "--> [DEBUG] Created Meeting #{meeting.id} with #{event_types.count * 2} results for season #{latest_fin_season.id}."
       end
-      # puts "[DEBUG] Created Meeting #{meeting.id} with #{event_types.count * 2} results for season #{latest_fin_season.id}." # Optional debug output
+      # Make sure the creation step actually populated the test domain:
+      # puts "--> [DEBUG] INSIDE creation step: #{base_scope.count} rows found."
+      expect(base_scope.count).to be_positive
     end
   end
 end
@@ -164,7 +174,7 @@ RSpec.shared_examples 'AbstractBestResult filtering scopes' do
   describe '.for_pool_type' do
     subject { base_scope.for_pool_type(GogglesDb::PoolType.find(chosen_pool_type_id)) }
 
-    let(:chosen_pool_type_id) { [GogglesDb::PoolType::MT_25_ID, GogglesDb::PoolType::MT_50_ID].sample }
+    let(:chosen_pool_type_id) { base_scope.pluck(:pool_type_id).uniq.sample }
 
     it 'returns only results for the specified pool type' do
       expect(subject.pluck(:pool_type_id).uniq).to eq([chosen_pool_type_id])
