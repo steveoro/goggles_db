@@ -14,6 +14,6 @@ module GogglesDb
       it_behaves_like('AbstractBestResult sorting scopes', described_class)
     end
 
-    # Add specific tests for Best50And100Result if needed in the future
+    # Add specific tests for BestSwimmer5yResult if needed in the future
   end
 end
