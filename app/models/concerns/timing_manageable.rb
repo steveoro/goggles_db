@@ -5,7 +5,7 @@ require 'active_support'
 #
 # = TimingManageable
 #
-#   - version:  7-0.7.24
+#   - version:  7-0.8.08
 #   - author:   Steve A.
 #
 # Concrete Interface for Timing helper methods (@see lib/wrappers/timing.rb).
@@ -44,11 +44,11 @@ module TimingManageable
   # Returns +true+ if the timing associated with this result is positive.
   # If the includee responds (at least) also to #hundredths_from_start,
   # this will check all the <tt>XXX_from_start</tt> columns as well.
-  def positive?
-    base_timing_positive = minutes.positive? || seconds.positive? || hundredths.positive?
+  def positive? # rubocop:disable Metrics/CyclomaticComplexity,Metrics/PerceivedComplexity
+    base_timing_positive = minutes&.positive? || seconds&.positive? || hundredths&.positive?
     return base_timing_positive unless respond_to?(:hundredths_from_start)
 
-    base_timing_positive || minutes_from_start.positive? || seconds_from_start.positive? || hundredths_from_start.positive?
+    base_timing_positive || minutes_from_start&.positive? || seconds_from_start&.positive? || hundredths_from_start&.positive?
   end
 
   # Returns +true+ if the timing associated with this result is zero.
