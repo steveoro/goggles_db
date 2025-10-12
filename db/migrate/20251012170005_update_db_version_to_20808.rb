@@ -2,7 +2,7 @@
 
 require 'goggles_db/version'
 
-class UpdateDbVersionTo20706 < ActiveRecord::Migration[6.1]
+class UpdateDbVersionTo20808 < ActiveRecord::Migration[6.1]
   def self.up
     # --- Update DB structure versioning:
     GogglesDb::AppParameter.versioning_row.update(

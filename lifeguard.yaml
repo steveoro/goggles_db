@@ -1,0 +1,13 @@
+# Lifeguard Custom Rules
+# Replace these examples with rules specific to your project
+# Each rule should have a clear name and detailed description
+
+rules:
+  - name: "Rubocop must be all green"
+    description: "'bundle exec rubocop -a' must yield no offenses or warnings."
+
+  - name: "Brakeman must be all green"
+    description: "'bundle exec brakeman -A6q -p spec/dummy' must yield no offenses or warnings."
+
+  - name: "Zeitwerk check must pass"
+    description: "'bundle exec rake app:zeitwerk:check' must pass."

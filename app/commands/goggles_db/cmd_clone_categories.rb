@@ -10,9 +10,7 @@ module GogglesDb
   #   - author....: Steve A.
   #   - build.....: 20210614
   #
-  # Copies the structure of a given Meeting up to its MeetingProgram rows.
-  #
-  # Edition number will result increased & dates will be updated to the current year (where possible).
+  # Copies all CategoryType rows from one Season to another.
   #
   class CmdCloneCategories
     prepend SimpleCommand
