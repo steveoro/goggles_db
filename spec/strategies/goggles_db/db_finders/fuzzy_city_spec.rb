@@ -31,7 +31,7 @@ module GogglesDb
       describe '#scan_for_matches finding a single result (1:1),' do
         [
           # 1:1 matches:
-          { name: 'reggio emilia' }, { name: 'carpi' }, { name: 'modena' }, { name: 'parma' },
+          { name: 'reggio nell emilia' }, { name: 'carpi' }, { name: 'modena' }, { name: 'parma' },
           { name: 'sassuolo' }
         ].each do |fixture_row|
           describe "#call ('#{fixture_row.inspect}')" do
