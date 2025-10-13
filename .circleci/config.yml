@@ -6,7 +6,8 @@ common-config: &common-config
   resource_class: large
   working_directory: ~/goggles_db
   shell: /bin/bash --login
-  # NOTE: make sure ENV vars on CircleCI include CC_TEST_REPORTER_ID
+  # [20251012] NOTE: not using CodeClimate anymore and everything related to it has been commented out.
+  # [Old] NOTE: make sure ENV vars on CircleCI include CC_TEST_REPORTER_ID
   #       for CodeClimate test coverage upload!
   #       (Otherwise the 'upload-coverage' step will fail.)
   docker:
@@ -44,6 +45,7 @@ common-db-setup: &common-db-setup
     mkdir -p tmp ~/test-results ~/test-artifacts
     mv spec/dummy/config/database_ci.yml spec/dummy/config/database.yml
     dockerize -wait tcp://localhost:3306 -timeout 2m
+    bundle install
     RAILS_ENV=test bin/rails app:db:rebuild from=test to=test
     RAILS_ENV=test bin/rails db:migrate
     # ./tmp/cc-test-reporter before-build
