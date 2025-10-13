@@ -93,7 +93,7 @@ namespace :db do
     # string column names and an array of row (array) values, this will format the result as
     # as text table.
     def print_formatted_result_set(result, verbose)
-      return if !verbose || result.rows.count.zero?
+      return if !verbose || result.rows.none?
 
       puts "  First 10 rows:\r\n" if result.rows.count > 10
       puts result.columns.map { |name| format('%20s', name) }.join(' |')

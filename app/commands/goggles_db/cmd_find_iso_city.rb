@@ -191,7 +191,7 @@ module GogglesDb
                               .reject { |word| word.empty? || conjunction_it.include?(word.downcase) }
                               .map { |token| "\\b#{token}\\b" }
       # Enforce terminators at boundaries for single tokens:
-      name_tokens[0] = "^#{name_tokens[0]}$" if name_tokens.count == 1
+      name_tokens[0] = "^#{name_tokens[0]}$" if name_tokens.one?
 
       Regexp.new(name_tokens.join('.*'), Regexp::IGNORECASE)
     end

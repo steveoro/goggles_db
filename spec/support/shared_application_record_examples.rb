@@ -141,7 +141,7 @@ shared_examples_for('ApplicationRecord shared interface') do
       subject.multiple_associations.each do |key|
         domain = subject.send(key)
         next unless domain.respond_to?(:map) && domain.respond_to?(:first) && domain.respond_to?(:count)
-        next unless domain.count.positive?
+        next unless domain.any?
 
         expect(result).to have_key(key.to_s)
         expect(result[key].count).to eq(domain.first(max_siblings).count)

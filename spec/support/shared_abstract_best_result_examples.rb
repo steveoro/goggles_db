@@ -72,7 +72,7 @@ RSpec.shared_context 'AbstractBestResult scopes setup' do
     if time_sensitive_models.include?(described_class)
       # 0. Skip the data creation block below if a returned domain for the model is already present
       # puts '--> [DEBUG] Skipping creation step: domain already present.' if base_scope.count.positive?
-      next if base_scope.count.positive?
+      next if base_scope.any?
 
       # 1. Find the latest 'FIN' season (ID=1) from the test data dump (there should be always one)
       latest_fin_season = GogglesDb::Season.where(season_type_id: 1).order(header_year: :desc, id: :desc).first

@@ -74,9 +74,9 @@ module GogglesDb
     #
     def to_iso
       if must_enforce_country
-        call_finders_using_stored_data || call_finders_using_guesses
+        successful_finders_using_stored_data? || successful_finders_using_guesses?
       else
-        call_finders_using_guesses || call_finders_using_stored_data
+        successful_finders_using_guesses? || successful_finders_using_stored_data?
       end
 
       [@iso_country, @iso_city]
@@ -128,7 +128,7 @@ module GogglesDb
     # A stringified value, taken with FIFO in precendence: 1) ISO City latitude, 2) 'latitude' column value
     def iso_latitude(iso_city = nil)
       chosen_city = iso_city || @iso_city
-      chosen_city&.latitude.to_s || latitude
+      chosen_city&.latitude.to_s.presence || latitude
     end
 
     # Retrieves either the currently set ISO longitude or the serialized value on the model.
@@ -140,7 +140,7 @@ module GogglesDb
     # A stringified value, taken with FIFO in precendence: 1) ISO City longitude, 2) 'longitude' column value
     def iso_longitude(iso_city = nil)
       chosen_city = iso_city || @iso_city
-      chosen_city&.longitude.to_s || longitude
+      chosen_city&.longitude.to_s.presence || longitude
     end
 
     # Returns the ISO Region name, if available (+nil+ otherwise).
@@ -311,7 +311,7 @@ module GogglesDb
     # The #success? boolean result of the city finder.
     # In the process, it sets both <tt>@iso_country</tt> & <tt>@iso_city</tt> internal members.
     #
-    def call_finders_using_guesses(forced_iso_country = nil)
+    def successful_finders_using_guesses?(forced_iso_country = nil)
       city_finder = GogglesDb::CmdFindIsoCity.call(forced_iso_country, name)
       @iso_country = city_finder.iso_country
       @iso_city = city_finder.result
@@ -326,7 +326,7 @@ module GogglesDb
     # The #success? boolean result of the city finder.
     # In the process, it sets both <tt>@iso_country</tt> & <tt>@iso_city</tt>.
     #
-    def call_finders_using_stored_data
+    def successful_finders_using_stored_data?
       country_finder = GogglesDb::CmdFindIsoCountry.call(country, country_code)
       city_finder = GogglesDb::CmdFindIsoCity.call(country_finder.result, name)
       @iso_country = country_finder.result

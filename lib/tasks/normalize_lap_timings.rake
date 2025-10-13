@@ -139,7 +139,7 @@ namespace :normalize do
   # == Returns:
   # true if the condition applies, false otherwise
   #
-  def case_delta_zero_and_abs_present(lap, lap_idx)
+  def delta_zero_and_abs_present?(lap, lap_idx)
     lap.hundredths.to_i.zero? && lap.seconds.to_i.zero? && lap.minutes.to_i.zero? &&
       ((lap.hundredths_from_start.present? && lap.seconds_from_start.present? &&
       lap.minutes_from_start.present?) || lap_idx.positive?)
@@ -154,7 +154,7 @@ namespace :normalize do
   # == Returns:
   # true if the condition applies, false otherwise
   #
-  def case_abs_zero_and_delta_present(lap, lap_idx)
+  def abs_zero_and_delta_present?(lap, lap_idx)
     lap.hundredths_from_start.to_i.zero? && lap.seconds_from_start.to_i.zero? &&
       lap.minutes_from_start.to_i.zero? &&
       ((lap.hundredths.present? && lap.seconds.present? && lap.minutes.present?) || lap_idx.positive?)
@@ -169,7 +169,7 @@ namespace :normalize do
   # == Returns:
   # true if the condition applies, false otherwise
   #
-  def case_abs_eq_delta(lap, lap_idx)
+  def abs_eq_delta?(lap, lap_idx)
     lap.hundredths == lap.hundredths_from_start && lap.seconds == lap.seconds_from_start &&
       lap.minutes == lap.minutes_from_start && lap_idx.positive?
   end
@@ -185,9 +185,9 @@ namespace :normalize do
   # and the lap timings do not need any fixing.
   #
   def detect_case_condition(lap, lap_idx)
-    return 1 if case_delta_zero_and_abs_present(lap, lap_idx)
-    return 2 if case_abs_zero_and_delta_present(lap, lap_idx)
-    return 3 if case_abs_eq_delta(lap, lap_idx)
+    return 1 if delta_zero_and_abs_present?(lap, lap_idx)
+    return 2 if abs_zero_and_delta_present?(lap, lap_idx)
+    return 3 if abs_eq_delta?(lap, lap_idx)
 
     0 # (case: ok, skip)
   end

@@ -111,7 +111,7 @@ module GogglesDb
 
     # Filtering scopes:
     describe 'self.valid_for_ranking' do
-      let(:result) { subject.class.valid_for_ranking.order('out_of_race DESC, disqualified DESC').limit(20) }
+      let(:result) { subject.class.valid_for_ranking.order(out_of_race: :desc, disqualified: :desc).limit(20) }
 
       it 'contains only results valid for ranking' do
         expect(result).to all(be_valid_for_ranking)
@@ -119,7 +119,7 @@ module GogglesDb
     end
 
     describe 'self.qualifications' do
-      let(:result) { subject.class.qualifications.order('disqualified DESC').limit(20) }
+      let(:result) { subject.class.qualifications.order(disqualified: :desc).limit(20) }
 
       it 'contains only qualified results' do
         expect(result.map(&:disqualified?).uniq).to all(be false)
