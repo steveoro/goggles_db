@@ -28,7 +28,7 @@ namespace :normalize do
 
     ids_to_be_checked.each do |id|
       row = GogglesDb::MeetingReservation.find_by(id:)
-      if row.meeting_event_reservations.count.zero? && row.meeting_relay_reservations.count.zero?
+      if row.meeting_event_reservations.none? && row.meeting_relay_reservations.none?
         row.destroy!
         updated_rows += 1
         $stdout.write("\033[1;33;31m×\033[0m")

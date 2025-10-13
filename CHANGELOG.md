@@ -2,6 +2,7 @@
 
 _Please, add the latest build info on top of the list; use Version::MAJOR only after gold release; keep semantic versioning in line with framework's_
 
+- **0.8.10** [Steve A.] removed FFaker::Guid usage in favor of UUID; bundle update; minor rubocop fixes; vers. 0.8.10
 - **0.8.08** [Steve A.] added new Seasons & categories for 2025-2026; updated test dump; DB vers. 2.08.08; removed CodeClimate from build setup as it's now an Enterprise-oriented code coverage solution; vers. 0.8.08
 - **0.8.07** [Steve A.] removed wrong view renaming migration and fixed remaining view migrations; DB vers. 2.08.07; vers. 0.8.07
 - **0.8.06** [Steve A.] added more "Best Result" views; DB vers. 2.08.06; vers. 0.8.06

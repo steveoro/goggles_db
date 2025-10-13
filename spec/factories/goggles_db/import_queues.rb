@@ -10,7 +10,7 @@ FactoryBot.define do
     solved_data         { {}.to_json }
     process_runs        { 0 }
     done                { false }
-    uid                 { FFaker::Guid.guid }
+    uid                 { FFaker::UUID.uuidv4 }
     bindings_left_count { 0 }
     bindings_left_list  { nil }
     error_messages      { nil }

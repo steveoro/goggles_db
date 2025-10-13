@@ -76,7 +76,7 @@ module GogglesDb
     #
     def multiple_associations
       # Include only 1:N associations with actual rows in it:
-      all_associations(:has_many).reject { |key| !send(key).respond_to?(:count) || send(key).count.zero? }
+      all_associations(:has_many).reject { |key| !send(key).respond_to?(:count) || send(key).none? }
     end
 
     # Returns a structured Hash representing a serializable version of the current model
@@ -146,7 +146,7 @@ module GogglesDb
       multiple_associations.each do |key|
         domain = send(key)
         next unless domain.respond_to?(:map) && domain.respond_to?(:first) && domain.respond_to?(:count)
-        next unless domain.count.positive?
+        next unless domain.any?
 
         result_hash[key.to_s] = domain.first(max_siblings)
                                       .map { |row| map_attributes_from_model(row, locale_override) }

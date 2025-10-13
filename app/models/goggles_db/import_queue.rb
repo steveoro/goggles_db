@@ -234,7 +234,11 @@ module GogglesDb
       return if req.blank?
 
       event_type_id = req.dig(root_key, result_parent_key, 'event_type_id')
-      @req_event_type ||= GogglesDb::EventType.find_by(id: event_type_id)
+      if defined?(@req_event_type)
+        @req_event_type
+      else
+        @req_event_type = GogglesDb::EventType.find_by(id: event_type_id)
+      end
     end
 
     # == Microtransaction management helper.

@@ -43,7 +43,7 @@ end
 # - the existence of some rows having set disqualified & out_of_race both true & false
 shared_examples_for 'AbstractResult filtering scopes' do |sibling_class|
   describe 'self.qualifications' do
-    let(:result) { subject.class.qualifications.limit(20).order('disqualified DESC').limit(20) }
+    let(:result) { subject.class.qualifications.limit(20).order(disqualified: :desc).limit(20) }
 
     it 'contains only qualified results' do
       expect(result.map(&:disqualified?).uniq).to all(be false)
