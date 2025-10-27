@@ -119,26 +119,6 @@ module GogglesDb
       end
     end
 
-    describe '.truncate!' do
-      before do
-        3.times do |i|
-          described_class.create!(
-            import_key: "test-key-#{i}",
-            rank: i + 1,
-            minutes: 0,
-            seconds: 30 + i,
-            hundredths: 0
-          )
-        end
-      end
-
-      it 'removes all records' do
-        expect(described_class.count).to eq(3)
-        described_class.truncate!
-        expect(described_class.count).to eq(0)
-      end
-    end
-
     describe 'timestamps' do
       it 'sets created_at on save' do
         subject.save!

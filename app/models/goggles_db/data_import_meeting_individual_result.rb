@@ -39,10 +39,5 @@ module GogglesDb
     def self.build_import_key(program_key, swimmer_key)
       "#{program_key}/#{swimmer_key}"
     end
-
-    # Truncate all records (for cleanup after successful commit)
-    def self.truncate!
-      connection.truncate(table_name)
-    end
   end
 end

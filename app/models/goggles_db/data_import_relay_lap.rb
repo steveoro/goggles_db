@@ -38,10 +38,5 @@ module GogglesDb
     def self.build_import_key(mrr_import_key, length_in_meters)
       "#{mrr_import_key}/#{length_in_meters}"
     end
-
-    # Truncate all records
-    def self.truncate!
-      connection.truncate(table_name)
-    end
   end
 end

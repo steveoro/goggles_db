@@ -40,10 +40,5 @@ module GogglesDb
     def self.build_import_key(order, mrr_import_key, swimmer_key)
       "mrs#{order}-#{mrr_import_key}-#{swimmer_key}"
     end
-
-    # Truncate all records
-    def self.truncate!
-      connection.truncate(table_name)
-    end
   end
 end
