@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2025_10_12_170005) do
+ActiveRecord::Schema.define(version: 2025_10_27_210157) do
 
   create_table "achievement_rows", id: :integer, charset: "utf8mb3", collation: "utf8mb3_general_ci", force: :cascade do |t|
     t.integer "lock_version", default: 0
@@ -324,6 +324,137 @@ ActiveRecord::Schema.define(version: 2025_10_12_170005) do
     t.index ["season_id", "rank"], name: "rank_x_season"
     t.index ["season_id", "team_id"], name: "teams_x_season"
     t.index ["team_id"], name: "fk_computed_season_rankings_teams"
+  end
+
+  create_table "data_import_laps", charset: "utf8mb4", collation: "utf8mb4_general_ci", force: :cascade do |t|
+    t.string "import_key", limit: 500, null: false, comment: "Unique composite key for this lap"
+    t.string "parent_import_key", limit: 500, null: false, comment: "Parent MIR import_key"
+    t.string "phase_file_path", limit: 500, comment: "Path to phase file source"
+    t.integer "meeting_individual_result_id", comment: "Parent MIR DB ID"
+    t.integer "lap_id", comment: "Existing Lap ID if matched"
+    t.integer "length_in_meters", null: false, comment: "Lap distance (50, 100, 150, etc.)"
+    t.integer "minutes", limit: 3, default: 0
+    t.integer "seconds", limit: 2, default: 0
+    t.integer "hundredths", limit: 2, default: 0
+    t.decimal "reaction_time", precision: 5, scale: 2, default: "0.0"
+    t.integer "stroke_cycles", default: 0
+    t.integer "underwater_kicks", default: 0
+    t.integer "underwater_seconds", default: 0
+    t.integer "breath_number", default: 0
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.index ["import_key"], name: "idx_di_laps_import_key", unique: true
+    t.index ["meeting_individual_result_id"], name: "idx_di_laps_mir_id"
+    t.index ["parent_import_key"], name: "idx_di_laps_parent_key"
+    t.index ["phase_file_path"], name: "idx_di_laps_phase_file"
+  end
+
+  create_table "data_import_meeting_individual_results", charset: "utf8mb4", collation: "utf8mb4_general_ci", force: :cascade do |t|
+    t.string "import_key", limit: 500, null: false, comment: "Unique composite key for this result"
+    t.string "phase_file_path", limit: 500, comment: "Path to phase file source"
+    t.integer "meeting_program_id", comment: "DB ID if matched, null if new"
+    t.integer "swimmer_id", comment: "DB ID from phase 3"
+    t.integer "team_id", comment: "DB ID from phase 2"
+    t.integer "badge_id", comment: "DB ID (calculated in phase 6)"
+    t.integer "meeting_individual_result_id", comment: "Existing MIR ID if matched"
+    t.integer "rank", default: 0, null: false
+    t.integer "minutes", limit: 3, default: 0
+    t.integer "seconds", limit: 2, default: 0
+    t.integer "hundredths", limit: 2, default: 0
+    t.boolean "disqualified", default: false, null: false
+    t.string "disqualification_code_type_id", limit: 5
+    t.decimal "standard_points", precision: 10, scale: 2, default: "0.0"
+    t.decimal "meeting_points", precision: 10, scale: 2, default: "0.0"
+    t.decimal "goggle_cup_points", precision: 10, scale: 2, default: "0.0"
+    t.decimal "reaction_time", precision: 5, scale: 2, default: "0.0"
+    t.integer "team_points", default: 0
+    t.boolean "out_of_race", default: false, null: false
+    t.string "notes", limit: 500
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.index ["import_key"], name: "idx_di_mir_import_key", unique: true
+    t.index ["meeting_program_id"], name: "idx_di_mir_program_id"
+    t.index ["phase_file_path"], name: "idx_di_mir_phase_file"
+    t.index ["swimmer_id"], name: "idx_di_mir_swimmer_id"
+    t.index ["team_id"], name: "idx_di_mir_team_id"
+  end
+
+  create_table "data_import_meeting_relay_results", charset: "utf8mb4", collation: "utf8mb4_general_ci", force: :cascade do |t|
+    t.string "import_key", limit: 500, null: false, comment: "Unique composite key for this relay result"
+    t.string "phase_file_path", limit: 500, comment: "Path to phase file source"
+    t.integer "meeting_program_id", comment: "DB ID if matched, null if new"
+    t.integer "team_id", comment: "DB ID from phase 2"
+    t.integer "team_affiliation_id", comment: "DB ID (calculated in phase 6)"
+    t.integer "meeting_relay_result_id", comment: "Existing MRR ID if matched"
+    t.integer "rank", default: 0, null: false
+    t.integer "minutes", limit: 3, default: 0
+    t.integer "seconds", limit: 2, default: 0
+    t.integer "hundredths", limit: 2, default: 0
+    t.string "relay_code", limit: 60, default: "", comment: "Relay team code/name"
+    t.boolean "disqualified", default: false, null: false
+    t.string "disqualification_code_type_id", limit: 5
+    t.decimal "standard_points", precision: 10, scale: 2, default: "0.0"
+    t.decimal "meeting_points", precision: 10, scale: 2, default: "0.0"
+    t.decimal "reaction_time", precision: 5, scale: 2, default: "0.0"
+    t.integer "team_points", default: 0
+    t.boolean "out_of_race", default: false, null: false
+    t.string "notes", limit: 500
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.index ["import_key"], name: "idx_di_mrr_import_key", unique: true
+    t.index ["meeting_program_id"], name: "idx_di_mrr_program_id"
+    t.index ["phase_file_path"], name: "idx_di_mrr_phase_file"
+    t.index ["team_id"], name: "idx_di_mrr_team_id"
+  end
+
+  create_table "data_import_meeting_relay_swimmers", charset: "utf8mb4", collation: "utf8mb4_general_ci", force: :cascade do |t|
+    t.string "import_key", limit: 500, null: false, comment: "Unique composite key for this relay swimmer"
+    t.string "parent_import_key", limit: 500, null: false, comment: "Parent MRR import_key"
+    t.string "phase_file_path", limit: 500, comment: "Path to phase file source"
+    t.integer "meeting_relay_result_id", comment: "Parent MRR DB ID"
+    t.integer "swimmer_id", comment: "DB ID from phase 3"
+    t.integer "badge_id", comment: "DB ID (calculated in phase 6)"
+    t.integer "meeting_relay_swimmer_id", comment: "Existing MRS ID if matched"
+    t.integer "relay_order", default: 0, null: false, comment: "Order within relay (1-4)"
+    t.integer "minutes", limit: 3, default: 0
+    t.integer "seconds", limit: 2, default: 0
+    t.integer "hundredths", limit: 2, default: 0
+    t.integer "length_in_meters", default: 0
+    t.decimal "reaction_time", precision: 5, scale: 2, default: "0.0"
+    t.integer "stroke_cycles", default: 0
+    t.integer "underwater_kicks", default: 0
+    t.integer "underwater_seconds", default: 0
+    t.integer "breath_number", default: 0
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.index ["import_key"], name: "idx_di_mrs_import_key", unique: true
+    t.index ["meeting_relay_result_id"], name: "idx_di_mrs_mrr_id"
+    t.index ["parent_import_key"], name: "idx_di_mrs_parent_key"
+    t.index ["phase_file_path"], name: "idx_di_mrs_phase_file"
+    t.index ["swimmer_id"], name: "idx_di_mrs_swimmer_id"
+  end
+
+  create_table "data_import_relay_laps", charset: "utf8mb4", collation: "utf8mb4_general_ci", force: :cascade do |t|
+    t.string "import_key", limit: 500, null: false, comment: "Unique composite key for this relay lap"
+    t.string "parent_import_key", limit: 500, null: false, comment: "Parent MRR import_key"
+    t.string "phase_file_path", limit: 500, comment: "Path to phase file source"
+    t.integer "meeting_relay_result_id", comment: "Parent MRR DB ID"
+    t.integer "relay_lap_id", comment: "Existing RelayLap ID if matched"
+    t.integer "length_in_meters", null: false, comment: "Lap distance (50, 100, 150, etc.)"
+    t.integer "minutes", limit: 3, default: 0
+    t.integer "seconds", limit: 2, default: 0
+    t.integer "hundredths", limit: 2, default: 0
+    t.decimal "reaction_time", precision: 5, scale: 2, default: "0.0"
+    t.integer "stroke_cycles", default: 0
+    t.integer "underwater_kicks", default: 0
+    t.integer "underwater_seconds", default: 0
+    t.integer "breath_number", default: 0
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.index ["import_key"], name: "idx_di_rel_laps_import_key", unique: true
+    t.index ["meeting_relay_result_id"], name: "idx_di_rel_laps_mrr_id"
+    t.index ["parent_import_key"], name: "idx_di_rel_laps_parent_key"
+    t.index ["phase_file_path"], name: "idx_di_rel_laps_phase_file"
   end
 
   create_table "day_part_types", id: :integer, charset: "utf8mb3", collation: "utf8mb3_general_ci", force: :cascade do |t|
