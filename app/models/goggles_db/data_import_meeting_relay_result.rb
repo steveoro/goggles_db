@@ -12,6 +12,8 @@ module GogglesDb
   class DataImportMeetingRelayResult < ApplicationRecord
     self.table_name = 'data_import_meeting_relay_results'
 
+    include TimingManageable
+
     # Associations (via IDs, not actual AR associations)
     # - meeting_program_id
     # - team_id
@@ -19,11 +21,6 @@ module GogglesDb
 
     validates :import_key, presence: true, uniqueness: true, length: { maximum: 500 }
     validates :rank, presence: true, numericality: { only_integer: true, greater_than_or_equal_to: 0 }
-
-    # Returns the timing as a Timing instance
-    def to_timing
-      @to_timing ||= Timing.new(hundredths: hundredths || 0, seconds: seconds || 0, minutes: minutes || 0)
-    end
 
     # Override minimal_attributes to add timing string
     def minimal_attributes(locale = I18n.locale)

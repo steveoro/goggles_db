@@ -12,6 +12,8 @@ module GogglesDb
   class DataImportMeetingRelaySwimmer < ApplicationRecord
     self.table_name = 'data_import_meeting_relay_swimmers'
 
+    include TimingManageable
+
     # Parent relationship (via import_key, not AR association)
     # - parent_import_key => DataImportMeetingRelayResult.import_key
     # - meeting_relay_result_id
@@ -21,11 +23,6 @@ module GogglesDb
     validates :import_key, presence: true, uniqueness: true, length: { maximum: 500 }
     validates :parent_import_key, presence: true, length: { maximum: 500 }
     validates :relay_order, presence: true, numericality: { only_integer: true, greater_than_or_equal_to: 1, less_than_or_equal_to: 4 }
-
-    # Returns the timing as a Timing instance
-    def to_timing
-      @to_timing ||= Timing.new(hundredths: hundredths || 0, seconds: seconds || 0, minutes: minutes || 0)
-    end
 
     # Override minimal_attributes to add timing string
     def minimal_attributes(locale = I18n.locale)
