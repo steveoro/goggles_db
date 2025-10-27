@@ -39,10 +39,5 @@ module GogglesDb
     def self.build_import_key(program_key, team_key, timing_string)
       "#{program_key}/#{team_key}-#{timing_string || '0'}"
     end
-
-    # Truncate all records
-    def self.truncate!
-      connection.truncate(table_name)
-    end
   end
 end
