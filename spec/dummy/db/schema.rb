@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2025_10_27_210157) do
+ActiveRecord::Schema.define(version: 2025_11_02_154400) do
 
   create_table "achievement_rows", id: :integer, charset: "utf8mb3", collation: "utf8mb3_general_ci", force: :cascade do |t|
     t.integer "lock_version", default: 0
@@ -343,6 +343,9 @@ ActiveRecord::Schema.define(version: 2025_10_27_210157) do
     t.integer "breath_number", default: 0
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
+    t.integer "minutes_from_start", limit: 3, default: 0, comment: "Minutes from race start"
+    t.integer "seconds_from_start", limit: 2, default: 0, comment: "Seconds from race start"
+    t.integer "hundredths_from_start", limit: 2, default: 0, comment: "Hundredths from race start"
     t.index ["import_key"], name: "idx_di_laps_import_key", unique: true
     t.index ["meeting_individual_result_id"], name: "idx_di_laps_mir_id"
     t.index ["parent_import_key"], name: "idx_di_laps_parent_key"
@@ -427,6 +430,9 @@ ActiveRecord::Schema.define(version: 2025_10_27_210157) do
     t.integer "breath_number", default: 0
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
+    t.integer "minutes_from_start", limit: 3, default: 0, comment: "Minutes from race start"
+    t.integer "seconds_from_start", limit: 2, default: 0, comment: "Seconds from race start"
+    t.integer "hundredths_from_start", limit: 2, default: 0, comment: "Hundredths from race start"
     t.index ["import_key"], name: "idx_di_mrs_import_key", unique: true
     t.index ["meeting_relay_result_id"], name: "idx_di_mrs_mrr_id"
     t.index ["parent_import_key"], name: "idx_di_mrs_parent_key"
@@ -451,6 +457,9 @@ ActiveRecord::Schema.define(version: 2025_10_27_210157) do
     t.integer "breath_number", default: 0
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
+    t.integer "minutes_from_start", limit: 3, default: 0, comment: "Minutes from race start"
+    t.integer "seconds_from_start", limit: 2, default: 0, comment: "Seconds from race start"
+    t.integer "hundredths_from_start", limit: 2, default: 0, comment: "Hundredths from race start"
     t.index ["import_key"], name: "idx_di_rel_laps_import_key", unique: true
     t.index ["meeting_relay_result_id"], name: "idx_di_rel_laps_mrr_id"
     t.index ["parent_import_key"], name: "idx_di_rel_laps_parent_key"
