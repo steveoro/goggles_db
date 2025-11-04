@@ -4,21 +4,10 @@ require 'rails_helper'
 
 module GogglesDb
   RSpec.describe DataImportMeetingIndividualResult do
-    subject { described_class.new(valid_attributes) }
+    subject { FactoryBot.build(:data_import_meeting_individual_result) }
 
     let(:valid_attributes) do
-      {
-        import_key: '1-100SL-M45-M/ROSSI-1978-M-CSI OBER FERRARI',
-        phase_file_path: '/test/phase5.json',
-        meeting_program_id: 12_345,
-        swimmer_id: 456,
-        team_id: 789,
-        rank: 1,
-        minutes: 0,
-        seconds: 58,
-        hundredths: 45,
-        disqualified: false
-      }
+      FactoryBot.attributes_for(:data_import_meeting_individual_result)
     end
 
     context 'with valid attributes' do
@@ -40,7 +29,7 @@ module GogglesDb
 
       it 'requires unique import_key' do
         subject.save!
-        duplicate = described_class.new(valid_attributes)
+        duplicate = described_class.new(subject.attributes.except('id', 'created_at', 'updated_at'))
         expect(duplicate).not_to be_valid
         expect(duplicate.errors[:import_key]).to include('has already been taken')
       end
@@ -88,7 +77,7 @@ module GogglesDb
       it 'includes timing string' do
         attrs = subject.minimal_attributes
         expect(attrs).to have_key('timing')
-        expect(attrs['timing']).to eq("0'58\"45")
+        expect(attrs['timing']).to eq(subject.to_timing.to_s)
       end
 
       it 'includes standard attributes' do
@@ -134,8 +123,58 @@ module GogglesDb
     describe 'indexes' do
       it 'has unique index on import_key' do
         subject.save!
-        duplicate = described_class.new(valid_attributes)
+        duplicate = described_class.new(subject.attributes.except('id', 'created_at', 'updated_at'))
         expect { duplicate.save!(validate: false) }.to raise_error(ActiveRecord::RecordNotUnique)
+      end
+    end
+
+    describe 'associations' do
+      describe 'data_import_laps' do
+        it 'has many data_import_laps' do
+          expect(subject).to respond_to(:data_import_laps)
+        end
+
+        it 'uses composite key relationship' do
+          subject.save!
+
+          lap1 = FactoryBot.create(
+            :data_import_lap,
+            parent_import_key: subject.import_key,
+            import_key: "#{subject.import_key}/50",
+            length_in_meters: 50,
+            phase_file_path: subject.phase_file_path
+          )
+
+          lap2 = FactoryBot.create(
+            :data_import_lap,
+            parent_import_key: subject.import_key,
+            import_key: "#{subject.import_key}/100",
+            length_in_meters: 100,
+            phase_file_path: subject.phase_file_path
+          )
+
+          expect(subject.data_import_laps).to contain_exactly(lap1, lap2)
+        end
+
+        it 'deletes laps when parent is destroyed' do
+          subject.save!
+
+          lap = FactoryBot.create(
+            :data_import_lap,
+            parent_import_key: subject.import_key,
+            import_key: "#{subject.import_key}/50",
+            length_in_meters: 50,
+            phase_file_path: subject.phase_file_path
+          )
+
+          expect { subject.destroy }.to change(DataImportLap, :count).by(-1)
+          expect(DataImportLap.find_by(id: lap.id)).to be_nil
+        end
+
+        it 'returns empty array when no laps exist' do
+          subject.save!
+          expect(subject.data_import_laps).to eq([])
+        end
       end
     end
   end
