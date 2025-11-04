@@ -14,8 +14,12 @@ module GogglesDb
 
     include TimingManageable
 
-    # Parent relationship (via import_key, not AR association)
-    # - parent_import_key => DataImportMeetingIndividualResult.import_key
+    # Associations
+    belongs_to :data_import_meeting_individual_result, foreign_key: :parent_import_key,
+                                                       primary_key: :import_key, optional: true,
+                                                       inverse_of: :data_import_laps
+
+    # ID reference (for final database row, not AR association)
     # - meeting_individual_result_id
 
     validates :import_key, presence: true, uniqueness: true, length: { maximum: 500 }

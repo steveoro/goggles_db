@@ -14,7 +14,15 @@ module GogglesDb
 
     include TimingManageable
 
-    # Associations (via IDs, not actual AR associations)
+    # Associations
+    has_many :data_import_relay_laps, foreign_key: :parent_import_key,
+                                      primary_key: :import_key, dependent: :delete_all,
+                                      inverse_of: :data_import_meeting_relay_result
+    has_many :data_import_meeting_relay_swimmers, foreign_key: :parent_import_key,
+                                                  primary_key: :import_key, dependent: :delete_all,
+                                                  inverse_of: :data_import_meeting_relay_result
+
+    # ID references (not AR associations since these are temp tables)
     # - meeting_program_id
     # - team_id
     # - team_affiliation_id
