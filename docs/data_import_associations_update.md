@@ -145,7 +145,7 @@ Each model spec tests:
 - Business logic (already covered in integration tests)
 - Validation logic (already covered in existing tests)
 - Timing calculations (already tested via TimingManageable)
-- Import workflows (covered by PhaseCommitter specs)
+- Import workflows (covered by Main specs)
 
 ---
 
@@ -267,7 +267,7 @@ bundle exec rspec
 - ✅ **goggles_db models** - Associations added
 - ✅ **goggles_db factories** - New factories for all 5 models
 - ✅ **goggles_db specs** - Refactored to use factories
-- ✅ **goggles_admin2 PhaseCommitter** - Primary consumer (associations)
+- ✅ **goggles_admin2 Main** - Primary consumer (associations)
 - ⚠️ **goggles_admin2 Phase5Populator** - May benefit from associations (optional)
 - ⚠️ **goggles_admin2 specs** - Can now use DataImport factories
 
@@ -300,9 +300,9 @@ mir = DataImportMeetingIndividualResult.find_by(import_key: key)
 laps = mir.data_import_laps  # Uses association
 ```
 
-### PhaseCommitter Integration
+### Main Integration
 ```ruby
-# Now works correctly in PhaseCommitter#commit_phase5_entities
+# Now works correctly in Main#commit_phase5_entities
 all_mirs.each do |mir|
   commit_meeting_individual_result(mir)
   
