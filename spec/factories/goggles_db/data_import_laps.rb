@@ -7,11 +7,14 @@ FactoryBot.define do
     # Generate parent_import_key and derive import_key from it
     sequence(:parent_import_key) do |n|
       program_key = "#{n}-100SL-M45-M"
-      swimmer_key = "SWIMMER#{n}-1978-M-TEAM#{n}"
+      swimmer_key = "SWIMMER#{n}|1978|TEAM#{n}"
       "#{program_key}/#{swimmer_key}"
     end
 
     import_key { "#{parent_import_key}/#{length_in_meters}" }
+
+    # String key reference for parent individual result
+    meeting_individual_result_key { parent_import_key }
 
     phase_file_path { '/test/phase5.json' }
     meeting_individual_result_id { (1..1000).to_a.sample }

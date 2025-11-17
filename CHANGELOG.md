@@ -2,8 +2,9 @@
 
 _Please, add the latest build info on top of the list; use Version::MAJOR only after gold release; keep semantic versioning in line with framework's_
 
-- **0.8.21** [Steve A.] added associations to DataImport models for Phase 6 commit workflow in Admin2; additional factories and specs; bundle update;
-- **0.8.20** [Steve A.] additional temp data import columns for storing both lap delta timings and timings from the start of the race; bundle update;
+- **0.8.22** [Steve A.] Added string key columns to all DataImport tables for referencing parent entities when IDs are null (unmatched entities); added new associations between DataImport models; updated factories to generate string keys with proper pipe-delimited format; all specs passing; bundle update; vers. 0.8.22
+- **0.8.21** [Steve A.] added associations to DataImport models for Phase 6 commit workflow in Admin2; additional factories and specs; bundle update
+- **0.8.20** [Steve A.] additional temp data import columns for storing both lap delta timings and timings from the start of the race; bundle update
 - **0.8.11** [Steve A.] added data import models for laps, relay laps, and meeting relay swimmers; added new migration files for data import tables; updated version to 0.8.11
 - **0.8.10** [Steve A.] removed FFaker::Guid usage in favor of UUID; bundle update; minor rubocop fixes; vers. 0.8.10
 - **0.8.08** [Steve A.] added new Seasons & categories for 2025-2026; updated test dump; DB vers. 2.08.08; removed CodeClimate from build setup as it's now an Enterprise-oriented code coverage solution; vers. 0.8.08

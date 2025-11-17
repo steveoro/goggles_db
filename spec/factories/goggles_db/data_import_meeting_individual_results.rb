@@ -4,9 +4,14 @@ FactoryBot.define do
 
     sequence(:import_key) do |n|
       program_key = "#{n}-100SL-M45-M"
-      swimmer_key = "SWIMMER#{n}-1978-M-TEAM#{n}"
+      swimmer_key = "SWIMMER#{n}|1978|TEAM#{n}"
       "#{program_key}/#{swimmer_key}"
     end
+
+    # String key references (for unmatched entities)
+    sequence(:swimmer_key) { |n| "SWIMMER#{n}|1978|TEAM#{n}" }
+    sequence(:team_key) { |n| "TEAM#{n}" }
+    sequence(:meeting_program_key) { |n| "#{n}-100SL-M45-M" }
 
     phase_file_path { '/test/phase5.json' }
     meeting_program_id { (1..1000).to_a.sample }

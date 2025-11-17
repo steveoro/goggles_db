@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2025_11_02_154400) do
+ActiveRecord::Schema.define(version: 2025_11_17_095111) do
 
   create_table "achievement_rows", id: :integer, charset: "utf8mb3", collation: "utf8mb3_general_ci", force: :cascade do |t|
     t.integer "lock_version", default: 0
@@ -340,14 +340,16 @@ ActiveRecord::Schema.define(version: 2025_11_02_154400) do
     t.integer "stroke_cycles", default: 0
     t.integer "underwater_kicks", default: 0
     t.integer "underwater_seconds", default: 0
-    t.integer "breath_number", default: 0
+    t.integer "breath_cycles", default: 0
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
     t.integer "minutes_from_start", limit: 3, default: 0, comment: "Minutes from race start"
     t.integer "seconds_from_start", limit: 2, default: 0, comment: "Seconds from race start"
     t.integer "hundredths_from_start", limit: 2, default: 0, comment: "Hundredths from race start"
+    t.string "meeting_individual_result_key", limit: 500, comment: "Parent MIR import_key reference"
     t.index ["import_key"], name: "idx_di_laps_import_key", unique: true
     t.index ["meeting_individual_result_id"], name: "idx_di_laps_mir_id"
+    t.index ["meeting_individual_result_key"], name: "idx_di_lap_mir_key"
     t.index ["parent_import_key"], name: "idx_di_laps_parent_key"
     t.index ["phase_file_path"], name: "idx_di_laps_phase_file"
   end
@@ -375,11 +377,17 @@ ActiveRecord::Schema.define(version: 2025_11_02_154400) do
     t.string "notes", limit: 500
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
+    t.string "swimmer_key", limit: 500, comment: "Swimmer key from phase3 (e.g., \"ROSSI|Mario|1990\")"
+    t.string "team_key", limit: 500, comment: "Team key from phase2 (e.g., \"ASD Team Name\")"
+    t.string "meeting_program_key", limit: 500, comment: "Program key (e.g., \"1-100SL-M25-M\")"
     t.index ["import_key"], name: "idx_di_mir_import_key", unique: true
     t.index ["meeting_program_id"], name: "idx_di_mir_program_id"
+    t.index ["meeting_program_key"], name: "idx_di_mir_program_key"
     t.index ["phase_file_path"], name: "idx_di_mir_phase_file"
     t.index ["swimmer_id"], name: "idx_di_mir_swimmer_id"
+    t.index ["swimmer_key"], name: "idx_di_mir_swimmer_key"
     t.index ["team_id"], name: "idx_di_mir_team_id"
+    t.index ["team_key"], name: "idx_di_mir_team_key"
   end
 
   create_table "data_import_meeting_relay_results", charset: "utf8mb4", collation: "utf8mb4_general_ci", force: :cascade do |t|
@@ -404,10 +412,14 @@ ActiveRecord::Schema.define(version: 2025_11_02_154400) do
     t.string "notes", limit: 500
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
+    t.string "team_key", limit: 500, comment: "Team key from phase2"
+    t.string "meeting_program_key", limit: 500, comment: "Program key (e.g., \"1-4X50SL-M100-F\")"
     t.index ["import_key"], name: "idx_di_mrr_import_key", unique: true
     t.index ["meeting_program_id"], name: "idx_di_mrr_program_id"
+    t.index ["meeting_program_key"], name: "idx_di_mrr_program_key"
     t.index ["phase_file_path"], name: "idx_di_mrr_phase_file"
     t.index ["team_id"], name: "idx_di_mrr_team_id"
+    t.index ["team_key"], name: "idx_di_mrr_team_key"
   end
 
   create_table "data_import_meeting_relay_swimmers", charset: "utf8mb4", collation: "utf8mb4_general_ci", force: :cascade do |t|
@@ -425,19 +437,20 @@ ActiveRecord::Schema.define(version: 2025_11_02_154400) do
     t.integer "length_in_meters", default: 0
     t.decimal "reaction_time", precision: 5, scale: 2, default: "0.0"
     t.integer "stroke_cycles", default: 0
-    t.integer "underwater_kicks", default: 0
-    t.integer "underwater_seconds", default: 0
-    t.integer "breath_number", default: 0
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
     t.integer "minutes_from_start", limit: 3, default: 0, comment: "Minutes from race start"
     t.integer "seconds_from_start", limit: 2, default: 0, comment: "Seconds from race start"
     t.integer "hundredths_from_start", limit: 2, default: 0, comment: "Hundredths from race start"
+    t.string "swimmer_key", limit: 500, comment: "Swimmer key from phase3 (e.g., \"GRAZIANI|Fabio|1958\")"
+    t.string "meeting_relay_result_key", limit: 500, comment: "Parent MRR import_key reference"
     t.index ["import_key"], name: "idx_di_mrs_import_key", unique: true
     t.index ["meeting_relay_result_id"], name: "idx_di_mrs_mrr_id"
+    t.index ["meeting_relay_result_key"], name: "idx_di_mrs_mrr_key"
     t.index ["parent_import_key"], name: "idx_di_mrs_parent_key"
     t.index ["phase_file_path"], name: "idx_di_mrs_phase_file"
     t.index ["swimmer_id"], name: "idx_di_mrs_swimmer_id"
+    t.index ["swimmer_key"], name: "idx_di_mrs_swimmer_key"
   end
 
   create_table "data_import_relay_laps", charset: "utf8mb4", collation: "utf8mb4_general_ci", force: :cascade do |t|
@@ -454,14 +467,16 @@ ActiveRecord::Schema.define(version: 2025_11_02_154400) do
     t.integer "stroke_cycles", default: 0
     t.integer "underwater_kicks", default: 0
     t.integer "underwater_seconds", default: 0
-    t.integer "breath_number", default: 0
+    t.integer "breath_cycles", default: 0
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
     t.integer "minutes_from_start", limit: 3, default: 0, comment: "Minutes from race start"
     t.integer "seconds_from_start", limit: 2, default: 0, comment: "Seconds from race start"
     t.integer "hundredths_from_start", limit: 2, default: 0, comment: "Hundredths from race start"
+    t.string "meeting_relay_swimmer_key", limit: 500, comment: "Parent MRS import_key reference"
     t.index ["import_key"], name: "idx_di_rel_laps_import_key", unique: true
     t.index ["meeting_relay_result_id"], name: "idx_di_rel_laps_mrr_id"
+    t.index ["meeting_relay_swimmer_key"], name: "idx_di_rlap_mrs_key"
     t.index ["parent_import_key"], name: "idx_di_rel_laps_parent_key"
     t.index ["phase_file_path"], name: "idx_di_rel_laps_phase_file"
   end

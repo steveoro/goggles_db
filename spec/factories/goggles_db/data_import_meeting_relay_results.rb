@@ -9,6 +9,10 @@ FactoryBot.define do
       "#{program_key}/#{team_key}-#{timing}"
     end
 
+    # String key references (for unmatched entities)
+    sequence(:team_key) { |n| "TEAM#{n}" }
+    sequence(:meeting_program_key) { |n| "#{n}-4X50SL-M160-M" }
+
     phase_file_path { '/test/phase5.json' }
     meeting_program_id { (1..1000).to_a.sample }
     team_id { (1..100).to_a.sample }
