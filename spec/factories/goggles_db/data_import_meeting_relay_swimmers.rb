@@ -14,9 +14,13 @@ FactoryBot.define do
 
     # Generate swimmer_key and derive import_key
     sequence(:import_key) do |n|
-      swimmer_key = "SWIMMER#{n}-1978-M-TEAM#{n}"
-      "mrs#{relay_order}-#{parent_import_key}-#{swimmer_key}"
+      s_key = "SWIMMER#{n}|1978|TEAM#{n}"
+      "mrs#{relay_order}-#{parent_import_key}-#{s_key}"
     end
+
+    # String key references (for unmatched entities)
+    sequence(:swimmer_key) { |n| "SWIMMER#{n}|1978|TEAM#{n}" }
+    meeting_relay_result_key { parent_import_key }
 
     phase_file_path { '/test/phase5.json' }
     meeting_relay_result_id { (1..1000).to_a.sample }

@@ -24,8 +24,16 @@ module GogglesDb
     # - swimmer_id
     # - team_id
     # - badge_id
+    #
+    # String key references (used when IDs are null - unmatched entities)
+    # - swimmer_key: from phase3 (e.g., "ROSSI|Mario|1990")
+    # - team_key: from phase2 (e.g., "ASD Team Name")
+    # - meeting_program_key: program key (e.g., "1-100SL-M25-M")
 
     validates :import_key, presence: true, uniqueness: true, length: { maximum: 500 }
+    validates :swimmer_key, length: { maximum: 500 }, allow_nil: true
+    validates :team_key, length: { maximum: 500 }, allow_nil: true
+    validates :meeting_program_key, length: { maximum: 500 }, allow_nil: true
     validates :rank, presence: true, numericality: { only_integer: true, greater_than_or_equal_to: 0 }
 
     # Override minimal_attributes to add timing string

@@ -14,6 +14,9 @@ FactoryBot.define do
 
     import_key { "#{parent_import_key}/#{length_in_meters}" }
 
+    # String key reference for parent relay swimmer (optional)
+    meeting_relay_swimmer_key { nil }
+
     phase_file_path { '/test/phase5.json' }
     meeting_relay_result_id { (1..1000).to_a.sample }
 

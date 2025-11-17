@@ -21,8 +21,12 @@ module GogglesDb
 
     # ID reference (for final database row, not AR association)
     # - meeting_individual_result_id
+    #
+    # String key references (used for parent reference)
+    # - meeting_individual_result_key: parent MIR import_key reference
 
     validates :import_key, presence: true, uniqueness: true, length: { maximum: 500 }
+    validates :meeting_individual_result_key, length: { maximum: 500 }, allow_nil: true
     validates :parent_import_key, presence: true, length: { maximum: 500 }
     validates :length_in_meters, presence: true, numericality: { only_integer: true, greater_than: 0 }
 

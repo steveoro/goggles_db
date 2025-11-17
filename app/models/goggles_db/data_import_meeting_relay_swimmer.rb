@@ -18,13 +18,22 @@ module GogglesDb
     belongs_to :data_import_meeting_relay_result, foreign_key: :parent_import_key,
                                                   primary_key: :import_key, optional: true,
                                                   inverse_of: :data_import_meeting_relay_swimmers
+    has_many :data_import_relay_laps, foreign_key: :meeting_relay_swimmer_key,
+                                      primary_key: :import_key, dependent: :delete_all,
+                                      inverse_of: :data_import_meeting_relay_swimmer
 
     # ID references (for final database rows, not AR associations)
     # - meeting_relay_result_id
     # - swimmer_id
     # - badge_id
+    #
+    # String key references (used when IDs are null - unmatched entities)
+    # - swimmer_key: from phase3 (e.g., "GRAZIANI|Fabio|1958")
+    # - meeting_relay_result_key: parent MRR import_key reference
 
     validates :import_key, presence: true, uniqueness: true, length: { maximum: 500 }
+    validates :swimmer_key, length: { maximum: 500 }, allow_nil: true
+    validates :meeting_relay_result_key, length: { maximum: 500 }, allow_nil: true
     validates :parent_import_key, presence: true, length: { maximum: 500 }
     validates :relay_order, presence: true, numericality: { only_integer: true, greater_than_or_equal_to: 1, less_than_or_equal_to: 4 }
 
