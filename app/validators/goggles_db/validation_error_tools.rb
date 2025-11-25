@@ -43,7 +43,7 @@ module GogglesDb
                        # Go deep until we found a "leaf" (an atomic or non-active_record member)
                        ValidationErrorTools.recursive_error_for(
                          sub_member,
-                         "#{member.class.name} ID:#{member.id} => "
+                         " #{member.class.name} ID:#{member.id} => "
                        )
                      else # Leaf reached!
                        "#{member.class.name} ID:#{member.id}, " \
