@@ -8,6 +8,13 @@ module GogglesDb
   # - described_class must be a kind_of Calculators::BaseStrategy
   #
   shared_examples_for 'Calculators::BaseStrategy with valid constructor paramaters' do
+    around do |example|
+      @skip_prosopite_finish = true
+      example.run
+    ensure
+      @skip_prosopite_finish = false
+    end
+
     # These may yield a strategy either *with* or *without an existing linked StandardTiming:
     let(:fixture_event) { GogglesDb::EventType.all_eventable.sample }
     let(:fixture_pool) { GogglesDb::PoolType.all_eventable.sample }

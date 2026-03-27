@@ -12,10 +12,14 @@ def hash2_includes_hash1(hash1:, hash2:)
   # Peculiar case for City: country (& code) from #iso_attributes will overwrite the country fields
   # from the model row with an always localized country name (which may differ from the one serialized).
   # That's the only case in which we can safely ignore the value comparison.
-  expect(
-    hash1.except('country', 'country_code')
-         .all? { |key, value| hash2.key?(key) && (hash2[key].to_s == value.to_s) }
-  ).to be true
+  mismatches = hash1.except('country', 'country_code').each_with_object([]) do |(key, value), memo|
+    next if hash2.key?(key) && (hash2[key].to_s == value.to_s)
+
+    memo << [key, value, hash2[key]]
+  end
+
+  expect(mismatches).to be_empty,
+                        "Mismatched keys: #{mismatches.map { |key, left, right| "#{key}=#{left.inspect}/#{right.inspect}" }.join(', ')}"
 end
 #-- ---------------------------------------------------------------------------
 #++
@@ -198,9 +202,10 @@ shared_examples_for '#to_hash when the entity has any 1:1 optional association w
   optional_associations.each do |association_name|
     it "contains the attributes of its '#{association_name}' *only* if the association is set" do
       if subject.send(association_name).present?
+        associated_row = subject.send(association_name).reload
         expect(result).to have_key(association_name.to_s)
         expect(result[association_name]).to be_an(Hash).and be_present
-        hash2_includes_hash1(hash1: result[association_name], hash2: subject.send(association_name).minimal_attributes)
+        hash2_includes_hash1(hash1: result[association_name], hash2: associated_row.minimal_attributes)
       else
         expect(result).not_to have_key(association_name.to_s)
       end

@@ -170,7 +170,8 @@ module GogglesDb
     # In FIFO in precendence: 1) translated ISO Country name, 2) 'country' column value
     def localized_country_name(iso_country = nil, locale_override = I18n.locale)
       chosen_country = iso_country || @iso_country
-      valid_country = chosen_country&.translations&.fetch(locale_override.to_s, nil) || country
+      translations = chosen_country&.translations || {}
+      valid_country = translations[locale_override.to_s] || translations[locale_override.to_sym] || country
       # User the first informal naming for excessively long names:
       return chosen_country&.unofficial_names&.first if valid_country.length > 50
 
