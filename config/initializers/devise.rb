@@ -313,12 +313,11 @@ Devise.setup do |config|
   # so you need to do it manually. For the users scope, it would be:
   # config.omniauth_path_prefix = '/users/auth'
 
-  # ==> Turbolinks configuration
-  # If your app is using Turbolinks, Turbolinks::Controller needs to be included to make redirection work correctly:
+  # ==> Turbo / Hotwire configuration
+  # For apps using Turbo, Devise 5 can be configured to use proper response codes:
   #
-  # ActiveSupport.on_load(:devise_failure_app) do
-  #   include Turbolinks::Controller
-  # end
+  # config.responder.error_status = :unprocessable_entity
+  # config.responder.redirect_status = :see_other
 
   # ==> Configuration for :registerable
 

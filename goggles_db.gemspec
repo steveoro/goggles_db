@@ -16,23 +16,17 @@ Gem::Specification.new do |spec|
   spec.description = 'contains just the models and the DB structure required to run the main Goggles app'
   spec.license     = 'LGPL-3.0-or-later'
 
-  spec.required_ruby_version = '>= 3.1.4'
+  spec.required_ruby_version = '>= 3.2.0'
 
   # Prevent pushing this gem to RubyGems.org. To allow pushes either set the 'allowed_push_host'
   # to allow pushing to a single host or delete this section to allow pushing to any host.
-  if spec.respond_to?(:metadata)
-    spec.metadata['allowed_push_host'] = 'https://master-goggles.org' # (Not valid yet)
-  else
-    raise 'RubyGems 2.0 or newer is required to protect against ' \
-          'public gem pushes.'
-  end
+  spec.metadata['allowed_push_host'] = 'https://master-goggles.org' # (Not valid yet)
 
   spec.files = Dir['{app,config,db,lib}/**/*', 'LICENSE', 'Rakefile', 'README.md']
 
   # Base Rails dependency:
-  # [20210128] ActiveRecord 6.1 introduces too many changes for the current implementation
-  spec.add_dependency 'rails', '>= 6.1.7', '< 7'
-  spec.add_dependency 'rails-i18n', '~> 6'
+  spec.add_dependency 'rails', '>= 8.1', '< 9'
+  spec.add_dependency 'rails-i18n', '~> 8'
 
   spec.add_dependency 'acts-as-taggable-on'
   spec.add_dependency 'acts_as_votable'
@@ -58,7 +52,6 @@ Gem::Specification.new do |spec|
   # Twitter disabled for the time being (supports only OAuth 1a)
   # spec.add_dependency 'omniauth-twitter'
   spec.add_dependency 'plus_codes' # https://github.com/google/open-location-code/tree/master/ruby
-  spec.add_dependency 'sass-rails'
   spec.add_dependency 'scenic'
   spec.add_dependency 'simple_command'
   spec.add_dependency 'tzinfo'

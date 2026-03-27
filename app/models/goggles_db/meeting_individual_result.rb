@@ -117,7 +117,8 @@ module GogglesDb
     #++
 
     # AbstractResult overrides:
-    alias_attribute :parent_meeting, :meeting # (old, new)
+    alias_method :parent_meeting, :meeting # (old, new)
+    alias_method :parent_meeting=, :meeting=
     #-- ------------------------------------------------------------------------
     #++
 
