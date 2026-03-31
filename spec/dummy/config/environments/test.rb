@@ -35,6 +35,7 @@ Rails.application.configure do
   # Store uploaded files on the local file system in a temporary directory.
   config.active_storage.service = :test
   config.active_job.queue_adapter = :test
+  config.active_record.dump_schema_after_migration = false
 
   config.action_mailer.perform_caching = false
 
