@@ -1,10 +1,10 @@
 plugins:
-  - rubocop-factory_bot
-  - rubocop-performance
-  - rubocop-rails
-  - rubocop-rake
-  - rubocop-rspec
-  - rubocop-rspec_rails
+- rubocop-factory_bot
+- rubocop-performance
+- rubocop-rails
+- rubocop-rake
+- rubocop-rspec
+- rubocop-rspec_rails
 
 inherit_from: .rubocop_todo.yml
 
@@ -23,8 +23,8 @@ AllCops:
   NewCops: enable
   TargetRubyVersion: 3.4
   Exclude:
-    - 'spec/dummy/db/schema.rb'
-    - 'vendor/**/*'
+  - 'spec/dummy/db/schema.rb'
+  - 'vendor/**/*'
 
 FactoryBot:
   Enabled: false
@@ -38,67 +38,66 @@ Layout/LineLength:
 Metrics/AbcSize:
   Max: 26
   Exclude:
-    - 'db/migrate/*'
-    - 'app/validators/goggles_db/validation_error_tools.rb'
-    - 'app/models/goggles_db/badge_payment.rb'
+  - 'db/migrate/*'
+  - 'app/validators/goggles_db/validation_error_tools.rb'
+  - 'app/models/goggles_db/badge_payment.rb'
 
 Metrics/BlockLength:
   Max: 40
-  CountAsOne: ['array', 'heredoc']
+  CountAsOne: [ 'array', 'heredoc' ]
   Exclude:
-    - 'goggles_db.gemspec'
-    - 'lib/tasks/*.rake'
-    - 'spec/**/*'
+  - 'goggles_db.gemspec'
+  - 'lib/tasks/*.rake'
+  - 'spec/**/*'
 
 Metrics/ClassLength:
   Max: 120
   Exclude:
-    - 'lib/wrappers/timing.rb'
-    - 'app/models/goggles_db/swimmer_stat.rb'
-    - 'app/models/goggles_db/user.rb'
+  - 'lib/wrappers/timing.rb'
+  - 'app/models/goggles_db/swimmer_stat.rb'
+  - 'app/models/goggles_db/user.rb'
 
 Metrics/CyclomaticComplexity:
   Exclude:
-    - 'app/strategies/goggles_db/calculators/base_strategy.rb'
-    - 'app/strategies/goggles_db/calculators/factory.rb'
+  - 'app/strategies/goggles_db/calculators/base_strategy.rb'
+  - 'app/strategies/goggles_db/calculators/factory.rb'
 
 Metrics/MethodLength:
   Max: 40
-  CountAsOne: ['array', 'heredoc']
+  CountAsOne: [ 'array', 'heredoc' ]
 
 Metrics/ModuleLength:
   Max: 200
   # If Rubocop whines too much for a spec length, exclude the individual files:
   Exclude:
-    - 'spec/models/goggles_db/import_queue_spec.rb'
-    - 'spec/models/goggles_db/meeting_individual_result_spec.rb'
-    - 'spec/models/goggles_db/meeting_spec.rb'
-    - 'spec/models/goggles_db/season_spec.rb'
-    - 'spec/models/goggles_db/swimmer_spec.rb'
-    - 'spec/models/goggles_db/user_spec.rb'
-    - 'spec/strategies/goggles_db/manager_checker_spec.rb'
-    - 'spec/support/shared_calculators_examples.rb'
+  - 'spec/models/goggles_db/import_queue_spec.rb'
+  - 'spec/models/goggles_db/meeting_individual_result_spec.rb'
+  - 'spec/models/goggles_db/meeting_spec.rb'
+  - 'spec/models/goggles_db/season_spec.rb'
+  - 'spec/models/goggles_db/swimmer_spec.rb'
+  - 'spec/models/goggles_db/user_spec.rb'
+  - 'spec/strategies/goggles_db/manager_checker_spec.rb'
+  - 'spec/support/shared_calculators_examples.rb'
 
 Naming/VariableNumber:
   Exclude:
-    - 'db/migrate/20201121173221_rename_bool_fields_for_mevents_plus_more.rb'
-    - 'db/migrate/20210130164719_rename_under_25_to_under25.rb'
-
+  - 'db/migrate/20201121173221_rename_bool_fields_for_mevents_plus_more.rb'
+  - 'db/migrate/20210130164719_rename_under_25_to_under25.rb'
 
 # We use arrays to group multiple similar specs under a single implementation
 Performance/CollectionLiteralInLoop:
   Exclude:
-    - 'spec/**/*'
+  - 'spec/**/*'
 
 Rails/Delegate:
   Exclude:
-    - 'lib/wrappers/timing.rb'
+  - 'lib/wrappers/timing.rb'
 
 Rails/SkipsModelValidations:
   Exclude:
-    - 'db/migrate/*.rb'
-    - 'lib/tasks/db_anonimize_data.rake'
-    - ''
+  - 'db/migrate/*.rb'
+  - 'lib/tasks/db_anonimize_data.rake'
+  - ''
 
 # This rule is simply stupid and needs to be kept disabled (most of the inline SQL will fail using squish)
 Rails/SquishedSQLHeredocs:
@@ -107,17 +106,15 @@ Rails/SquishedSQLHeredocs:
 # Excluded files here were already corrected in later migrations:
 Rails/ThreeStateBooleanColumn:
   Exclude:
-    - 'db/migrate/20210513113601_create_goggles_db_user_workshops.rb'
-    - 'db/migrate/20220228114607_add_cancelled_to_calendars.rb'
-    - 'db/migrate/20220801110842_add_sql_batch_field_to_import_queues.rb'
-
+  - 'db/migrate/20210513113601_create_goggles_db_user_workshops.rb'
+  - 'db/migrate/20220228114607_add_cancelled_to_calendars.rb'
+  - 'db/migrate/20220801110842_add_sql_batch_field_to_import_queues.rb'
 
 Rake/MethodDefinitionInTask:
   Exclude:
-    - 'lib/tasks/db_check.rake'
-    - 'lib/tasks/db_dump_rebuild_reset.rake'
-    - 'lib/tasks/normalize_*'
-
+  - 'lib/tasks/db_check.rake'
+  - 'lib/tasks/db_dump_rebuild_reset.rake'
+  - 'lib/tasks/normalize_*'
 
 RSpec/ExpectInHook:
   Enabled: false
@@ -137,9 +134,12 @@ RSpec/MultipleMemoizedHelpers:
 RSpec/NestedGroups:
   Max: 5
 
+RSpec/Output:
+  Enabled: false
+
 RSpec/PendingWithoutReason:
   Exclude:
-    - 'spec/models/goggles_db/goggle_cup*'
+  - 'spec/models/goggles_db/goggle_cup*'
 
 # Yields an error with:
 # - v. 1.68.0 (using Parser 3.3.6.0, rubocop-ast 1.36.1, analyzing as Ruby 3.1, running on ruby 3.1.4)
@@ -148,18 +148,18 @@ Style/BitwisePredicate:
 
 Style/Documentation:
   Exclude:
-    - 'db/migrate/**/*'
-    - 'spec/**/*'
-    - 'test/**/*'
-    - 'app/controllers/goggles_db/application_controller.rb'
-    - 'app/helpers/goggles_db/application_helper.rb'
-    - 'app/mailers/goggles_db/application_mailer.rb'
-    - 'app/models/goggles_db/application_record.rb'
-    - 'app/models/goggles_db/user.rb'
-    - 'app/models/goggles_db/relay_lap.rb'
-    - 'lib/goggles_db.rb'
-    - 'lib/goggles_db/engine.rb'
+  - 'db/migrate/**/*'
+  - 'spec/**/*'
+  - 'test/**/*'
+  - 'app/controllers/goggles_db/application_controller.rb'
+  - 'app/helpers/goggles_db/application_helper.rb'
+  - 'app/mailers/goggles_db/application_mailer.rb'
+  - 'app/models/goggles_db/application_record.rb'
+  - 'app/models/goggles_db/user.rb'
+  - 'app/models/goggles_db/relay_lap.rb'
+  - 'lib/goggles_db.rb'
+  - 'lib/goggles_db/engine.rb'
 
 Style/FrozenStringLiteralComment:
   Exclude:
-    - 'spec/factories/**/*'
+  - 'spec/factories/**/*'

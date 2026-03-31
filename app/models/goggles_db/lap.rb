@@ -65,10 +65,10 @@ module GogglesDb
     #++
 
     # AbstractLap overrides:
-    alias_method :parent_meeting, :meeting
-    alias_method :parent_meeting=, :meeting=
-    alias_method :parent_result, :meeting_individual_result
-    alias_method :parent_result=, :meeting_individual_result=
+    alias parent_meeting meeting
+    alias parent_meeting= meeting=
+    alias parent_result meeting_individual_result
+    alias parent_result= meeting_individual_result=
     alias_attribute :parent_result_id, :meeting_individual_result_id
 
     # Returns the correct parent association symbol

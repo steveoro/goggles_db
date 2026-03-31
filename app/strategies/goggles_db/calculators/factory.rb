@@ -43,7 +43,7 @@ module GogglesDb
       # Either the badge or the season are always needed in order to get a valid SeasonType. Gender & category
       # can be derived from the badge directly.
       #
-      # When all parameters are present, the named key takes precendence over the derived value
+      # When all parameters are present, the named key takes precedence over the derived value
       # (i.e., when both season & badge are given, the first will be used and badge.season will not).
       #
       # == Supported +SeasonType+s

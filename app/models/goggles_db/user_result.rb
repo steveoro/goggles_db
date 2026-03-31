@@ -65,8 +65,8 @@ module GogglesDb
     #++
 
     # AbstractResult overrides:
-    alias_method :parent_meeting, :user_workshop # (old, new)
-    alias_method :parent_meeting=, :user_workshop=
+    alias parent_meeting user_workshop # (old, new)
+    alias parent_meeting= user_workshop=
 
     alias user_workshop_attributes meeting_attributes # (new, old)
     #-- ------------------------------------------------------------------------

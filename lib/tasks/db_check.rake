@@ -25,7 +25,7 @@ namespace :db do
       puts
 
       # Missing TAs from badges:
-      sql = <<-SQL.squish
+      sql = <<~SQL.squish
         SELECT DISTINCT b.team_id team_id, t.editable_name name, #{season_id} season_id, NOW() created_at, NOW() updated_at
         FROM badges b INNER JOIN teams t ON t.id = b.team_id
         WHERE b.season_id = #{season_id} AND
@@ -34,7 +34,7 @@ namespace :db do
       execute_query_and_report(sql, 'TAs MISSING from Badges...', verbose)
 
       # Missing Badges from MIRs:
-      sql = <<-SQL.squish
+      sql = <<~SQL.squish
         SELECT DISTINCT mir.swimmer_id swimmer_id, mir.team_id team_id, #{season_id} season_id, mp.category_type_id category_type_id,
           5 entry_time_type_id,
           (select id from team_affiliations ta where ta.team_id = mir.team_id and ta.season_id = #{season_id}) team_affiliation_id,
@@ -51,7 +51,7 @@ namespace :db do
       execute_query_and_report(sql, 'Badges MISSING in MIRs....', verbose)
 
       # Missing TAs from MIRs:
-      sql = <<-SQL.squish
+      sql = <<~SQL.squish
         SELECT DISTINCT mir.team_id team_id, t.editable_name name, #{season_id} season_id, NOW() created_at, NOW() updated_at
         FROM meeting_individual_results mir
           INNER JOIN teams t ON (mir.team_id = t.id)
@@ -65,7 +65,7 @@ namespace :db do
       execute_query_and_report(sql, 'TAs MISSING from MIRs.....', verbose)
 
       # Misplaced TAs in MIRs (by comparing swimmer, team & season):
-      sql = <<-SQL.squish
+      sql = <<~SQL.squish
         SELECT mir.id, mir.team_id, mir.swimmer_id, mir.team_affiliation_id, ta2.id, ta2.team_id
         FROM meeting_individual_results mir
           INNER JOIN meeting_programs mp ON (mir.meeting_program_id = mp.id)

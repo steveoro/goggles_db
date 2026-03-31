@@ -96,8 +96,8 @@ module GogglesDb
     #++
 
     # Replicate AbstractResult behavior:
-    alias_method :parent_meeting, :meeting # (old, new)
-    alias_method :parent_meeting=, :meeting=
+    alias parent_meeting meeting # (old, new)
+    alias parent_meeting= meeting=
     #-- ------------------------------------------------------------------------
     #++
 

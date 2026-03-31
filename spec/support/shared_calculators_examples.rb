@@ -10,7 +10,7 @@ module GogglesDb
   shared_examples_for 'Calculators::BaseStrategy with valid constructor paramaters' do
     around do |example|
       @skip_prosopite_finish = true
-      example.run
+      Prosopite.pause { example.run }
     ensure
       @skip_prosopite_finish = false
     end

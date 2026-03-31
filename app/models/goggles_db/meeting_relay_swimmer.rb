@@ -72,12 +72,12 @@ module GogglesDb
     #++
 
     # Replicate part of AbstractLap behavior:
-    alias_method :parent_result, :meeting_relay_result # (old, new)
-    alias_method :parent_result=, :meeting_relay_result=
+    alias parent_result meeting_relay_result # (old, new)
+    alias parent_result= meeting_relay_result=
 
     # Replicate AbstractResult behavior:
-    alias_method :parent_meeting, :meeting # (old, new)
-    alias_method :parent_meeting=, :meeting=
+    alias parent_meeting meeting # (old, new)
+    alias parent_meeting= meeting=
     #-- ------------------------------------------------------------------------
     #++
 

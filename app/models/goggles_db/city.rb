@@ -113,7 +113,7 @@ module GogglesDb
     # - <tt>iso_city</tt> => when +nil+, uses the internal memoized value computed by #to_iso;
     #   a valid Cities::City otherwise.
     # == Returns:
-    # In FIFO in precendence: 1) ISO City name, 2) 'name' column value
+    # In FIFO in precedence: 1) ISO City name, 2) 'name' column value
     def iso_name(iso_city = nil)
       chosen_city = iso_city || @iso_city
       chosen_city&.name || name
@@ -125,7 +125,7 @@ module GogglesDb
     # - <tt>iso_city</tt> => when +nil+, uses the internal memoized value computed by #to_iso;
     #   a valid Cities::City otherwise.
     # == Returns:
-    # A stringified value, taken with FIFO in precendence: 1) ISO City latitude, 2) 'latitude' column value
+    # A stringified value, taken with FIFO in precedence: 1) ISO City latitude, 2) 'latitude' column value
     def iso_latitude(iso_city = nil)
       chosen_city = iso_city || @iso_city
       chosen_city&.latitude.to_s.presence || latitude
@@ -137,7 +137,7 @@ module GogglesDb
     # - <tt>iso_city</tt> => when +nil+, uses the internal memoized value computed by #to_iso;
     #   a valid Cities::City otherwise.
     # == Returns:
-    # A stringified value, taken with FIFO in precendence: 1) ISO City longitude, 2) 'longitude' column value
+    # A stringified value, taken with FIFO in precedence: 1) ISO City longitude, 2) 'longitude' column value
     def iso_longitude(iso_city = nil)
       chosen_city = iso_city || @iso_city
       chosen_city&.longitude.to_s.presence || longitude
@@ -167,8 +167,9 @@ module GogglesDb
     # - <tt>locale_override</tt> => a locale code override; defaults to the current locale.
     #
     # == Returns:
-    # In FIFO in precendence: 1) translated ISO Country name, 2) 'country' column value
-    def localized_country_name(iso_country = nil, locale_override = I18n.locale)
+    # In FIFO in precedence: 1) translated ISO Country name, 2) 'country' column value
+    #
+    def localized_country_name(iso_country = nil, locale_override = I18n.locale) # rubocop:disable Metrics/CyclomaticComplexity
       chosen_country = iso_country || @iso_country
       translations = chosen_country&.translations || {}
       valid_country = translations[locale_override.to_s] || translations[locale_override.to_sym] || country
@@ -185,7 +186,7 @@ module GogglesDb
     #   a valid ISO3166::Country otherwise.
     #
     # == Returns:
-    # In FIFO in precendence: 1) ISO Country code, 2) 'country_code' column value
+    # In FIFO in precedence: 1) ISO Country code, 2) 'country_code' column value
     def iso_country_code(iso_country = nil)
       # Make sure the internal memoized members are set:
       to_iso if @iso_country.blank?
@@ -201,7 +202,7 @@ module GogglesDb
     #   an array including the ISO3166::Country sub-division struct as *last* element otherwise.
     #
     # == Returns:
-    # In FIFO in precendence: 1) ISO subdivision name 2) <tt>area</tt> column value
+    # In FIFO in precedence: 1) ISO subdivision name 2) <tt>area</tt> column value
     def iso_area(subdivision = nil)
       # Make sure the internal memoized members are set:
       to_iso if @iso_country.blank?

@@ -2,7 +2,7 @@ FactoryBot.define do
   factory :data_import_meeting_relay_swimmer, class: 'GogglesDb::DataImportMeetingRelaySwimmer' do
     before_create_validate_instance
 
-    sequence(:relay_order) { |n| ((n % 4) + 1) }
+    sequence(:relay_order) { |n| (n % 4) + 1 }
 
     # Generate parent_import_key
     sequence(:parent_import_key) do |n|

@@ -2,6 +2,7 @@
 
 _Please, add the latest build info on top of the list; use Version::MAJOR only after gold release; keep semantic versioning in line with framework's_
 
+- **0.9.00** [Steve A.] update to Rails 8.1
 - **0.8.22** [Steve A.] Added string key columns to all DataImport tables for referencing parent entities when IDs are null (unmatched entities); added new associations between DataImport models; updated factories to generate string keys with proper pipe-delimited format; all specs passing; bundle update; vers. 0.8.22
 - **0.8.21** [Steve A.] added associations to DataImport models for Phase 6 commit workflow in Admin2; additional factories and specs; bundle update
 - **0.8.20** [Steve A.] additional temp data import columns for storing both lap delta timings and timings from the start of the race; bundle update
