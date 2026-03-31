@@ -23,6 +23,8 @@ spec/dummy/db/dump/*.bz2
 /coverage/*
 # Include the anonymized test DB dump to ease pipeline setup:
 !spec/dummy/db/dump/test.sql.bz2
+# Dummy test file used in upload specs:
+!spec/dummy/tmp/test.sql
 
 # Ignore Byebug command history file.
 .byebug_history
@@ -32,8 +34,10 @@ spec/dummy/db/dump/*.bz2
 /yarn-error.log
 node_modules/
 
-# Ignore editors settings
+# Ignore IDE settings and rules
 .vscode/*
+.cursor
+.windsurfrules
 
 # TODO Comment out this rule if you are OK with secrets being uploaded to the repo
 /config/initializers/secret_token.rb
@@ -44,9 +48,9 @@ node_modules/
 /config/database.yml
 spec/dummy/config/database.yml
 send_coverage.sh
+/config/credentials/development.key
 
 # dotenv
-# TODO Comment out this rule if environment variables can be committed
 .env
 
 # these should all be checked in to normalize the environment:
@@ -59,8 +63,3 @@ send_coverage.sh
 /vendor/assets/bower_components
 *.bowerrc
 bower.json
-
-/config/credentials/development.key
-
-# windsurf rules
-.windsurfrules
