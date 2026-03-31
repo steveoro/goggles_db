@@ -8,6 +8,7 @@
 !/log/.keep
 !/tmp/.keep
 spec/dummy/log/*.log
+spec/dummy/log/*.log.*
 /spec/dummy/tmp/*
 /spec/dummy/tmp/storage/.keep
 
