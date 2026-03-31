@@ -1,316 +1,316 @@
 version: 2.1
 orbs:
-    ruby: circleci/ruby@2.6.0
+      ruby: circleci/ruby@2.6.0
 
 common-config: &common-config
-    resource_class: large
-    working_directory: ~/goggles_db
-    shell: /bin/bash --login
-    # [20251012] NOTE: not using CodeClimate anymore and everything related to it has been commented out.
-    # [Old] NOTE: make sure ENV vars on CircleCI include CC_TEST_REPORTER_ID
-    #       for CodeClimate test coverage upload!
-    #       (Otherwise the 'upload-coverage' step will fail.)
-    docker:
-      - image: cimg/ruby:3.4.7-node
-        environment:
-            RAILS_ENV: test
-            DISABLE_SPRING: true
-            BUNDLE_JOBS: 2
-            BUNDLE_RETRY: 2
-            BUNDLE_PATH: vendor/bundle
-            PAGER: cat
-      # NOTE: until 11.4.2 is released, each updated test DB dump needs to be
-      # edited to remove the sandbox mode parameter which isn't recognized by the DB container
-      #
-      # To remove the sandbox parameter (usually at line 7) from the dump file:
-      # 1. unzip the test DB dump & open bash in the same folder
-      # 2. "head -n 6 test.sql > t1.sql"
-      # 3. "tail -n +8 test.sql > t2.sql"
-      # 4. "cat t?.sql > test.sql"
-      # 5. To verify the removal: "head -n 10 test.sql"
-      # 6. Remove the old dump file: "rm test.sql.bz2"
-      # 7. Remove the old dump file parts: "rm t?.sql"
-      # 8. Create a new dump file: "bzip2 test.sql"
-      - image: cimg/mariadb:11.4.1
-        environment:
-            DATABASE_NAME: goggles_test
-            DATABASE_USER: root
-            PAGER: cat
+      resource_class: large
+      working_directory: ~/goggles_db
+      shell: /bin/bash --login
+      # [20251012] NOTE: not using CodeClimate anymore and everything related to it has been commented out.
+      # [Old] NOTE: make sure ENV vars on CircleCI include CC_TEST_REPORTER_ID
+      #       for CodeClimate test coverage upload!
+      #       (Otherwise the 'upload-coverage' step will fail.)
+      docker:
+          - image: cimg/ruby:3.4.7-node
+            environment:
+                  RAILS_ENV: test
+                  DISABLE_SPRING: true
+                  BUNDLE_JOBS: 2
+                  BUNDLE_RETRY: 2
+                  BUNDLE_PATH: vendor/bundle
+                  PAGER: cat
+          # NOTE: until 11.4.2 is released, each updated test DB dump needs to be
+          # edited to remove the sandbox mode parameter which isn't recognized by the DB container
+          #
+          # To remove the sandbox parameter (usually at line 7) from the dump file:
+          # 1. unzip the test DB dump & open bash in the same folder
+          # 2. "head -n 6 test.sql > t1.sql"
+          # 3. "tail -n +8 test.sql > t2.sql"
+          # 4. "cat t?.sql > test.sql"
+          # 5. To verify the removal: "head -n 10 test.sql"
+          # 6. Remove the old dump file: "rm test.sql.bz2"
+          # 7. Remove the old dump file parts: "rm t?.sql"
+          # 8. Create a new dump file: "bzip2 test.sql"
+          - image: cimg/mariadb:11.8.6
+            environment:
+                  DATABASE_NAME: goggles_test
+                  DATABASE_USER: root
+                  PAGER: cat
 
 common-db-setup: &common-db-setup
-    name: DB setup
-    command: |
-        sudo apt update
-        sudo apt-get install mysql-client
-        mkdir -p tmp ~/test-results ~/test-artifacts
-        mv spec/dummy/config/database_ci.yml spec/dummy/config/database.yml
-        dockerize -wait tcp://localhost:3306 -timeout 2m
-        RAILS_ENV=test bin/rails app:db:rebuild from=test to=test
-        RAILS_ENV=test bin/rails db:migrate
-        # ./tmp/cc-test-reporter before-build
+      name: DB setup
+      command: |
+            sudo apt update
+            sudo apt-get install mysql-client
+            mkdir -p tmp ~/test-results ~/test-artifacts
+            mv spec/dummy/config/database_ci.yml spec/dummy/config/database.yml
+            dockerize -wait tcp://localhost:3306 -timeout 2m
+            RAILS_ENV=test bin/rails app:db:rebuild from=test to=test
+            RAILS_ENV=test bin/rails db:migrate
+            # ./tmp/cc-test-reporter before-build
 
 jobs:
-    # persisted-data:
-    #   <<: *common-config
-    #   # parallelism: 1 (no actual need here)
-    #   steps:
-    #     - run:
-    #         name:  Setup persisted data
-    #         command: |
-    #           mkdir -p tmp
-    #           curl -L https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64 > ./tmp/cc-test-reporter
-    #           chmod +x ./tmp/cc-test-reporter
-    #     - persist_to_workspace:
-    #         root: tmp
-    #         paths:
-    #           - cc-test-reporter
+      # persisted-data:
+      #   <<: *common-config
+      #   # parallelism: 1 (no actual need here)
+      #   steps:
+      #     - run:
+      #         name:  Setup persisted data
+      #         command: |
+      #           mkdir -p tmp
+      #           curl -L https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64 > ./tmp/cc-test-reporter
+      #           chmod +x ./tmp/cc-test-reporter
+      #     - persist_to_workspace:
+      #         root: tmp
+      #         paths:
+      #           - cc-test-reporter
 
-    rubocop:
-        <<: *common-config
-        # parallelism: 1 (no actual need here)
-        steps:
-          - checkout
-          - ruby/install-deps:
-                app-dir: ~/goggles_db
-                key: goggles_db-v0900
-          - ruby/rubocop-check:
-                app-dir: ~/goggles_db
-                label: Rubocop
-                format: pacman
+      rubocop:
+            <<: *common-config
+            # parallelism: 1 (no actual need here)
+            steps:
+                - checkout
+                - ruby/install-deps:
+                        app-dir: ~/goggles_db
+                        key: goggles_db-v0900
+                - ruby/rubocop-check:
+                        app-dir: ~/goggles_db
+                        label: Rubocop
+                        format: pacman
 
-    brakeman:
-        <<: *common-config
-        # parallelism: 1 (no actual need here)
-        steps:
-          - checkout
-          - ruby/install-deps:
-                app-dir: ~/goggles_db
-                key: goggles_db-v0900
-          - run:
-                name: Brakeman
-                command: |
-                    bundle exec brakeman -A6q -p spec/dummy
+      brakeman:
+            <<: *common-config
+            # parallelism: 1 (no actual need here)
+            steps:
+                - checkout
+                - ruby/install-deps:
+                        app-dir: ~/goggles_db
+                        key: goggles_db-v0900
+                - run:
+                        name: Brakeman
+                        command: |
+                              bundle exec brakeman -A6q -p spec/dummy
 
-    zeitwerk:
-        <<: *common-config
-        # parallelism: 1 (no actual need here)
-        steps:
-          - checkout
-          - attach_workspace:
-                at: ~/goggles_db/tmp
-          - ruby/install-deps:
-                app-dir: ~/goggles_db
-                key: goggles_db-v0900
-          - run:
-                <<: *common-db-setup
-          - run:
-                name: Zeitwerk check
-                command: |
-                    bundle exec rake app:zeitwerk:check
+      zeitwerk:
+            <<: *common-config
+            # parallelism: 1 (no actual need here)
+            steps:
+                - checkout
+                - attach_workspace:
+                        at: ~/goggles_db/tmp
+                - ruby/install-deps:
+                        app-dir: ~/goggles_db
+                        key: goggles_db-v0900
+                - run:
+                        <<: *common-db-setup
+                - run:
+                        name: Zeitwerk check
+                        command: |
+                              bundle exec rake app:zeitwerk:check
 
-    rspec-model:
-        <<: *common-config
-        parallelism: 3
-        steps:
-          - checkout
-          - attach_workspace:
-                at: ~/goggles_db/tmp
-          - ruby/install-deps:
-                app-dir: ~/goggles_db
-                key: goggles_db-v0900
-          - run:
-                <<: *common-db-setup
-          - run:
-                name: RSpec - models
-                command: |
-                    TEST_FILES=$(circleci tests glob "spec/models/**/*_spec.rb")
-                    echo "$TEST_FILES" | circleci tests run --command="xargs bundle exec spec/dummy/bin/rspec --color --order rand -f doc \
-                                --format RspecJunitFormatter -o ~/test-results/rspec-models.xml" --verbose --split-by=timings
-                    # ./tmp/cc-test-reporter format-coverage -t simplecov \
-                    #             -o "./tmp/codeclimate.rspec-models.$CIRCLE_NODE_INDEX.json"
-          - store_test_results:
-                path: ~/test-results
-          - store_artifacts:
-                path: ~/test-artifacts
-          # - persist_to_workspace:
-          #     root: tmp
-          #     paths:
-          #       - codeclimate.rspec-models.*.json
-
-
-    rspec-command:
-        <<: *common-config
-        parallelism: 2
-        steps:
-          - checkout
-          - attach_workspace:
-                at: ~/goggles_db/tmp
-          - ruby/install-deps:
-                app-dir: ~/goggles_db
-                key: goggles_db-v0900
-          - run:
-                <<: *common-db-setup
-          - run:
-                name: RSpec - commands
-                command: |
-                    TEST_FILES=$(circleci tests glob "spec/commands/**/*_spec.rb")
-                    echo "$TEST_FILES" | circleci tests run --command="xargs bundle exec spec/dummy/bin/rspec --color --order rand -f doc \
-                                --format RspecJunitFormatter -o ~/test-results/rspec-commands.xml" --verbose --split-by=timings
-                    # ./tmp/cc-test-reporter format-coverage -t simplecov \
-                    #             -o "./tmp/codeclimate.rspec-commands.$CIRCLE_NODE_INDEX.json"
-          - store_test_results:
-                path: ~/test-results
-          - store_artifacts:
-                path: ~/test-artifacts
-          # - persist_to_workspace:
-          #     root: tmp
-          #     paths:
-          #       - codeclimate.rspec-commands.*.json
+      rspec-model:
+            <<: *common-config
+            parallelism: 3
+            steps:
+                - checkout
+                - attach_workspace:
+                        at: ~/goggles_db/tmp
+                - ruby/install-deps:
+                        app-dir: ~/goggles_db
+                        key: goggles_db-v0900
+                - run:
+                        <<: *common-db-setup
+                - run:
+                        name: RSpec - models
+                        command: |
+                              TEST_FILES=$(circleci tests glob "spec/models/**/*_spec.rb")
+                              echo "$TEST_FILES" | circleci tests run --command="xargs bundle exec spec/dummy/bin/rspec --color --order rand -f doc \
+                                          --format RspecJunitFormatter -o ~/test-results/rspec-models.xml" --verbose --split-by=timings
+                              # ./tmp/cc-test-reporter format-coverage -t simplecov \
+                              #             -o "./tmp/codeclimate.rspec-models.$CIRCLE_NODE_INDEX.json"
+                - store_test_results:
+                        path: ~/test-results
+                - store_artifacts:
+                        path: ~/test-artifacts
+                # - persist_to_workspace:
+                #     root: tmp
+                #     paths:
+                #       - codeclimate.rspec-models.*.json
 
 
-    rspec-decorator:
-        <<: *common-config
-        parallelism: 2
-        steps:
-          - checkout
-          - attach_workspace:
-                at: ~/goggles_db/tmp
-          - ruby/install-deps:
-                app-dir: ~/goggles_db
-                key: goggles_db-v0900
-          - run:
-                <<: *common-db-setup
-          - run:
-                name: RSpec - decorators
-                command: |
-                    TEST_FILES=$(circleci tests glob "spec/decorators/**/*_spec.rb")
-                    echo "$TEST_FILES" | circleci tests run --command="xargs bundle exec spec/dummy/bin/rspec --color --order rand -f doc \
-                                --format RspecJunitFormatter -o ~/test-results/rspec-decorators.xml" --verbose --split-by=timings
-                    # ./tmp/cc-test-reporter format-coverage -t simplecov \
-                    #             -o "./tmp/codeclimate.rspec-decorators.$CIRCLE_NODE_INDEX.json"
-          - store_test_results:
-                path: ~/test-results
-          - store_artifacts:
-                path: ~/test-artifacts
-          # - persist_to_workspace:
-          #     root: tmp
-          #     paths:
-          #       - codeclimate.rspec-decorators.*.json
+      rspec-command:
+            <<: *common-config
+            parallelism: 2
+            steps:
+                - checkout
+                - attach_workspace:
+                        at: ~/goggles_db/tmp
+                - ruby/install-deps:
+                        app-dir: ~/goggles_db
+                        key: goggles_db-v0900
+                - run:
+                        <<: *common-db-setup
+                - run:
+                        name: RSpec - commands
+                        command: |
+                              TEST_FILES=$(circleci tests glob "spec/commands/**/*_spec.rb")
+                              echo "$TEST_FILES" | circleci tests run --command="xargs bundle exec spec/dummy/bin/rspec --color --order rand -f doc \
+                                          --format RspecJunitFormatter -o ~/test-results/rspec-commands.xml" --verbose --split-by=timings
+                              # ./tmp/cc-test-reporter format-coverage -t simplecov \
+                              #             -o "./tmp/codeclimate.rspec-commands.$CIRCLE_NODE_INDEX.json"
+                - store_test_results:
+                        path: ~/test-results
+                - store_artifacts:
+                        path: ~/test-artifacts
+                # - persist_to_workspace:
+                #     root: tmp
+                #     paths:
+                #       - codeclimate.rspec-commands.*.json
 
 
-    rspec-strategy:
-        <<: *common-config
-        parallelism: 3
-        steps:
-          - checkout
-          - attach_workspace:
-                at: ~/goggles_db/tmp
-          - ruby/install-deps:
-                app-dir: ~/goggles_db
-                key: goggles_db-v0900
-          - run:
-                <<: *common-db-setup
-          - run:
-                name: RSpec - strategies
-                command: |
-                    TEST_FILES=$(circleci tests glob "spec/strategies/**/*_spec.rb")
-                    echo "$TEST_FILES" | circleci tests run --command="xargs bundle exec spec/dummy/bin/rspec --color --order rand -f doc \
-                                --format RspecJunitFormatter -o ~/test-results/rspec-strategies.xml" --verbose --split-by=timings
-                    # ./tmp/cc-test-reporter format-coverage -t simplecov \
-                    #             -o "./tmp/codeclimate.rspec-strategies.$CIRCLE_NODE_INDEX.json"
-          - store_test_results:
-                path: ~/test-results
-          - store_artifacts:
-                path: ~/test-artifacts
-          # - persist_to_workspace:
-          #     root: tmp
-          #     paths:
-          #       - codeclimate.rspec-strategies.*.json
+      rspec-decorator:
+            <<: *common-config
+            parallelism: 2
+            steps:
+                - checkout
+                - attach_workspace:
+                        at: ~/goggles_db/tmp
+                - ruby/install-deps:
+                        app-dir: ~/goggles_db
+                        key: goggles_db-v0900
+                - run:
+                        <<: *common-db-setup
+                - run:
+                        name: RSpec - decorators
+                        command: |
+                              TEST_FILES=$(circleci tests glob "spec/decorators/**/*_spec.rb")
+                              echo "$TEST_FILES" | circleci tests run --command="xargs bundle exec spec/dummy/bin/rspec --color --order rand -f doc \
+                                          --format RspecJunitFormatter -o ~/test-results/rspec-decorators.xml" --verbose --split-by=timings
+                              # ./tmp/cc-test-reporter format-coverage -t simplecov \
+                              #             -o "./tmp/codeclimate.rspec-decorators.$CIRCLE_NODE_INDEX.json"
+                - store_test_results:
+                        path: ~/test-results
+                - store_artifacts:
+                        path: ~/test-artifacts
+                # - persist_to_workspace:
+                #     root: tmp
+                #     paths:
+                #       - codeclimate.rspec-decorators.*.json
 
 
-    rspec-validator:
-        <<: *common-config
-        # parallelism: 1 (no actual need here)
-        steps:
-          - checkout
-          - attach_workspace:
-                at: ~/goggles_db/tmp
-          - ruby/install-deps:
-                app-dir: ~/goggles_db
-                key: goggles_db-v0900
-          - run:
-                <<: *common-db-setup
-          - run:
-                name: RSpec - validators
-                command: |
-                    TEST_FILES=$(circleci tests glob "spec/validators/**/*_spec.rb")
-                    echo "$TEST_FILES" | circleci tests run --command="xargs bundle exec spec/dummy/bin/rspec --color --order rand -f doc \
-                                --format RspecJunitFormatter -o ~/test-results/rspec-validators.xml" --verbose --split-by=timings
-                    # ./tmp/cc-test-reporter format-coverage -t simplecov \
-                    #             -o "./tmp/codeclimate.rspec-validators.$CIRCLE_NODE_INDEX.json"
-          - store_test_results:
-                path: ~/test-results
-          - store_artifacts:
-                path: ~/test-artifacts
-          # - persist_to_workspace:
-          #     root: tmp
-          #     paths:
-          #       - codeclimate.rspec-validators.*.json
+      rspec-strategy:
+            <<: *common-config
+            parallelism: 3
+            steps:
+                - checkout
+                - attach_workspace:
+                        at: ~/goggles_db/tmp
+                - ruby/install-deps:
+                        app-dir: ~/goggles_db
+                        key: goggles_db-v0900
+                - run:
+                        <<: *common-db-setup
+                - run:
+                        name: RSpec - strategies
+                        command: |
+                              TEST_FILES=$(circleci tests glob "spec/strategies/**/*_spec.rb")
+                              echo "$TEST_FILES" | circleci tests run --command="xargs bundle exec spec/dummy/bin/rspec --color --order rand -f doc \
+                                          --format RspecJunitFormatter -o ~/test-results/rspec-strategies.xml" --verbose --split-by=timings
+                              # ./tmp/cc-test-reporter format-coverage -t simplecov \
+                              #             -o "./tmp/codeclimate.rspec-strategies.$CIRCLE_NODE_INDEX.json"
+                - store_test_results:
+                        path: ~/test-results
+                - store_artifacts:
+                        path: ~/test-artifacts
+                # - persist_to_workspace:
+                #     root: tmp
+                #     paths:
+                #       - codeclimate.rspec-strategies.*.json
 
 
-          # upload-coverage:
-          #   <<: *common-config
-          #   # parallelism: 1 (no actual need here)
-          #   steps:
-          #     - attach_workspace:
-          #         at: ~/goggles_db/tmp
-          #     - run:
-          #         name: CodeClimate upload
-          #         command: |
-          #           echo "*** Persisted contents: ***"
-          #           ls -l ./tmp
-          #           ./tmp/cc-test-reporter sum-coverage -o - tmp/codeclimate.*.json | ./tmp/cc-test-reporter upload-coverage --debug --input -
+      rspec-validator:
+            <<: *common-config
+            # parallelism: 1 (no actual need here)
+            steps:
+                - checkout
+                - attach_workspace:
+                        at: ~/goggles_db/tmp
+                - ruby/install-deps:
+                        app-dir: ~/goggles_db
+                        key: goggles_db-v0900
+                - run:
+                        <<: *common-db-setup
+                - run:
+                        name: RSpec - validators
+                        command: |
+                              TEST_FILES=$(circleci tests glob "spec/validators/**/*_spec.rb")
+                              echo "$TEST_FILES" | circleci tests run --command="xargs bundle exec spec/dummy/bin/rspec --color --order rand -f doc \
+                                          --format RspecJunitFormatter -o ~/test-results/rspec-validators.xml" --verbose --split-by=timings
+                              # ./tmp/cc-test-reporter format-coverage -t simplecov \
+                              #             -o "./tmp/codeclimate.rspec-validators.$CIRCLE_NODE_INDEX.json"
+                - store_test_results:
+                        path: ~/test-results
+                - store_artifacts:
+                        path: ~/test-artifacts
+                # - persist_to_workspace:
+                #     root: tmp
+                #     paths:
+                #       - codeclimate.rspec-validators.*.json
+
+
+                # upload-coverage:
+                #   <<: *common-config
+                #   # parallelism: 1 (no actual need here)
+                #   steps:
+                #     - attach_workspace:
+                #         at: ~/goggles_db/tmp
+                #     - run:
+                #         name: CodeClimate upload
+                #         command: |
+                #           echo "*** Persisted contents: ***"
+                #           ls -l ./tmp
+                #           ./tmp/cc-test-reporter sum-coverage -o - tmp/codeclimate.*.json | ./tmp/cc-test-reporter upload-coverage --debug --input -
 
 workflows:
-    full-build:
-        jobs:
-          # [20251012] Removing this step as CodeClimate has changed into an Enterprise solution only
-          # - persisted-data
-          - brakeman
-          # requires:
-          #   - persisted-data
-          - rubocop
-          # requires:
-          #   - persisted-data
-          - zeitwerk
-          # requires:
-          #   - persisted-data
+      full-build:
+            jobs:
+                # [20251012] Removing this step as CodeClimate has changed into an Enterprise solution only
+                # - persisted-data
+                - brakeman
+                # requires:
+                #   - persisted-data
+                - rubocop
+                # requires:
+                #   - persisted-data
+                - zeitwerk
+                # requires:
+                #   - persisted-data
 
-          - rspec-model:
-                requires:
-                  - brakeman
-                  - rubocop
-                  - zeitwerk
+                - rspec-model:
+                        requires:
+                            - brakeman
+                            - rubocop
+                            - zeitwerk
 
-          - rspec-command:
-                requires:
-                  - rspec-model
-          - rspec-decorator:
-                requires:
-                  - rspec-model
+                - rspec-command:
+                        requires:
+                            - rspec-model
+                - rspec-decorator:
+                        requires:
+                            - rspec-model
 
-          - rspec-strategy:
-                requires:
-                  - rspec-command
-                  - rspec-decorator
-          - rspec-validator:
-                requires:
-                  - rspec-command
-                  - rspec-decorator
-          # - upload-coverage:
-          #     requires:
-          #       - rspec-model
-          #       - rspec-command
-          #       - rspec-decorator
-          #       - rspec-strategy
-          #       - rspec-validator
+                - rspec-strategy:
+                        requires:
+                            - rspec-command
+                            - rspec-decorator
+                - rspec-validator:
+                        requires:
+                            - rspec-command
+                            - rspec-decorator
+                # - upload-coverage:
+                #     requires:
+                #       - rspec-model
+                #       - rspec-command
+                #       - rspec-decorator
+                #       - rspec-strategy
+                #       - rspec-validator
