@@ -5,9 +5,9 @@
 # SimpleCov prepares a static HTML code-coverage report inside '/coverage';
 # the formatter is used by both CodeClimate.com & CodeCov.io build configurations.
 #
-# - CodeCov repor........: sent by its gem if the ENV variable CODECOV_TOKEN is set
-# - CodeClimate report...: sent by using its stand-alone 'cc-test-reporter' utility
-# - CoverAlls report.....: no longer maintained & gem dependency removed
+# - CodeCov repor........: DISABLED; sent by its gem if the ENV variable CODECOV_TOKEN is set
+# - CodeClimate report...: DISABLED; sent by using its stand-alone 'cc-test-reporter' utility (CodeClimate has changed into an Enterprise solution only)
+# - CoverAlls report.....: DISABLED; no longer maintained & gem dependency removed
 #
 # See: https://github.com/steveoro/goggles_db/wiki/HOWTO-dev-code_coverage_setup
 
@@ -15,11 +15,12 @@ require 'simplecov'
 SimpleCov.start 'rails'
 puts 'SimpleCov required and started.'
 
-unless ENV['CODECOV_TOKEN'].to_s.empty?
-  require 'codecov'
-  SimpleCov.formatter = SimpleCov::Formatter::Codecov
-  puts 'CodeCov.io selected for reporting output.'
-end
+# DISABLED:
+# unless ENV['CODECOV_TOKEN'].to_s.empty?
+#   require 'codecov'
+#   SimpleCov.formatter = SimpleCov::Formatter::Codecov
+#   puts 'CodeCov.io selected for reporting output.'
+# end
 
 # This file is copied to spec/ when you run 'rails generate rspec:install'
 require 'spec_helper'
