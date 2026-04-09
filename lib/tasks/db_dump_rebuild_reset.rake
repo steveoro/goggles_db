@@ -19,6 +19,8 @@ require 'fileutils'
 
 # DB Dumps have the same name as current environment and are considered as "current":
 DB_DUMP_DIR = Rails.root.join('db/dump').freeze unless defined? DB_DUMP_DIR
+# Regex used to strip machine-specific definers from dumped SQL objects:
+SQL_DEFINER_REGEX = %r{DEFINER\s*=\s*(?:`[^`]+`@`[^`]+`|'[^']+'@'[^']+'|[^\s*/;]+)\s*}i unless defined? SQL_DEFINER_REGEX
 # (add here any other needed folder as additional constants)
 #-- ---------------------------------------------------------------------------
 #++
@@ -99,6 +101,9 @@ namespace :db do
       This can be kept inside the source tree of the main app repository to be used for quick
       recovery of the any of the environment DB, using "db:rebuild".
 
+    Any explicit SQL DEFINER clauses are stripped from the dump to keep it portable across
+    machines/users where the original definer account may not exist.
+
     Options: [Rails.env=#{Rails.env}]
 
   DESC
@@ -135,6 +140,7 @@ namespace :db do
           "--routines --events --triggers --single-transaction #{db_name} >> #{file_name}"
     sh cmd
     append_sql_transaction_footer(file_name)
+    sanitize_dump_definers(file_name)
     puts "\r\nRecovery dump created."
 
     compressed_file = "#{file_name}.bz2"
@@ -142,6 +148,29 @@ namespace :db do
     puts 'Compressing as bz2...'
     sh "bzip2 #{file_name}"
     puts "\r\nDone.\r\n\r\n"
+  end
+
+  # Removes any explicit DEFINER clause from dumped SQL objects so imported DBs do
+  # not depend on users that may not exist on destination machines.
+  def sanitize_dump_definers(file_name)
+    temp_file_name = "#{file_name}.tmp"
+    removed_tokens = 0
+
+    File.open(temp_file_name, 'w') do |temp_file|
+      File.foreach(file_name) do |line|
+        sanitized_line = line.gsub(SQL_DEFINER_REGEX) do
+          removed_tokens += 1
+          ''
+        end
+        temp_file.write(sanitized_line)
+      end
+    end
+    File.rename(temp_file_name, file_name)
+
+    puts "Removed #{removed_tokens} DEFINER token#{'s' unless removed_tokens == 1} from dump."
+    removed_tokens
+  ensure
+    FileUtils.rm_f(temp_file_name)
   end
 
   # Creates a new +file_name+ with a single-transaction start, in case the dump
@@ -225,63 +254,65 @@ namespace :db do
   #-- -------------------------------------------------------------------------
   #++
 
-  desc <<~DESC
-      Recreates views that still have an invalid DEFINER (typically after DB upgrades).
-    The task rewrites each matching view with CREATE OR REPLACE and no explicit DEFINER,
-    so the current DB user becomes the new owner.
+  namespace :fix do
+    desc <<~DESC
+        Recreates views that still have an invalid DEFINER (typically after DB upgrades).
+      The task rewrites each matching view with CREATE OR REPLACE and no explicit DEFINER,
+      so the current DB user becomes the new owner.
 
-    Options: [Rails.env=#{Rails.env}]
-             definer=<user@host>  # default: root@%
-             view=<glob>          # optional, example: best_* or best_50m_results
-             dry_run=true         # optional, default: false
-  DESC
-  task(fix_invalid_view_definers: :environment) do
-    puts '*** Task: db:fix_invalid_view_definers ***'
+      Options: [Rails.env=#{Rails.env}]
+              [definer=<user@host>]  # default: root@%
+              [view=<glob>]          # optional, example: best_* or best_50m_results
+              [simulate=1|<0>]       # optional, default: 0 (apply changes)
+    DESC
+    task(view_definers: :environment) do
+      puts '*** Task: db:fix:view_definers ***'
 
-    target_definer = ENV.fetch('definer', 'root@%')
-    view_filter = ENV.fetch('view', nil)
-    dry_run = ENV.fetch('dry_run', 'false').to_s.downcase == 'true'
+      target_definer = ENV.fetch('definer', 'root@%')
+      view_filter = ENV.fetch('view', nil)
+      simulate = ENV.include?('simulate') ? ENV['simulate'].to_i.positive? : false
 
-    conn = ActiveRecord::Base.connection
-    rows = conn.select_all(<<~SQL.squish).to_a
-      SELECT TABLE_NAME, DEFINER
-      FROM information_schema.VIEWS
-      WHERE TABLE_SCHEMA = DATABASE()
-    SQL
+      conn = ActiveRecord::Base.connection
+      rows = conn.select_all(<<~SQL.squish).to_a
+        SELECT TABLE_NAME, DEFINER
+        FROM information_schema.VIEWS
+        WHERE TABLE_SCHEMA = DATABASE()
+      SQL
 
-    matching_views = rows.select do |row|
-      definer_match = target_definer.blank? || row['DEFINER'] == target_definer
-      view_match = view_filter.blank? || File.fnmatch?(view_filter, row['TABLE_NAME'])
-      definer_match && view_match
-    end
-
-    if matching_views.empty?
-      puts("No matching views found for definer='#{target_definer}'" \
-           "#{" and view='#{view_filter}'" if view_filter.present?}.")
-      next
-    end
-
-    puts("Matching views: #{matching_views.size} (dry_run=#{dry_run})")
-    matching_views.each do |row|
-      view_name = row['TABLE_NAME']
-      current_definer = row['DEFINER']
-      puts("--> #{view_name} (definer=#{current_definer})")
-
-      create_view_row = conn.select_one("SHOW CREATE VIEW `#{view_name}`")
-      create_sql = create_view_row['Create View']
-      patched_sql = create_sql
-                    .sub(/\ACREATE\s+/i, 'CREATE OR REPLACE ')
-                    .gsub(/DEFINER=`[^`]+`@`[^`]+`\s*/i, '')
-
-      if dry_run
-        puts('    Skipped (dry run).')
-      else
-        conn.execute(patched_sql)
-        puts('    Recreated.')
+      matching_views = rows.select do |row|
+        definer_match = target_definer.blank? || row['DEFINER'] == target_definer
+        view_match = view_filter.blank? || File.fnmatch?(view_filter, row['TABLE_NAME'])
+        definer_match && view_match
       end
-    end
 
-    puts('Done.')
+      if matching_views.empty?
+        puts("No matching views found for definer='#{target_definer}'" \
+             "#{" and view='#{view_filter}'" if view_filter.present?}.")
+        next
+      end
+
+      puts("Matching views: #{matching_views.size} (simulate=#{simulate})")
+      matching_views.each do |row|
+        view_name = row['TABLE_NAME']
+        current_definer = row['DEFINER']
+        puts("--> #{view_name} (definer=#{current_definer})")
+
+        create_view_row = conn.select_one("SHOW CREATE VIEW `#{view_name}`")
+        create_sql = create_view_row['Create View']
+        patched_sql = create_sql
+                      .sub(/\ACREATE\s+/i, 'CREATE OR REPLACE ')
+                      .gsub(/DEFINER=`[^`]+`@`[^`]+`\s*/i, '')
+
+        if simulate
+          puts('    Skipped (simulate mode).')
+        else
+          conn.execute(patched_sql)
+          puts('    Recreated.')
+        end
+      end
+
+      puts('Done.')
+    end
   end
   #-- -------------------------------------------------------------------------
   #++
