@@ -51,6 +51,38 @@ end
 #++
 
 namespace :db do
+  def database_config_for(environment)
+    environment_name = environment.to_s
+    config = primary_database_config_for(environment_name)
+
+    return config.configuration_hash.transform_keys(&:to_s) if config.respond_to?(:configuration_hash)
+
+    legacy_database_config_for(environment_name)
+  end
+
+  def primary_database_config_for(environment_name)
+    return unless ActiveRecord::Base.configurations.respond_to?(:configs_for)
+
+    configs = ActiveRecord::Base.configurations.configs_for(env_name: environment_name)
+    configs.find { |item| item.respond_to?(:name) && item.name == 'primary' } || configs.first
+  end
+
+  def legacy_database_config_for(environment_name)
+    env_config = Rails.configuration.database_configuration.fetch(environment_name)
+    env_config = env_config.transform_keys(&:to_s) if env_config.respond_to?(:transform_keys)
+    db_config = env_config.key?('primary') ? env_config.fetch('primary') : env_config
+    db_config.respond_to?(:transform_keys) ? db_config.transform_keys(&:to_s) : db_config
+  end
+
+  def mysql_connection_options(db_config)
+    options = []
+    options << "--host=#{db_config['host']}" if db_config['host'].present?
+    options << "--socket=#{db_config['socket']}" if db_config['host'].blank? && db_config['socket'].present?
+    options << "--user=#{db_config['username']}" if db_config['username'].present?
+    options << "--password=\"#{db_config['password']}\"" if db_config.key?('password')
+    options.join(' ')
+  end
+
   namespace :test do
     desc 'NO-OP task: not needed for this project (always safe to run, shouldn\'t affect the DB dump)'
     task prepare: :environment do |_t|
@@ -70,18 +102,17 @@ namespace :db do
   DESC
   task reset: :environment do |_t|
     puts '*** Task: Custom DB RESET ***'
-    rails_config  = Rails.configuration # Prepare & check configuration:
-    db_name       = rails_config.database_configuration[Rails.env]['database']
-    db_user       = rails_config.database_configuration[Rails.env]['username']
-    db_pwd        = rails_config.database_configuration[Rails.env]['password']
-    db_host       = rails_config.database_configuration[Rails.env]['host']
+    db_config     = database_config_for(Rails.env)
+    db_name       = db_config['database']
+    db_user       = db_config['username']
+    db_options    = mysql_connection_options(db_config)
     # Display some info:
     puts "DB name:      #{db_name}"
     puts "DB user:      #{db_user}"
     puts "\r\nDropping DB..."
-    sh "mysql --host=#{db_host} --user=#{db_user} --password=\"#{db_pwd}\" --execute=\"drop database if exists #{db_name}\""
+    sh "mysql #{db_options} --execute=\"drop database if exists #{db_name}\""
     puts "\r\nRecreating DB..."
-    sh "mysql --host=#{db_host} --user=#{db_user} --password=\"#{db_pwd}\" --execute=\"create database #{db_name}\""
+    sh "mysql #{db_options} --execute=\"create database #{db_name}\""
   end
   #-- -------------------------------------------------------------------------
   #++
@@ -110,12 +141,11 @@ namespace :db do
   task(dump: [:check_needed_dirs]) do
     puts '*** Task: DB dump ***'
     # Prepare & check configuration:
-    rails_config  = Rails.configuration
-    db_name       = rails_config.database_configuration[Rails.env]['database']
-    db_user       = rails_config.database_configuration[Rails.env]['username']
-    db_pwd        = rails_config.database_configuration[Rails.env]['password']
-    db_host       = rails_config.database_configuration[Rails.env]['host']
-    db_dump(db_host, db_user, db_pwd, db_name, Rails.env)
+    db_config     = database_config_for(Rails.env)
+    db_name       = db_config['database']
+    db_user       = db_config['username']
+    db_options    = mysql_connection_options(db_config)
+    db_dump(db_options, db_user, db_name, Rails.env)
   end
 
   # Performs the actual operations required for a DB dump update given the specified
@@ -123,7 +153,7 @@ namespace :db do
   #
   # Note that the dump takes the name of the Environment configuration section.
   #
-  def db_dump(db_host, db_user, db_pwd, db_name, dump_basename)
+  def db_dump(db_options, db_user, db_name, dump_basename)
     puts "\r\nUpdating recovery dump '#{dump_basename}' (from #{db_name} DB)..."
     # Display some info:
     puts "DB name: #{db_name}"
@@ -136,7 +166,7 @@ namespace :db do
     # (The Resulting SQL file will be much longer, though -- but the bzipped
     #  version can result more compressed due to the replicated strings, and it is
     #  indeed much more readable and editable...)
-    cmd = "mariadb-dump --host=#{db_host} -u #{db_user} --password=\"#{db_pwd}\" --add-drop-table " \
+    cmd = "mariadb-dump #{db_options} --add-drop-table " \
           "--routines --events --triggers --single-transaction #{db_name} >> #{file_name}"
     sh cmd
     append_sql_transaction_footer(file_name)
@@ -212,14 +242,13 @@ namespace :db do
   task(rebuild: [:check_needed_dirs]) do
     puts '*** Task: DB rebuild ***'
     # Prepare & check configuration:
-    rails_config  = Rails.configuration
-    db_name       = rails_config.database_configuration[Rails.env]['database']
-    db_user       = rails_config.database_configuration[Rails.env]['username']
-    db_pwd        = rails_config.database_configuration[Rails.env]['password']
-    db_host       = rails_config.database_configuration[Rails.env]['host']
+    db_config     = database_config_for(Rails.env)
+    db_name       = db_config['database']
+    db_user       = db_config['username']
+    db_options    = mysql_connection_options(db_config)
     dump_basename = ENV.include?('from') ? ENV['from'] : Rails.env
-    output_db     = ENV.include?('to')   ? rails_config.database_configuration[ENV['to']]['database'] : db_name
-    rebuild(dump_basename, output_db, db_host, db_user, db_pwd)
+    output_db     = ENV.include?('to')   ? database_config_for(ENV['to'])['database'] : db_name
+    rebuild(dump_basename, output_db, db_options, db_user)
   end
 
   # Performs the actual sequence of operations required by a single db:rebuild
@@ -228,7 +257,7 @@ namespace :db do
   # The source_basename comes from the name of the file dump.
   # Note that the dump takes the name of the Environment configuration section.
   #
-  def rebuild(source_basename, output_db, db_host, db_user, db_pwd)
+  def rebuild(source_basename, output_db, db_options, db_user)
     puts "\r\nRebuilding..."
     puts "DB name: #{source_basename} (dump) => #{output_db} (DEST)"
     puts "DB user: #{db_user}"
@@ -240,12 +269,12 @@ namespace :db do
     sh "bunzip2 -ck #{file_name} > #{sql_file_name}"
 
     puts "\r\nDropping destination DB '#{output_db}'..."
-    sh "mysql --host=#{db_host} --user=#{db_user} --password=\"#{db_pwd}\" --execute=\"drop database if exists #{output_db}\""
+    sh "mysql #{db_options} --execute=\"drop database if exists #{output_db}\""
     puts "\r\nRecreating destination DB..."
-    sh "mysql --host=#{db_host} --user=#{db_user} --password=\"#{db_pwd}\" --execute=\"create database #{output_db}\""
+    sh "mysql #{db_options} --execute=\"create database #{output_db}\""
 
     puts "\r\nExecuting '#{file_name}' on #{output_db}..."
-    sh "mysql --host=#{db_host} --user=#{db_user} --password=\"#{db_pwd}\" --database=#{output_db} --execute=\"\\. #{sql_file_name}\""
+    sh "mysql #{db_options} --database=#{output_db} --execute=\"\\. #{sql_file_name}\""
     puts "Deleting uncompressed file '#{sql_file_name}'..."
     FileUtils.rm(sql_file_name)
 
