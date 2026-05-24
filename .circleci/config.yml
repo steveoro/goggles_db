@@ -1,17 +1,15 @@
 version: 2.1
 orbs:
-  ruby: circleci/ruby@2.5.4
+  ruby: circleci/ruby@2.7.1
 
 common-config: &common-config
   resource_class: large
   working_directory: ~/goggles_db
   shell: /bin/bash --login
-  # [20251012] NOTE: not using CodeClimate anymore and everything related to it has been commented out.
-  # [Old] NOTE: make sure ENV vars on CircleCI include CC_TEST_REPORTER_ID
-  #       for CodeClimate test coverage upload!
-  #       (Otherwise the 'upload-coverage' step will fail.)
+  # [20251012] NOTE: not using CodeClimate anymore because now it's not open/free anymore
+  #            (CodeClimate has changed into an Enterprise solution only)
   docker:
-    - image: cimg/ruby:3.1.4-node
+    - image: cimg/ruby:3.4.7-node
       environment:
         RAILS_ENV: test
         DISABLE_SPRING: true
@@ -19,8 +17,8 @@ common-config: &common-config
         BUNDLE_RETRY: 2
         BUNDLE_PATH: vendor/bundle
         PAGER: cat
-    # NOTE: until 11.4.2 is released, each updated test DB dump needs to be
-    # edited to remove the sandbox mode parameter which isn't recognized by the DB container
+    # NOTE: before version 11.4.2, each updated test DB dump needed to be
+    # edited to remove the sandbox mode parameter (which wasn't recognized by the DB container)
     #
     # To remove the sandbox parameter (usually at line 7) from the dump file:
     # 1. unzip the test DB dump & open bash in the same folder
@@ -31,7 +29,7 @@ common-config: &common-config
     # 6. Remove the old dump file: "rm test.sql.bz2"
     # 7. Remove the old dump file parts: "rm t?.sql"
     # 8. Create a new dump file: "bzip2 test.sql"
-    - image: cimg/mariadb:11.4.1
+    - image: cimg/mariadb:11.8.6
       environment:
         DATABASE_NAME: goggles_test
         DATABASE_USER: root
@@ -41,30 +39,14 @@ common-db-setup: &common-db-setup
   name: DB setup
   command: |
     sudo apt update
-    sudo apt-get install mysql-client
+    sudo apt-get install mariadb-client
     mkdir -p tmp ~/test-results ~/test-artifacts
     mv spec/dummy/config/database_ci.yml spec/dummy/config/database.yml
     dockerize -wait tcp://localhost:3306 -timeout 2m
     RAILS_ENV=test bin/rails app:db:rebuild from=test to=test
     RAILS_ENV=test bin/rails db:migrate
-    # ./tmp/cc-test-reporter before-build
 
 jobs:
-  # persisted-data:
-  #   <<: *common-config
-  #   # parallelism: 1 (no actual need here)
-  #   steps:
-  #     - run:
-  #         name:  Setup persisted data
-  #         command: |
-  #           mkdir -p tmp
-  #           curl -L https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64 > ./tmp/cc-test-reporter
-  #           chmod +x ./tmp/cc-test-reporter
-  #     - persist_to_workspace:
-  #         root: tmp
-  #         paths:
-  #           - cc-test-reporter
-
   rubocop:
     <<: *common-config
     # parallelism: 1 (no actual need here)
@@ -72,16 +54,10 @@ jobs:
       - checkout
       - ruby/install-deps:
           app-dir: ~/goggles_db
-          key: goggles_db-v0810
-      - run:
-          name: Apply ActiveSupport logger patch
-          # Patch the logger loading order issue in activesupport 6.1.7.8
-          command: |
-            patch -p1 -N -d vendor/bundle/ruby/3.1.0/gems/activesupport-6.1.7.8 < patches/activesupport-6.1.7.8-logger.patch
+          key: goggles_db-v0905
       - ruby/rubocop-check:
           app-dir: ~/goggles_db
           label: Rubocop
-          format: pacman
 
   brakeman:
     <<: *common-config
@@ -90,12 +66,7 @@ jobs:
       - checkout
       - ruby/install-deps:
           app-dir: ~/goggles_db
-          key: goggles_db-v0810
-      - run:
-          name: Apply ActiveSupport logger patch
-          # Patch the logger loading order issue in activesupport 6.1.7.8
-          command: |
-            patch -p1 -N -d vendor/bundle/ruby/3.1.0/gems/activesupport-6.1.7.8 < patches/activesupport-6.1.7.8-logger.patch
+          key: goggles_db-v0905
       - run:
           name: Brakeman
           command: |
@@ -110,19 +81,13 @@ jobs:
           at: ~/goggles_db/tmp
       - ruby/install-deps:
           app-dir: ~/goggles_db
-          key: goggles_db-v0810
-      - run:
-          name: Apply ActiveSupport logger patch
-          # Patch the logger loading order issue in activesupport 6.1.7.8
-          command: |
-            patch -p1 -N -d vendor/bundle/ruby/3.1.0/gems/activesupport-6.1.7.8 < patches/activesupport-6.1.7.8-logger.patch
+          key: goggles_db-v0905
       - run:
           <<: *common-db-setup
       - run:
           name: Zeitwerk check
           command: |
             bundle exec rake app:zeitwerk:check
-
 
   rspec-model:
     <<: *common-config
@@ -133,12 +98,7 @@ jobs:
           at: ~/goggles_db/tmp
       - ruby/install-deps:
           app-dir: ~/goggles_db
-          key: goggles_db-v0810
-      - run:
-          name: Apply ActiveSupport logger patch
-          # Patch the logger loading order issue in activesupport 6.1.7.8
-          command: |
-            patch -p1 -N -d vendor/bundle/ruby/3.1.0/gems/activesupport-6.1.7.8 < patches/activesupport-6.1.7.8-logger.patch
+          key: goggles_db-v0905
       - run:
           <<: *common-db-setup
       - run:
@@ -147,17 +107,10 @@ jobs:
             TEST_FILES=$(circleci tests glob "spec/models/**/*_spec.rb")
             echo "$TEST_FILES" | circleci tests run --command="xargs bundle exec spec/dummy/bin/rspec --color --order rand -f doc \
                         --format RspecJunitFormatter -o ~/test-results/rspec-models.xml" --verbose --split-by=timings
-            # ./tmp/cc-test-reporter format-coverage -t simplecov \
-            #             -o "./tmp/codeclimate.rspec-models.$CIRCLE_NODE_INDEX.json"
       - store_test_results:
           path: ~/test-results
       - store_artifacts:
           path: ~/test-artifacts
-      # - persist_to_workspace:
-      #     root: tmp
-      #     paths:
-      #       - codeclimate.rspec-models.*.json
-
 
   rspec-command:
     <<: *common-config
@@ -168,12 +121,7 @@ jobs:
           at: ~/goggles_db/tmp
       - ruby/install-deps:
           app-dir: ~/goggles_db
-          key: goggles_db-v0810
-      - run:
-          name: Apply ActiveSupport logger patch
-          # Patch the logger loading order issue in activesupport 6.1.7.8
-          command: |
-            patch -p1 -N -d vendor/bundle/ruby/3.1.0/gems/activesupport-6.1.7.8 < patches/activesupport-6.1.7.8-logger.patch
+          key: goggles_db-v0905
       - run:
           <<: *common-db-setup
       - run:
@@ -182,17 +130,10 @@ jobs:
             TEST_FILES=$(circleci tests glob "spec/commands/**/*_spec.rb")
             echo "$TEST_FILES" | circleci tests run --command="xargs bundle exec spec/dummy/bin/rspec --color --order rand -f doc \
                         --format RspecJunitFormatter -o ~/test-results/rspec-commands.xml" --verbose --split-by=timings
-            # ./tmp/cc-test-reporter format-coverage -t simplecov \
-            #             -o "./tmp/codeclimate.rspec-commands.$CIRCLE_NODE_INDEX.json"
       - store_test_results:
           path: ~/test-results
       - store_artifacts:
           path: ~/test-artifacts
-      # - persist_to_workspace:
-      #     root: tmp
-      #     paths:
-      #       - codeclimate.rspec-commands.*.json
-
 
   rspec-decorator:
     <<: *common-config
@@ -203,12 +144,7 @@ jobs:
           at: ~/goggles_db/tmp
       - ruby/install-deps:
           app-dir: ~/goggles_db
-          key: goggles_db-v0810
-      - run:
-          name: Apply ActiveSupport logger patch
-          # Patch the logger loading order issue in activesupport 6.1.7.8
-          command: |
-            patch -p1 -N -d vendor/bundle/ruby/3.1.0/gems/activesupport-6.1.7.8 < patches/activesupport-6.1.7.8-logger.patch
+          key: goggles_db-v0905
       - run:
           <<: *common-db-setup
       - run:
@@ -217,17 +153,10 @@ jobs:
             TEST_FILES=$(circleci tests glob "spec/decorators/**/*_spec.rb")
             echo "$TEST_FILES" | circleci tests run --command="xargs bundle exec spec/dummy/bin/rspec --color --order rand -f doc \
                         --format RspecJunitFormatter -o ~/test-results/rspec-decorators.xml" --verbose --split-by=timings
-            # ./tmp/cc-test-reporter format-coverage -t simplecov \
-            #             -o "./tmp/codeclimate.rspec-decorators.$CIRCLE_NODE_INDEX.json"
       - store_test_results:
           path: ~/test-results
       - store_artifacts:
           path: ~/test-artifacts
-      # - persist_to_workspace:
-      #     root: tmp
-      #     paths:
-      #       - codeclimate.rspec-decorators.*.json
-
 
   rspec-strategy:
     <<: *common-config
@@ -238,12 +167,7 @@ jobs:
           at: ~/goggles_db/tmp
       - ruby/install-deps:
           app-dir: ~/goggles_db
-          key: goggles_db-v0810
-      - run:
-          name: Apply ActiveSupport logger patch
-          # Patch the logger loading order issue in activesupport 6.1.7.8
-          command: |
-            patch -p1 -N -d vendor/bundle/ruby/3.1.0/gems/activesupport-6.1.7.8 < patches/activesupport-6.1.7.8-logger.patch
+          key: goggles_db-v0905
       - run:
           <<: *common-db-setup
       - run:
@@ -252,17 +176,10 @@ jobs:
             TEST_FILES=$(circleci tests glob "spec/strategies/**/*_spec.rb")
             echo "$TEST_FILES" | circleci tests run --command="xargs bundle exec spec/dummy/bin/rspec --color --order rand -f doc \
                         --format RspecJunitFormatter -o ~/test-results/rspec-strategies.xml" --verbose --split-by=timings
-            # ./tmp/cc-test-reporter format-coverage -t simplecov \
-            #             -o "./tmp/codeclimate.rspec-strategies.$CIRCLE_NODE_INDEX.json"
       - store_test_results:
           path: ~/test-results
       - store_artifacts:
           path: ~/test-artifacts
-      # - persist_to_workspace:
-      #     root: tmp
-      #     paths:
-      #       - codeclimate.rspec-strategies.*.json
-
 
   rspec-validator:
     <<: *common-config
@@ -273,12 +190,7 @@ jobs:
           at: ~/goggles_db/tmp
       - ruby/install-deps:
           app-dir: ~/goggles_db
-          key: goggles_db-v0810
-      - run:
-          name: Apply ActiveSupport logger patch
-          # Patch the logger loading order issue in activesupport 6.1.7.8
-          command: |
-            patch -p1 -N -d vendor/bundle/ruby/3.1.0/gems/activesupport-6.1.7.8 < patches/activesupport-6.1.7.8-logger.patch
+          key: goggles_db-v0905
       - run:
           <<: *common-db-setup
       - run:
@@ -287,45 +199,17 @@ jobs:
             TEST_FILES=$(circleci tests glob "spec/validators/**/*_spec.rb")
             echo "$TEST_FILES" | circleci tests run --command="xargs bundle exec spec/dummy/bin/rspec --color --order rand -f doc \
                         --format RspecJunitFormatter -o ~/test-results/rspec-validators.xml" --verbose --split-by=timings
-            # ./tmp/cc-test-reporter format-coverage -t simplecov \
-            #             -o "./tmp/codeclimate.rspec-validators.$CIRCLE_NODE_INDEX.json"
       - store_test_results:
           path: ~/test-results
       - store_artifacts:
           path: ~/test-artifacts
-      # - persist_to_workspace:
-      #     root: tmp
-      #     paths:
-      #       - codeclimate.rspec-validators.*.json
-
-
-  # upload-coverage:
-  #   <<: *common-config
-  #   # parallelism: 1 (no actual need here)
-  #   steps:
-  #     - attach_workspace:
-  #         at: ~/goggles_db/tmp
-  #     - run:
-  #         name: CodeClimate upload
-  #         command: |
-  #           echo "*** Persisted contents: ***"
-  #           ls -l ./tmp
-  #           ./tmp/cc-test-reporter sum-coverage -o - tmp/codeclimate.*.json | ./tmp/cc-test-reporter upload-coverage --debug --input -
 
 workflows:
   full-build:
     jobs:
-      # [20251012] Removing this step as CodeClimate has changed into an Enterprise solution only
-      # - persisted-data
       - brakeman
-      # requires:
-      #   - persisted-data
       - rubocop
-      # requires:
-      #   - persisted-data
       - zeitwerk
-      # requires:
-      #   - persisted-data
 
       - rspec-model:
           requires:
@@ -339,20 +223,11 @@ workflows:
       - rspec-decorator:
           requires:
             - rspec-model
+      - rspec-validator:
+          requires:
+            - rspec-model
 
       - rspec-strategy:
           requires:
             - rspec-command
             - rspec-decorator
-      - rspec-validator:
-          requires:
-            - rspec-command
-            - rspec-decorator
-
-      # - upload-coverage:
-      #     requires:
-      #       - rspec-model
-      #       - rspec-command
-      #       - rspec-decorator
-      #       - rspec-strategy
-      #       - rspec-validator

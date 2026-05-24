@@ -36,7 +36,8 @@ shared_examples_for 'active storage field with local file' do |attach_msg|
       # (which assumes the helper getter will be named <'attach_msg'_contents>):
       expect(subject.send(:"#{attach_msg}_contents")).to eq(text_contents)
 
-      attachable.purge
+      subject.reload
+      subject.send(attach_msg).purge
       expect(attachable).to be_blank
     end
   end

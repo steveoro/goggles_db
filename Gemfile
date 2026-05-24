@@ -14,9 +14,6 @@ gem 'scenic-mysql_adapter'
 # development dependencies will be added by default to the :development group.
 gemspec
 
-# Explicitly pin activesupport to test if 6.1.7.10 is the culprit
-gem 'activesupport', '6.1.7.8'
-
 # Declare any dependencies that are still in development here instead of in
 # your gemspec. These might include edge Rails or gems from your path or
 # Git. Remember to move these dependencies to your gemspec before releasing
@@ -29,12 +26,9 @@ group :development do
   gem 'guard-brakeman'
   gem 'guard-bundler', require: false
   gem 'guard-haml_lint'
-  gem 'guard-inch'
   gem 'guard-rspec'
   gem 'guard-rubocop'
-  gem 'guard-spring'
   gem 'haml_lint', require: false
-  gem 'inch', require: false # grades source documentation
   gem 'listen', '~> 3.2'
   gem 'rubocop'
   gem 'rubocop-factory_bot', require: false
@@ -43,10 +37,6 @@ group :development do
   gem 'rubocop-rake'
   gem 'rubocop-rspec'
   gem 'rubocop-rspec_rails'
-  gem 'spring'
-  gem 'spring-commands-rspec'
-  gem 'spring-commands-rubocop'
-  gem 'spring-watcher-listen'
 end
 
 group :development, :test do
@@ -66,14 +56,7 @@ group :development, :test do
 end
 
 group :test do
-  gem 'shoulda-matchers', require: false
-  # For CodeClimate: use the stand-alone 'cc-test-reporter' from the command line.
-  gem 'codecov', require: false
-  # SimpleCov >= 0.17 seems to break parsing for CodeClimate test reporter
-  # NOTE: prior of upgrading the gem version, test it locally with something like:
-  # > cc-test-reporter before-build
-  # > bundle exec rspec -t type:command
-  # > cc-test-reporter format-coverage -t simplecov -o coverage/cc-command.json
   gem 'rspec_junit_formatter' # required by new Semaphore test reports
-  gem 'simplecov', '= 0.13.0', require: false
+  gem 'shoulda-matchers', require: false
+  gem 'simplecov', '>= 0.22', require: false
 end

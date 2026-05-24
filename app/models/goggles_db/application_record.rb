@@ -169,12 +169,18 @@ module GogglesDb
     # - row: an associated model instance
     # - locale: string or symbol for the locale override
     #
-    def map_attributes_from_model(row, locale = I18n.locale)
+    def map_attributes_from_model(row, locale = I18n.locale) # rubocop:disable Metrics/CyclomaticComplexity,Metrics/PerceivedComplexity
       custom_attr_helper = "#{row.class.name.split('::').last.tableize.singularize}_attributes"
       return send(custom_attr_helper) if respond_to?(custom_attr_helper)
-      return unless row.respond_to?(:minimal_attributes)
 
-      row.minimal_attributes(locale)
+      serialized_row = if row.respond_to?(:id) && row.id && !row.readonly? && row.respond_to?(:has_changes_to_save?) && row.has_changes_to_save?
+                         row.class.find_by(id: row.id) || row
+                       else
+                         row
+                       end
+      return unless serialized_row.respond_to?(:minimal_attributes)
+
+      serialized_row.minimal_attributes(locale)
     end
   end
 end

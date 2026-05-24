@@ -45,8 +45,10 @@ module GogglesDb
     #++
 
     # AbstractLap overrides:
-    alias_attribute :parent_meeting, :user_workshop # (old, new)
-    alias_attribute :parent_result, :user_result
+    alias parent_meeting user_workshop # (old, new)
+    alias parent_meeting= user_workshop=
+    alias parent_result user_result
+    alias parent_result= user_result=
     alias_attribute :parent_result_id, :user_result_id
     alias user_workshop_attributes meeting_attributes # (new, old)
 

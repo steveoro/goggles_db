@@ -19,6 +19,8 @@ require 'fileutils'
 
 # DB Dumps have the same name as current environment and are considered as "current":
 DB_DUMP_DIR = Rails.root.join('db/dump').freeze unless defined? DB_DUMP_DIR
+# Regex used to strip machine-specific definers from dumped SQL objects:
+SQL_DEFINER_REGEX = %r{DEFINER\s*=\s*(?:`[^`]+`@`[^`]+`|'[^']+'@'[^']+'|[^\s*/;]+)\s*}i unless defined? SQL_DEFINER_REGEX
 # (add here any other needed folder as additional constants)
 #-- ---------------------------------------------------------------------------
 #++
@@ -49,6 +51,38 @@ end
 #++
 
 namespace :db do
+  def database_config_for(environment)
+    environment_name = environment.to_s
+    config = primary_database_config_for(environment_name)
+
+    return config.configuration_hash.transform_keys(&:to_s) if config.respond_to?(:configuration_hash)
+
+    legacy_database_config_for(environment_name)
+  end
+
+  def primary_database_config_for(environment_name)
+    return unless ActiveRecord::Base.configurations.respond_to?(:configs_for)
+
+    configs = ActiveRecord::Base.configurations.configs_for(env_name: environment_name)
+    configs.find { |item| item.respond_to?(:name) && item.name == 'primary' } || configs.first
+  end
+
+  def legacy_database_config_for(environment_name)
+    env_config = Rails.configuration.database_configuration.fetch(environment_name)
+    env_config = env_config.transform_keys(&:to_s) if env_config.respond_to?(:transform_keys)
+    db_config = env_config.key?('primary') ? env_config.fetch('primary') : env_config
+    db_config.respond_to?(:transform_keys) ? db_config.transform_keys(&:to_s) : db_config
+  end
+
+  def mysql_connection_options(db_config)
+    options = []
+    options << "--host=#{db_config['host']}" if db_config['host'].present?
+    options << "--socket=#{db_config['socket']}" if db_config['host'].blank? && db_config['socket'].present?
+    options << "--user=#{db_config['username']}" if db_config['username'].present?
+    options << "--password=\"#{db_config['password']}\"" if db_config.key?('password')
+    options.join(' ')
+  end
+
   namespace :test do
     desc 'NO-OP task: not needed for this project (always safe to run, shouldn\'t affect the DB dump)'
     task prepare: :environment do |_t|
@@ -68,18 +102,17 @@ namespace :db do
   DESC
   task reset: :environment do |_t|
     puts '*** Task: Custom DB RESET ***'
-    rails_config  = Rails.configuration # Prepare & check configuration:
-    db_name       = rails_config.database_configuration[Rails.env]['database']
-    db_user       = rails_config.database_configuration[Rails.env]['username']
-    db_pwd        = rails_config.database_configuration[Rails.env]['password']
-    db_host       = rails_config.database_configuration[Rails.env]['host']
+    db_config     = database_config_for(Rails.env)
+    db_name       = db_config['database']
+    db_user       = db_config['username']
+    db_options    = mysql_connection_options(db_config)
     # Display some info:
     puts "DB name:      #{db_name}"
     puts "DB user:      #{db_user}"
     puts "\r\nDropping DB..."
-    sh "mysql --host=#{db_host} --user=#{db_user} --password=\"#{db_pwd}\" --execute=\"drop database if exists #{db_name}\""
+    sh "mysql #{db_options} --execute=\"drop database if exists #{db_name}\""
     puts "\r\nRecreating DB..."
-    sh "mysql --host=#{db_host} --user=#{db_user} --password=\"#{db_pwd}\" --execute=\"create database #{db_name}\""
+    sh "mysql #{db_options} --execute=\"create database #{db_name}\""
   end
   #-- -------------------------------------------------------------------------
   #++
@@ -99,18 +132,20 @@ namespace :db do
       This can be kept inside the source tree of the main app repository to be used for quick
       recovery of the any of the environment DB, using "db:rebuild".
 
+    Any explicit SQL DEFINER clauses are stripped from the dump to keep it portable across
+    machines/users where the original definer account may not exist.
+
     Options: [Rails.env=#{Rails.env}]
 
   DESC
   task(dump: [:check_needed_dirs]) do
     puts '*** Task: DB dump ***'
     # Prepare & check configuration:
-    rails_config  = Rails.configuration
-    db_name       = rails_config.database_configuration[Rails.env]['database']
-    db_user       = rails_config.database_configuration[Rails.env]['username']
-    db_pwd        = rails_config.database_configuration[Rails.env]['password']
-    db_host       = rails_config.database_configuration[Rails.env]['host']
-    db_dump(db_host, db_user, db_pwd, db_name, Rails.env)
+    db_config     = database_config_for(Rails.env)
+    db_name       = db_config['database']
+    db_user       = db_config['username']
+    db_options    = mysql_connection_options(db_config)
+    db_dump(db_options, db_user, db_name, Rails.env)
   end
 
   # Performs the actual operations required for a DB dump update given the specified
@@ -118,7 +153,7 @@ namespace :db do
   #
   # Note that the dump takes the name of the Environment configuration section.
   #
-  def db_dump(db_host, db_user, db_pwd, db_name, dump_basename)
+  def db_dump(db_options, db_user, db_name, dump_basename)
     puts "\r\nUpdating recovery dump '#{dump_basename}' (from #{db_name} DB)..."
     # Display some info:
     puts "DB name: #{db_name}"
@@ -131,10 +166,11 @@ namespace :db do
     # (The Resulting SQL file will be much longer, though -- but the bzipped
     #  version can result more compressed due to the replicated strings, and it is
     #  indeed much more readable and editable...)
-    cmd = "mysqldump --host=#{db_host} -u #{db_user} --password=\"#{db_pwd}\" --add-drop-table " \
+    cmd = "mariadb-dump #{db_options} --add-drop-table " \
           "--routines --events --triggers --single-transaction #{db_name} >> #{file_name}"
     sh cmd
     append_sql_transaction_footer(file_name)
+    sanitize_dump_definers(file_name)
     puts "\r\nRecovery dump created."
 
     compressed_file = "#{file_name}.bz2"
@@ -142,6 +178,29 @@ namespace :db do
     puts 'Compressing as bz2...'
     sh "bzip2 #{file_name}"
     puts "\r\nDone.\r\n\r\n"
+  end
+
+  # Removes any explicit DEFINER clause from dumped SQL objects so imported DBs do
+  # not depend on users that may not exist on destination machines.
+  def sanitize_dump_definers(file_name)
+    temp_file_name = "#{file_name}.tmp"
+    removed_tokens = 0
+
+    File.open(temp_file_name, 'w') do |temp_file|
+      File.foreach(file_name) do |line|
+        sanitized_line = line.gsub(SQL_DEFINER_REGEX) do
+          removed_tokens += 1
+          ''
+        end
+        temp_file.write(sanitized_line)
+      end
+    end
+    File.rename(temp_file_name, file_name)
+
+    puts "Removed #{removed_tokens} DEFINER token#{'s' unless removed_tokens == 1} from dump."
+    removed_tokens
+  ensure
+    FileUtils.rm_f(temp_file_name)
   end
 
   # Creates a new +file_name+ with a single-transaction start, in case the dump
@@ -183,14 +242,13 @@ namespace :db do
   task(rebuild: [:check_needed_dirs]) do
     puts '*** Task: DB rebuild ***'
     # Prepare & check configuration:
-    rails_config  = Rails.configuration
-    db_name       = rails_config.database_configuration[Rails.env]['database']
-    db_user       = rails_config.database_configuration[Rails.env]['username']
-    db_pwd        = rails_config.database_configuration[Rails.env]['password']
-    db_host       = rails_config.database_configuration[Rails.env]['host']
+    db_config     = database_config_for(Rails.env)
+    db_name       = db_config['database']
+    db_user       = db_config['username']
+    db_options    = mysql_connection_options(db_config)
     dump_basename = ENV.include?('from') ? ENV['from'] : Rails.env
-    output_db     = ENV.include?('to')   ? rails_config.database_configuration[ENV['to']]['database'] : db_name
-    rebuild(dump_basename, output_db, db_host, db_user, db_pwd)
+    output_db     = ENV.include?('to')   ? database_config_for(ENV['to'])['database'] : db_name
+    rebuild(dump_basename, output_db, db_options, db_user)
   end
 
   # Performs the actual sequence of operations required by a single db:rebuild
@@ -199,7 +257,7 @@ namespace :db do
   # The source_basename comes from the name of the file dump.
   # Note that the dump takes the name of the Environment configuration section.
   #
-  def rebuild(source_basename, output_db, db_host, db_user, db_pwd)
+  def rebuild(source_basename, output_db, db_options, db_user)
     puts "\r\nRebuilding..."
     puts "DB name: #{source_basename} (dump) => #{output_db} (DEST)"
     puts "DB user: #{db_user}"
@@ -211,12 +269,12 @@ namespace :db do
     sh "bunzip2 -ck #{file_name} > #{sql_file_name}"
 
     puts "\r\nDropping destination DB '#{output_db}'..."
-    sh "mysql --host=#{db_host} --user=#{db_user} --password=\"#{db_pwd}\" --execute=\"drop database if exists #{output_db}\""
+    sh "mysql #{db_options} --execute=\"drop database if exists #{output_db}\""
     puts "\r\nRecreating destination DB..."
-    sh "mysql --host=#{db_host} --user=#{db_user} --password=\"#{db_pwd}\" --execute=\"create database #{output_db}\""
+    sh "mysql #{db_options} --execute=\"create database #{output_db}\""
 
     puts "\r\nExecuting '#{file_name}' on #{output_db}..."
-    sh "mysql --host=#{db_host} --user=#{db_user} --password=\"#{db_pwd}\" --database=#{output_db} --execute=\"\\. #{sql_file_name}\""
+    sh "mysql #{db_options} --database=#{output_db} --execute=\"\\. #{sql_file_name}\""
     puts "Deleting uncompressed file '#{sql_file_name}'..."
     FileUtils.rm(sql_file_name)
 
@@ -225,63 +283,65 @@ namespace :db do
   #-- -------------------------------------------------------------------------
   #++
 
-  desc <<~DESC
-      Recreates views that still have an invalid DEFINER (typically after DB upgrades).
-    The task rewrites each matching view with CREATE OR REPLACE and no explicit DEFINER,
-    so the current DB user becomes the new owner.
+  namespace :fix do
+    desc <<~DESC
+        Recreates views that still have an invalid DEFINER (typically after DB upgrades).
+      The task rewrites each matching view with CREATE OR REPLACE and no explicit DEFINER,
+      so the current DB user becomes the new owner.
 
-    Options: [Rails.env=#{Rails.env}]
-             definer=<user@host>  # default: root@%
-             view=<glob>          # optional, example: best_* or best_50m_results
-             dry_run=true         # optional, default: false
-  DESC
-  task(fix_invalid_view_definers: :environment) do
-    puts '*** Task: db:fix_invalid_view_definers ***'
+      Options: [Rails.env=#{Rails.env}]
+              [definer=<user@host>]  # default: root@%
+              [view=<glob>]          # optional, example: best_* or best_50m_results
+              [simulate=1|<0>]       # optional, default: 0 (apply changes)
+    DESC
+    task(view_definers: :environment) do
+      puts '*** Task: db:fix:view_definers ***'
 
-    target_definer = ENV.fetch('definer', 'root@%')
-    view_filter = ENV.fetch('view', nil)
-    dry_run = ENV.fetch('dry_run', 'false').to_s.downcase == 'true'
+      target_definer = ENV.fetch('definer', 'root@%')
+      view_filter = ENV.fetch('view', nil)
+      simulate = ENV.include?('simulate') ? ENV['simulate'].to_i.positive? : false
 
-    conn = ActiveRecord::Base.connection
-    rows = conn.select_all(<<~SQL.squish).to_a
-      SELECT TABLE_NAME, DEFINER
-      FROM information_schema.VIEWS
-      WHERE TABLE_SCHEMA = DATABASE()
-    SQL
+      conn = ActiveRecord::Base.connection
+      rows = conn.select_all(<<~SQL.squish).to_a
+        SELECT TABLE_NAME, DEFINER
+        FROM information_schema.VIEWS
+        WHERE TABLE_SCHEMA = DATABASE()
+      SQL
 
-    matching_views = rows.select do |row|
-      definer_match = target_definer.blank? || row['DEFINER'] == target_definer
-      view_match = view_filter.blank? || File.fnmatch?(view_filter, row['TABLE_NAME'])
-      definer_match && view_match
-    end
-
-    if matching_views.empty?
-      puts("No matching views found for definer='#{target_definer}'" \
-           "#{" and view='#{view_filter}'" if view_filter.present?}.")
-      next
-    end
-
-    puts("Matching views: #{matching_views.size} (dry_run=#{dry_run})")
-    matching_views.each do |row|
-      view_name = row['TABLE_NAME']
-      current_definer = row['DEFINER']
-      puts("--> #{view_name} (definer=#{current_definer})")
-
-      create_view_row = conn.select_one("SHOW CREATE VIEW `#{view_name}`")
-      create_sql = create_view_row['Create View']
-      patched_sql = create_sql
-                    .sub(/\ACREATE\s+/i, 'CREATE OR REPLACE ')
-                    .gsub(/DEFINER=`[^`]+`@`[^`]+`\s*/i, '')
-
-      if dry_run
-        puts('    Skipped (dry run).')
-      else
-        conn.execute(patched_sql)
-        puts('    Recreated.')
+      matching_views = rows.select do |row|
+        definer_match = target_definer.blank? || row['DEFINER'] == target_definer
+        view_match = view_filter.blank? || File.fnmatch?(view_filter, row['TABLE_NAME'])
+        definer_match && view_match
       end
-    end
 
-    puts('Done.')
+      if matching_views.empty?
+        puts("No matching views found for definer='#{target_definer}'" \
+             "#{" and view='#{view_filter}'" if view_filter.present?}.")
+        next
+      end
+
+      puts("Matching views: #{matching_views.size} (simulate=#{simulate})")
+      matching_views.each do |row|
+        view_name = row['TABLE_NAME']
+        current_definer = row['DEFINER']
+        puts("--> #{view_name} (definer=#{current_definer})")
+
+        create_view_row = conn.select_one("SHOW CREATE VIEW `#{view_name}`")
+        create_sql = create_view_row['Create View']
+        patched_sql = create_sql
+                      .sub(/\ACREATE\s+/i, 'CREATE OR REPLACE ')
+                      .gsub(/DEFINER=`[^`]+`@`[^`]+`\s*/i, '')
+
+        if simulate
+          puts('    Skipped (simulate mode).')
+        else
+          conn.execute(patched_sql)
+          puts('    Recreated.')
+        end
+      end
+
+      puts('Done.')
+    end
   end
   #-- -------------------------------------------------------------------------
   #++

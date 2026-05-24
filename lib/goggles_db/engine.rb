@@ -25,10 +25,6 @@ module GogglesDb
     #  being used in production environment too)
     config.eager_load_paths << GogglesDb::Engine.root.join('lib', 'extensions').to_s
     config.eager_load_paths << GogglesDb::Engine.root.join('lib', 'wrappers').to_s
-    # [Steve A.] When in doubt, to check out the actual resulting paths, open the console and type:
-    #   $> puts ActiveSupport::Dependencies.eager_load_paths
-    # ...Or...
-    #   $> puts ActiveSupport::Dependencies.autoload_paths
 
     config.generators do |g|
       g.test_framework :rspec, fixture: false

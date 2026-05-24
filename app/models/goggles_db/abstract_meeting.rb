@@ -22,7 +22,7 @@ module GogglesDb
     has_one :season_type, through: :season
     has_one :federation_type, through: :season_type
 
-    default_scope { includes(:edition_type, :timing_type, season: [season_type: [:federation_type]]) }
+    default_scope { includes(:edition_type, :timing_type, season: [{ season_type: [:federation_type] }]) }
 
     validates :code,        presence: { length: { within: 1..50 }, allow_nil: false }
     validates :header_year, presence: { length: { within: 1..9 }, allow_nil: false }
