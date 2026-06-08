@@ -110,9 +110,9 @@ namespace :db do
     puts "DB name:      #{db_name}"
     puts "DB user:      #{db_user}"
     puts "\r\nDropping DB..."
-    sh "mysql #{db_options} --execute=\"drop database if exists #{db_name}\""
+    sh "mariadb #{db_options} --execute=\"drop database if exists #{db_name}\""
     puts "\r\nRecreating DB..."
-    sh "mysql #{db_options} --execute=\"create database #{db_name}\""
+    sh "mariadb #{db_options} --execute=\"create database #{db_name}\""
   end
   #-- -------------------------------------------------------------------------
   #++
@@ -269,12 +269,12 @@ namespace :db do
     sh "bunzip2 -ck #{file_name} > #{sql_file_name}"
 
     puts "\r\nDropping destination DB '#{output_db}'..."
-    sh "mysql #{db_options} --execute=\"drop database if exists #{output_db}\""
+    sh "mariadb #{db_options} --execute=\"drop database if exists #{output_db}\""
     puts "\r\nRecreating destination DB..."
-    sh "mysql #{db_options} --execute=\"create database #{output_db}\""
+    sh "mariadb #{db_options} --execute=\"create database #{output_db}\""
 
     puts "\r\nExecuting '#{file_name}' on #{output_db}..."
-    sh "mysql #{db_options} --database=#{output_db} --execute=\"\\. #{sql_file_name}\""
+    sh "mariadb #{db_options} --database=#{output_db} --execute=\"\\. #{sql_file_name}\""
     puts "Deleting uncompressed file '#{sql_file_name}'..."
     FileUtils.rm(sql_file_name)
 

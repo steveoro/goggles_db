@@ -109,6 +109,7 @@ shared_examples_for 'AbstractResult #minimal_attributes' do |sibling_class, _min
   subject { fixture_row.minimal_attributes }
 
   let(:fixture_row) { sibling_class.last(100).sample }
+
   before { expect(fixture_row).to be_a(sibling_class).and be_valid }
 
   it 'includes the timing string' do

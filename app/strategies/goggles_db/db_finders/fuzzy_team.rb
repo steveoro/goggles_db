@@ -23,8 +23,12 @@ module GogglesDb
       # - <tt>bias</tt>: fuzzy search bias for a match (default: 0.74)
       #
       def initialize(search_terms = {}, _bias = 0.74)
-        # Use a less restrictive bias (0.75 allows for just a partial name)
-        super(GogglesDb::Team, search_terms, :for_name, 0.74)
+        # Use a less restrictive bias (0.75 allows for just a partial name).
+        # Score against all 3 name columns (taking the max weight) so that a strong match on
+        # 'editable_name' or any of the ';'/','-separated 'name_variations' tokens is not penalized
+        # just because the main 'name' column differs.
+        super(GogglesDb::Team, search_terms, :for_name, 0.74,
+              %i[name editable_name name_variations], %i[name_variations])
       end
       #-- --------------------------------------------------------------------------
       #++

@@ -250,6 +250,7 @@ shared_examples_for 'AbstractMeeting #minimal_attributes' do |sibling_class|
   subject(:result) { fixture_row.minimal_attributes }
 
   let(:fixture_row) { sibling_class.first(100).sample }
+
   before { expect(fixture_row).to be_a(sibling_class).and be_valid }
 
   %w[display_label short_label meeting_date].each do |method_name|
