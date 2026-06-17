@@ -10,9 +10,10 @@ module GogglesDb
   #   - author:   Steve A.
   #
   class LastSeasonId < ApplicationRecord
+    self.primary_key = :id
     self.table_name = 'last_seasons_ids'
 
-    belongs_to :searchable, polymorphic: true
+    belongs_to :season, foreign_key: :id, inverse_of: false
 
     # (Override) This is a view and it's always R/O
     def readonly?
