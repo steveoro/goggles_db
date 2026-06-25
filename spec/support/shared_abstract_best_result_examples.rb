@@ -61,7 +61,8 @@ RSpec.shared_context 'AbstractBestResult scopes setup' do
       GogglesDb::Best50And100Result,
       GogglesDb::Best50And100Result5y,
       GogglesDb::BestSwimmer3yResult,
-      GogglesDb::BestSwimmer5yResult
+      GogglesDb::BestSwimmer5yResult,
+      GogglesDb::BestSwimmerCurrentVsPreviousResult
     ]
   end
 
@@ -74,8 +75,22 @@ RSpec.shared_context 'AbstractBestResult scopes setup' do
       # puts '--> [DEBUG] Skipping creation step: domain already present.' if base_scope.count.positive?
       next if base_scope.any?
 
-      # 1. Find the latest 'FIN' season (ID=1) from the test data dump (there should be always one)
-      latest_fin_season = GogglesDb::Season.where(season_type_id: 1).order(header_year: :desc, id: :desc).first
+      # 1. Select (or build) a season compatible with the current view logic
+      latest_fin_season = if described_class.name == 'GogglesDb::BestSwimmerCurrentVsPreviousResult'
+                            # This view requires an ongoing season as "current"
+                            begin_date = Date.new(2199, 1, 1)
+                            end_date = Date.new(2199, 12, 31)
+                            create(
+                              :season,
+                              season_type_id: 1,
+                              begin_date: begin_date,
+                              end_date: end_date,
+                              header_year: "#{begin_date.year}/#{end_date.year}"
+                            )
+                          else
+                            # Latest FIN season from test dump for time-window views
+                            GogglesDb::Season.where(season_type_id: 1).order(header_year: :desc, id: :desc).first
+                          end
       # puts "--> [DEBUG] Latest FIN season: #{latest_fin_season&.id}"
       next unless latest_fin_season
 
@@ -100,7 +115,8 @@ RSpec.shared_context 'AbstractBestResult scopes setup' do
                       GogglesDb::EventType.where(id: [2, 11, 15, 19]) # All 50m x stroke type
                     when 'GogglesDb::Best50And100Result', 'GogglesDb::Best50And100Result5y'
                       GogglesDb::EventType.where(id: [2, 3, 11, 12, 15, 16, 19, 20, 22]) # All (50m + 100m) x stroke type + '100MI'
-                    when 'GogglesDb::BestSwimmer3yResult', 'GogglesDb::BestSwimmer5yResult', 'GogglesDb::BestSwimmerAllTimeResult'
+                    when 'GogglesDb::BestSwimmer3yResult', 'GogglesDb::BestSwimmer5yResult',
+                         'GogglesDb::BestSwimmerAllTimeResult', 'GogglesDb::BestSwimmerCurrentVsPreviousResult'
                       # "BestSwimmer"-type views will consider all individual events except the non-standard lengths:
                       GogglesDb::EventType.all_individuals.select { |ev| ev.length_in_meters.between?(50, 1500) }
                     else
@@ -115,8 +131,32 @@ RSpec.shared_context 'AbstractBestResult scopes setup' do
       # NOTE: we need to pause Prosopite during this data creation step as the complex hierarchy
       #       chain needed in this will trigger N+1 query errors.
       Prosopite.pause do
-        meeting = create(:meeting, season: latest_fin_season, header_date: Time.zone.today - rand(1..90).days)
+        current_meeting_date = if described_class.name == 'GogglesDb::BestSwimmerCurrentVsPreviousResult'
+                                 latest_fin_season.begin_date + rand(30..120).days
+                               else
+                                 Time.zone.today - rand(1..90).days
+                               end
+        meeting = create(:meeting, season: latest_fin_season, header_date: current_meeting_date)
         session = create(:meeting_session, meeting: meeting, scheduled_date: meeting.header_date)
+
+        previous_session = nil
+        if described_class.name == 'GogglesDb::BestSwimmerCurrentVsPreviousResult'
+          prev_begin_date = Date.new(2198, 1, 1)
+          prev_end_date = Date.new(2198, 12, 31)
+          previous_season = create(
+            :season,
+            season_type_id: 8,
+            begin_date: prev_begin_date,
+            end_date: prev_end_date,
+            header_year: "#{prev_begin_date.year}/#{prev_end_date.year}"
+          )
+          previous_meeting = create(
+            :meeting,
+            season: previous_season,
+            header_date: previous_season.begin_date + rand(30..120).days
+          )
+          previous_session = create(:meeting_session, meeting: previous_meeting, scheduled_date: previous_meeting.header_date)
+        end
 
         # 6. Create only 2x random events for each gender, each with 1 result (2x2 tot.rows), for the new meeting:
         event_types.sample(2).each do |event_type|
@@ -126,6 +166,42 @@ RSpec.shared_context 'AbstractBestResult scopes setup' do
           program_female = create(:meeting_program, meeting_session: session, event_type: event_type, gender_type: female_gender)
           create(:meeting_individual_result, meeting_program: program_female, swimmer: female_swimmer, team: team_for_creation,
                                              minutes: 0, seconds: rand(28..50), hundredths: rand(0..99))
+
+          next unless previous_session
+
+          previous_program_male = create(
+            :meeting_program,
+            meeting_session: previous_session,
+            event_type: event_type,
+            gender_type: male_gender,
+            pool_type: program_male.pool_type
+          )
+          create(
+            :meeting_individual_result,
+            meeting_program: previous_program_male,
+            swimmer: male_swimmer,
+            team: team_for_creation,
+            minutes: 0,
+            seconds: rand(26..48),
+            hundredths: rand(0..99)
+          )
+
+          previous_program_female = create(
+            :meeting_program,
+            meeting_session: previous_session,
+            event_type: event_type,
+            gender_type: female_gender,
+            pool_type: program_female.pool_type
+          )
+          create(
+            :meeting_individual_result,
+            meeting_program: previous_program_female,
+            swimmer: female_swimmer,
+            team: team_for_creation,
+            minutes: 0,
+            seconds: rand(30..53),
+            hundredths: rand(0..99)
+          )
         end
         # puts "--> [DEBUG] Created Meeting #{meeting.id} with #{event_types.count * 2} results for season #{latest_fin_season.id}."
       end

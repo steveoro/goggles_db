@@ -72,7 +72,7 @@ CREATE TABLE `active_storage_attachments` (
   UNIQUE KEY `index_active_storage_attachments_uniqueness` (`record_type`,`record_id`,`name`,`blob_id`),
   KEY `index_active_storage_attachments_on_blob_id` (`blob_id`),
   CONSTRAINT `fk_rails_c3b3935057` FOREIGN KEY (`blob_id`) REFERENCES `active_storage_blobs` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=1992 DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_general_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=2096 DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_general_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 DROP TABLE IF EXISTS `active_storage_blobs`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
@@ -89,7 +89,7 @@ CREATE TABLE `active_storage_blobs` (
   `service_name` varchar(255) NOT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `index_active_storage_blobs_on_key` (`key`)
-) ENGINE=InnoDB AUTO_INCREMENT=1992 DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_general_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=2096 DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_general_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 DROP TABLE IF EXISTS `active_storage_variant_records`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
@@ -133,7 +133,7 @@ CREATE TABLE `api_daily_uses` (
   PRIMARY KEY (`id`),
   UNIQUE KEY `index_api_daily_uses_on_route_and_day` (`route`,`day`),
   KEY `index_api_daily_uses_on_route` (`route`)
-) ENGINE=InnoDB AUTO_INCREMENT=4041901 DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=9680038 DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 DROP TABLE IF EXISTS `app_parameters`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
@@ -289,7 +289,7 @@ CREATE TABLE `badges` (
   KEY `fk_badges_category_types` (`category_type_id`),
   KEY `fk_badges_entry_time_types` (`entry_time_type_id`),
   KEY `fk_badges_team_affiliations` (`team_affiliation_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=214337 DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_general_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=225966 DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_general_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 DROP TABLE IF EXISTS `base_movements`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
@@ -319,156 +319,185 @@ DROP TABLE IF EXISTS `best_50_and_100_results`;
 SET @saved_cs_client     = @@character_set_client;
 SET character_set_client = utf8mb4;
 /*!50001 CREATE VIEW `best_50_and_100_results` AS SELECT
- 1 AS `swimmer_id`,
-  1 AS `swimmer_name`,
-  1 AS `swimmer_year_of_birth`,
-  1 AS `gender_type_id`,
-  1 AS `event_type_id`,
-  1 AS `event_type_code`,
-  1 AS `pool_type_id`,
-  1 AS `pool_type_code`,
-  1 AS `season_id`,
-  1 AS `season_header_year`,
-  1 AS `meeting_individual_result_id`,
-  1 AS `minutes`,
-  1 AS `seconds`,
-  1 AS `hundredths`,
-  1 AS `total_hundredths`,
-  1 AS `meeting_id`,
-  1 AS `meeting_date`,
-  1 AS `meeting_name`,
-  1 AS `team_id`,
-  1 AS `team_name` */;
+ NULL AS `swimmer_id`,
+ NULL AS `swimmer_name`,
+ NULL AS `swimmer_year_of_birth`,
+ NULL AS `gender_type_id`,
+ NULL AS `event_type_id`,
+ NULL AS `event_type_code`,
+ NULL AS `pool_type_id`,
+ NULL AS `pool_type_code`,
+ NULL AS `season_id`,
+ NULL AS `season_header_year`,
+ NULL AS `meeting_individual_result_id`,
+ NULL AS `minutes`,
+ NULL AS `seconds`,
+ NULL AS `hundredths`,
+ NULL AS `total_hundredths`,
+ NULL AS `meeting_id`,
+ NULL AS `meeting_date`,
+ NULL AS `meeting_name`,
+ NULL AS `team_id`,
+ NULL AS `team_name` */;
 SET character_set_client = @saved_cs_client;
 DROP TABLE IF EXISTS `best_50_and_100_results5y`;
 /*!50001 DROP VIEW IF EXISTS `best_50_and_100_results5y`*/;
 SET @saved_cs_client     = @@character_set_client;
 SET character_set_client = utf8mb4;
 /*!50001 CREATE VIEW `best_50_and_100_results5y` AS SELECT
- 1 AS `swimmer_id`,
-  1 AS `swimmer_name`,
-  1 AS `swimmer_year_of_birth`,
-  1 AS `gender_type_id`,
-  1 AS `event_type_id`,
-  1 AS `event_type_code`,
-  1 AS `pool_type_id`,
-  1 AS `pool_type_code`,
-  1 AS `season_id`,
-  1 AS `season_header_year`,
-  1 AS `meeting_individual_result_id`,
-  1 AS `minutes`,
-  1 AS `seconds`,
-  1 AS `hundredths`,
-  1 AS `total_hundredths`,
-  1 AS `meeting_id`,
-  1 AS `meeting_date`,
-  1 AS `meeting_name`,
-  1 AS `team_id`,
-  1 AS `team_name` */;
+ NULL AS `swimmer_id`,
+ NULL AS `swimmer_name`,
+ NULL AS `swimmer_year_of_birth`,
+ NULL AS `gender_type_id`,
+ NULL AS `event_type_id`,
+ NULL AS `event_type_code`,
+ NULL AS `pool_type_id`,
+ NULL AS `pool_type_code`,
+ NULL AS `season_id`,
+ NULL AS `season_header_year`,
+ NULL AS `meeting_individual_result_id`,
+ NULL AS `minutes`,
+ NULL AS `seconds`,
+ NULL AS `hundredths`,
+ NULL AS `total_hundredths`,
+ NULL AS `meeting_id`,
+ NULL AS `meeting_date`,
+ NULL AS `meeting_name`,
+ NULL AS `team_id`,
+ NULL AS `team_name` */;
 SET character_set_client = @saved_cs_client;
 DROP TABLE IF EXISTS `best_50m_results`;
 /*!50001 DROP VIEW IF EXISTS `best_50m_results`*/;
 SET @saved_cs_client     = @@character_set_client;
 SET character_set_client = utf8mb4;
 /*!50001 CREATE VIEW `best_50m_results` AS SELECT
- 1 AS `swimmer_id`,
-  1 AS `swimmer_name`,
-  1 AS `swimmer_year_of_birth`,
-  1 AS `gender_type_id`,
-  1 AS `event_type_id`,
-  1 AS `event_type_code`,
-  1 AS `pool_type_id`,
-  1 AS `pool_type_code`,
-  1 AS `season_id`,
-  1 AS `season_header_year`,
-  1 AS `meeting_individual_result_id`,
-  1 AS `minutes`,
-  1 AS `seconds`,
-  1 AS `hundredths`,
-  1 AS `total_hundredths`,
-  1 AS `meeting_id`,
-  1 AS `meeting_date`,
-  1 AS `meeting_name`,
-  1 AS `team_id`,
-  1 AS `team_name` */;
+ NULL AS `swimmer_id`,
+ NULL AS `swimmer_name`,
+ NULL AS `swimmer_year_of_birth`,
+ NULL AS `gender_type_id`,
+ NULL AS `event_type_id`,
+ NULL AS `event_type_code`,
+ NULL AS `pool_type_id`,
+ NULL AS `pool_type_code`,
+ NULL AS `season_id`,
+ NULL AS `season_header_year`,
+ NULL AS `meeting_individual_result_id`,
+ NULL AS `minutes`,
+ NULL AS `seconds`,
+ NULL AS `hundredths`,
+ NULL AS `total_hundredths`,
+ NULL AS `meeting_id`,
+ NULL AS `meeting_date`,
+ NULL AS `meeting_name`,
+ NULL AS `team_id`,
+ NULL AS `team_name` */;
 SET character_set_client = @saved_cs_client;
 DROP TABLE IF EXISTS `best_swimmer3y_results`;
 /*!50001 DROP VIEW IF EXISTS `best_swimmer3y_results`*/;
 SET @saved_cs_client     = @@character_set_client;
 SET character_set_client = utf8mb4;
 /*!50001 CREATE VIEW `best_swimmer3y_results` AS SELECT
- 1 AS `swimmer_id`,
-  1 AS `swimmer_name`,
-  1 AS `swimmer_year_of_birth`,
-  1 AS `gender_type_id`,
-  1 AS `event_type_id`,
-  1 AS `event_type_code`,
-  1 AS `pool_type_id`,
-  1 AS `pool_type_code`,
-  1 AS `season_id`,
-  1 AS `season_header_year`,
-  1 AS `meeting_individual_result_id`,
-  1 AS `minutes`,
-  1 AS `seconds`,
-  1 AS `hundredths`,
-  1 AS `total_hundredths`,
-  1 AS `meeting_id`,
-  1 AS `meeting_date`,
-  1 AS `meeting_name`,
-  1 AS `team_id`,
-  1 AS `team_name` */;
+ NULL AS `swimmer_id`,
+ NULL AS `swimmer_name`,
+ NULL AS `swimmer_year_of_birth`,
+ NULL AS `gender_type_id`,
+ NULL AS `event_type_id`,
+ NULL AS `event_type_code`,
+ NULL AS `pool_type_id`,
+ NULL AS `pool_type_code`,
+ NULL AS `season_id`,
+ NULL AS `season_header_year`,
+ NULL AS `meeting_individual_result_id`,
+ NULL AS `minutes`,
+ NULL AS `seconds`,
+ NULL AS `hundredths`,
+ NULL AS `total_hundredths`,
+ NULL AS `meeting_id`,
+ NULL AS `meeting_date`,
+ NULL AS `meeting_name`,
+ NULL AS `team_id`,
+ NULL AS `team_name` */;
 SET character_set_client = @saved_cs_client;
 DROP TABLE IF EXISTS `best_swimmer5y_results`;
 /*!50001 DROP VIEW IF EXISTS `best_swimmer5y_results`*/;
 SET @saved_cs_client     = @@character_set_client;
 SET character_set_client = utf8mb4;
 /*!50001 CREATE VIEW `best_swimmer5y_results` AS SELECT
- 1 AS `swimmer_id`,
-  1 AS `swimmer_name`,
-  1 AS `swimmer_year_of_birth`,
-  1 AS `gender_type_id`,
-  1 AS `event_type_id`,
-  1 AS `event_type_code`,
-  1 AS `pool_type_id`,
-  1 AS `pool_type_code`,
-  1 AS `season_id`,
-  1 AS `season_header_year`,
-  1 AS `meeting_individual_result_id`,
-  1 AS `minutes`,
-  1 AS `seconds`,
-  1 AS `hundredths`,
-  1 AS `total_hundredths`,
-  1 AS `meeting_id`,
-  1 AS `meeting_date`,
-  1 AS `meeting_name`,
-  1 AS `team_id`,
-  1 AS `team_name` */;
+ NULL AS `swimmer_id`,
+ NULL AS `swimmer_name`,
+ NULL AS `swimmer_year_of_birth`,
+ NULL AS `gender_type_id`,
+ NULL AS `event_type_id`,
+ NULL AS `event_type_code`,
+ NULL AS `pool_type_id`,
+ NULL AS `pool_type_code`,
+ NULL AS `season_id`,
+ NULL AS `season_header_year`,
+ NULL AS `meeting_individual_result_id`,
+ NULL AS `minutes`,
+ NULL AS `seconds`,
+ NULL AS `hundredths`,
+ NULL AS `total_hundredths`,
+ NULL AS `meeting_id`,
+ NULL AS `meeting_date`,
+ NULL AS `meeting_name`,
+ NULL AS `team_id`,
+ NULL AS `team_name` */;
 SET character_set_client = @saved_cs_client;
 DROP TABLE IF EXISTS `best_swimmer_all_time_results`;
 /*!50001 DROP VIEW IF EXISTS `best_swimmer_all_time_results`*/;
 SET @saved_cs_client     = @@character_set_client;
 SET character_set_client = utf8mb4;
 /*!50001 CREATE VIEW `best_swimmer_all_time_results` AS SELECT
- 1 AS `swimmer_id`,
-  1 AS `swimmer_name`,
-  1 AS `swimmer_year_of_birth`,
-  1 AS `gender_type_id`,
-  1 AS `event_type_id`,
-  1 AS `event_type_code`,
-  1 AS `pool_type_id`,
-  1 AS `pool_type_code`,
-  1 AS `season_id`,
-  1 AS `season_header_year`,
-  1 AS `meeting_individual_result_id`,
-  1 AS `minutes`,
-  1 AS `seconds`,
-  1 AS `hundredths`,
-  1 AS `total_hundredths`,
-  1 AS `meeting_id`,
-  1 AS `meeting_date`,
-  1 AS `meeting_name`,
-  1 AS `team_id`,
-  1 AS `team_name` */;
+ NULL AS `swimmer_id`,
+ NULL AS `swimmer_name`,
+ NULL AS `swimmer_year_of_birth`,
+ NULL AS `gender_type_id`,
+ NULL AS `event_type_id`,
+ NULL AS `event_type_code`,
+ NULL AS `pool_type_id`,
+ NULL AS `pool_type_code`,
+ NULL AS `season_id`,
+ NULL AS `season_header_year`,
+ NULL AS `meeting_individual_result_id`,
+ NULL AS `minutes`,
+ NULL AS `seconds`,
+ NULL AS `hundredths`,
+ NULL AS `total_hundredths`,
+ NULL AS `meeting_id`,
+ NULL AS `meeting_date`,
+ NULL AS `meeting_name`,
+ NULL AS `team_id`,
+ NULL AS `team_name` */;
+SET character_set_client = @saved_cs_client;
+DROP TABLE IF EXISTS `best_swimmer_current_vs_previous_results`;
+/*!50001 DROP VIEW IF EXISTS `best_swimmer_current_vs_previous_results`*/;
+SET @saved_cs_client     = @@character_set_client;
+SET character_set_client = utf8mb4;
+/*!50001 CREATE VIEW `best_swimmer_current_vs_previous_results` AS SELECT
+ NULL AS `swimmer_id`,
+ NULL AS `swimmer_name`,
+ NULL AS `swimmer_year_of_birth`,
+ NULL AS `gender_type_id`,
+ NULL AS `event_type_id`,
+ NULL AS `event_type_code`,
+ NULL AS `pool_type_id`,
+ NULL AS `pool_type_code`,
+ NULL AS `season_id`,
+ NULL AS `season_header_year`,
+ NULL AS `meeting_individual_result_id`,
+ NULL AS `minutes`,
+ NULL AS `seconds`,
+ NULL AS `hundredths`,
+ NULL AS `total_hundredths`,
+ NULL AS `meeting_id`,
+ NULL AS `meeting_date`,
+ NULL AS `meeting_name`,
+ NULL AS `team_id`,
+ NULL AS `team_name`,
+ NULL AS `old_minutes`,
+ NULL AS `old_seconds`,
+ NULL AS `old_hundredths` */;
 SET character_set_client = @saved_cs_client;
 DROP TABLE IF EXISTS `calendars`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
@@ -505,7 +534,7 @@ CREATE TABLE `calendars` (
   KEY `index_calendars_on_meeting_id` (`meeting_id`),
   KEY `index_calendars_on_meeting_code` (`meeting_code`),
   KEY `index_calendars_on_cancelled` (`cancelled`)
-) ENGINE=InnoDB AUTO_INCREMENT=1563 DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_general_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=1675 DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_general_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 DROP TABLE IF EXISTS `category_types`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
@@ -551,7 +580,7 @@ CREATE TABLE `cities` (
   UNIQUE KEY `index_cities_on_country_code_and_area_and_name` (`country_code`,`area`,`name`),
   KEY `index_cities_on_name` (`name`),
   FULLTEXT KEY `city_name` (`name`,`area`)
-) ENGINE=InnoDB AUTO_INCREMENT=235 DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_general_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=249 DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_general_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 DROP TABLE IF EXISTS `coach_level_types`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
@@ -634,7 +663,7 @@ CREATE TABLE `data_import_laps` (
   KEY `idx_di_laps_mir_id` (`meeting_individual_result_id`),
   KEY `idx_di_laps_phase_file` (`phase_file_path`),
   KEY `idx_di_lap_mir_key` (`meeting_individual_result_key`)
-) ENGINE=InnoDB AUTO_INCREMENT=87913 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=104117 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 DROP TABLE IF EXISTS `data_import_meeting_individual_results`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
@@ -675,7 +704,7 @@ CREATE TABLE `data_import_meeting_individual_results` (
   KEY `idx_di_mir_swimmer_key` (`swimmer_key`),
   KEY `idx_di_mir_team_key` (`team_key`),
   KEY `idx_di_mir_program_key` (`meeting_program_key`)
-) ENGINE=InnoDB AUTO_INCREMENT=67084 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=135375 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 DROP TABLE IF EXISTS `data_import_meeting_relay_results`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
@@ -712,7 +741,7 @@ CREATE TABLE `data_import_meeting_relay_results` (
   KEY `idx_di_mrr_phase_file` (`phase_file_path`),
   KEY `idx_di_mrr_team_key` (`team_key`),
   KEY `idx_di_mrr_program_key` (`meeting_program_key`)
-) ENGINE=InnoDB AUTO_INCREMENT=4015 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=4325 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 DROP TABLE IF EXISTS `data_import_meeting_relay_swimmers`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
@@ -748,7 +777,7 @@ CREATE TABLE `data_import_meeting_relay_swimmers` (
   KEY `idx_di_mrs_phase_file` (`phase_file_path`),
   KEY `idx_di_mrs_swimmer_key` (`swimmer_key`),
   KEY `idx_di_mrs_mrr_key` (`meeting_relay_result_key`)
-) ENGINE=InnoDB AUTO_INCREMENT=16073 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=17483 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 DROP TABLE IF EXISTS `data_import_relay_laps`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
@@ -781,7 +810,7 @@ CREATE TABLE `data_import_relay_laps` (
   KEY `idx_di_rel_laps_mrr_id` (`meeting_relay_result_id`),
   KEY `idx_di_rel_laps_phase_file` (`phase_file_path`),
   KEY `idx_di_rlap_mrs_key` (`meeting_relay_swimmer_key`)
-) ENGINE=InnoDB AUTO_INCREMENT=16068 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=17276 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 DROP TABLE IF EXISTS `day_part_types`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
@@ -1109,7 +1138,7 @@ CREATE TABLE `import_queues` (
   KEY `index_import_queues_on_user_id_and_uid` (`user_id`,`uid`),
   KEY `index_import_queues_on_import_queue_id` (`import_queue_id`),
   KEY `index_import_queues_on_batch_sql` (`batch_sql`)
-) ENGINE=InnoDB AUTO_INCREMENT=1992 DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=2096 DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 DROP TABLE IF EXISTS `individual_records`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
@@ -1201,14 +1230,14 @@ CREATE TABLE `laps` (
   CONSTRAINT `fk_rails_a33a36dd83` FOREIGN KEY (`swimmer_id`) REFERENCES `swimmers` (`id`),
   CONSTRAINT `fk_rails_c073154702` FOREIGN KEY (`team_id`) REFERENCES `teams` (`id`),
   CONSTRAINT `fk_rails_d2251ad180` FOREIGN KEY (`meeting_individual_result_id`) REFERENCES `meeting_individual_results` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=130679 DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_general_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=132636 DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_general_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 DROP TABLE IF EXISTS `last_seasons_ids`;
 /*!50001 DROP VIEW IF EXISTS `last_seasons_ids`*/;
 SET @saved_cs_client     = @@character_set_client;
 SET character_set_client = utf8mb4;
 /*!50001 CREATE VIEW `last_seasons_ids` AS SELECT
- 1 AS `id` */;
+ NULL AS `id` */;
 SET character_set_client = @saved_cs_client;
 DROP TABLE IF EXISTS `locker_cabinet_types`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
@@ -1340,7 +1369,7 @@ CREATE TABLE `meeting_events` (
   KEY `fk_meeting_events_meeting_sessions` (`meeting_session_id`),
   KEY `fk_meeting_events_event_types` (`event_type_id`),
   KEY `fk_meeting_events_heat_types` (`heat_type_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=27027 DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_general_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=28393 DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_general_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 DROP TABLE IF EXISTS `meeting_individual_results`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
@@ -1383,7 +1412,7 @@ CREATE TABLE `meeting_individual_results` (
   KEY `index_meeting_individual_results_on_disqualified` (`disqualified`),
   KEY `index_meeting_individual_results_on_personal_best` (`personal_best`),
   KEY `index_meeting_individual_results_on_season_type_best` (`season_type_best`)
-) ENGINE=InnoDB AUTO_INCREMENT=1326496 DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_general_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=1422090 DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_general_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 DROP TABLE IF EXISTS `meeting_programs`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
@@ -1409,7 +1438,7 @@ CREATE TABLE `meeting_programs` (
   KEY `fk_meeting_programs_meeting_events` (`meeting_event_id`),
   KEY `fk_meeting_programs_pool_types` (`pool_type_id`),
   KEY `fk_meeting_programs_time_standards` (`standard_timing_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=273585 DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_general_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=296674 DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_general_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 DROP TABLE IF EXISTS `meeting_relay_reservations`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
@@ -1476,7 +1505,7 @@ CREATE TABLE `meeting_relay_results` (
   KEY `fk_meeting_relay_results_team_affiliations` (`team_affiliation_id`),
   KEY `fk_meeting_relay_results_entry_time_types` (`entry_time_type_id`),
   KEY `idx_mrr_disqualification_code_type` (`disqualification_code_type_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=45541 DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_general_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=45640 DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_general_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 DROP TABLE IF EXISTS `meeting_relay_swimmers`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
@@ -1507,7 +1536,7 @@ CREATE TABLE `meeting_relay_swimmers` (
   KEY `relay_order` (`relay_order`),
   KEY `fk_meeting_relay_swimmers_meeting_relay_results` (`meeting_relay_result_id`),
   KEY `index_meeting_relay_swimmers_on_length_in_meters` (`length_in_meters`)
-) ENGINE=InnoDB AUTO_INCREMENT=28064 DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_general_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=28460 DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_general_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 DROP TABLE IF EXISTS `meeting_reservations`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
@@ -1563,7 +1592,7 @@ CREATE TABLE `meeting_sessions` (
   KEY `fk_meeting_sessions_meetings` (`meeting_id`),
   KEY `fk_meeting_sessions_swimming_pools` (`swimming_pool_id`),
   KEY `fk_meeting_sessions_day_part_types` (`day_part_type_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=4270 DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_general_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=4422 DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_general_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 DROP TABLE IF EXISTS `meeting_team_scores`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
@@ -1655,7 +1684,7 @@ CREATE TABLE `meetings` (
   FULLTEXT KEY `meeting_name` (`description`,`code`),
   FULLTEXT KEY `meeting_code` (`code`),
   FULLTEXT KEY `meeting_desc` (`description`)
-) ENGINE=InnoDB AUTO_INCREMENT=20016 DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_general_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=20130 DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_general_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 DROP TABLE IF EXISTS `movement_scope_types`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
@@ -1941,7 +1970,7 @@ CREATE TABLE `sessions` (
   PRIMARY KEY (`id`),
   KEY `index_sessions_on_session_id` (`session_id`),
   KEY `index_sessions_on_updated_at` (`updated_at`)
-) ENGINE=InnoDB AUTO_INCREMENT=1275 DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_general_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=1293 DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_general_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 DROP TABLE IF EXISTS `settings`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
@@ -2112,7 +2141,7 @@ CREATE TABLE `swimmers` (
   FULLTEXT KEY `swimmer_first_name` (`first_name`),
   FULLTEXT KEY `swimmer_last_name` (`last_name`),
   FULLTEXT KEY `swimmer_complete_name` (`complete_name`)
-) ENGINE=InnoDB AUTO_INCREMENT=56290 DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_general_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=58875 DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_general_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 DROP TABLE IF EXISTS `swimming_pool_reviews`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
@@ -2175,7 +2204,7 @@ CREATE TABLE `swimming_pools` (
   KEY `fk_swimming_pools_hair_dryer_types` (`hair_dryer_type_id`),
   KEY `fk_swimming_pools_locker_cabinet_types` (`locker_cabinet_type_id`),
   FULLTEXT KEY `swimming_pool_name` (`name`,`nick_name`)
-) ENGINE=InnoDB AUTO_INCREMENT=319 DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_general_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=331 DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_general_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 DROP TABLE IF EXISTS `taggings`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
@@ -2232,7 +2261,7 @@ CREATE TABLE `team_affiliations` (
   KEY `fk_team_affiliations_teams` (`team_id`),
   KEY `index_team_affiliations_on_number` (`number`),
   FULLTEXT KEY `team_affiliation_name` (`name`)
-) ENGINE=InnoDB AUTO_INCREMENT=10150 DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_general_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=10426 DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_general_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 DROP TABLE IF EXISTS `team_aliases`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
@@ -2303,7 +2332,7 @@ CREATE TABLE `teams` (
   FULLTEXT KEY `team_only_name` (`name`),
   FULLTEXT KEY `team_editable_name` (`editable_name`),
   FULLTEXT KEY `team_name_variations` (`name_variations`)
-) ENGINE=InnoDB AUTO_INCREMENT=1699 DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_general_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=1731 DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_general_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 DROP TABLE IF EXISTS `timing_types`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
@@ -2662,7 +2691,7 @@ CREATE TABLE `users` (
   KEY `idx_users_swimmer_level_type` (`swimmer_level_type_id`),
   KEY `idx_users_coach_level_type` (`coach_level_type_id`),
   KEY `index_users_on_active` (`active`)
-) ENGINE=InnoDB AUTO_INCREMENT=786 DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_general_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=787 DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_general_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 DROP TABLE IF EXISTS `votes`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
@@ -2691,10 +2720,10 @@ CREATE TABLE `votes` (
 /*!50001 SET @saved_col_connection     = @@collation_connection */;
 /*!50001 SET character_set_client      = utf8mb4 */;
 /*!50001 SET character_set_results     = utf8mb4 */;
-/*!50001 SET collation_connection      = utf8mb4_uca1400_ai_ci */;
+/*!50001 SET collation_connection      = utf8mb4_general_ci */;
 /*!50001 CREATE ALGORITHM=UNDEFINED */
 /*!50013 DEFINER=`root`@`localhost` SQL SECURITY DEFINER */
-/*!50001 VIEW `best_50_and_100_results` AS with RecentSeasons as (select `goggles`.`seasons`.`id` AS `id` from `goggles`.`seasons` where `goggles`.`seasons`.`end_date` >= curdate() - interval 3 year order by `goggles`.`seasons`.`end_date` desc), RankedResults as (select `mir`.`swimmer_id` AS `swimmer_id`,`s`.`complete_name` AS `swimmer_name`,`s`.`year_of_birth` AS `swimmer_year_of_birth`,`s`.`gender_type_id` AS `gender_type_id`,`me`.`event_type_id` AS `event_type_id`,`et`.`code` AS `event_type_code`,`mp`.`pool_type_id` AS `pool_type_id`,`pt`.`code` AS `pool_type_code`,`m`.`season_id` AS `season_id`,`se`.`header_year` AS `season_header_year`,`mir`.`id` AS `meeting_individual_result_id`,`mir`.`minutes` AS `minutes`,`mir`.`seconds` AS `seconds`,`mir`.`hundredths` AS `hundredths`,`mir`.`minutes` * 6000 + `mir`.`seconds` * 100 + `mir`.`hundredths` AS `total_hundredths`,`m`.`id` AS `meeting_id`,`m`.`header_date` AS `meeting_date`,`m`.`description` AS `meeting_name`,`t`.`id` AS `team_id`,`t`.`name` AS `team_name`,row_number() over ( partition by `mir`.`swimmer_id`,`me`.`event_type_id`,`mp`.`pool_type_id` order by `mir`.`minutes` * 6000 + `mir`.`seconds` * 100 + `mir`.`hundredths`,`m`.`header_date` desc) AS `rn` from ((((((((((`goggles`.`meeting_individual_results` `mir` join `goggles`.`meeting_programs` `mp` on(`mp`.`id` = `mir`.`meeting_program_id`)) join `goggles`.`meeting_events` `me` on(`me`.`id` = `mp`.`meeting_event_id`)) join `goggles`.`meeting_sessions` `ms` on(`ms`.`id` = `me`.`meeting_session_id`)) join `goggles`.`meetings` `m` on(`m`.`id` = `ms`.`meeting_id`)) join `goggles`.`seasons` `se` on(`se`.`id` = `m`.`season_id`)) join `goggles`.`event_types` `et` on(`et`.`id` = `me`.`event_type_id`)) join `goggles`.`pool_types` `pt` on(`pt`.`id` = `mp`.`pool_type_id`)) join `goggles`.`swimmers` `s` on(`s`.`id` = `mir`.`swimmer_id`)) join `goggles`.`teams` `t` on(`t`.`id` = `mir`.`team_id`)) join `RecentSeasons` `rs` on(`m`.`season_id` = `rs`.`id`)) where `mir`.`disqualified` = 0 and `mir`.`minutes` * 6000 + `mir`.`seconds` * 100 + `mir`.`hundredths` > 0 and `me`.`event_type_id` in (2,3,11,12,15,16,19,20,22) and `mp`.`pool_type_id` in (1,2))select `RankedResults`.`swimmer_id` AS `swimmer_id`,`RankedResults`.`swimmer_name` AS `swimmer_name`,`RankedResults`.`swimmer_year_of_birth` AS `swimmer_year_of_birth`,`RankedResults`.`gender_type_id` AS `gender_type_id`,`RankedResults`.`event_type_id` AS `event_type_id`,`RankedResults`.`event_type_code` AS `event_type_code`,`RankedResults`.`pool_type_id` AS `pool_type_id`,`RankedResults`.`pool_type_code` AS `pool_type_code`,`RankedResults`.`season_id` AS `season_id`,`RankedResults`.`season_header_year` AS `season_header_year`,`RankedResults`.`meeting_individual_result_id` AS `meeting_individual_result_id`,`RankedResults`.`minutes` AS `minutes`,`RankedResults`.`seconds` AS `seconds`,`RankedResults`.`hundredths` AS `hundredths`,`RankedResults`.`total_hundredths` AS `total_hundredths`,`RankedResults`.`meeting_id` AS `meeting_id`,`RankedResults`.`meeting_date` AS `meeting_date`,`RankedResults`.`meeting_name` AS `meeting_name`,`RankedResults`.`team_id` AS `team_id`,`RankedResults`.`team_name` AS `team_name` from `RankedResults` where `RankedResults`.`rn` = 1 */;
+/*!50001 VIEW `best_50_and_100_results` AS with RecentSeasons as (select `seasons`.`id` AS `id` from `seasons` where `seasons`.`end_date` >= curdate() - interval 3 year order by `seasons`.`end_date` desc), RankedResults as (select `mir`.`swimmer_id` AS `swimmer_id`,`s`.`complete_name` AS `swimmer_name`,`s`.`year_of_birth` AS `swimmer_year_of_birth`,`s`.`gender_type_id` AS `gender_type_id`,`me`.`event_type_id` AS `event_type_id`,`et`.`code` AS `event_type_code`,`mp`.`pool_type_id` AS `pool_type_id`,`pt`.`code` AS `pool_type_code`,`m`.`season_id` AS `season_id`,`se`.`header_year` AS `season_header_year`,`mir`.`id` AS `meeting_individual_result_id`,`mir`.`minutes` AS `minutes`,`mir`.`seconds` AS `seconds`,`mir`.`hundredths` AS `hundredths`,`mir`.`minutes` * 6000 + `mir`.`seconds` * 100 + `mir`.`hundredths` AS `total_hundredths`,`m`.`id` AS `meeting_id`,`m`.`header_date` AS `meeting_date`,`m`.`description` AS `meeting_name`,`t`.`id` AS `team_id`,`t`.`name` AS `team_name`,row_number() over ( partition by `mir`.`swimmer_id`,`me`.`event_type_id`,`mp`.`pool_type_id` order by `mir`.`minutes` * 6000 + `mir`.`seconds` * 100 + `mir`.`hundredths`,`m`.`header_date` desc) AS `rn` from ((((((((((`meeting_individual_results` `mir` join `meeting_programs` `mp` on(`mp`.`id` = `mir`.`meeting_program_id`)) join `meeting_events` `me` on(`me`.`id` = `mp`.`meeting_event_id`)) join `meeting_sessions` `ms` on(`ms`.`id` = `me`.`meeting_session_id`)) join `meetings` `m` on(`m`.`id` = `ms`.`meeting_id`)) join `seasons` `se` on(`se`.`id` = `m`.`season_id`)) join `event_types` `et` on(`et`.`id` = `me`.`event_type_id`)) join `pool_types` `pt` on(`pt`.`id` = `mp`.`pool_type_id`)) join `swimmers` `s` on(`s`.`id` = `mir`.`swimmer_id`)) join `teams` `t` on(`t`.`id` = `mir`.`team_id`)) join `RecentSeasons` `rs` on(`m`.`season_id` = `rs`.`id`)) where `mir`.`disqualified` = 0 and `mir`.`minutes` * 6000 + `mir`.`seconds` * 100 + `mir`.`hundredths` > 0 and `me`.`event_type_id` in (2,3,11,12,15,16,19,20,22) and `mp`.`pool_type_id` in (1,2))select `RankedResults`.`swimmer_id` AS `swimmer_id`,`RankedResults`.`swimmer_name` AS `swimmer_name`,`RankedResults`.`swimmer_year_of_birth` AS `swimmer_year_of_birth`,`RankedResults`.`gender_type_id` AS `gender_type_id`,`RankedResults`.`event_type_id` AS `event_type_id`,`RankedResults`.`event_type_code` AS `event_type_code`,`RankedResults`.`pool_type_id` AS `pool_type_id`,`RankedResults`.`pool_type_code` AS `pool_type_code`,`RankedResults`.`season_id` AS `season_id`,`RankedResults`.`season_header_year` AS `season_header_year`,`RankedResults`.`meeting_individual_result_id` AS `meeting_individual_result_id`,`RankedResults`.`minutes` AS `minutes`,`RankedResults`.`seconds` AS `seconds`,`RankedResults`.`hundredths` AS `hundredths`,`RankedResults`.`total_hundredths` AS `total_hundredths`,`RankedResults`.`meeting_id` AS `meeting_id`,`RankedResults`.`meeting_date` AS `meeting_date`,`RankedResults`.`meeting_name` AS `meeting_name`,`RankedResults`.`team_id` AS `team_id`,`RankedResults`.`team_name` AS `team_name` from `RankedResults` where `RankedResults`.`rn` = 1 */;
 /*!50001 SET character_set_client      = @saved_cs_client */;
 /*!50001 SET character_set_results     = @saved_cs_results */;
 /*!50001 SET collation_connection      = @saved_col_connection */;
@@ -2704,10 +2733,10 @@ CREATE TABLE `votes` (
 /*!50001 SET @saved_col_connection     = @@collation_connection */;
 /*!50001 SET character_set_client      = utf8mb4 */;
 /*!50001 SET character_set_results     = utf8mb4 */;
-/*!50001 SET collation_connection      = utf8mb4_uca1400_ai_ci */;
+/*!50001 SET collation_connection      = utf8mb4_general_ci */;
 /*!50001 CREATE ALGORITHM=UNDEFINED */
 /*!50013 DEFINER=`root`@`localhost` SQL SECURITY DEFINER */
-/*!50001 VIEW `best_50_and_100_results5y` AS with RecentSeasons as (select `goggles`.`seasons`.`id` AS `id` from `goggles`.`seasons` where `goggles`.`seasons`.`end_date` >= curdate() - interval 5 year order by `goggles`.`seasons`.`end_date` desc), RankedResults as (select `mir`.`swimmer_id` AS `swimmer_id`,`s`.`complete_name` AS `swimmer_name`,`s`.`year_of_birth` AS `swimmer_year_of_birth`,`s`.`gender_type_id` AS `gender_type_id`,`me`.`event_type_id` AS `event_type_id`,`et`.`code` AS `event_type_code`,`mp`.`pool_type_id` AS `pool_type_id`,`pt`.`code` AS `pool_type_code`,`m`.`season_id` AS `season_id`,`se`.`header_year` AS `season_header_year`,`mir`.`id` AS `meeting_individual_result_id`,`mir`.`minutes` AS `minutes`,`mir`.`seconds` AS `seconds`,`mir`.`hundredths` AS `hundredths`,`mir`.`minutes` * 6000 + `mir`.`seconds` * 100 + `mir`.`hundredths` AS `total_hundredths`,`m`.`id` AS `meeting_id`,`m`.`header_date` AS `meeting_date`,`m`.`description` AS `meeting_name`,`t`.`id` AS `team_id`,`t`.`name` AS `team_name`,row_number() over ( partition by `mir`.`swimmer_id`,`me`.`event_type_id`,`mp`.`pool_type_id` order by `mir`.`minutes` * 6000 + `mir`.`seconds` * 100 + `mir`.`hundredths`,`m`.`header_date` desc) AS `rn` from ((((((((((`goggles`.`meeting_individual_results` `mir` join `goggles`.`meeting_programs` `mp` on(`mp`.`id` = `mir`.`meeting_program_id`)) join `goggles`.`meeting_events` `me` on(`me`.`id` = `mp`.`meeting_event_id`)) join `goggles`.`meeting_sessions` `ms` on(`ms`.`id` = `me`.`meeting_session_id`)) join `goggles`.`meetings` `m` on(`m`.`id` = `ms`.`meeting_id`)) join `goggles`.`seasons` `se` on(`se`.`id` = `m`.`season_id`)) join `goggles`.`event_types` `et` on(`et`.`id` = `me`.`event_type_id`)) join `goggles`.`pool_types` `pt` on(`pt`.`id` = `mp`.`pool_type_id`)) join `goggles`.`swimmers` `s` on(`s`.`id` = `mir`.`swimmer_id`)) join `goggles`.`teams` `t` on(`t`.`id` = `mir`.`team_id`)) join `RecentSeasons` `rs` on(`m`.`season_id` = `rs`.`id`)) where `mir`.`disqualified` = 0 and `mir`.`minutes` * 6000 + `mir`.`seconds` * 100 + `mir`.`hundredths` > 0 and `me`.`event_type_id` in (2,3,11,12,15,16,19,20,22) and `mp`.`pool_type_id` in (1,2))select `RankedResults`.`swimmer_id` AS `swimmer_id`,`RankedResults`.`swimmer_name` AS `swimmer_name`,`RankedResults`.`swimmer_year_of_birth` AS `swimmer_year_of_birth`,`RankedResults`.`gender_type_id` AS `gender_type_id`,`RankedResults`.`event_type_id` AS `event_type_id`,`RankedResults`.`event_type_code` AS `event_type_code`,`RankedResults`.`pool_type_id` AS `pool_type_id`,`RankedResults`.`pool_type_code` AS `pool_type_code`,`RankedResults`.`season_id` AS `season_id`,`RankedResults`.`season_header_year` AS `season_header_year`,`RankedResults`.`meeting_individual_result_id` AS `meeting_individual_result_id`,`RankedResults`.`minutes` AS `minutes`,`RankedResults`.`seconds` AS `seconds`,`RankedResults`.`hundredths` AS `hundredths`,`RankedResults`.`total_hundredths` AS `total_hundredths`,`RankedResults`.`meeting_id` AS `meeting_id`,`RankedResults`.`meeting_date` AS `meeting_date`,`RankedResults`.`meeting_name` AS `meeting_name`,`RankedResults`.`team_id` AS `team_id`,`RankedResults`.`team_name` AS `team_name` from `RankedResults` where `RankedResults`.`rn` = 1 */;
+/*!50001 VIEW `best_50_and_100_results5y` AS with RecentSeasons as (select `seasons`.`id` AS `id` from `seasons` where `seasons`.`end_date` >= curdate() - interval 5 year order by `seasons`.`end_date` desc), RankedResults as (select `mir`.`swimmer_id` AS `swimmer_id`,`s`.`complete_name` AS `swimmer_name`,`s`.`year_of_birth` AS `swimmer_year_of_birth`,`s`.`gender_type_id` AS `gender_type_id`,`me`.`event_type_id` AS `event_type_id`,`et`.`code` AS `event_type_code`,`mp`.`pool_type_id` AS `pool_type_id`,`pt`.`code` AS `pool_type_code`,`m`.`season_id` AS `season_id`,`se`.`header_year` AS `season_header_year`,`mir`.`id` AS `meeting_individual_result_id`,`mir`.`minutes` AS `minutes`,`mir`.`seconds` AS `seconds`,`mir`.`hundredths` AS `hundredths`,`mir`.`minutes` * 6000 + `mir`.`seconds` * 100 + `mir`.`hundredths` AS `total_hundredths`,`m`.`id` AS `meeting_id`,`m`.`header_date` AS `meeting_date`,`m`.`description` AS `meeting_name`,`t`.`id` AS `team_id`,`t`.`name` AS `team_name`,row_number() over ( partition by `mir`.`swimmer_id`,`me`.`event_type_id`,`mp`.`pool_type_id` order by `mir`.`minutes` * 6000 + `mir`.`seconds` * 100 + `mir`.`hundredths`,`m`.`header_date` desc) AS `rn` from ((((((((((`meeting_individual_results` `mir` join `meeting_programs` `mp` on(`mp`.`id` = `mir`.`meeting_program_id`)) join `meeting_events` `me` on(`me`.`id` = `mp`.`meeting_event_id`)) join `meeting_sessions` `ms` on(`ms`.`id` = `me`.`meeting_session_id`)) join `meetings` `m` on(`m`.`id` = `ms`.`meeting_id`)) join `seasons` `se` on(`se`.`id` = `m`.`season_id`)) join `event_types` `et` on(`et`.`id` = `me`.`event_type_id`)) join `pool_types` `pt` on(`pt`.`id` = `mp`.`pool_type_id`)) join `swimmers` `s` on(`s`.`id` = `mir`.`swimmer_id`)) join `teams` `t` on(`t`.`id` = `mir`.`team_id`)) join `RecentSeasons` `rs` on(`m`.`season_id` = `rs`.`id`)) where `mir`.`disqualified` = 0 and `mir`.`minutes` * 6000 + `mir`.`seconds` * 100 + `mir`.`hundredths` > 0 and `me`.`event_type_id` in (2,3,11,12,15,16,19,20,22) and `mp`.`pool_type_id` in (1,2))select `RankedResults`.`swimmer_id` AS `swimmer_id`,`RankedResults`.`swimmer_name` AS `swimmer_name`,`RankedResults`.`swimmer_year_of_birth` AS `swimmer_year_of_birth`,`RankedResults`.`gender_type_id` AS `gender_type_id`,`RankedResults`.`event_type_id` AS `event_type_id`,`RankedResults`.`event_type_code` AS `event_type_code`,`RankedResults`.`pool_type_id` AS `pool_type_id`,`RankedResults`.`pool_type_code` AS `pool_type_code`,`RankedResults`.`season_id` AS `season_id`,`RankedResults`.`season_header_year` AS `season_header_year`,`RankedResults`.`meeting_individual_result_id` AS `meeting_individual_result_id`,`RankedResults`.`minutes` AS `minutes`,`RankedResults`.`seconds` AS `seconds`,`RankedResults`.`hundredths` AS `hundredths`,`RankedResults`.`total_hundredths` AS `total_hundredths`,`RankedResults`.`meeting_id` AS `meeting_id`,`RankedResults`.`meeting_date` AS `meeting_date`,`RankedResults`.`meeting_name` AS `meeting_name`,`RankedResults`.`team_id` AS `team_id`,`RankedResults`.`team_name` AS `team_name` from `RankedResults` where `RankedResults`.`rn` = 1 */;
 /*!50001 SET character_set_client      = @saved_cs_client */;
 /*!50001 SET character_set_results     = @saved_cs_results */;
 /*!50001 SET collation_connection      = @saved_col_connection */;
@@ -2717,10 +2746,10 @@ CREATE TABLE `votes` (
 /*!50001 SET @saved_col_connection     = @@collation_connection */;
 /*!50001 SET character_set_client      = utf8mb4 */;
 /*!50001 SET character_set_results     = utf8mb4 */;
-/*!50001 SET collation_connection      = utf8mb4_uca1400_ai_ci */;
+/*!50001 SET collation_connection      = utf8mb4_general_ci */;
 /*!50001 CREATE ALGORITHM=UNDEFINED */
 /*!50013 DEFINER=`root`@`localhost` SQL SECURITY DEFINER */
-/*!50001 VIEW `best_50m_results` AS with RecentSeasons as (select `goggles`.`seasons`.`id` AS `id` from `goggles`.`seasons` where `goggles`.`seasons`.`end_date` >= curdate() - interval 3 year order by `goggles`.`seasons`.`end_date` desc), RankedResults as (select `mir`.`swimmer_id` AS `swimmer_id`,`s`.`complete_name` AS `swimmer_name`,`s`.`year_of_birth` AS `swimmer_year_of_birth`,`s`.`gender_type_id` AS `gender_type_id`,`me`.`event_type_id` AS `event_type_id`,`et`.`code` AS `event_type_code`,`mp`.`pool_type_id` AS `pool_type_id`,`pt`.`code` AS `pool_type_code`,`m`.`season_id` AS `season_id`,`se`.`header_year` AS `season_header_year`,`mir`.`id` AS `meeting_individual_result_id`,`mir`.`minutes` AS `minutes`,`mir`.`seconds` AS `seconds`,`mir`.`hundredths` AS `hundredths`,`mir`.`minutes` * 6000 + `mir`.`seconds` * 100 + `mir`.`hundredths` AS `total_hundredths`,`m`.`id` AS `meeting_id`,`m`.`header_date` AS `meeting_date`,`m`.`description` AS `meeting_name`,`t`.`id` AS `team_id`,`t`.`name` AS `team_name`,row_number() over ( partition by `mir`.`swimmer_id`,`me`.`event_type_id`,`mp`.`pool_type_id` order by `mir`.`minutes` * 6000 + `mir`.`seconds` * 100 + `mir`.`hundredths`,`m`.`header_date` desc) AS `rn` from ((((((((((`goggles`.`meeting_individual_results` `mir` join `goggles`.`meeting_programs` `mp` on(`mp`.`id` = `mir`.`meeting_program_id`)) join `goggles`.`meeting_events` `me` on(`me`.`id` = `mp`.`meeting_event_id`)) join `goggles`.`meeting_sessions` `ms` on(`ms`.`id` = `me`.`meeting_session_id`)) join `goggles`.`meetings` `m` on(`m`.`id` = `ms`.`meeting_id`)) join `goggles`.`seasons` `se` on(`se`.`id` = `m`.`season_id`)) join `goggles`.`event_types` `et` on(`et`.`id` = `me`.`event_type_id`)) join `goggles`.`pool_types` `pt` on(`pt`.`id` = `mp`.`pool_type_id`)) join `goggles`.`swimmers` `s` on(`s`.`id` = `mir`.`swimmer_id`)) join `goggles`.`teams` `t` on(`t`.`id` = `mir`.`team_id`)) join `RecentSeasons` `rs` on(`m`.`season_id` = `rs`.`id`)) where `mir`.`disqualified` = 0 and `mir`.`minutes` * 6000 + `mir`.`seconds` * 100 + `mir`.`hundredths` > 0 and `me`.`event_type_id` in (2,11,15,19) and `mp`.`pool_type_id` in (1,2))select `RankedResults`.`swimmer_id` AS `swimmer_id`,`RankedResults`.`swimmer_name` AS `swimmer_name`,`RankedResults`.`swimmer_year_of_birth` AS `swimmer_year_of_birth`,`RankedResults`.`gender_type_id` AS `gender_type_id`,`RankedResults`.`event_type_id` AS `event_type_id`,`RankedResults`.`event_type_code` AS `event_type_code`,`RankedResults`.`pool_type_id` AS `pool_type_id`,`RankedResults`.`pool_type_code` AS `pool_type_code`,`RankedResults`.`season_id` AS `season_id`,`RankedResults`.`season_header_year` AS `season_header_year`,`RankedResults`.`meeting_individual_result_id` AS `meeting_individual_result_id`,`RankedResults`.`minutes` AS `minutes`,`RankedResults`.`seconds` AS `seconds`,`RankedResults`.`hundredths` AS `hundredths`,`RankedResults`.`total_hundredths` AS `total_hundredths`,`RankedResults`.`meeting_id` AS `meeting_id`,`RankedResults`.`meeting_date` AS `meeting_date`,`RankedResults`.`meeting_name` AS `meeting_name`,`RankedResults`.`team_id` AS `team_id`,`RankedResults`.`team_name` AS `team_name` from `RankedResults` where `RankedResults`.`rn` = 1 */;
+/*!50001 VIEW `best_50m_results` AS with RecentSeasons as (select `seasons`.`id` AS `id` from `seasons` where `seasons`.`end_date` >= curdate() - interval 3 year order by `seasons`.`end_date` desc), RankedResults as (select `mir`.`swimmer_id` AS `swimmer_id`,`s`.`complete_name` AS `swimmer_name`,`s`.`year_of_birth` AS `swimmer_year_of_birth`,`s`.`gender_type_id` AS `gender_type_id`,`me`.`event_type_id` AS `event_type_id`,`et`.`code` AS `event_type_code`,`mp`.`pool_type_id` AS `pool_type_id`,`pt`.`code` AS `pool_type_code`,`m`.`season_id` AS `season_id`,`se`.`header_year` AS `season_header_year`,`mir`.`id` AS `meeting_individual_result_id`,`mir`.`minutes` AS `minutes`,`mir`.`seconds` AS `seconds`,`mir`.`hundredths` AS `hundredths`,`mir`.`minutes` * 6000 + `mir`.`seconds` * 100 + `mir`.`hundredths` AS `total_hundredths`,`m`.`id` AS `meeting_id`,`m`.`header_date` AS `meeting_date`,`m`.`description` AS `meeting_name`,`t`.`id` AS `team_id`,`t`.`name` AS `team_name`,row_number() over ( partition by `mir`.`swimmer_id`,`me`.`event_type_id`,`mp`.`pool_type_id` order by `mir`.`minutes` * 6000 + `mir`.`seconds` * 100 + `mir`.`hundredths`,`m`.`header_date` desc) AS `rn` from ((((((((((`meeting_individual_results` `mir` join `meeting_programs` `mp` on(`mp`.`id` = `mir`.`meeting_program_id`)) join `meeting_events` `me` on(`me`.`id` = `mp`.`meeting_event_id`)) join `meeting_sessions` `ms` on(`ms`.`id` = `me`.`meeting_session_id`)) join `meetings` `m` on(`m`.`id` = `ms`.`meeting_id`)) join `seasons` `se` on(`se`.`id` = `m`.`season_id`)) join `event_types` `et` on(`et`.`id` = `me`.`event_type_id`)) join `pool_types` `pt` on(`pt`.`id` = `mp`.`pool_type_id`)) join `swimmers` `s` on(`s`.`id` = `mir`.`swimmer_id`)) join `teams` `t` on(`t`.`id` = `mir`.`team_id`)) join `RecentSeasons` `rs` on(`m`.`season_id` = `rs`.`id`)) where `mir`.`disqualified` = 0 and `mir`.`minutes` * 6000 + `mir`.`seconds` * 100 + `mir`.`hundredths` > 0 and `me`.`event_type_id` in (2,11,15,19) and `mp`.`pool_type_id` in (1,2))select `RankedResults`.`swimmer_id` AS `swimmer_id`,`RankedResults`.`swimmer_name` AS `swimmer_name`,`RankedResults`.`swimmer_year_of_birth` AS `swimmer_year_of_birth`,`RankedResults`.`gender_type_id` AS `gender_type_id`,`RankedResults`.`event_type_id` AS `event_type_id`,`RankedResults`.`event_type_code` AS `event_type_code`,`RankedResults`.`pool_type_id` AS `pool_type_id`,`RankedResults`.`pool_type_code` AS `pool_type_code`,`RankedResults`.`season_id` AS `season_id`,`RankedResults`.`season_header_year` AS `season_header_year`,`RankedResults`.`meeting_individual_result_id` AS `meeting_individual_result_id`,`RankedResults`.`minutes` AS `minutes`,`RankedResults`.`seconds` AS `seconds`,`RankedResults`.`hundredths` AS `hundredths`,`RankedResults`.`total_hundredths` AS `total_hundredths`,`RankedResults`.`meeting_id` AS `meeting_id`,`RankedResults`.`meeting_date` AS `meeting_date`,`RankedResults`.`meeting_name` AS `meeting_name`,`RankedResults`.`team_id` AS `team_id`,`RankedResults`.`team_name` AS `team_name` from `RankedResults` where `RankedResults`.`rn` = 1 */;
 /*!50001 SET character_set_client      = @saved_cs_client */;
 /*!50001 SET character_set_results     = @saved_cs_results */;
 /*!50001 SET collation_connection      = @saved_col_connection */;
@@ -2730,10 +2759,10 @@ CREATE TABLE `votes` (
 /*!50001 SET @saved_col_connection     = @@collation_connection */;
 /*!50001 SET character_set_client      = utf8mb4 */;
 /*!50001 SET character_set_results     = utf8mb4 */;
-/*!50001 SET collation_connection      = utf8mb4_uca1400_ai_ci */;
+/*!50001 SET collation_connection      = utf8mb4_general_ci */;
 /*!50001 CREATE ALGORITHM=UNDEFINED */
 /*!50013 DEFINER=`root`@`localhost` SQL SECURITY DEFINER */
-/*!50001 VIEW `best_swimmer3y_results` AS with RecentSeasons as (select `goggles`.`seasons`.`id` AS `id` from `goggles`.`seasons` where `goggles`.`seasons`.`end_date` >= curdate() - interval 3 year order by `goggles`.`seasons`.`end_date` desc), RankedResults as (select `mir`.`swimmer_id` AS `swimmer_id`,`s`.`complete_name` AS `swimmer_name`,`s`.`year_of_birth` AS `swimmer_year_of_birth`,`s`.`gender_type_id` AS `gender_type_id`,`me`.`event_type_id` AS `event_type_id`,`et`.`code` AS `event_type_code`,`mp`.`pool_type_id` AS `pool_type_id`,`pt`.`code` AS `pool_type_code`,`m`.`season_id` AS `season_id`,`se`.`header_year` AS `season_header_year`,`mir`.`id` AS `meeting_individual_result_id`,`mir`.`minutes` AS `minutes`,`mir`.`seconds` AS `seconds`,`mir`.`hundredths` AS `hundredths`,`mir`.`minutes` * 6000 + `mir`.`seconds` * 100 + `mir`.`hundredths` AS `total_hundredths`,`m`.`id` AS `meeting_id`,`m`.`header_date` AS `meeting_date`,`m`.`description` AS `meeting_name`,`t`.`id` AS `team_id`,`t`.`name` AS `team_name`,row_number() over ( partition by `mir`.`swimmer_id`,`me`.`event_type_id`,`mp`.`pool_type_id` order by `mir`.`minutes` * 6000 + `mir`.`seconds` * 100 + `mir`.`hundredths`,`m`.`header_date` desc) AS `rn` from ((((((((((`goggles`.`meeting_individual_results` `mir` join `goggles`.`meeting_programs` `mp` on(`mp`.`id` = `mir`.`meeting_program_id`)) join `goggles`.`meeting_events` `me` on(`me`.`id` = `mp`.`meeting_event_id`)) join `goggles`.`meeting_sessions` `ms` on(`ms`.`id` = `me`.`meeting_session_id`)) join `goggles`.`meetings` `m` on(`m`.`id` = `ms`.`meeting_id`)) join `goggles`.`seasons` `se` on(`se`.`id` = `m`.`season_id`)) join `goggles`.`event_types` `et` on(`et`.`id` = `me`.`event_type_id`)) join `goggles`.`pool_types` `pt` on(`pt`.`id` = `mp`.`pool_type_id`)) join `goggles`.`swimmers` `s` on(`s`.`id` = `mir`.`swimmer_id`)) join `goggles`.`teams` `t` on(`t`.`id` = `mir`.`team_id`)) join `RecentSeasons` `rs` on(`m`.`season_id` = `rs`.`id`)) where `mir`.`disqualified` = 0 and `mir`.`minutes` * 6000 + `mir`.`seconds` * 100 + `mir`.`hundredths` > 0 and `me`.`event_type_id` in (2,3,4,5,6,7,11,12,13,15,16,17,19,20,21,22,23,24) and `mp`.`pool_type_id` in (1,2))select `RankedResults`.`swimmer_id` AS `swimmer_id`,`RankedResults`.`swimmer_name` AS `swimmer_name`,`RankedResults`.`swimmer_year_of_birth` AS `swimmer_year_of_birth`,`RankedResults`.`gender_type_id` AS `gender_type_id`,`RankedResults`.`event_type_id` AS `event_type_id`,`RankedResults`.`event_type_code` AS `event_type_code`,`RankedResults`.`pool_type_id` AS `pool_type_id`,`RankedResults`.`pool_type_code` AS `pool_type_code`,`RankedResults`.`season_id` AS `season_id`,`RankedResults`.`season_header_year` AS `season_header_year`,`RankedResults`.`meeting_individual_result_id` AS `meeting_individual_result_id`,`RankedResults`.`minutes` AS `minutes`,`RankedResults`.`seconds` AS `seconds`,`RankedResults`.`hundredths` AS `hundredths`,`RankedResults`.`total_hundredths` AS `total_hundredths`,`RankedResults`.`meeting_id` AS `meeting_id`,`RankedResults`.`meeting_date` AS `meeting_date`,`RankedResults`.`meeting_name` AS `meeting_name`,`RankedResults`.`team_id` AS `team_id`,`RankedResults`.`team_name` AS `team_name` from `RankedResults` where `RankedResults`.`rn` = 1 */;
+/*!50001 VIEW `best_swimmer3y_results` AS with RecentSeasons as (select `seasons`.`id` AS `id` from `seasons` where `seasons`.`end_date` >= curdate() - interval 3 year order by `seasons`.`end_date` desc), RankedResults as (select `mir`.`swimmer_id` AS `swimmer_id`,`s`.`complete_name` AS `swimmer_name`,`s`.`year_of_birth` AS `swimmer_year_of_birth`,`s`.`gender_type_id` AS `gender_type_id`,`me`.`event_type_id` AS `event_type_id`,`et`.`code` AS `event_type_code`,`mp`.`pool_type_id` AS `pool_type_id`,`pt`.`code` AS `pool_type_code`,`m`.`season_id` AS `season_id`,`se`.`header_year` AS `season_header_year`,`mir`.`id` AS `meeting_individual_result_id`,`mir`.`minutes` AS `minutes`,`mir`.`seconds` AS `seconds`,`mir`.`hundredths` AS `hundredths`,`mir`.`minutes` * 6000 + `mir`.`seconds` * 100 + `mir`.`hundredths` AS `total_hundredths`,`m`.`id` AS `meeting_id`,`m`.`header_date` AS `meeting_date`,`m`.`description` AS `meeting_name`,`t`.`id` AS `team_id`,`t`.`name` AS `team_name`,row_number() over ( partition by `mir`.`swimmer_id`,`me`.`event_type_id`,`mp`.`pool_type_id` order by `mir`.`minutes` * 6000 + `mir`.`seconds` * 100 + `mir`.`hundredths`,`m`.`header_date` desc) AS `rn` from ((((((((((`meeting_individual_results` `mir` join `meeting_programs` `mp` on(`mp`.`id` = `mir`.`meeting_program_id`)) join `meeting_events` `me` on(`me`.`id` = `mp`.`meeting_event_id`)) join `meeting_sessions` `ms` on(`ms`.`id` = `me`.`meeting_session_id`)) join `meetings` `m` on(`m`.`id` = `ms`.`meeting_id`)) join `seasons` `se` on(`se`.`id` = `m`.`season_id`)) join `event_types` `et` on(`et`.`id` = `me`.`event_type_id`)) join `pool_types` `pt` on(`pt`.`id` = `mp`.`pool_type_id`)) join `swimmers` `s` on(`s`.`id` = `mir`.`swimmer_id`)) join `teams` `t` on(`t`.`id` = `mir`.`team_id`)) join `RecentSeasons` `rs` on(`m`.`season_id` = `rs`.`id`)) where `mir`.`disqualified` = 0 and `mir`.`minutes` * 6000 + `mir`.`seconds` * 100 + `mir`.`hundredths` > 0 and `me`.`event_type_id` in (2,3,4,5,6,7,11,12,13,15,16,17,19,20,21,22,23,24) and `mp`.`pool_type_id` in (1,2))select `RankedResults`.`swimmer_id` AS `swimmer_id`,`RankedResults`.`swimmer_name` AS `swimmer_name`,`RankedResults`.`swimmer_year_of_birth` AS `swimmer_year_of_birth`,`RankedResults`.`gender_type_id` AS `gender_type_id`,`RankedResults`.`event_type_id` AS `event_type_id`,`RankedResults`.`event_type_code` AS `event_type_code`,`RankedResults`.`pool_type_id` AS `pool_type_id`,`RankedResults`.`pool_type_code` AS `pool_type_code`,`RankedResults`.`season_id` AS `season_id`,`RankedResults`.`season_header_year` AS `season_header_year`,`RankedResults`.`meeting_individual_result_id` AS `meeting_individual_result_id`,`RankedResults`.`minutes` AS `minutes`,`RankedResults`.`seconds` AS `seconds`,`RankedResults`.`hundredths` AS `hundredths`,`RankedResults`.`total_hundredths` AS `total_hundredths`,`RankedResults`.`meeting_id` AS `meeting_id`,`RankedResults`.`meeting_date` AS `meeting_date`,`RankedResults`.`meeting_name` AS `meeting_name`,`RankedResults`.`team_id` AS `team_id`,`RankedResults`.`team_name` AS `team_name` from `RankedResults` where `RankedResults`.`rn` = 1 */;
 /*!50001 SET character_set_client      = @saved_cs_client */;
 /*!50001 SET character_set_results     = @saved_cs_results */;
 /*!50001 SET collation_connection      = @saved_col_connection */;
@@ -2743,10 +2772,10 @@ CREATE TABLE `votes` (
 /*!50001 SET @saved_col_connection     = @@collation_connection */;
 /*!50001 SET character_set_client      = utf8mb4 */;
 /*!50001 SET character_set_results     = utf8mb4 */;
-/*!50001 SET collation_connection      = utf8mb4_uca1400_ai_ci */;
+/*!50001 SET collation_connection      = utf8mb4_general_ci */;
 /*!50001 CREATE ALGORITHM=UNDEFINED */
 /*!50013 DEFINER=`root`@`localhost` SQL SECURITY DEFINER */
-/*!50001 VIEW `best_swimmer5y_results` AS with RecentSeasons as (select `goggles`.`seasons`.`id` AS `id` from `goggles`.`seasons` where `goggles`.`seasons`.`end_date` >= curdate() - interval 5 year order by `goggles`.`seasons`.`end_date` desc), RankedResults as (select `mir`.`swimmer_id` AS `swimmer_id`,`s`.`complete_name` AS `swimmer_name`,`s`.`year_of_birth` AS `swimmer_year_of_birth`,`s`.`gender_type_id` AS `gender_type_id`,`me`.`event_type_id` AS `event_type_id`,`et`.`code` AS `event_type_code`,`mp`.`pool_type_id` AS `pool_type_id`,`pt`.`code` AS `pool_type_code`,`m`.`season_id` AS `season_id`,`se`.`header_year` AS `season_header_year`,`mir`.`id` AS `meeting_individual_result_id`,`mir`.`minutes` AS `minutes`,`mir`.`seconds` AS `seconds`,`mir`.`hundredths` AS `hundredths`,`mir`.`minutes` * 6000 + `mir`.`seconds` * 100 + `mir`.`hundredths` AS `total_hundredths`,`m`.`id` AS `meeting_id`,`m`.`header_date` AS `meeting_date`,`m`.`description` AS `meeting_name`,`t`.`id` AS `team_id`,`t`.`name` AS `team_name`,row_number() over ( partition by `mir`.`swimmer_id`,`me`.`event_type_id`,`mp`.`pool_type_id` order by `mir`.`minutes` * 6000 + `mir`.`seconds` * 100 + `mir`.`hundredths`,`m`.`header_date` desc) AS `rn` from ((((((((((`goggles`.`meeting_individual_results` `mir` join `goggles`.`meeting_programs` `mp` on(`mp`.`id` = `mir`.`meeting_program_id`)) join `goggles`.`meeting_events` `me` on(`me`.`id` = `mp`.`meeting_event_id`)) join `goggles`.`meeting_sessions` `ms` on(`ms`.`id` = `me`.`meeting_session_id`)) join `goggles`.`meetings` `m` on(`m`.`id` = `ms`.`meeting_id`)) join `goggles`.`seasons` `se` on(`se`.`id` = `m`.`season_id`)) join `goggles`.`event_types` `et` on(`et`.`id` = `me`.`event_type_id`)) join `goggles`.`pool_types` `pt` on(`pt`.`id` = `mp`.`pool_type_id`)) join `goggles`.`swimmers` `s` on(`s`.`id` = `mir`.`swimmer_id`)) join `goggles`.`teams` `t` on(`t`.`id` = `mir`.`team_id`)) join `RecentSeasons` `rs` on(`m`.`season_id` = `rs`.`id`)) where `mir`.`disqualified` = 0 and `mir`.`minutes` * 6000 + `mir`.`seconds` * 100 + `mir`.`hundredths` > 0 and `me`.`event_type_id` in (2,3,4,5,6,7,11,12,13,15,16,17,19,20,21,22,23,24) and `mp`.`pool_type_id` in (1,2))select `RankedResults`.`swimmer_id` AS `swimmer_id`,`RankedResults`.`swimmer_name` AS `swimmer_name`,`RankedResults`.`swimmer_year_of_birth` AS `swimmer_year_of_birth`,`RankedResults`.`gender_type_id` AS `gender_type_id`,`RankedResults`.`event_type_id` AS `event_type_id`,`RankedResults`.`event_type_code` AS `event_type_code`,`RankedResults`.`pool_type_id` AS `pool_type_id`,`RankedResults`.`pool_type_code` AS `pool_type_code`,`RankedResults`.`season_id` AS `season_id`,`RankedResults`.`season_header_year` AS `season_header_year`,`RankedResults`.`meeting_individual_result_id` AS `meeting_individual_result_id`,`RankedResults`.`minutes` AS `minutes`,`RankedResults`.`seconds` AS `seconds`,`RankedResults`.`hundredths` AS `hundredths`,`RankedResults`.`total_hundredths` AS `total_hundredths`,`RankedResults`.`meeting_id` AS `meeting_id`,`RankedResults`.`meeting_date` AS `meeting_date`,`RankedResults`.`meeting_name` AS `meeting_name`,`RankedResults`.`team_id` AS `team_id`,`RankedResults`.`team_name` AS `team_name` from `RankedResults` where `RankedResults`.`rn` = 1 */;
+/*!50001 VIEW `best_swimmer5y_results` AS with RecentSeasons as (select `seasons`.`id` AS `id` from `seasons` where `seasons`.`end_date` >= curdate() - interval 5 year order by `seasons`.`end_date` desc), RankedResults as (select `mir`.`swimmer_id` AS `swimmer_id`,`s`.`complete_name` AS `swimmer_name`,`s`.`year_of_birth` AS `swimmer_year_of_birth`,`s`.`gender_type_id` AS `gender_type_id`,`me`.`event_type_id` AS `event_type_id`,`et`.`code` AS `event_type_code`,`mp`.`pool_type_id` AS `pool_type_id`,`pt`.`code` AS `pool_type_code`,`m`.`season_id` AS `season_id`,`se`.`header_year` AS `season_header_year`,`mir`.`id` AS `meeting_individual_result_id`,`mir`.`minutes` AS `minutes`,`mir`.`seconds` AS `seconds`,`mir`.`hundredths` AS `hundredths`,`mir`.`minutes` * 6000 + `mir`.`seconds` * 100 + `mir`.`hundredths` AS `total_hundredths`,`m`.`id` AS `meeting_id`,`m`.`header_date` AS `meeting_date`,`m`.`description` AS `meeting_name`,`t`.`id` AS `team_id`,`t`.`name` AS `team_name`,row_number() over ( partition by `mir`.`swimmer_id`,`me`.`event_type_id`,`mp`.`pool_type_id` order by `mir`.`minutes` * 6000 + `mir`.`seconds` * 100 + `mir`.`hundredths`,`m`.`header_date` desc) AS `rn` from ((((((((((`meeting_individual_results` `mir` join `meeting_programs` `mp` on(`mp`.`id` = `mir`.`meeting_program_id`)) join `meeting_events` `me` on(`me`.`id` = `mp`.`meeting_event_id`)) join `meeting_sessions` `ms` on(`ms`.`id` = `me`.`meeting_session_id`)) join `meetings` `m` on(`m`.`id` = `ms`.`meeting_id`)) join `seasons` `se` on(`se`.`id` = `m`.`season_id`)) join `event_types` `et` on(`et`.`id` = `me`.`event_type_id`)) join `pool_types` `pt` on(`pt`.`id` = `mp`.`pool_type_id`)) join `swimmers` `s` on(`s`.`id` = `mir`.`swimmer_id`)) join `teams` `t` on(`t`.`id` = `mir`.`team_id`)) join `RecentSeasons` `rs` on(`m`.`season_id` = `rs`.`id`)) where `mir`.`disqualified` = 0 and `mir`.`minutes` * 6000 + `mir`.`seconds` * 100 + `mir`.`hundredths` > 0 and `me`.`event_type_id` in (2,3,4,5,6,7,11,12,13,15,16,17,19,20,21,22,23,24) and `mp`.`pool_type_id` in (1,2))select `RankedResults`.`swimmer_id` AS `swimmer_id`,`RankedResults`.`swimmer_name` AS `swimmer_name`,`RankedResults`.`swimmer_year_of_birth` AS `swimmer_year_of_birth`,`RankedResults`.`gender_type_id` AS `gender_type_id`,`RankedResults`.`event_type_id` AS `event_type_id`,`RankedResults`.`event_type_code` AS `event_type_code`,`RankedResults`.`pool_type_id` AS `pool_type_id`,`RankedResults`.`pool_type_code` AS `pool_type_code`,`RankedResults`.`season_id` AS `season_id`,`RankedResults`.`season_header_year` AS `season_header_year`,`RankedResults`.`meeting_individual_result_id` AS `meeting_individual_result_id`,`RankedResults`.`minutes` AS `minutes`,`RankedResults`.`seconds` AS `seconds`,`RankedResults`.`hundredths` AS `hundredths`,`RankedResults`.`total_hundredths` AS `total_hundredths`,`RankedResults`.`meeting_id` AS `meeting_id`,`RankedResults`.`meeting_date` AS `meeting_date`,`RankedResults`.`meeting_name` AS `meeting_name`,`RankedResults`.`team_id` AS `team_id`,`RankedResults`.`team_name` AS `team_name` from `RankedResults` where `RankedResults`.`rn` = 1 */;
 /*!50001 SET character_set_client      = @saved_cs_client */;
 /*!50001 SET character_set_results     = @saved_cs_results */;
 /*!50001 SET collation_connection      = @saved_col_connection */;
@@ -2756,10 +2785,23 @@ CREATE TABLE `votes` (
 /*!50001 SET @saved_col_connection     = @@collation_connection */;
 /*!50001 SET character_set_client      = utf8mb4 */;
 /*!50001 SET character_set_results     = utf8mb4 */;
+/*!50001 SET collation_connection      = utf8mb4_general_ci */;
+/*!50001 CREATE ALGORITHM=UNDEFINED */
+/*!50013 DEFINER=`root`@`localhost` SQL SECURITY DEFINER */
+/*!50001 VIEW `best_swimmer_all_time_results` AS with RankedResults as (select `mir`.`swimmer_id` AS `swimmer_id`,`s`.`complete_name` AS `swimmer_name`,`s`.`year_of_birth` AS `swimmer_year_of_birth`,`s`.`gender_type_id` AS `gender_type_id`,`me`.`event_type_id` AS `event_type_id`,`et`.`code` AS `event_type_code`,`mp`.`pool_type_id` AS `pool_type_id`,`pt`.`code` AS `pool_type_code`,`m`.`season_id` AS `season_id`,`se`.`header_year` AS `season_header_year`,`mir`.`id` AS `meeting_individual_result_id`,`mir`.`minutes` AS `minutes`,`mir`.`seconds` AS `seconds`,`mir`.`hundredths` AS `hundredths`,`mir`.`minutes` * 6000 + `mir`.`seconds` * 100 + `mir`.`hundredths` AS `total_hundredths`,`m`.`id` AS `meeting_id`,`m`.`header_date` AS `meeting_date`,`m`.`description` AS `meeting_name`,`t`.`id` AS `team_id`,`t`.`name` AS `team_name`,row_number() over ( partition by `mir`.`swimmer_id`,`me`.`event_type_id`,`mp`.`pool_type_id` order by `mir`.`minutes` * 6000 + `mir`.`seconds` * 100 + `mir`.`hundredths`,`m`.`header_date` desc) AS `rn` from (((((((((`meeting_individual_results` `mir` join `meeting_programs` `mp` on(`mp`.`id` = `mir`.`meeting_program_id`)) join `meeting_events` `me` on(`me`.`id` = `mp`.`meeting_event_id`)) join `meeting_sessions` `ms` on(`ms`.`id` = `me`.`meeting_session_id`)) join `meetings` `m` on(`m`.`id` = `ms`.`meeting_id`)) join `seasons` `se` on(`se`.`id` = `m`.`season_id`)) join `event_types` `et` on(`et`.`id` = `me`.`event_type_id`)) join `pool_types` `pt` on(`pt`.`id` = `mp`.`pool_type_id`)) join `swimmers` `s` on(`s`.`id` = `mir`.`swimmer_id`)) join `teams` `t` on(`t`.`id` = `mir`.`team_id`)) where `mir`.`disqualified` = 0 and `mir`.`minutes` * 6000 + `mir`.`seconds` * 100 + `mir`.`hundredths` > 0 and `me`.`event_type_id` in (2,3,4,5,6,7,11,12,13,15,16,17,19,20,21,22,23,24) and `mp`.`pool_type_id` in (1,2))select `RankedResults`.`swimmer_id` AS `swimmer_id`,`RankedResults`.`swimmer_name` AS `swimmer_name`,`RankedResults`.`swimmer_year_of_birth` AS `swimmer_year_of_birth`,`RankedResults`.`gender_type_id` AS `gender_type_id`,`RankedResults`.`event_type_id` AS `event_type_id`,`RankedResults`.`event_type_code` AS `event_type_code`,`RankedResults`.`pool_type_id` AS `pool_type_id`,`RankedResults`.`pool_type_code` AS `pool_type_code`,`RankedResults`.`season_id` AS `season_id`,`RankedResults`.`season_header_year` AS `season_header_year`,`RankedResults`.`meeting_individual_result_id` AS `meeting_individual_result_id`,`RankedResults`.`minutes` AS `minutes`,`RankedResults`.`seconds` AS `seconds`,`RankedResults`.`hundredths` AS `hundredths`,`RankedResults`.`total_hundredths` AS `total_hundredths`,`RankedResults`.`meeting_id` AS `meeting_id`,`RankedResults`.`meeting_date` AS `meeting_date`,`RankedResults`.`meeting_name` AS `meeting_name`,`RankedResults`.`team_id` AS `team_id`,`RankedResults`.`team_name` AS `team_name` from `RankedResults` where `RankedResults`.`rn` = 1 */;
+/*!50001 SET character_set_client      = @saved_cs_client */;
+/*!50001 SET character_set_results     = @saved_cs_results */;
+/*!50001 SET collation_connection      = @saved_col_connection */;
+/*!50001 DROP VIEW IF EXISTS `best_swimmer_current_vs_previous_results`*/;
+/*!50001 SET @saved_cs_client          = @@character_set_client */;
+/*!50001 SET @saved_cs_results         = @@character_set_results */;
+/*!50001 SET @saved_col_connection     = @@collation_connection */;
+/*!50001 SET character_set_client      = utf8mb4 */;
+/*!50001 SET character_set_results     = utf8mb4 */;
 /*!50001 SET collation_connection      = utf8mb4_uca1400_ai_ci */;
 /*!50001 CREATE ALGORITHM=UNDEFINED */
 /*!50013 DEFINER=`root`@`localhost` SQL SECURITY DEFINER */
-/*!50001 VIEW `best_swimmer_all_time_results` AS with RankedResults as (select `mir`.`swimmer_id` AS `swimmer_id`,`s`.`complete_name` AS `swimmer_name`,`s`.`year_of_birth` AS `swimmer_year_of_birth`,`s`.`gender_type_id` AS `gender_type_id`,`me`.`event_type_id` AS `event_type_id`,`et`.`code` AS `event_type_code`,`mp`.`pool_type_id` AS `pool_type_id`,`pt`.`code` AS `pool_type_code`,`m`.`season_id` AS `season_id`,`se`.`header_year` AS `season_header_year`,`mir`.`id` AS `meeting_individual_result_id`,`mir`.`minutes` AS `minutes`,`mir`.`seconds` AS `seconds`,`mir`.`hundredths` AS `hundredths`,`mir`.`minutes` * 6000 + `mir`.`seconds` * 100 + `mir`.`hundredths` AS `total_hundredths`,`m`.`id` AS `meeting_id`,`m`.`header_date` AS `meeting_date`,`m`.`description` AS `meeting_name`,`t`.`id` AS `team_id`,`t`.`name` AS `team_name`,row_number() over ( partition by `mir`.`swimmer_id`,`me`.`event_type_id`,`mp`.`pool_type_id` order by `mir`.`minutes` * 6000 + `mir`.`seconds` * 100 + `mir`.`hundredths`,`m`.`header_date` desc) AS `rn` from (((((((((`goggles`.`meeting_individual_results` `mir` join `goggles`.`meeting_programs` `mp` on(`mp`.`id` = `mir`.`meeting_program_id`)) join `goggles`.`meeting_events` `me` on(`me`.`id` = `mp`.`meeting_event_id`)) join `goggles`.`meeting_sessions` `ms` on(`ms`.`id` = `me`.`meeting_session_id`)) join `goggles`.`meetings` `m` on(`m`.`id` = `ms`.`meeting_id`)) join `goggles`.`seasons` `se` on(`se`.`id` = `m`.`season_id`)) join `goggles`.`event_types` `et` on(`et`.`id` = `me`.`event_type_id`)) join `goggles`.`pool_types` `pt` on(`pt`.`id` = `mp`.`pool_type_id`)) join `goggles`.`swimmers` `s` on(`s`.`id` = `mir`.`swimmer_id`)) join `goggles`.`teams` `t` on(`t`.`id` = `mir`.`team_id`)) where `mir`.`disqualified` = 0 and `mir`.`minutes` * 6000 + `mir`.`seconds` * 100 + `mir`.`hundredths` > 0 and `me`.`event_type_id` in (2,3,4,5,6,7,11,12,13,15,16,17,19,20,21,22,23,24) and `mp`.`pool_type_id` in (1,2))select `RankedResults`.`swimmer_id` AS `swimmer_id`,`RankedResults`.`swimmer_name` AS `swimmer_name`,`RankedResults`.`swimmer_year_of_birth` AS `swimmer_year_of_birth`,`RankedResults`.`gender_type_id` AS `gender_type_id`,`RankedResults`.`event_type_id` AS `event_type_id`,`RankedResults`.`event_type_code` AS `event_type_code`,`RankedResults`.`pool_type_id` AS `pool_type_id`,`RankedResults`.`pool_type_code` AS `pool_type_code`,`RankedResults`.`season_id` AS `season_id`,`RankedResults`.`season_header_year` AS `season_header_year`,`RankedResults`.`meeting_individual_result_id` AS `meeting_individual_result_id`,`RankedResults`.`minutes` AS `minutes`,`RankedResults`.`seconds` AS `seconds`,`RankedResults`.`hundredths` AS `hundredths`,`RankedResults`.`total_hundredths` AS `total_hundredths`,`RankedResults`.`meeting_id` AS `meeting_id`,`RankedResults`.`meeting_date` AS `meeting_date`,`RankedResults`.`meeting_name` AS `meeting_name`,`RankedResults`.`team_id` AS `team_id`,`RankedResults`.`team_name` AS `team_name` from `RankedResults` where `RankedResults`.`rn` = 1 */;
+/*!50001 VIEW `best_swimmer_current_vs_previous_results` AS with CurrentSeason as (select `s`.`id` AS `id`,`s`.`begin_date` AS `begin_date` from `seasons` `s` where `s`.`end_date` >= curdate() order by `s`.`begin_date` desc,`s`.`id` desc limit 1), PreviousSeason as (select `s`.`id` AS `id` from (`seasons` `s` join `CurrentSeason` `cs` on(`s`.`begin_date` < `cs`.`begin_date`)) order by `s`.`begin_date` desc,`s`.`id` desc limit 1), ValidResults as (select `mir`.`swimmer_id` AS `swimmer_id`,`s`.`complete_name` AS `swimmer_name`,`s`.`year_of_birth` AS `swimmer_year_of_birth`,`s`.`gender_type_id` AS `gender_type_id`,`me`.`event_type_id` AS `event_type_id`,`et`.`code` AS `event_type_code`,`mp`.`pool_type_id` AS `pool_type_id`,`pt`.`code` AS `pool_type_code`,`m`.`season_id` AS `season_id`,`se`.`header_year` AS `season_header_year`,`mir`.`id` AS `meeting_individual_result_id`,`mir`.`minutes` AS `minutes`,`mir`.`seconds` AS `seconds`,`mir`.`hundredths` AS `hundredths`,`mir`.`minutes` * 6000 + `mir`.`seconds` * 100 + `mir`.`hundredths` AS `total_hundredths`,`m`.`id` AS `meeting_id`,`m`.`header_date` AS `meeting_date`,`m`.`description` AS `meeting_name`,`t`.`id` AS `team_id`,`t`.`name` AS `team_name` from (((((((((`meeting_individual_results` `mir` join `meeting_programs` `mp` on(`mp`.`id` = `mir`.`meeting_program_id`)) join `meeting_events` `me` on(`me`.`id` = `mp`.`meeting_event_id`)) join `meeting_sessions` `ms` on(`ms`.`id` = `me`.`meeting_session_id`)) join `meetings` `m` on(`m`.`id` = `ms`.`meeting_id`)) join `seasons` `se` on(`se`.`id` = `m`.`season_id`)) join `event_types` `et` on(`et`.`id` = `me`.`event_type_id`)) join `pool_types` `pt` on(`pt`.`id` = `mp`.`pool_type_id`)) join `swimmers` `s` on(`s`.`id` = `mir`.`swimmer_id`)) join `teams` `t` on(`t`.`id` = `mir`.`team_id`)) where `mir`.`disqualified` = 0 and `mir`.`minutes` * 6000 + `mir`.`seconds` * 100 + `mir`.`hundredths` > 0 and `me`.`event_type_id` in (2,3,4,5,6,7,11,12,13,15,16,17,19,20,21,22,23,24) and `mp`.`pool_type_id` in (1,2)), CurrentSeasonRanked as (select `vr`.`swimmer_id` AS `swimmer_id`,`vr`.`swimmer_name` AS `swimmer_name`,`vr`.`swimmer_year_of_birth` AS `swimmer_year_of_birth`,`vr`.`gender_type_id` AS `gender_type_id`,`vr`.`event_type_id` AS `event_type_id`,`vr`.`event_type_code` AS `event_type_code`,`vr`.`pool_type_id` AS `pool_type_id`,`vr`.`pool_type_code` AS `pool_type_code`,`vr`.`season_id` AS `season_id`,`vr`.`season_header_year` AS `season_header_year`,`vr`.`meeting_individual_result_id` AS `meeting_individual_result_id`,`vr`.`minutes` AS `minutes`,`vr`.`seconds` AS `seconds`,`vr`.`hundredths` AS `hundredths`,`vr`.`total_hundredths` AS `total_hundredths`,`vr`.`meeting_id` AS `meeting_id`,`vr`.`meeting_date` AS `meeting_date`,`vr`.`meeting_name` AS `meeting_name`,`vr`.`team_id` AS `team_id`,`vr`.`team_name` AS `team_name`,row_number() over ( partition by `vr`.`swimmer_id`,`vr`.`event_type_id`,`vr`.`pool_type_id` order by `vr`.`total_hundredths`,`vr`.`meeting_date` desc,`vr`.`meeting_id` desc) AS `rn` from (`ValidResults` `vr` join `CurrentSeason` `cs` on(`cs`.`id` = `vr`.`season_id`))), PreviousSeasonRanked as (select `vr`.`swimmer_id` AS `swimmer_id`,`vr`.`swimmer_name` AS `swimmer_name`,`vr`.`swimmer_year_of_birth` AS `swimmer_year_of_birth`,`vr`.`gender_type_id` AS `gender_type_id`,`vr`.`event_type_id` AS `event_type_id`,`vr`.`event_type_code` AS `event_type_code`,`vr`.`pool_type_id` AS `pool_type_id`,`vr`.`pool_type_code` AS `pool_type_code`,`vr`.`season_id` AS `season_id`,`vr`.`season_header_year` AS `season_header_year`,`vr`.`meeting_individual_result_id` AS `meeting_individual_result_id`,`vr`.`minutes` AS `minutes`,`vr`.`seconds` AS `seconds`,`vr`.`hundredths` AS `hundredths`,`vr`.`total_hundredths` AS `total_hundredths`,`vr`.`meeting_id` AS `meeting_id`,`vr`.`meeting_date` AS `meeting_date`,`vr`.`meeting_name` AS `meeting_name`,`vr`.`team_id` AS `team_id`,`vr`.`team_name` AS `team_name`,row_number() over ( partition by `vr`.`swimmer_id`,`vr`.`event_type_id`,`vr`.`pool_type_id` order by `vr`.`total_hundredths`,`vr`.`meeting_date` desc,`vr`.`meeting_id` desc) AS `rn` from (`ValidResults` `vr` join `PreviousSeason` `ps` on(`ps`.`id` = `vr`.`season_id`))), CurrentBest as (select `CurrentSeasonRanked`.`swimmer_id` AS `swimmer_id`,`CurrentSeasonRanked`.`swimmer_name` AS `swimmer_name`,`CurrentSeasonRanked`.`swimmer_year_of_birth` AS `swimmer_year_of_birth`,`CurrentSeasonRanked`.`gender_type_id` AS `gender_type_id`,`CurrentSeasonRanked`.`event_type_id` AS `event_type_id`,`CurrentSeasonRanked`.`event_type_code` AS `event_type_code`,`CurrentSeasonRanked`.`pool_type_id` AS `pool_type_id`,`CurrentSeasonRanked`.`pool_type_code` AS `pool_type_code`,`CurrentSeasonRanked`.`season_id` AS `season_id`,`CurrentSeasonRanked`.`season_header_year` AS `season_header_year`,`CurrentSeasonRanked`.`meeting_individual_result_id` AS `meeting_individual_result_id`,`CurrentSeasonRanked`.`minutes` AS `minutes`,`CurrentSeasonRanked`.`seconds` AS `seconds`,`CurrentSeasonRanked`.`hundredths` AS `hundredths`,`CurrentSeasonRanked`.`total_hundredths` AS `total_hundredths`,`CurrentSeasonRanked`.`meeting_id` AS `meeting_id`,`CurrentSeasonRanked`.`meeting_date` AS `meeting_date`,`CurrentSeasonRanked`.`meeting_name` AS `meeting_name`,`CurrentSeasonRanked`.`team_id` AS `team_id`,`CurrentSeasonRanked`.`team_name` AS `team_name`,`CurrentSeasonRanked`.`rn` AS `rn` from `CurrentSeasonRanked` where `CurrentSeasonRanked`.`rn` = 1), PreviousBest as (select `PreviousSeasonRanked`.`swimmer_id` AS `swimmer_id`,`PreviousSeasonRanked`.`event_type_id` AS `event_type_id`,`PreviousSeasonRanked`.`pool_type_id` AS `pool_type_id`,`PreviousSeasonRanked`.`minutes` AS `old_minutes`,`PreviousSeasonRanked`.`seconds` AS `old_seconds`,`PreviousSeasonRanked`.`hundredths` AS `old_hundredths` from `PreviousSeasonRanked` where `PreviousSeasonRanked`.`rn` = 1)select `cb`.`swimmer_id` AS `swimmer_id`,`cb`.`swimmer_name` AS `swimmer_name`,`cb`.`swimmer_year_of_birth` AS `swimmer_year_of_birth`,`cb`.`gender_type_id` AS `gender_type_id`,`cb`.`event_type_id` AS `event_type_id`,`cb`.`event_type_code` AS `event_type_code`,`cb`.`pool_type_id` AS `pool_type_id`,`cb`.`pool_type_code` AS `pool_type_code`,`cb`.`season_id` AS `season_id`,`cb`.`season_header_year` AS `season_header_year`,`cb`.`meeting_individual_result_id` AS `meeting_individual_result_id`,`cb`.`minutes` AS `minutes`,`cb`.`seconds` AS `seconds`,`cb`.`hundredths` AS `hundredths`,`cb`.`total_hundredths` AS `total_hundredths`,`cb`.`meeting_id` AS `meeting_id`,`cb`.`meeting_date` AS `meeting_date`,`cb`.`meeting_name` AS `meeting_name`,`cb`.`team_id` AS `team_id`,`cb`.`team_name` AS `team_name`,`pb`.`old_minutes` AS `old_minutes`,`pb`.`old_seconds` AS `old_seconds`,`pb`.`old_hundredths` AS `old_hundredths` from (`CurrentBest` `cb` left join `PreviousBest` `pb` on(`pb`.`swimmer_id` = `cb`.`swimmer_id` and `pb`.`event_type_id` = `cb`.`event_type_id` and `pb`.`pool_type_id` = `cb`.`pool_type_id`)) */;
 /*!50001 SET character_set_client      = @saved_cs_client */;
 /*!50001 SET character_set_results     = @saved_cs_results */;
 /*!50001 SET collation_connection      = @saved_col_connection */;
@@ -2772,7 +2814,7 @@ CREATE TABLE `votes` (
 /*!50001 SET collation_connection      = utf8mb4_general_ci */;
 /*!50001 CREATE ALGORITHM=UNDEFINED */
 /*!50013 DEFINER=`root`@`localhost` SQL SECURITY DEFINER */
-/*!50001 VIEW `last_seasons_ids` AS select `s1`.`id` AS `id` from (select `goggles`.`seasons`.`id` AS `id` from `goggles`.`seasons` where `goggles`.`seasons`.`season_type_id` = 1 order by `goggles`.`seasons`.`begin_date` desc limit 1) `s1` union select `s1_1`.`id` AS `id` from (select `goggles`.`seasons`.`id` AS `id` from (((((`goggles`.`seasons` join `goggles`.`meetings` on(`goggles`.`meetings`.`season_id` = `goggles`.`seasons`.`id`)) join `goggles`.`meeting_sessions` on(`goggles`.`meeting_sessions`.`meeting_id` = `goggles`.`meetings`.`id`)) join `goggles`.`meeting_events` on(`goggles`.`meeting_events`.`meeting_session_id` = `goggles`.`meeting_sessions`.`id`)) join `goggles`.`meeting_programs` on(`goggles`.`meeting_programs`.`meeting_event_id` = `goggles`.`meeting_events`.`id`)) join `goggles`.`meeting_individual_results` on(`goggles`.`meeting_individual_results`.`meeting_program_id` = `goggles`.`meeting_programs`.`id`)) where `goggles`.`seasons`.`season_type_id` = 1 order by `goggles`.`seasons`.`begin_date` desc limit 1) `s1_1` union select `s1_2`.`id` AS `id` from (select `goggles`.`seasons`.`id` AS `id` from (`goggles`.`seasons` join `goggles`.`user_workshops` on(`goggles`.`user_workshops`.`season_id` = `goggles`.`seasons`.`id`)) where `goggles`.`seasons`.`season_type_id` = 1 order by `goggles`.`seasons`.`begin_date` desc limit 1) `s1_2` union select `s1_3`.`id` AS `id` from (select `goggles`.`seasons`.`id` AS `id` from ((`goggles`.`seasons` join `goggles`.`user_workshops` on(`goggles`.`user_workshops`.`season_id` = `goggles`.`seasons`.`id`)) join `goggles`.`user_results` on(`goggles`.`user_results`.`user_workshop_id` = `goggles`.`user_workshops`.`id`)) where `goggles`.`seasons`.`season_type_id` = 1 order by `goggles`.`seasons`.`begin_date` desc limit 1) `s1_3` union select `s2`.`id` AS `id` from (select `goggles`.`seasons`.`id` AS `id` from `goggles`.`seasons` where `goggles`.`seasons`.`season_type_id` = 7 order by `goggles`.`seasons`.`begin_date` desc limit 1) `s2` union select `s2_1`.`id` AS `id` from (select `goggles`.`seasons`.`id` AS `id` from (((((`goggles`.`seasons` join `goggles`.`meetings` on(`goggles`.`meetings`.`season_id` = `goggles`.`seasons`.`id`)) join `goggles`.`meeting_sessions` on(`goggles`.`meeting_sessions`.`meeting_id` = `goggles`.`meetings`.`id`)) join `goggles`.`meeting_events` on(`goggles`.`meeting_events`.`meeting_session_id` = `goggles`.`meeting_sessions`.`id`)) join `goggles`.`meeting_programs` on(`goggles`.`meeting_programs`.`meeting_event_id` = `goggles`.`meeting_events`.`id`)) join `goggles`.`meeting_individual_results` on(`goggles`.`meeting_individual_results`.`meeting_program_id` = `goggles`.`meeting_programs`.`id`)) where `goggles`.`seasons`.`season_type_id` = 7 order by `goggles`.`seasons`.`begin_date` desc limit 1) `s2_1` union select `s2_2`.`id` AS `id` from (select `goggles`.`seasons`.`id` AS `id` from (`goggles`.`seasons` join `goggles`.`user_workshops` on(`goggles`.`user_workshops`.`season_id` = `goggles`.`seasons`.`id`)) where `goggles`.`seasons`.`season_type_id` = 7 order by `goggles`.`seasons`.`begin_date` desc limit 1) `s2_2` union select `s2_3`.`id` AS `id` from (select `goggles`.`seasons`.`id` AS `id` from ((`goggles`.`seasons` join `goggles`.`user_workshops` on(`goggles`.`user_workshops`.`season_id` = `goggles`.`seasons`.`id`)) join `goggles`.`user_results` on(`goggles`.`user_results`.`user_workshop_id` = `goggles`.`user_workshops`.`id`)) where `goggles`.`seasons`.`season_type_id` = 7 order by `goggles`.`seasons`.`begin_date` desc limit 1) `s2_3` union select `s3`.`id` AS `id` from (select `goggles`.`seasons`.`id` AS `id` from `goggles`.`seasons` where `goggles`.`seasons`.`season_type_id` = 8 order by `goggles`.`seasons`.`begin_date` desc limit 1) `s3` union select `s3_1`.`id` AS `id` from (select `goggles`.`seasons`.`id` AS `id` from (((((`goggles`.`seasons` join `goggles`.`meetings` on(`goggles`.`meetings`.`season_id` = `goggles`.`seasons`.`id`)) join `goggles`.`meeting_sessions` on(`goggles`.`meeting_sessions`.`meeting_id` = `goggles`.`meetings`.`id`)) join `goggles`.`meeting_events` on(`goggles`.`meeting_events`.`meeting_session_id` = `goggles`.`meeting_sessions`.`id`)) join `goggles`.`meeting_programs` on(`goggles`.`meeting_programs`.`meeting_event_id` = `goggles`.`meeting_events`.`id`)) join `goggles`.`meeting_individual_results` on(`goggles`.`meeting_individual_results`.`meeting_program_id` = `goggles`.`meeting_programs`.`id`)) where `goggles`.`seasons`.`season_type_id` = 8 order by `goggles`.`seasons`.`begin_date` desc limit 1) `s3_1` union select `s2_2`.`id` AS `id` from (select `goggles`.`seasons`.`id` AS `id` from (`goggles`.`seasons` join `goggles`.`user_workshops` on(`goggles`.`user_workshops`.`season_id` = `goggles`.`seasons`.`id`)) where `goggles`.`seasons`.`season_type_id` = 8 order by `goggles`.`seasons`.`begin_date` desc limit 1) `s2_2` union select `s2_3`.`id` AS `id` from (select `goggles`.`seasons`.`id` AS `id` from ((`goggles`.`seasons` join `goggles`.`user_workshops` on(`goggles`.`user_workshops`.`season_id` = `goggles`.`seasons`.`id`)) join `goggles`.`user_results` on(`goggles`.`user_results`.`user_workshop_id` = `goggles`.`user_workshops`.`id`)) where `goggles`.`seasons`.`season_type_id` = 8 order by `goggles`.`seasons`.`begin_date` desc limit 1) `s2_3` */;
+/*!50001 VIEW `last_seasons_ids` AS select `s1`.`id` AS `id` from (select `seasons`.`id` AS `id` from `seasons` where `seasons`.`season_type_id` = 1 order by `seasons`.`begin_date` desc limit 1) `s1` union select `s1_1`.`id` AS `id` from (select `seasons`.`id` AS `id` from (((((`seasons` join `meetings` on(`meetings`.`season_id` = `seasons`.`id`)) join `meeting_sessions` on(`meeting_sessions`.`meeting_id` = `meetings`.`id`)) join `meeting_events` on(`meeting_events`.`meeting_session_id` = `meeting_sessions`.`id`)) join `meeting_programs` on(`meeting_programs`.`meeting_event_id` = `meeting_events`.`id`)) join `meeting_individual_results` on(`meeting_individual_results`.`meeting_program_id` = `meeting_programs`.`id`)) where `seasons`.`season_type_id` = 1 order by `seasons`.`begin_date` desc limit 1) `s1_1` union select `s1_2`.`id` AS `id` from (select `seasons`.`id` AS `id` from (`seasons` join `user_workshops` on(`user_workshops`.`season_id` = `seasons`.`id`)) where `seasons`.`season_type_id` = 1 order by `seasons`.`begin_date` desc limit 1) `s1_2` union select `s1_3`.`id` AS `id` from (select `seasons`.`id` AS `id` from ((`seasons` join `user_workshops` on(`user_workshops`.`season_id` = `seasons`.`id`)) join `user_results` on(`user_results`.`user_workshop_id` = `user_workshops`.`id`)) where `seasons`.`season_type_id` = 1 order by `seasons`.`begin_date` desc limit 1) `s1_3` union select `s2`.`id` AS `id` from (select `seasons`.`id` AS `id` from `seasons` where `seasons`.`season_type_id` = 7 order by `seasons`.`begin_date` desc limit 1) `s2` union select `s2_1`.`id` AS `id` from (select `seasons`.`id` AS `id` from (((((`seasons` join `meetings` on(`meetings`.`season_id` = `seasons`.`id`)) join `meeting_sessions` on(`meeting_sessions`.`meeting_id` = `meetings`.`id`)) join `meeting_events` on(`meeting_events`.`meeting_session_id` = `meeting_sessions`.`id`)) join `meeting_programs` on(`meeting_programs`.`meeting_event_id` = `meeting_events`.`id`)) join `meeting_individual_results` on(`meeting_individual_results`.`meeting_program_id` = `meeting_programs`.`id`)) where `seasons`.`season_type_id` = 7 order by `seasons`.`begin_date` desc limit 1) `s2_1` union select `s2_2`.`id` AS `id` from (select `seasons`.`id` AS `id` from (`seasons` join `user_workshops` on(`user_workshops`.`season_id` = `seasons`.`id`)) where `seasons`.`season_type_id` = 7 order by `seasons`.`begin_date` desc limit 1) `s2_2` union select `s2_3`.`id` AS `id` from (select `seasons`.`id` AS `id` from ((`seasons` join `user_workshops` on(`user_workshops`.`season_id` = `seasons`.`id`)) join `user_results` on(`user_results`.`user_workshop_id` = `user_workshops`.`id`)) where `seasons`.`season_type_id` = 7 order by `seasons`.`begin_date` desc limit 1) `s2_3` union select `s3`.`id` AS `id` from (select `seasons`.`id` AS `id` from `seasons` where `seasons`.`season_type_id` = 8 order by `seasons`.`begin_date` desc limit 1) `s3` union select `s3_1`.`id` AS `id` from (select `seasons`.`id` AS `id` from (((((`seasons` join `meetings` on(`meetings`.`season_id` = `seasons`.`id`)) join `meeting_sessions` on(`meeting_sessions`.`meeting_id` = `meetings`.`id`)) join `meeting_events` on(`meeting_events`.`meeting_session_id` = `meeting_sessions`.`id`)) join `meeting_programs` on(`meeting_programs`.`meeting_event_id` = `meeting_events`.`id`)) join `meeting_individual_results` on(`meeting_individual_results`.`meeting_program_id` = `meeting_programs`.`id`)) where `seasons`.`season_type_id` = 8 order by `seasons`.`begin_date` desc limit 1) `s3_1` union select `s2_2`.`id` AS `id` from (select `seasons`.`id` AS `id` from (`seasons` join `user_workshops` on(`user_workshops`.`season_id` = `seasons`.`id`)) where `seasons`.`season_type_id` = 8 order by `seasons`.`begin_date` desc limit 1) `s2_2` union select `s2_3`.`id` AS `id` from (select `seasons`.`id` AS `id` from ((`seasons` join `user_workshops` on(`user_workshops`.`season_id` = `seasons`.`id`)) join `user_results` on(`user_results`.`user_workshop_id` = `user_workshops`.`id`)) where `seasons`.`season_type_id` = 8 order by `seasons`.`begin_date` desc limit 1) `s2_3` */;
 /*!50001 SET character_set_client      = @saved_cs_client */;
 /*!50001 SET character_set_results     = @saved_cs_results */;
 /*!50001 SET collation_connection      = @saved_col_connection */;
@@ -2787,6 +2829,8 @@ CREATE TABLE `votes` (
 /*M!100616 SET NOTE_VERBOSITY=@OLD_NOTE_VERBOSITY */;
 
 INSERT INTO `schema_migrations` (version) VALUES
+('20260625110505'),
+('20260625110500'),
 ('20260430121138'),
 ('20251117095111'),
 ('20251102154400'),

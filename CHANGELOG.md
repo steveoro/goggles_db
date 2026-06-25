@@ -2,6 +2,7 @@
 
 _Please, add the latest build info on top of the list; use Version::MAJOR only after gold release; keep semantic versioning in line with framework's_
 
+- **0.9.09** [Steve A.] BestSwimmerCurrentVsPreviousResult model and specs; bundle update
 - **0.9.08** [Steve A.] fix for last_season_id model; bundle update
 - **0.9.07** [Steve A.] improved fuzzy search strategies; using mariadb binary in all rake tasks instead of legacy mysql; bundle update
 - **0.9.00** [Steve A.] update to Rails 8.1; adapted CircleCI build pipeline to new versions
