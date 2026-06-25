@@ -111,7 +111,7 @@ module GogglesDb
     #
     # (Note that this will imply 3 summing queries and it may fail to yield correct values
     #  if the preceding deltas are not set.)
-    def timing_from_start
+    def timing_from_start # rubocop:disable Metrics/AbcSize,Metrics/CyclomaticComplexity,Metrics/PerceivedComplexity
       # Quick way to detect if the timing from start is already set:
       lap_present = minutes_from_start.positive? || seconds_from_start.positive? || hundredths_from_start.positive?
       if lap_present
@@ -121,6 +121,19 @@ module GogglesDb
           minutes: minutes_from_start
         )
       else
+        parent_collection_association = inferred_parent_collection_association_name
+        if parent_collection_association && parent_result&.association(parent_collection_association)&.loaded?
+          sibling_laps = parent_result.public_send(parent_collection_association)
+                                      .select { |lap| lap.length_in_meters.to_i <= length_in_meters.to_i }
+          return timing_from_sibling_laps(sibling_laps)
+        end
+
+        if parent_result_id.present?
+          sibling_laps = cached_related_laps_for_parent_result
+                         .select { |lap| lap.length_in_meters.to_i <= length_in_meters.to_i }
+          return timing_from_sibling_laps(sibling_laps)
+        end
+
         laps = self.class.summing_laps(self)
         Timing.new(
           hundredths: laps.sum(:hundredths),
@@ -131,6 +144,31 @@ module GogglesDb
     end
     #-- ------------------------------------------------------------------------
     #++
+
+    def timing_from_sibling_laps(sibling_laps)
+      Timing.new(
+        hundredths: sibling_laps.sum { |lap| lap.hundredths.to_i },
+        seconds: sibling_laps.sum { |lap| lap.seconds.to_i },
+        minutes: sibling_laps.sum { |lap| lap.minutes.to_i }
+      )
+    end
+
+    def inferred_parent_collection_association_name
+      @inferred_parent_collection_association_name ||= begin
+        parent = parent_result
+        if parent && parent.class.respond_to?(:reflect_on_all_associations)
+          parent.class.reflect_on_all_associations(:has_many)
+                .find { |assoc| assoc.klass == self.class }
+                &.name
+        end
+      end
+    end
+
+    def cached_related_laps_for_parent_result
+      Thread.current[:goggles_db_related_laps_cache] ||= {}
+      cache_key = "#{self.class.name}:#{parent_result_id}"
+      Thread.current[:goggles_db_related_laps_cache][cache_key] ||= self.class.related_laps(self).to_a
+    end
 
     protected
 
