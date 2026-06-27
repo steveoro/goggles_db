@@ -6,30 +6,24 @@
 [![codecov](https://codecov.io/gh/steveoro/goggles_db/branch/master/graph/badge.svg?token=G4E7NVC4T4)](https://codecov.io/gh/steveoro/goggles_db)
 [![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2Fsteveoro%2Fgoggles_db.svg?type=shield)](https://app.fossa.com/projects/git%2Bgithub.com%2Fsteveoro%2Fgoggles_db?ref=badge_shield)
 
-
 DB structure and base Rails models for the Goggles Framework applications.
 Includes the [Devise](https://github.com/heartcombo/devise) routes for `User` (the Engine must be mounted in `routes.rb` in order to publish them).
 
-
 ## Wiki & HOW-TOs
 
-Official Framework Wiki, [here](https://github.com/steveoro/goggles_db/wiki) (v. 7+)
-
+[Official Framework Wiki](https://github.com/steveoro/goggles_db/wiki) (v. 7+)
 
 ## Requires
 
-- Ruby 3.1.4
-- Rails 6.1.7.9+
-- MariaDb 15.1 dist. 10.6.16+ or any other MySql equivalent version
-
-
+- Ruby 3.4.7
+- Rails 8.1.3+
+- MariaDb 11.8.8
 
 ## Installation
 
 Just clone the repository on `localhost` and run `bundle install`.
 
 To recreate the DB, see [Database setup](#database-setup) below.
-
 
 ## Usage
 
@@ -51,8 +45,6 @@ The Engine will add a bunch of rake tasks to the application, among which:
 
 - `check_needed_dirs` will be invoked internally by these tasks to ensure the existence of any other required folder.
 
-
-
 ## How to run the test suite
 
 For local testing & development, just keep your [Guard](https://github.com/guard/guard) friend running in background from a dedicated console:
@@ -71,8 +63,6 @@ $> bundle exec brakeman -Aq
 
 _Please, make sure the test suite is locally :green_heart: before committing & pushing any changes to the repo._
 
-
-
 ## Database setup
 
 Make sure you have a running MariaDB server & client installation + development packages in order to rebuild the drivers during `bundle install`.
@@ -80,7 +70,6 @@ Make sure you have a running MariaDB server & client installation + development 
 To speed up the build process, the test suite uses pre-existing anonymized data seeds with **transactional fixtures** and _does not clear the DB before each run_.
 
 For this reason, you'll need a proper DB dump from which restore the DB for either running tests or for using a localhost server during development.
-
 
 ### DB management tasks
 
@@ -96,7 +85,6 @@ To rebuild the `test` database before running the suite (using default parameter
 $> RAILS_ENV=test rails app:db:rebuild
 ```
 
-
 _Any other target DB_ can be prepared for local usage by copying a source dump to another target.
 
 For example, if you need to work with the `development` environment, you can easily prepare it with the anonymized `test` image:
@@ -106,7 +94,6 @@ $> rails app:db:rebuild from=test to=development
 ```
 
 (The execution will take some time depending of the dump size: sit back and relax...)
-
 
 ### From scratch
 
@@ -132,24 +119,21 @@ To create a brand new random user (for example):
  > FactoryBot.create(:user)
 ```
 
-
 * * *
 
-
 ## Contributing
+
 1. Clone the project.
 2. Make a new custom branch for your changes, naming the branch accordingly (i.e. use prefixes like: `feature-`, `fix-`, `upgrade-`, ...).
 3. When you think you're done, make sure you type `guard` (+`Enter`) and wait for the whole spec suite to end.
 4. Make sure your branch is locally green (:green_heart:) before submitting the pull request.
 5. Await the PR's review by the maintainers.
 
-
 ## License
+
 The gem is available as open source under the terms of the [LGPL-3.0 License](https://opensource.org/licenses/LGPL-3.0).
 
 [![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2Fsteveoro%2Fgoggles_db.svg?type=large)](https://app.fossa.com/projects/git%2Bgithub.com%2Fsteveoro%2Fgoggles_db?ref=badge_large)
-
-
 
 ## Supporting
 
