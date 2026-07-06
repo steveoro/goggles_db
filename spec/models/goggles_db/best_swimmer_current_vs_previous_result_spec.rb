@@ -295,6 +295,40 @@ module GogglesDb # rubocop:disable Metrics/ModuleLength
           expect(row.old_meeting_individual_result_id).to eq(old_mir.id)
         end
       end
+
+      context 'with a summer season sharing the same championship year as a standard season' do
+        it 'selects the faster MIR from the summer season as current best' do # rubocop:disable RSpec/ExampleLength
+          # Standard season: Sep 2999 → Jun 3000, championship_year = YEAR(begin_date) = 2999
+          standard_session = create_season_with_meeting(
+            Date.new(2999, 9, 1), Date.new(3000, 6, 30)
+          )
+          standard_mir = create_result_in_session(standard_session, seconds: 35)
+
+          # Summer season: Jun 2999 → Aug 2999, championship_year = YEAR(end_date) = 2999
+          # Same championship year as the standard season above
+          summer_session = create_season_with_meeting(
+            Date.new(2999, 6, 1), Date.new(2999, 8, 31), 8
+          )
+          summer_mir = create_result_in_session(
+            summer_session,
+            swimmer: standard_mir.swimmer,
+            team: standard_mir.team,
+            team_affiliation: standard_mir.team_affiliation,
+            seconds: 33
+          )
+
+          row = described_class.where(
+            swimmer_id: standard_mir.swimmer_id,
+            event_type_id: event_type.id,
+            pool_type_id: pool_type.id
+          ).first
+
+          expect(row).not_to be_nil
+          expect(row.meeting_individual_result_id).to eq(summer_mir.id)
+          expect(row.total_hundredths).to eq(3300)
+          expect(row.total_hundredths).to be < 3500
+        end
+      end
     end
   end
 end

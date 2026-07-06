@@ -6,7 +6,7 @@
 #
 module GogglesDb
   # Public gem version (uses Semantic versioning)
-  VERSION = '0.9.16'
+  VERSION = '0.9.20'
 
   # == Versioning codes
   #
@@ -19,7 +19,7 @@ module GogglesDb
     CORE  = 'C7'
     MAJOR = '0'
     MINOR = '9'
-    PATCH = '16'
+    PATCH = '20'
     BUILD = '20260706'
 
     # Full label
@@ -27,7 +27,7 @@ module GogglesDb
 
     # Compact label
     SEMANTIC = "#{MAJOR}.#{MINOR}.#{PATCH}".freeze
-    DB = '2.09.10' # Internal DB structure (frozen @ <minor>.<patch>.<seq> from last migration)
+    DB = '2.09.11' # Internal DB structure (frozen @ <minor>.<patch>.<seq> from last migration)
 
     # Pointless UNICODE emojis (just for fun):
     EMOJI_BUTTERFLY    = 'з== ( ▀ ͜͞ʖ▀) ==ε'

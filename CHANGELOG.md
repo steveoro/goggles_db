@@ -2,6 +2,7 @@
 
 _Please, add the latest build info on top of the list; use Version::MAJOR only after gold release; keep semantic versioning in line with framework's_
 
+- **0.9.20** [Steve A.] BestSwimmerCurrentVsPreviousResult v5; bundle and specs update
 - **0.9.16** [Steve A.] BestSwimmerCurrentVsPreviousResult v4; bundle and specs update
 - **0.9.14** [Steve A.] BestSwimmerCurrentVsPreviousResult (v1..v3) model and specs; bundle update; spec stability fixes
 - **0.9.08** [Steve A.] fix for last_season_id model; bundle update
