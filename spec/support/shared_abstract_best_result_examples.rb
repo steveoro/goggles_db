@@ -62,7 +62,8 @@ RSpec.shared_context 'AbstractBestResult scopes setup' do
       GogglesDb::Best50And100Result5y,
       GogglesDb::BestSwimmer3yResult,
       GogglesDb::BestSwimmer5yResult,
-      GogglesDb::BestSwimmerCurrentVsPreviousResult
+      GogglesDb::BestSwimmerCurrentVsPreviousResult,
+      GogglesDb::GogglesCup3yBaseTimings
     ]
   end
 
@@ -76,7 +77,7 @@ RSpec.shared_context 'AbstractBestResult scopes setup' do
       next if base_scope.any?
 
       # 1. Select (or build) a season compatible with the current view logic
-      latest_fin_season = if described_class.name == 'GogglesDb::BestSwimmerCurrentVsPreviousResult'
+      latest_fin_season = if ['GogglesDb::BestSwimmerCurrentVsPreviousResult', 'GogglesDb::GogglesCup3yBaseTimings'].include?(described_class.name)
                             # This view requires an ongoing season as "current"
                             begin_date = Date.new(2199, 1, 1)
                             end_date = Date.new(2199, 12, 31)
@@ -116,7 +117,8 @@ RSpec.shared_context 'AbstractBestResult scopes setup' do
                     when 'GogglesDb::Best50And100Result', 'GogglesDb::Best50And100Result5y'
                       GogglesDb::EventType.where(id: [2, 3, 11, 12, 15, 16, 19, 20, 22]) # All (50m + 100m) x stroke type + '100MI'
                     when 'GogglesDb::BestSwimmer3yResult', 'GogglesDb::BestSwimmer5yResult',
-                         'GogglesDb::BestSwimmerAllTimeResult', 'GogglesDb::BestSwimmerCurrentVsPreviousResult'
+                         'GogglesDb::BestSwimmerAllTimeResult', 'GogglesDb::BestSwimmerCurrentVsPreviousResult',
+                         'GogglesDb::GogglesCup3yBaseTimings'
                       # "BestSwimmer"-type views will consider all individual events except the non-standard lengths:
                       GogglesDb::EventType.all_individuals.select { |ev| ev.length_in_meters.between?(50, 1500) }
                     else
@@ -131,7 +133,7 @@ RSpec.shared_context 'AbstractBestResult scopes setup' do
       # NOTE: we need to pause Prosopite during this data creation step as the complex hierarchy
       #       chain needed in this will trigger N+1 query errors.
       Prosopite.pause do
-        current_meeting_date = if described_class.name == 'GogglesDb::BestSwimmerCurrentVsPreviousResult'
+        current_meeting_date = if ['GogglesDb::BestSwimmerCurrentVsPreviousResult', 'GogglesDb::GogglesCup3yBaseTimings'].include?(described_class.name)
                                  latest_fin_season.begin_date + rand(30..120).days
                                else
                                  Time.zone.today - rand(1..90).days
@@ -140,7 +142,7 @@ RSpec.shared_context 'AbstractBestResult scopes setup' do
         session = create(:meeting_session, meeting: meeting, scheduled_date: meeting.header_date)
 
         previous_session = nil
-        if described_class.name == 'GogglesDb::BestSwimmerCurrentVsPreviousResult'
+        if ['GogglesDb::BestSwimmerCurrentVsPreviousResult', 'GogglesDb::GogglesCup3yBaseTimings'].include?(described_class.name)
           prev_begin_date = Date.new(2198, 1, 1)
           prev_end_date = Date.new(2198, 12, 31)
           previous_season = create(

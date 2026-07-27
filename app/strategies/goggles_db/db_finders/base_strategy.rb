@@ -179,7 +179,7 @@ module GogglesDb
         # Output verbose debugging output:
         Rails.logger.debug { "\r\n\r\n[#{@target_value}]" }
         @matches.each_with_index do |obj, index|
-          Rails.logger.debug "#{index}. #{obj.candidate.send(@target_key)} (#{obj.weight})"
+          Rails.logger.debug { "#{index}. #{obj.candidate.send(@target_key)} (#{obj.weight})" }
         end
       end
       #-- ---------------------------------------------------------------------

@@ -209,7 +209,7 @@ module GogglesDb
 
       # Output verbose debugging output:
       Rails.logger.debug { "\r\n\r\n[#{@city_name}]" }
-      @matches.each_with_index { |obj, index| Rails.logger.debug "#{index}. #{obj.candidate.name} (#{obj.weight})" }
+      @matches.each_with_index { |obj, index| Rails.logger.debug { "#{index}. #{obj.candidate.name} (#{obj.weight})" } }
     end
 
     # Return computed weight between searched name and:

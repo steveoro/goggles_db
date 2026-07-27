@@ -13,6 +13,9 @@ module GogglesDb
     belongs_to :team
     validates_associated :team
 
-    # TODO
+    validates :season_year, presence: true,
+                            numericality: { only_integer: true, greater_than: 2000 }
+    validates :description, presence: true,
+                            uniqueness: { scope: %i[team_id season_year] }
   end
 end
