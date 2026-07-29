@@ -133,7 +133,7 @@ CREATE TABLE `api_daily_uses` (
   PRIMARY KEY (`id`),
   UNIQUE KEY `index_api_daily_uses_on_route_and_day` (`route`,`day`),
   KEY `index_api_daily_uses_on_route` (`route`)
-) ENGINE=InnoDB AUTO_INCREMENT=12808340 DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=12808325 DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 DROP TABLE IF EXISTS `app_parameters`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
@@ -709,7 +709,7 @@ CREATE TABLE `data_import_meeting_individual_results` (
   KEY `idx_di_mir_swimmer_key` (`swimmer_key`),
   KEY `idx_di_mir_team_key` (`team_key`),
   KEY `idx_di_mir_program_key` (`meeting_program_key`)
-) ENGINE=InnoDB AUTO_INCREMENT=126859 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=118647 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 DROP TABLE IF EXISTS `data_import_meeting_relay_results`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
@@ -746,7 +746,7 @@ CREATE TABLE `data_import_meeting_relay_results` (
   KEY `idx_di_mrr_phase_file` (`phase_file_path`),
   KEY `idx_di_mrr_team_key` (`team_key`),
   KEY `idx_di_mrr_program_key` (`meeting_program_key`)
-) ENGINE=InnoDB AUTO_INCREMENT=7649 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=5433 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 DROP TABLE IF EXISTS `data_import_meeting_relay_swimmers`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
@@ -782,7 +782,7 @@ CREATE TABLE `data_import_meeting_relay_swimmers` (
   KEY `idx_di_mrs_phase_file` (`phase_file_path`),
   KEY `idx_di_mrs_swimmer_key` (`swimmer_key`),
   KEY `idx_di_mrs_mrr_key` (`meeting_relay_result_key`)
-) ENGINE=InnoDB AUTO_INCREMENT=28787 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=21251 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 DROP TABLE IF EXISTS `data_import_relay_laps`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
@@ -815,7 +815,7 @@ CREATE TABLE `data_import_relay_laps` (
   KEY `idx_di_rel_laps_mrr_id` (`meeting_relay_result_id`),
   KEY `idx_di_rel_laps_phase_file` (`phase_file_path`),
   KEY `idx_di_rlap_mrs_key` (`meeting_relay_swimmer_key`)
-) ENGINE=InnoDB AUTO_INCREMENT=28580 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=21044 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 DROP TABLE IF EXISTS `day_part_types`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
@@ -2005,7 +2005,7 @@ CREATE TABLE `sessions` (
   PRIMARY KEY (`id`),
   KEY `index_sessions_on_session_id` (`session_id`),
   KEY `index_sessions_on_updated_at` (`updated_at`)
-) ENGINE=InnoDB AUTO_INCREMENT=1287 DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_general_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=1289 DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_general_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 DROP TABLE IF EXISTS `settings`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
