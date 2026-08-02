@@ -89,5 +89,42 @@ module GogglesDb
         expect(goggle_cup.ranking_data).to be_nil
       end
     end
+
+    describe '#swimmer_ids_array' do
+      it 'returns an empty array when swimmers_ids is nil' do
+        goggle_cup = FactoryBot.build(:goggle_cup, swimmers_ids: nil)
+        expect(goggle_cup.swimmer_ids_array).to eq([])
+      end
+
+      it 'parses comma-separated IDs into an array of integers' do
+        goggle_cup = FactoryBot.build(:goggle_cup, swimmers_ids: '1,2,3')
+        expect(goggle_cup.swimmer_ids_array).to eq([1, 2, 3])
+      end
+
+      it 'handles blank and zero values gracefully' do
+        goggle_cup = FactoryBot.build(:goggle_cup, swimmers_ids: '1,,0,3')
+        expect(goggle_cup.swimmer_ids_array).to eq([1, 3])
+      end
+    end
+
+    describe '#swimmer_ids_array=' do
+      it 'sets swimmers_ids as a comma-separated string from an array' do
+        goggle_cup = FactoryBot.build(:goggle_cup)
+        goggle_cup.swimmer_ids_array = [1, 2, 3]
+        expect(goggle_cup.swimmers_ids).to eq('1,2,3')
+      end
+
+      it 'handles string values in the array' do
+        goggle_cup = FactoryBot.build(:goggle_cup)
+        goggle_cup.swimmer_ids_array = %w[1 2 3]
+        expect(goggle_cup.swimmers_ids).to eq('1,2,3')
+      end
+
+      it 'handles empty array' do
+        goggle_cup = FactoryBot.build(:goggle_cup)
+        goggle_cup.swimmer_ids_array = []
+        expect(goggle_cup.swimmers_ids).to eq('')
+      end
+    end
   end
 end

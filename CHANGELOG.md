@@ -2,6 +2,7 @@
 
 _Please, add the latest build info on top of the list; use Version::MAJOR only after gold release; keep semantic versioning in line with framework's_
 
+- **0.9.26** [Steve A.] added swimmer IDs helpers on GoggleCup
 - **0.9.25** [Steve A.] GogglesCup3yBaseTimings; BestSwimmerCurrentVsPreviousResult v6 leveraging GogglesCup3yBaseTimings; GoggleCup base structure update, with dedicated columns for configuration and results ID serialization; bundle updates; DB vers. 2.10.03, rel. 0.9.25
 - **0.9.20** [Steve A.] BestSwimmerCurrentVsPreviousResult v5; bundle and specs update
 - **0.9.16** [Steve A.] BestSwimmerCurrentVsPreviousResult v4; bundle and specs update
