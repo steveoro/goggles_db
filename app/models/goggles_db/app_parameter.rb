@@ -78,5 +78,15 @@ module GogglesDb
     def self.maintenance=(new_boolean_value)
       AppParameter.versioning_row.update!(TOGGLE_FIELDNAME => new_boolean_value)
     end
+
+    DEFAULT_MAX_ANONYMOUS_REQ = 500
+
+    # Returns the maximum daily anonymous request count per IP before throttling.
+    # Reads from the +:app+ settings group; falls back to +DEFAULT_MAX_ANONYMOUS_REQ+
+    # when the setting is missing or nil.
+    def self.max_anonymous_req
+      value = AppParameter.versioning_row.settings(:app).max_anonymous_req
+      value.present? ? value.to_i : DEFAULT_MAX_ANONYMOUS_REQ
+    end
   end
 end

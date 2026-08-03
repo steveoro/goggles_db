@@ -70,5 +70,21 @@ module GogglesDb
         end
       end
     end
+
+    describe 'self.max_anonymous_req' do
+      it 'returns the configured value from the :app settings group' do
+        row = described_class.versioning_row
+        row.settings(:app).max_anonymous_req = 750
+        row.save!
+        expect(described_class.max_anonymous_req).to eq(750)
+      end
+
+      it 'falls back to the default when the setting is missing' do
+        row = described_class.versioning_row
+        row.settings(:app).max_anonymous_req = nil
+        row.save!
+        expect(described_class.max_anonymous_req).to eq(described_class::DEFAULT_MAX_ANONYMOUS_REQ)
+      end
+    end
   end
 end
