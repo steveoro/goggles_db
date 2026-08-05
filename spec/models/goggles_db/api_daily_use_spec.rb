@@ -21,7 +21,7 @@ module GogglesDb
 
       it_behaves_like(
         'responding to a list of class methods',
-        %i[increase_for!]
+        %i[increase_for! top_routes top_ip_routes daily_totals]
       )
 
       it_behaves_like('ApplicationRecord shared interface')
@@ -80,6 +80,60 @@ module GogglesDb
           expect { described_class.increase_for!(new_built_row.route, new_built_row.day) }.to change(described_class, :count).by(1)
           expect(described_class.where(route: new_built_row.route, day: new_built_row.day).first.count).to eq(1)
         end
+      end
+    end
+    #-- ------------------------------------------------------------------------
+    #++
+
+    describe 'self.top_routes' do
+      before do
+        FactoryBot.create(:api_daily_use, route: 'GET /api/v3/fake/route', count: 100)
+        FactoryBot.create(:api_daily_use, route: 'POST /api/v3/fake/route', count: 50)
+      end
+
+      let(:result) { described_class.top_routes(day_from: Time.zone.today - 1.day, day_to: Time.zone.today) }
+
+      it 'returns a non-empty array of results' do
+        expect(result).to be_a(ActiveRecord::Relation)
+        expect(result.to_a).not_to be_empty
+      end
+
+      it 'excludes REQ- routes' do
+        expect(result.map(&:route)).to all(match(/\A(?!REQ-)/i))
+      end
+
+      it 'returns results sorted by descending total_count' do
+        expect(result.map(&:total_count)).to eq(result.map(&:total_count).sort.reverse)
+      end
+    end
+
+    describe 'self.top_ip_routes' do
+      before do
+        FactoryBot.create(:api_daily_use, route: 'REQ-10.0.0.1', count: 1000)
+        FactoryBot.create(:api_daily_use, route: 'REQ-10.0.0.2', count: 10)
+      end
+
+      let(:result) { described_class.top_ip_routes(day_from: Time.zone.today - 1.day, day_to: Time.zone.today) }
+
+      it 'returns only REQ- routes above the default threshold' do
+        expect(result).to be_a(ActiveRecord::Relation)
+        expect(result.map(&:route)).to all(match(/\AREQ-/i))
+        expect(result.map(&:total_count)).to all(be > 500)
+      end
+    end
+
+    describe 'self.daily_totals' do
+      before do
+        FactoryBot.create(:api_daily_use, route: 'GET /api/v3/fake/route', count: 100)
+        FactoryBot.create(:api_daily_use, route: 'REQ-10.0.0.1', count: 50)
+      end
+
+      let(:result) { described_class.daily_totals(day_from: Time.zone.today - 1.day, day_to: Time.zone.today) }
+
+      it 'returns a Hash with total, ip and route counts' do
+        expect(result).to be_a(Hash)
+        expect(result.keys).to include(:requests, :ip_requests, :route_requests)
+        expect(result[:requests]).to eq(result[:ip_requests] + result[:route_requests])
       end
     end
   end

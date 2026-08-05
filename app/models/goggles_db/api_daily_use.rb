@@ -48,5 +48,39 @@ module GogglesDb
       counter_row.increment!(:count)
     end
     # rubocop:enable Rails/SkipsModelValidations
+
+    # Returns the +limit+ most requested non-IP routes between +day_from+ and +day_to+,
+    # with their total count summed across the period.
+    def self.top_routes(day_from:, day_to:, limit: 10)
+      where(day: day_from..day_to)
+        .where.not('route LIKE ?', 'REQ-%')
+        .group(:route)
+        .order('SUM(count) DESC')
+        .select(:route, 'SUM(count) AS total_count')
+        .limit(limit)
+    end
+
+    # Returns the +limit+ most active IP routes (REQ-<ip>) whose total count exceeds
+    # +threshold+ between +day_from+ and +day_to+.
+    def self.top_ip_routes(day_from:, day_to:, threshold: 500, limit: 10)
+      where(day: day_from..day_to)
+        .where('route LIKE ?', 'REQ-%')
+        .group(:route)
+        .having('SUM(count) > ?', threshold)
+        .order('SUM(count) DESC')
+        .select(:route, 'SUM(count) AS total_count')
+        .limit(limit)
+    end
+
+    # Returns a simple Hash with overall, IP and non-IP request totals
+    # for the specified period.
+    def self.daily_totals(day_from:, day_to:)
+      scope = where(day: day_from..day_to)
+      {
+        requests: scope.sum(:count),
+        ip_requests: scope.where('route LIKE ?', 'REQ-%').sum(:count),
+        route_requests: scope.where.not('route LIKE ?', 'REQ-%').sum(:count)
+      }
+    end
   end
 end

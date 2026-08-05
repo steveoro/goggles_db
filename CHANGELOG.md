@@ -2,6 +2,7 @@
 
 _Please, add the latest build info on top of the list; use Version::MAJOR only after gold release; keep semantic versioning in line with framework's_
 
+- **0.9.28** [Steve A.] added api_daily_use_agents table and model; bundle updates
 - **0.9.27** [Steve A.] added helper for new 'max_anonymous_req' setting in app group; data migration run & test DB dump updated; bundle updates
 - **0.9.26** [Steve A.] added swimmer IDs helpers on GoggleCup
 - **0.9.25** [Steve A.] GogglesCup3yBaseTimings; BestSwimmerCurrentVsPreviousResult v6 leveraging GogglesCup3yBaseTimings; GoggleCup base structure update, with dedicated columns for configuration and results ID serialization; bundle updates; DB vers. 2.10.03, rel. 0.9.25
