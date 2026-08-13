@@ -4,7 +4,9 @@ module GogglesDb
   # = GogglesCup3yBaseTimings (Scenic View model)
   #
   # Collects the best result for each swimmer/event/pool tuple across the
-  # 3 championship years preceding the current ongoing championship year.
+  # 3 championship years preceding the reference championship year.
+  # The reference year defaults to the latest ongoing championship year and can be
+  # overridden via AbstractBestResult.with_base_year(year).
   # These timings serve as "base timings" for Goggles Cup ranking computations.
   #
   class GogglesCup3yBaseTimings < AbstractBestResult
