@@ -83,5 +83,17 @@ module GogglesDb
 
     # Scope to sort results by time (slowest first).
     scope :sort_by_time_desc, -> { order(total_hundredths: :desc) }
+
+    # Set the base_year session variable used by parameterized views to override
+    # the default championship year of reference. Passing no value resets the
+    # variable, which makes the views fall back to the latest ongoing championship year.
+    scope :with_base_year, lambda { |year = nil|
+      if year
+        connection.execute("SET @base_year = #{year.to_i}")
+      else
+        connection.execute('SET @base_year = NULL')
+      end
+      all
+    }
   end
 end
