@@ -14,7 +14,7 @@
                 %br
                 #{t('goggles_cup.no_duplicated_events')}: #{no_duplicated_events ? t('goggles_cup.yes') : t('goggles_cup.no')}
 
-        - if local_assigns[:show_exports]
+        - if local_assigns[:show_exports] && goggle_cup
           .row.mb-3
             .col-12.text-center
               = link_to(compute_goggles_cup_preview_path(format: :csv, team_id: team.id, goggle_cup_id: goggle_cup.id, secondary_team_id: local_assigns[:secondary_team_id], swimmer_ids: local_assigns[:selected_swimmer_ids], no_duplicated_events: no_duplicated_events),
