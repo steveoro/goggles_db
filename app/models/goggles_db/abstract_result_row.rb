@@ -79,5 +79,10 @@ module GogglesDb
 
     # Rows to be excluded from rankings (missing rank or timing).
     scope :with_no_rank, -> { where('`rank` = 0 OR total_hundredths = 0') }
+
+    # Compatibility alias for components that rely on AbstractResult#parent_meeting.
+    def parent_meeting
+      meeting
+    end
   end
 end
