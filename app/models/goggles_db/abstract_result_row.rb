@@ -68,6 +68,12 @@ module GogglesDb
             gender_type_id: :desc, total_hundredths: :asc)
     }
 
+    # Sorting scopes compatible with AbstractResult (for table components):
+    scope :by_rank, ->(dir = :asc) { order(disqualified: :asc, rank: dir.to_s.downcase.to_sym) }
+    scope :by_timing, lambda { |dir = :asc|
+      order(disqualified: :asc, total_hundredths: dir.to_s.downcase.to_sym)
+    }
+
     # Rows to be included in rankings (positive rank & timing).
     scope :with_rank, -> { where('`rank` > 0 AND total_hundredths > 0') }
 

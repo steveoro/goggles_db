@@ -34,5 +34,23 @@ module GogglesDb
       expect(json_row).to eq(described_class.new(attributes))
       expect(json_row).not_to eq(described_class.new(attributes.merge('id' => 999)))
     end
+
+    it 'supports attribute writers' do
+      lap = described_class.new(attributes)
+      lap.seconds = 45
+      expect(lap.seconds).to eq(45)
+    end
+
+    it 'supports dup and from_timing to build derived rows' do
+      dup = json_row.dup
+      expect(dup).to eq(json_row)
+      expect(dup).not_to be(json_row)
+
+      delta = Timing.new(minutes: 0, seconds: 5, hundredths: 0)
+      derived = json_row.dup.from_timing(delta)
+      expect(derived.minutes).to eq(0)
+      expect(derived.seconds).to eq(5)
+      expect(derived.hundredths).to eq(0)
+    end
   end
 end

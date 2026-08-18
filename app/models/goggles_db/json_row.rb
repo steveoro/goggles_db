@@ -15,6 +15,9 @@ module GogglesDb
   # parameter), #positive? & #zero? are all supported whenever the source hash
   # carries the corresponding timing keys.
   #
+  # Although mostly read-only, writer singleton methods are also defined so that
+  # TimingManageable#from_timing can build derived rows (e.g. the closing lap)
+  # without materializing an ActiveRecord instance.
   class JsonRow
     include TimingManageable
 
@@ -23,9 +26,7 @@ module GogglesDb
     # Creates a new JsonRow given a Hash of attributes (string or symbol keys).
     def initialize(attributes)
       @attributes = attributes.transform_keys(&:to_s)
-      @attributes.each do |key, value|
-        define_singleton_method(key) { value }
-      end
+      define_accessors
     end
 
     # Returns a new Timing instance based on the 'XXX_from_start' keys.
@@ -39,6 +40,22 @@ module GogglesDb
 
     def inspect
       "#<#{self.class.name} #{@attributes.inspect}>"
+    end
+
+    def initialize_copy(other)
+      super
+      @attributes = other.attributes.dup
+      define_accessors
+    end
+
+    private
+
+    # Defines singleton reader/writer methods for each attribute key.
+    def define_accessors
+      @attributes.each_key do |key|
+        define_singleton_method(key) { @attributes[key] }
+        define_singleton_method("#{key}=") { |value| @attributes[key] = value }
+      end
     end
   end
 end
