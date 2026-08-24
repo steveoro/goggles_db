@@ -12,7 +12,10 @@
               %p.small-text
                 = t('goggles_cup.formula')
                 %br
-                #{t('goggles_cup.no_duplicated_events')}: #{no_duplicated_events ? t('goggles_cup.yes') : t('goggles_cup.no')}
+                - if no_duplicated_events
+                  #{t('goggles_cup.no_duplicated_events')}: #{t('goggles_cup.yes')}
+                - else
+                  #{t('goggles_cup.with_duplicated_events')}: #{t('goggles_cup.yes')}
 
         - if local_assigns[:show_exports] && goggle_cup
           .row.mb-3
