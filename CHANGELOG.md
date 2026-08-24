@@ -2,7 +2,7 @@
 
 _Please, add the latest build info on top of the list; use Version::MAJOR only after gold release; keep semantic versioning in line with framework's_
 
-- **0.10.35** [Steve A.] security bundle updates
+- **0.10.36** [Steve A.] security bundle updates; improved goggle cup shared partials with export_path support; added shared GoggleCupRanking::Exporter service for ranking and base-timings CSV/XLSX/PDF exports
 - **0.10.33** [Steve A.] added flattened read-only views meeting_individual_result_rows & meeting_relay_result_rows (laps/relay legs aggregated as JSON) with MeetingIndividualResultRow & MeetingRelayResultRow models for the Main meeting/show page; test dump updated; DB vers. 2.10.06
 - **0.10.32** [Steve A.] aligned framework versioning across all goggles_* projects to 0.10.32; no functional changes
 - **0.10.1** [Steve A.] extracted GoggleCup ranking deserializer/serializer and shared partial into the engine; added base-timings display support and engine locales

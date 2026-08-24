@@ -30,10 +30,13 @@ Gem::Specification.new do |spec|
 
   spec.add_dependency 'acts-as-taggable-on'
   spec.add_dependency 'acts_as_votable'
+  # XLSX export:
+  spec.add_dependency 'caxlsx'
   # Countries & cities lookup:
   spec.add_dependency 'cities'    # https://github.com/joecorcoran/cities
   spec.add_dependency 'countries' # https://github.com/hexorx/countries
   spec.add_dependency 'country_select'
+  spec.add_dependency 'csv'
   spec.add_dependency 'devise'
   spec.add_dependency 'devise-i18n'
   spec.add_dependency 'draper'
@@ -43,9 +46,12 @@ Gem::Specification.new do |spec|
   spec.add_dependency 'jwt'
   spec.add_dependency 'ledermann-rails-settings' # https://github.com/ledermann/rails-settings
   spec.add_dependency 'loofah'
+  spec.add_dependency 'matrix'
   spec.add_dependency 'mini_magick'
   spec.add_dependency 'nokogiri'
   spec.add_dependency 'omniauth-facebook'
+  spec.add_dependency 'prawn'
+  spec.add_dependency 'prawn-table'
   # Subseeded by google_sign_in used by goggles_main (no Devise/Omniauth dependencies)
   # spec.add_dependency 'omniauth-google-oauth2'
   spec.add_dependency 'omniauth-rails_csrf_protection'

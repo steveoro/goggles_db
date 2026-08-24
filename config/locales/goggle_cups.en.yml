@@ -49,6 +49,17 @@ en:
     load_team_tooltip: "Load and list all swimmers having results in the current year for the selected team"
     save_config_tooltip: "Overwrite the currently selected cup configuration (ID shown above)"
     compute_tooltip: "Compute the ranking and store the result on the current configuration for later retrieval"
+    export:
+      ranking_csv: "CSV Ranking"
+      ranking_xls: "XLS Ranking"
+      ranking_pdf: "PDF Ranking"
+      base_timings_csv: "CSV Base Timings"
+      base_timings_xls: "XLS Base Timings"
+      base_timings_pdf: "PDF Base Timings"
+      csv:
+        rank: "Rank"
+        overall_score: "Overall Score"
+        swimmer_id: "Swimmer ID"
     export_sql: "Export SQL"
     export_sql_tooltip: "Generate a pushable SQL script for this cup"
     confirm_export: "Generate an SQL script for this cup?"

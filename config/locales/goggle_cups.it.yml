@@ -49,6 +49,17 @@ it:
     load_team_tooltip: "Carica e elenca tutti i nuotatori con risultati nell'anno in corso per la squadra selezionata"
     save_config_tooltip: "Sovrascrivi la configurazione della coppa attualmente selezionata (ID mostrato sopra)"
     compute_tooltip: "Calcola la classifica e salva il risultato sulla configurazione attuale per recupero successivo"
+    export:
+      ranking_csv: "Classifica CSV"
+      ranking_xls: "Classifica XLS"
+      ranking_pdf: "Classifica PDF"
+      base_timings_csv: "Tempi Base CSV"
+      base_timings_xls: "Tempi Base XLS"
+      base_timings_pdf: "Tempi Base PDF"
+      csv:
+        rank: "Pos."
+        overall_score: "Punteggio Totale"
+        swimmer_id: "ID Nuotatore"
     export_sql: "Esporta SQL"
     export_sql_tooltip: "Genera uno script SQL inviabile per questa coppa"
     confirm_export: "Generare uno script SQL per questa coppa?"
