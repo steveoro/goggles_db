@@ -13,9 +13,9 @@
                 = t('goggles_cup.formula')
                 %br
                 - if no_duplicated_events
-                  #{t('goggles_cup.no_duplicated_events')}: #{t('goggles_cup.yes')}
+                  #{t('goggles_cup.no_duplicated_events')}
                 - else
-                  #{t('goggles_cup.with_duplicated_events')}: #{t('goggles_cup.yes')}
+                  #{t('goggles_cup.with_duplicated_events')}
 
         - if local_assigns[:export_path] && goggle_cup
           .row.mb-3

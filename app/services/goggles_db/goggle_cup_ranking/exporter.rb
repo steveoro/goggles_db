@@ -139,12 +139,13 @@ module GogglesDb
             pdf.text("#{@cup.season_year} — #{@cup.description}", size: 12, style: :bold, align: :center)
             pdf.move_down 2
           end
-          pdf.text(I18n.t('goggles_cup.no_duplicated_events'), size: 8, align: :center)
-          pdf.move_up 10
-          checkbox_x = (pdf.bounds.width / 2) + (pdf.width_of(I18n.t('goggles_cup.no_duplicated_events'), size: 8) / 2) + 4
-          checkbox_y = pdf.cursor
-          pdf.stroke_rectangle([checkbox_x, checkbox_y], 8, 8)
+          # Draw the additional rule only if toggled on:
           if @no_duplicated_events
+            pdf.text(I18n.t('goggles_cup.no_duplicated_events'), size: 8, align: :center)
+            pdf.move_up 10
+            checkbox_x = (pdf.bounds.width / 2) + (pdf.width_of(I18n.t('goggles_cup.no_duplicated_events'), size: 8) / 2) + 4
+            checkbox_y = pdf.cursor
+            pdf.stroke_rectangle([checkbox_x, checkbox_y], 8, 8)
             pdf.fill_color '000000'
             pdf.text_box('X', at: [checkbox_x + 1.5, checkbox_y - 1], size: 7)
           end
