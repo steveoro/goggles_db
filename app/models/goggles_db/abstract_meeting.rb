@@ -45,7 +45,7 @@ module GogglesDb
     # Returns just the verbose edition label based on the current edition value & type.
     # Returns a safe empty string otherwise.
     #
-    # rubocop:disable Metrics/CyclomaticComplexity
+    # rubocop:disable-next Metrics/CyclomaticComplexity
     def edition_label
       return "#{edition}°" if edition.to_i.positive? && (edition_type.seasonal? || edition_type.ordinal?)
       return edition.to_i.to_roman if edition.to_i.positive? && edition_type.roman?
@@ -53,7 +53,6 @@ module GogglesDb
 
       ''
     end
-    # rubocop:enable Metrics/CyclomaticComplexity
 
     # Meeting name stripped of any edition label.
     #

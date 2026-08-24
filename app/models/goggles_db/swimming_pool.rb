@@ -30,8 +30,8 @@ module GogglesDb
     validates :e_mail,        length: { maximum: 100 }
     validates :contact_name,  length: { maximum: 100 }
 
-    validates :lanes_number,  presence: { length: { within: 1..2, allow_nil: false } },
-                              numericality: true
+    validates :lanes_number, presence: { length: { within: 1..2, allow_nil: false } },
+                             numericality: true
 
     validates :multiple_pools, inclusion: { in: [true, false] }
     validates :garden,         inclusion: { in: [true, false] }

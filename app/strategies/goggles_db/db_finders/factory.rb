@@ -39,7 +39,7 @@ module GogglesDb
       # == Returns
       # A <tt>DbFinders::BaseStrategy</tt> sibling
       #
-      # rubocop:disable Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
+      # rubocop:disable-next Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
       def self.for(model_klass, search_terms = {}, bias = BaseStrategy::DEFAULT_MATCH_BIAS)
         raise(ArgumentError, 'No search term specified') if search_terms.blank? ||
                                                             search_terms.except(:toggle_debug).blank?
@@ -69,7 +69,6 @@ module GogglesDb
           raise(ArgumentError, 'New, unsupported or unimplemented model class!')
         end
       end
-      # rubocop:enable Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
     end
   end
 end

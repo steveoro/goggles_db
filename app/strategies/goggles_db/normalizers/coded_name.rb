@@ -26,7 +26,7 @@ module GogglesDb
       # == Returns
       # the coded String name for the meeting, which usually includes the city name.
       #
-      # rubocop:disable Metrics/CyclomaticComplexity
+      # rubocop:disable-next Metrics/CyclomaticComplexity
       def self.for_meeting(description, city_name)
         # == Code usage examples:
         #
@@ -90,7 +90,6 @@ module GogglesDb
           end
         end
       end
-      # rubocop:enable Metrics/CyclomaticComplexity
 
       # Computes the "official" nickname for a SwimmingPool given the parameters.
       #
@@ -135,7 +134,7 @@ module GogglesDb
       # == Returns:
       # a donwcased, normalized String.
       #
-      # rubocop: disable Metrics/AbcSize
+      # rubocop: disable-next Metrics/AbcSize
       def self.normalize(name)
         # NOTE: [Steve, 20170426]: The "non-word" char code ("\W") for Regexp works best as
         # most generic separator, even when SHIFT-SPACEs or other UNICODE chars are present
@@ -172,7 +171,6 @@ module GogglesDb
             .gsub(/\bteam\basi\b|\bacsi\b|\bsnp\b|\bdna\b/iu, '')
             .downcase.strip
       end
-      # rubocop: enable Metrics/AbcSize
       #-- -----------------------------------------------------------------------
       #++
 
@@ -210,7 +208,7 @@ module GogglesDb
       #
       # 3. EditionType ID, if any.
       #
-      # rubocop:disable Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
+      # rubocop:disable-next Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
       def self.edition_split_from(meeting_description)
         edition_type_id = GogglesDb::EditionType::NONE_ID
         # Return the default unless there's any match:
@@ -235,7 +233,6 @@ module GogglesDb
 
         [edition, name.strip, edition_type_id]
       end
-      # rubocop:enable Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
       #-- -----------------------------------------------------------------------
       #++
     end

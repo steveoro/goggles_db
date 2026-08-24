@@ -82,7 +82,7 @@ namespace :normalize do
   # Updates the city_model with an 'update', but only if the update is actually needed.
   # Returns 1 if the update was successful; 0 otherwise.
   #
-  # rubocop:disable Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
+  # rubocop:disable-next Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
   def update_city(_normalizer, city_model, simulate)
     # Don't count unless there are changes:
     return 0 unless city_model.has_changes_to_save?
@@ -121,7 +121,6 @@ namespace :normalize do
 
     0 # Always return 0 in case of errors (we count the updates only)
   end
-  # rubocop:enable Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
   #-- -------------------------------------------------------------------------
   #++
 end

@@ -19,8 +19,8 @@ module GogglesDb
     # [Steve, 20130924] entry_time_type is used as a (default) user-preference for time accreditation during meeting registration.
     # It can change on a user/season basis, thus the reference is kept on the badge.
 
-    has_one  :season_type, through: :season
-    has_one  :gender_type, through: :swimmer
+    has_one :season_type, through: :season
+    has_one :gender_type, through: :swimmer
 
     validates_associated :swimmer
     validates_associated :team_affiliation

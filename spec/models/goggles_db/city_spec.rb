@@ -216,11 +216,10 @@ module GogglesDb
           expect(subject.keys).to include('id', 'zip')
         end
 
-        # rubocop:disable RSpec/NoExpectationExample
+        # rubocop:disable-next RSpec/NoExpectationExample
         it 'includes all the #iso_attributes' do
           hash2_includes_hash1(hash1: subject_city.iso_attributes, hash2: result)
         end
-        # rubocop:enable RSpec/NoExpectationExample
       end
     end
     #-- ------------------------------------------------------------------------

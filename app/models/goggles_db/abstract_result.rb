@@ -22,8 +22,8 @@ module GogglesDb
     validates :rank, presence: { length: { within: 1..4, allow_nil: false } },
                      numericality: true
 
-    validates :minutes,  presence: { length: { within: 1..3, allow_nil: false } }, numericality: true
-    validates :seconds,  presence: { length: { within: 1..2, allow_nil: false } }, numericality: true
+    validates :minutes, presence: { length: { within: 1..3, allow_nil: false } }, numericality: true
+    validates :seconds, presence: { length: { within: 1..2, allow_nil: false } }, numericality: true
     validates :hundredths, presence: { length: { within: 1..2, allow_nil: false } }, numericality: true
 
     validates :standard_points,   presence: true, numericality: true

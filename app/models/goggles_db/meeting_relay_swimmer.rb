@@ -58,8 +58,8 @@ module GogglesDb
                                  numericality: true
 
     # Absolute timing:
-    validates :minutes_from_start,  presence: { length: { within: 1..3, allow_nil: false } }, numericality: true
-    validates :seconds_from_start,  presence: { length: { within: 1..2, allow_nil: false } }, numericality: true
+    validates :minutes_from_start, presence: { length: { within: 1..3, allow_nil: false } }, numericality: true
+    validates :seconds_from_start, presence: { length: { within: 1..2, allow_nil: false } }, numericality: true
     validates :hundredths_from_start, presence: { length: { within: 1..2, allow_nil: false } }, numericality: true
 
     # Sorting scopes:

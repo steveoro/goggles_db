@@ -14,8 +14,8 @@ module GogglesDb
       # (Testing the instance methods will automaticall test also the corresponding class implementation)
       subject { described_class.new(fixture_key, 1.hour) }
 
-      let(:decoded_jwt)     { subject.decode(encoded_jwt) }
-      let(:encoded_jwt)     { subject.encode(fixture_payload) }
+      let(:decoded_jwt) { subject.decode(encoded_jwt) }
+      let(:encoded_jwt) { subject.encode(fixture_payload) }
 
       it 'creates a new instance' do
         expect(subject).to be_a(described_class)

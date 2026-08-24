@@ -2,7 +2,7 @@
 
 require 'goggles_db'
 
-# rubocop:disable Metrics/AbcSize, Metrics/CyclomaticComplexity
+# rubocop:disable-next Metrics/AbcSize, Metrics/CyclomaticComplexity
 namespace :normalize do
   desc 'Normalizes laps timings'
   task laps: :environment do
@@ -337,4 +337,3 @@ namespace :normalize do
     updated_rows
   end
 end
-# rubocop:enable Metrics/AbcSize, Metrics/CyclomaticComplexity

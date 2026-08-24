@@ -42,12 +42,11 @@ module GogglesDb
     # 'route' does not need to correspond to an actual API route; it can be
     # any valid string.
     #
-    # rubocop:disable Rails/SkipsModelValidations
+    # rubocop:disable-next Rails/SkipsModelValidations
     def self.increase_for!(route, day = Time.zone.today)
       counter_row = APIDailyUse.create_or_find_by!(route:, day:)
       counter_row.increment!(:count)
     end
-    # rubocop:enable Rails/SkipsModelValidations
 
     # Returns the +limit+ most requested non-IP routes between +day_from+ and +day_to+,
     # with their total count summed across the period.

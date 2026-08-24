@@ -73,8 +73,8 @@ module GogglesDb
     scope :urgent,      -> { processable.where(priority: 2) }
     scope :critical,    -> { processable.where(priority: 3) }
 
-    scope :for_user,    ->(user) { where(user_id: user.id) }
-    scope :for_code,    ->(code) { where(code:) }
+    scope :for_user, ->(user) { where(user_id: user.id) }
+    scope :for_code, ->(code) { where(code:) }
     #-- ------------------------------------------------------------------------
     #++
 

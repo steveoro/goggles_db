@@ -6,7 +6,7 @@ require 'prawn'
 require 'prawn/table'
 Prawn::Fonts::AFM.hide_m17n_warning = true
 
-# rubocop:disable Metrics/ClassLength, Metrics/AbcSize, Metrics/ParameterLists
+# rubocop:disable-next Metrics/ClassLength, Metrics/AbcSize, Metrics/ParameterLists
 module GogglesDb
   module GoggleCupRanking
     # Generates ranking and base-timings exports (CSV, XLSX, PDF) for a Goggle Cup.
@@ -340,4 +340,3 @@ module GogglesDb
     end
   end
 end
-# rubocop:enable Metrics/ClassLength, Metrics/AbcSize, Metrics/ParameterLists

@@ -87,7 +87,7 @@ module GogglesDb
       # Both lists are declared by the sibling strategy and are *never* treated as exact-match filters
       # (they are removed from the filtering terms even if specified among the search terms).
       #
-      # rubocop:disable Metrics/ParameterLists
+      # rubocop:disable-next Metrics/ParameterLists
       def initialize(model_klass, search_terms = {}, search_method = :for_name, bias = DEFAULT_MATCH_BIAS,
                      score_columns = [], multi_value_columns = [])
         @toggle_debug = search_terms[:toggle_debug] || false
@@ -108,7 +108,6 @@ module GogglesDb
         @candidate_struct = Struct.new(:candidate, :weight)
         @matches = []
       end
-      # rubocop:enable Metrics/ParameterLists
 
       # Returns a stripped-down, pure ASCII 7-bit version of the specified value. Handles possible nil values.
       # In its base implementation just removes foreign accented letters and downcases the result string.
@@ -130,7 +129,7 @@ module GogglesDb
       # Updates directly the internal </tt>matches</tt> list with the matching candidates
       # in found order (call </tt>#sort_matches</tt> afterwards to sort the array using weights).
       #
-      # rubocop:disable Metrics/AbcSize, Metrics/PerceivedComplexity, Metrics/CyclomaticComplexity
+      # rubocop:disable-next Metrics/AbcSize, Metrics/PerceivedComplexity, Metrics/CyclomaticComplexity
       def scan_for_matches
         domain = @model_klass.send(@search_method, @target_value)
         if @toggle_debug.present?
@@ -165,7 +164,6 @@ module GogglesDb
           end
         end
       end
-      # rubocop:enable Metrics/AbcSize, Metrics/PerceivedComplexity, Metrics/CyclomaticComplexity
 
       # Sorts the internal </tt>matches</tt> array according to the computed Jaro-Winkler
       # text metric distance.

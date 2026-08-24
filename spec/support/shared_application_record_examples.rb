@@ -45,12 +45,11 @@ shared_examples_for('ApplicationRecord shared interface') do
       expect(result).to be_an(Hash).and be_present
     end
 
-    # rubocop:disable RSpec/NoExpectationExample
+    # rubocop:disable-next RSpec/NoExpectationExample
     it 'includes the attributes Hash without the timestamps and the lock_version' do
       min_attrs_hash = subject.attributes.except('lock_version', 'created_at', 'updated_at')
       hash2_includes_hash1(hash1: min_attrs_hash, hash2: result)
     end
-    # rubocop:enable RSpec/NoExpectationExample
 
     it 'includes the localization labels if it\'s a Localizable entity (responding to the methods)' do
       if subject.respond_to?(:label) && subject.respond_to?(:long_label) && subject.respond_to?(:alt_label)
@@ -110,11 +109,10 @@ shared_examples_for('ApplicationRecord shared interface') do
       expect(result).to be_an(Hash).and be_present
     end
 
-    # rubocop:disable RSpec/NoExpectationExample
+    # rubocop:disable-next RSpec/NoExpectationExample
     it 'includes the #minimal_attributes' do
       hash2_includes_hash1(hash1: subject.minimal_attributes(locale_override), hash2: result)
     end
-    # rubocop:enable RSpec/NoExpectationExample
 
     it 'includes the localization labels if it\'s a Localizable entity (responding to its methods)' do
       if subject.respond_to?(:label) && subject.respond_to?(:long_label) && subject.respond_to?(:alt_label)

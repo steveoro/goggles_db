@@ -52,7 +52,7 @@ module GogglesDb
       # - mas_csi  => Calculators::CSIScore
       # - mas_uisp => Calculators::UISPScore
       #
-      # rubocop:disable Metrics/AbcSize, Metrics/PerceivedComplexity
+      # rubocop:disable-next Metrics/AbcSize, Metrics/PerceivedComplexity
       def self.for(options = {})
         season_type = options[:badge]&.season_type || options[:season]&.season_type
         raise(ArgumentError, 'Invalid parameters specified') unless options[:pool_type].instance_of?(GogglesDb::PoolType) &&
@@ -81,7 +81,6 @@ module GogglesDb
           raise(ArgumentError, 'New, unsupported or unimplemented SeasonType!')
         end
       end
-      # rubocop:enable Metrics/AbcSize, Metrics/PerceivedComplexity
     end
   end
 end

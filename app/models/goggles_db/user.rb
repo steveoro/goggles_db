@@ -259,7 +259,7 @@ module GogglesDb
     # - UserWorkshop (same as above)
     # - UserResult (same as above)
     #
-    # rubocop:disable Rails/SkipsModelValidations
+    # rubocop:disable-next Rails/SkipsModelValidations
     def amend_fk_rows!
       logger.info("\r\n=> Deleting user #{id}: #{first_name} #{last_name} (#{name} => #{email})")
       # Delete erasable stuff:
@@ -269,7 +269,6 @@ module GogglesDb
       GogglesDb::UserWorkshop.where(user_id: id).update_all(user_id: PLACEHOLDER_ID)
       GogglesDb::UserResult.where(user_id: id).update_all(user_id: PLACEHOLDER_ID)
     end
-    # rubocop:enable Rails/SkipsModelValidations
 
     # Returns an Array of SQL "LIKE" String conditions, one for each name "particle" extracted by splitting
     # the given name by spaces.

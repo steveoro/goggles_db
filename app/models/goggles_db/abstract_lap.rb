@@ -19,13 +19,13 @@ module GogglesDb
                                  numericality: true
 
     # Delta timing:
-    validates :minutes,  presence: { length: { within: 1..3, allow_nil: false } }, numericality: true
-    validates :seconds,  presence: { length: { within: 1..2, allow_nil: false } }, numericality: true
+    validates :minutes, presence: { length: { within: 1..3, allow_nil: false } }, numericality: true
+    validates :seconds, presence: { length: { within: 1..2, allow_nil: false } }, numericality: true
     validates :hundredths, presence: { length: { within: 1..2, allow_nil: false } }, numericality: true
 
     # Absolute timing:
-    validates :minutes_from_start,  presence: { length: { within: 1..3, allow_nil: false } }, numericality: true
-    validates :seconds_from_start,  presence: { length: { within: 1..2, allow_nil: false } }, numericality: true
+    validates :minutes_from_start, presence: { length: { within: 1..3, allow_nil: false } }, numericality: true
+    validates :seconds_from_start, presence: { length: { within: 1..2, allow_nil: false } }, numericality: true
     validates :hundredths_from_start, presence: { length: { within: 1..2, allow_nil: false } }, numericality: true
 
     # Sorting scopes:
@@ -66,7 +66,7 @@ module GogglesDb
 
     # Returns a commodity Hash wrapping the essential data that summarizes the Meeting
     # associated to this row.
-    # rubocop:disable Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
+    # rubocop:disable-next Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
     def meeting_attributes
       {
         'id' => parent_meeting&.id,
@@ -77,7 +77,6 @@ module GogglesDb
         'edition_label' => parent_meeting&.edition_label
       }
     end
-    # rubocop:enable Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
 
     alias user_workshop_attributes meeting_attributes # (new, old)
     # (Needed by app/models/goggles_db/application_record.rb:122)

@@ -34,13 +34,12 @@ module GogglesDb
     # - user_agent: the raw user-agent string; blank/nil values are stored as 'unknown'.
     # - day: a Date instance; defaults to +today+.
     #
-    # rubocop:disable Rails/SkipsModelValidations
+    # rubocop:disable-next Rails/SkipsModelValidations
     def self.increase_for!(user_agent, day = Time.zone.today)
       safe_agent = user_agent.to_s.strip.first(255).presence || 'unknown'
       counter_row = APIDailyUseAgent.create_or_find_by!(user_agent: safe_agent, day:)
       counter_row.increment!(:count)
     end
-    # rubocop:enable Rails/SkipsModelValidations
 
     # Returns the +limit+ most used user-agent strings between +day_from+ and +day_to+,
     # with their total count summed across the period.

@@ -35,8 +35,8 @@ module GogglesDb
     validates_associated :federation_type
     validates_associated :record_type
 
-    validates :minutes,  presence: { length: { within: 1..3, allow_nil: false } }, numericality: true
-    validates :seconds,  presence: { length: { within: 1..2, allow_nil: false } }, numericality: true
+    validates :minutes, presence: { length: { within: 1..3, allow_nil: false } }, numericality: true
+    validates :seconds, presence: { length: { within: 1..2, allow_nil: false } }, numericality: true
     validates :hundredths, presence: { length: { within: 1..2, allow_nil: false } }, numericality: true
 
     has_one :season_type, through: :season
