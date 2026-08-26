@@ -86,7 +86,8 @@
                         %td.small-text
                           #{row.meeting_date},
                           - if local_assigns[:meeting_path].present? && row.meeting_id.to_i.positive?
-                            = link_to(row.meeting_name, meeting_path.call(row.meeting_id))
+                            = link_to(row.meeting_name, meeting_path.call(row.meeting_id, data[:swimmer_id]),
+                                      title: t('goggles_cup.meeting_link_tooltip'))
                           - else
                             = row.meeting_name
                           %br
@@ -97,7 +98,13 @@
                             = Timing.new.from_hundredths(row.total_hundredths.to_i).to_s
                         %td.small-text
                           - if row.old_meeting_date.present?
-                            #{row.old_meeting_date}, #{row.old_meeting_name}
+                            #{row.old_meeting_date},
+                            - if local_assigns[:meeting_path].present? && row.old_meeting_id.to_i.positive?
+                              = link_to(row.old_meeting_name,
+                                        meeting_path.call(row.old_meeting_id, data[:swimmer_id]),
+                                        title: t('goggles_cup.meeting_link_tooltip'))
+                            - else
+                              = row.old_meeting_name
                             %br
                             Meeting ID #{row.old_meeting_id}, MIR #{row.old_meeting_individual_result_id}
                           - else
@@ -121,6 +128,7 @@
                             aria: { expanded: false, controls: "base-timings-#{data[:swimmer_id]}" })
                   .collapse{ id: "base-timings-#{data[:swimmer_id]}" }
                     = render partial: 'goggles_db/goggle_cups/base_timings_table',
-                             locals: { base_rows: data[:base_rows], meeting_path: local_assigns[:meeting_path] }
+                             locals: { base_rows: data[:base_rows], swimmer_id: data[:swimmer_id],
+                                       meeting_path: local_assigns[:meeting_path] }
       - else
         .alert.alert-info.text-center= t('goggles_cup.info.no_ranking_data')

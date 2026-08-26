@@ -66,6 +66,7 @@ en:
     export_sql_success: "SQL export saved: %{file}"
     export_sql_error: "SQL export failed: %{message}"
     confirm_overwrite: "A precomputed ranking exists for this cup. Computing will overwrite it. Continue?"
+    meeting_link_tooltip: "Go to this swimmer results page for this meeting"
     base_timings:
       title: "Base timings used"
       link: "Base timings"

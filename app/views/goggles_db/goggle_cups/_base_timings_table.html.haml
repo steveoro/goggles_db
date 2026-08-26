@@ -16,7 +16,8 @@
           %td.small-text
             #{row.meeting_date},
             - if local_assigns[:meeting_path].present? && row.meeting_id.to_i.positive?
-              = link_to(row.meeting_name, meeting_path.call(row.meeting_id))
+              = link_to(row.meeting_name, meeting_path.call(row.meeting_id, local_assigns[:swimmer_id]),
+                        title: t('goggles_cup.meeting_link_tooltip'))
             - else
               = row.meeting_name
             %br

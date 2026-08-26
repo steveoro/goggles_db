@@ -53,6 +53,7 @@
                 %small.text-muted.ml-2 ID #{data[:swimmer_id]}
             .card-body
               = render partial: 'goggles_db/goggle_cups/base_timings_table',
-                       locals: { base_rows: data[:base_rows], meeting_path: local_assigns[:meeting_path] }
+                       locals: { base_rows: data[:base_rows], swimmer_id: data[:swimmer_id],
+                                 meeting_path: local_assigns[:meeting_path] }
       - else
         .alert.alert-info.text-center= t('goggles_cup.info.no_ranking_data')

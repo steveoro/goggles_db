@@ -2,6 +2,7 @@
 
 _Please, add the latest build info on top of the list; use Version::MAJOR only after gold release; keep semantic versioning in line with framework's_
 
+- **0.10.42** [Steve A.] meeting links in goggle cup ranking/base-timings partials now pass swimmer_id to the meeting_path lambda so consumers can build swimmer-specific result links; added tooltip i18n key for meeting links
 - **0.10.40** [Steve A.] moved RankingPosComponent into the engine and made it the canonical shared component; extended shared goggle cup ranking partial with optional swimmer/meeting links and a dedicated base-timings page link; added GoggleCupRanking::BaseTimingsData service and shared _base_timings partial to render base-timings in HTML; version/DB alignment
 - **0.10.37** [Steve A.] security bundle updates; improved goggle cup shared partials with export_path support; added shared GoggleCupRanking::Exporter service for ranking and base-timings CSV/XLSX/PDF exports; fix rendering of goggle cup rule on PDF layout
 - **0.10.33** [Steve A.] added flattened read-only views meeting_individual_result_rows & meeting_relay_result_rows (laps/relay legs aggregated as JSON) with MeetingIndividualResultRow & MeetingRelayResultRow models for the Main meeting/show page; test dump updated; DB vers. 2.10.06

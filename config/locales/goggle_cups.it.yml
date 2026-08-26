@@ -66,6 +66,7 @@ it:
     export_sql_success: "Esportazione SQL salvata: %{file}"
     export_sql_error: "Esportazione SQL fallita: %{message}"
     confirm_overwrite: "Esiste già una classifica precalcolata per questa coppa. Il calcolo la sovrascriverà. Continuare?"
+    meeting_link_tooltip: "Vai alla pagina dei risultati per questo nuotatore in questo meeting"
     base_timings:
       title: "Tempi base utilizzati"
       link: "Tempi Base"
