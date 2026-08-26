@@ -61,6 +61,7 @@ Gem::Specification.new do |spec|
   spec.add_dependency 'scenic'
   spec.add_dependency 'simple_command'
   spec.add_dependency 'tzinfo'
+  spec.add_dependency 'view_component'
 
   spec.add_dependency 'factory_bot_rails'
   spec.add_dependency 'ffaker'

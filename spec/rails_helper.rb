@@ -66,6 +66,10 @@ end
 
 # Configure Shoulda Matchers
 require 'shoulda/matchers'
+require 'view_component/test_helpers'
+
+# Load shared examples from the engine's spec/support directory:
+Dir[GogglesDb::Engine.root.join('spec', 'support', '**', '*.rb')].sort.each { |f| require f }
 
 Shoulda::Matchers.configure do |config|
   config.integrate do |with|
@@ -80,6 +84,9 @@ end
 RSpec.configure do |config|
   # Include FactoryBot syntax methods (create, build, etc.)
   config.include FactoryBot::Syntax::Methods
+
+  # Add ViewComponent helpers for component specs
+  config.include ViewComponent::TestHelpers, type: :component
 
   # Remove this line if you're not using ActiveRecord or ActiveRecord fixtures
   # config.fixture_path = "#{::Rails.root}/spec/fixtures"

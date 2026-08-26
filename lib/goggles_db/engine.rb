@@ -4,6 +4,7 @@ require 'devise'
 require 'jwt'
 require 'draper'
 require 'haml'
+require 'view_component'
 require 'acts-as-taggable-on'
 require 'acts_as_votable'
 require 'factory_bot_rails'
@@ -25,6 +26,7 @@ module GogglesDb
     #  being used in production environment too)
     config.eager_load_paths << GogglesDb::Engine.root.join('lib', 'extensions').to_s
     config.eager_load_paths << GogglesDb::Engine.root.join('lib', 'wrappers').to_s
+    config.eager_load_paths << GogglesDb::Engine.root.join('app', 'components').to_s
 
     config.generators do |g|
       g.test_framework :rspec, fixture: false

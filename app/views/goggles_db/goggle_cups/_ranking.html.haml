@@ -32,28 +32,36 @@
                         class: 'btn btn-outline-secondary mx-2', 'data-turbo': false) do
                 %i.fa.fa-file-pdf-o
                 = t('goggles_cup.export.ranking_pdf')
-              = link_to(export_path.call(format: :csv, export_type: :base_timings),
-                        class: 'btn btn-outline-secondary mx-2', 'data-turbo': false) do
-                %i.fa.fa-file-text-o
-                = t('goggles_cup.export.base_timings_csv')
-              = link_to(export_path.call(format: :xlsx, export_type: :base_timings),
-                        class: 'btn btn-outline-secondary mx-2', 'data-turbo': false) do
-                %i.fa.fa-file-excel-o
-                = t('goggles_cup.export.base_timings_xls')
-              = link_to(export_path.call(format: :pdf, export_type: :base_timings),
-                        class: 'btn btn-outline-secondary mx-2', 'data-turbo': false) do
-                %i.fa.fa-file-pdf-o
-                = t('goggles_cup.export.base_timings_pdf')
+
+              - if local_assigns[:base_timings_path].present?
+                = link_to(t('goggles_cup.base_timings.link'), base_timings_path,
+                          class: 'btn btn-outline-secondary mx-2', 'data-turbo': false)
+              - else
+                = link_to(export_path.call(format: :csv, export_type: :base_timings),
+                          class: 'btn btn-outline-secondary mx-2', 'data-turbo': false) do
+                  %i.fa.fa-file-text-o
+                  = t('goggles_cup.export.base_timings_csv')
+                = link_to(export_path.call(format: :xlsx, export_type: :base_timings),
+                          class: 'btn btn-outline-secondary mx-2', 'data-turbo': false) do
+                  %i.fa.fa-file-excel-o
+                  = t('goggles_cup.export.base_timings_xls')
+                = link_to(export_path.call(format: :pdf, export_type: :base_timings),
+                          class: 'btn btn-outline-secondary mx-2', 'data-turbo': false) do
+                  %i.fa.fa-file-pdf-o
+                  = t('goggles_cup.export.base_timings_pdf')
 
         - ranking_data.each_with_index do |data, index|
           .card.mb-3
             .card-header.bg-light-blue.d-flex.justify-content-between.align-items-center
               .d-flex.align-items-center
                 %h5.mb-0.mr-3
-                  %span.badge.badge-primary.mr-2 ##{index + 1}
-                  = data[:swimmer_name]
+                  = render(GogglesDb::RankingPosComponent.new(rank: index + 1, css: 'badge badge-primary mr-2'))
+                  - if local_assigns[:swimmer_path].present? && data[:swimmer_id].to_i.positive?
+                    = link_to(data[:swimmer_name], swimmer_path.call(data[:swimmer_id]))
+                  - else
+                    = data[:swimmer_name]
                   %small.ml-2 (#{data[:swimmer_year_of_birth]})
-                %strong.ml-3= t('goggles_cup.overall_score', score: sprintf('%.2f', data[:overall_score]))
+                %strong.ml-3= t('goggles_cup.overall_score', score: format('%.2f', data[:overall_score]))
               %small.text-muted ID #{data[:swimmer_id]}
 
             .card-body
@@ -76,18 +84,22 @@
                         %td= row.event_type_code
                         %td= row.pool_type_code
                         %td.small-text
-                          = "#{row.meeting_date}, #{row.meeting_name}"
+                          #{row.meeting_date},
+                          - if local_assigns[:meeting_path].present? && row.meeting_id.to_i.positive?
+                            = link_to(row.meeting_name, meeting_path.call(row.meeting_id))
+                          - else
+                            = row.meeting_name
                           %br
-                          = "Meeting ID #{row.meeting_id}, MIR #{row.meeting_individual_result_id}"
+                          Meeting ID #{row.meeting_id}, MIR #{row.meeting_individual_result_id}
                         %td.text-right.pr-4
                           = row.total_hundredths
                           %p.small-text
                             = Timing.new.from_hundredths(row.total_hundredths.to_i).to_s
                         %td.small-text
                           - if row.old_meeting_date.present?
-                            = "#{row.old_meeting_date}, #{row.old_meeting_name}"
+                            #{row.old_meeting_date}, #{row.old_meeting_name}
                             %br
-                            = "Meeting ID #{row.old_meeting_id}, MIR #{row.old_meeting_individual_result_id}"
+                            Meeting ID #{row.old_meeting_id}, MIR #{row.old_meeting_individual_result_id}
                           - else
                             = '-'
                         %td.text-right.pr-4
@@ -97,41 +109,18 @@
                               = Timing.new.from_hundredths(row.old_total_hundredths.to_i).to_s
                           - else
                             = '-'
-
                         %td.text-right.pr-4
-                          %strong= sprintf('%.2f', top_row[:row_score])
+                          %strong= format('%.2f', top_row[:row_score])
 
               - if data[:base_rows].present?
                 .mt-4
-                  %a.btn.btn-outline-secondary.btn-sm{ 'data-toggle' => 'collapse',
-                                                      href: "#base-timings-#{data[:swimmer_id]}",
-                                                      role: 'button',
-                                                      'aria-expanded' => 'false',
-                                                      'aria-controls' => "base-timings-#{data[:swimmer_id]}" }
-                    = t('goggles_cup.base_timings.toggle')
+                  = link_to(t('goggles_cup.base_timings.toggle'),
+                            "#base-timings-#{data[:swimmer_id]}",
+                            class: 'btn btn-outline-secondary btn-sm', role: 'button',
+                            data: { toggle: 'collapse' },
+                            aria: { expanded: false, controls: "base-timings-#{data[:swimmer_id]}" })
                   .collapse{ id: "base-timings-#{data[:swimmer_id]}" }
-                    .table-responsive.mt-2
-                      %table.table.table-sm.table-striped
-                        %thead
-                          %tr
-                            %th= t('goggles_cup.base_timings.event_type')
-                            %th= t('goggles_cup.base_timings.pool_type')
-                            %th= t('goggles_cup.base_timings.season')
-                            %th= t('goggles_cup.base_timings.meeting')
-                            %th= t('goggles_cup.base_timings.timing')
-                        %tbody
-                          - data[:base_rows].each do |row|
-                            %tr
-                              %td= row.event_type_code
-                              %td= row.pool_type_code
-                              %td= row.season_header_year
-                              %td.small-text
-                                = "#{row.meeting_date}, #{row.meeting_name}"
-                                %br
-                                = "Meeting ID #{row.meeting_id}, MIR #{row.meeting_individual_result_id}"
-                              %td.text-right.pr-4
-                                = row.total_hundredths
-                                %p.small-text
-                                  = Timing.new.from_hundredths(row.total_hundredths.to_i).to_s
+                    = render partial: 'goggles_db/goggle_cups/base_timings_table',
+                             locals: { base_rows: data[:base_rows], meeting_path: local_assigns[:meeting_path] }
       - else
         .alert.alert-info.text-center= t('goggles_cup.info.no_ranking_data')

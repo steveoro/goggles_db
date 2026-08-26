@@ -1,0 +1,59 @@
+%section.my-2#goggle-cup-base-timings{ data: { goggle_cup_id: goggle_cup&.id } }
+  .row
+    .col-12
+      %h5.text-center.my-4= t('goggles_cup.base_timings.title')
+
+      - if goggle_cup
+        .row.mb-3
+          .col-12.text-center
+            %h6
+              #{goggle_cup.season_year} — #{goggle_cup.description}
+            %p.small-text
+              = t('goggles_cup.ranking_for_team', team: team&.name)
+              %br
+              = t('goggles_cup.formula')
+              %br
+              - if no_duplicated_events
+                #{t('goggles_cup.no_duplicated_events')}
+              - else
+                #{t('goggles_cup.with_duplicated_events')}
+
+      - if local_assigns[:export_path].present?
+        .row.mb-3
+          .col-12.text-center
+            = link_to(export_path.call(format: :csv, export_type: :base_timings),
+                      class: 'btn btn-outline-secondary mx-2', 'data-turbo': false) do
+              %i.fa.fa-file-text-o
+              = t('goggles_cup.export.base_timings_csv')
+            = link_to(export_path.call(format: :xlsx, export_type: :base_timings),
+                      class: 'btn btn-outline-secondary mx-2', 'data-turbo': false) do
+              %i.fa.fa-file-excel-o
+              = t('goggles_cup.export.base_timings_xls')
+            = link_to(export_path.call(format: :pdf, export_type: :base_timings),
+                      class: 'btn btn-outline-secondary mx-2', 'data-turbo': false) do
+              %i.fa.fa-file-pdf-o
+              = t('goggles_cup.export.base_timings_pdf')
+
+      - if local_assigns[:back_path].present?
+        .row.mb-3
+          .col-12.text-center
+            = link_to(t('goggles_cup.base_timings.back_to_ranking'), back_path,
+                      class: 'btn btn-outline-secondary mb-3', 'data-turbo': false)
+
+      - base_timings_data = GogglesDb::GoggleCupRanking::BaseTimingsData.new(ranking_data).call
+      - if base_timings_data.present?
+        - base_timings_data.each do |data|
+          .card.mb-3
+            .card-header.bg-light-blue
+              %h6.mb-0
+                - if local_assigns[:swimmer_path].present? && data[:swimmer_id].to_i.positive?
+                  = link_to(data[:swimmer_name], swimmer_path.call(data[:swimmer_id]))
+                - else
+                  = data[:swimmer_name]
+                %small.ml-2 (#{data[:swimmer_year_of_birth]})
+                %small.text-muted.ml-2 ID #{data[:swimmer_id]}
+            .card-body
+              = render partial: 'goggles_db/goggle_cups/base_timings_table',
+                       locals: { base_rows: data[:base_rows], meeting_path: local_assigns[:meeting_path] }
+      - else
+        .alert.alert-info.text-center= t('goggles_cup.info.no_ranking_data')

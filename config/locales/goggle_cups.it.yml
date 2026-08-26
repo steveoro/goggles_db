@@ -68,6 +68,8 @@ it:
     confirm_overwrite: "Esiste già una classifica precalcolata per questa coppa. Il calcolo la sovrascriverà. Continuare?"
     base_timings:
       title: "Tempi base utilizzati"
+      link: "Tempi Base"
+      back_to_ranking: "Torna alla classifica"
       toggle: "Mostra tempi base"
       event_type: "Evento"
       pool_type: "Vasca"

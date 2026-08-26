@@ -1,0 +1,27 @@
+.table-responsive
+  %table.table.table-sm.table-striped
+    %thead
+      %tr
+        %th= t('goggles_cup.base_timings.event_type')
+        %th= t('goggles_cup.base_timings.pool_type')
+        %th= t('goggles_cup.base_timings.season')
+        %th= t('goggles_cup.base_timings.meeting')
+        %th= t('goggles_cup.base_timings.timing')
+    %tbody
+      - base_rows.each do |row|
+        %tr
+          %td= row.event_type_code
+          %td= row.pool_type_code
+          %td= row.season_header_year
+          %td.small-text
+            #{row.meeting_date},
+            - if local_assigns[:meeting_path].present? && row.meeting_id.to_i.positive?
+              = link_to(row.meeting_name, meeting_path.call(row.meeting_id))
+            - else
+              = row.meeting_name
+            %br
+            Meeting ID #{row.meeting_id}, MIR #{row.meeting_individual_result_id}
+          %td.text-right.pr-4
+            = row.total_hundredths
+            %p.small-text
+              = Timing.new.from_hundredths(row.total_hundredths.to_i).to_s

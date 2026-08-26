@@ -68,6 +68,8 @@ en:
     confirm_overwrite: "A precomputed ranking exists for this cup. Computing will overwrite it. Continue?"
     base_timings:
       title: "Base timings used"
+      link: "Base timings"
+      back_to_ranking: "Back to ranking"
       toggle: "Show base timings"
       event_type: "Event"
       pool_type: "Pool"

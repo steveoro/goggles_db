@@ -4,6 +4,8 @@ exclude:
 linters:
   LineLength:
     max: 120
+  ViewLength:
+    max: 150
 
   IdNames:
     exclude:

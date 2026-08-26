@@ -92,9 +92,7 @@ module GogglesDb
       end
 
       def base_timings_export_data
-        @base_timings_export_data ||= @ranking_data
-                                      .reject { |data| data[:base_rows].blank? }
-                                      .sort_by { |data| data[:swimmer_name].to_s }
+        @base_timings_export_data ||= BaseTimingsData.new(@ranking_data).call
       end
 
       def mime_type_for(format_name)
