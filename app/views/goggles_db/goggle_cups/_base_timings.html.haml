@@ -21,6 +21,11 @@
       - if local_assigns[:export_path].present?
         .row.mb-3
           .col-12.text-center
+            - if local_assigns[:back_path].present?
+              = link_to(back_path, class: 'mb-3', 'data-turbo': false) do
+                %i.fa.fa-arrow-left
+                = t('goggles_cup.base_timings.back_to_ranking')
+
             = link_to(export_path.call(format: :csv, export_type: :base_timings),
                       class: 'btn btn-outline-secondary mx-2', 'data-turbo': false) do
               %i.fa.fa-file-text-o
@@ -33,12 +38,6 @@
                       class: 'btn btn-outline-secondary mx-2', 'data-turbo': false) do
               %i.fa.fa-file-pdf-o
               = t('goggles_cup.export.base_timings_pdf')
-
-      - if local_assigns[:back_path].present?
-        .row.mb-3
-          .col-12.text-center
-            = link_to(t('goggles_cup.base_timings.back_to_ranking'), back_path,
-                      class: 'btn btn-outline-secondary mb-3', 'data-turbo': false)
 
       - base_timings_data = GogglesDb::GoggleCupRanking::BaseTimingsData.new(ranking_data).call
       - if base_timings_data.present?

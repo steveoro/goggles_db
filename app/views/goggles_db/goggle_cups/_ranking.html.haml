@@ -35,7 +35,7 @@
 
               - if local_assigns[:base_timings_path].present?
                 = link_to(t('goggles_cup.base_timings.link'), base_timings_path,
-                          class: 'btn btn-outline-secondary mx-2', 'data-turbo': false)
+                          class: 'mx-2', 'data-turbo': false)
               - else
                 = link_to(export_path.call(format: :csv, export_type: :base_timings),
                           class: 'btn btn-outline-secondary mx-2', 'data-turbo': false) do
