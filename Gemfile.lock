@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    goggles_db (0.10.42)
+    goggles_db (0.10.43)
       acts-as-taggable-on
       acts_as_votable
       caxlsx

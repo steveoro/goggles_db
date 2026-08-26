@@ -14,8 +14,16 @@ module GogglesDb
     let(:fixture_row) { described_class.find(source_mir.id) }
 
     describe 'the view' do
-      it 'has one row per source MIR' do
-        expect(described_class.count).to eq(MeetingIndividualResult.count)
+      it 'has one row per source MIR with an existing swimmer' do
+        expect(described_class.count).to eq(MeetingIndividualResult.joins(:swimmer).count)
+      end
+
+      it 'excludes MIRs whose swimmer_id no longer references an existing swimmer' do
+        missing_swimmer_id = Swimmer.maximum(:id) + 1
+        source_mir.swimmer_id = missing_swimmer_id
+        source_mir.save!(validate: false)
+
+        expect(described_class.exists?(source_mir.id)).to be(false)
       end
     end
 
