@@ -69,7 +69,7 @@ require 'shoulda/matchers'
 require 'view_component/test_helpers'
 
 # Load shared examples from the engine's spec/support directory:
-Dir[GogglesDb::Engine.root.join('spec', 'support', '**', '*.rb')].sort.each { |f| require f }
+Dir[GogglesDb::Engine.root.join('spec', 'support', '**', '*.rb')].each { |f| require f }
 
 Shoulda::Matchers.configure do |config|
   config.integrate do |with|
