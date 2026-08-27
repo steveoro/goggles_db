@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    goggles_db (0.10.43)
+    goggles_db (0.10.44)
       acts-as-taggable-on
       acts_as_votable
       caxlsx
@@ -442,7 +442,7 @@ GEM
       io-console (~> 0.5)
     request_store (1.7.0)
       rack (>= 1.4)
-    responders (3.2.0)
+    responders (3.2.1)
       actionpack (>= 7.0)
       railties (>= 7.0)
     rouge (5.1.0)
