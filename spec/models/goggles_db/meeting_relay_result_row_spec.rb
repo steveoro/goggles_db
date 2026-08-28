@@ -12,8 +12,16 @@ module GogglesDb
     let(:fixture_row) { described_class.find(source_mrr.id) }
 
     describe 'the view' do
-      it 'has one row per source MRR' do
-        expect(described_class.count).to eq(MeetingRelayResult.count)
+      it 'has one row per source MRR with an existing team' do
+        expect(described_class.count).to eq(MeetingRelayResult.joins(:team).count)
+      end
+
+      it 'excludes MRRs whose team_id no longer references an existing team' do
+        missing_team_id = Team.maximum(:id) + 1
+        source_mrr.team_id = missing_team_id
+        source_mrr.save!(validate: false)
+
+        expect(described_class.exists?(source_mrr.id)).to be(false)
       end
     end
 
@@ -60,6 +68,16 @@ module GogglesDb
           source_leg = source_mrr.meeting_relay_swimmers.order(:relay_order).first
           expect(leg_row.to_timing).to eq(source_leg.to_timing)
           expect(leg_row.timing_from_start).to eq(source_leg.to_timing(from_start: true))
+        end
+
+        it 'excludes relay legs whose swimmer_id no longer references an existing swimmer' do
+          source_leg = source_mrr.meeting_relay_swimmers.first
+          source_leg.swimmer_id = Swimmer.maximum(:id) + 1
+          source_leg.save!(validate: false)
+          relay_swimmers = described_class.find(source_mrr.id).relay_swimmers
+
+          expect(relay_swimmers.map(&:id)).not_to include(source_leg.id)
+          expect(relay_swimmers.map(&:swimmer)).to all(be_present)
         end
       end
 
