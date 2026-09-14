@@ -86,5 +86,37 @@ module GogglesDb
         expect(described_class.max_anonymous_req).to eq(described_class::DEFAULT_MAX_ANONYMOUS_REQ)
       end
     end
+
+    describe 'self.max_bot_req' do
+      it 'returns the configured value from the :app settings group' do
+        row = described_class.versioning_row
+        row.settings(:app).max_bot_req = 45
+        row.save!
+        expect(described_class.max_bot_req).to eq(45)
+      end
+
+      it 'falls back to the default when the setting is nil' do
+        row = described_class.versioning_row
+        row.settings(:app).max_bot_req = nil
+        row.save!
+        expect(described_class.max_bot_req).to eq(described_class::DEFAULT_MAX_BOT_REQ)
+      end
+    end
+
+    describe 'self.max_req_per_minute' do
+      it 'returns the configured value from the :app settings group' do
+        row = described_class.versioning_row
+        row.settings(:app).max_req_per_minute = 90
+        row.save!
+        expect(described_class.max_req_per_minute).to eq(90)
+      end
+
+      it 'falls back to the default when the setting is nil' do
+        row = described_class.versioning_row
+        row.settings(:app).max_req_per_minute = nil
+        row.save!
+        expect(described_class.max_req_per_minute).to eq(described_class::DEFAULT_MAX_REQ_PER_MINUTE)
+      end
+    end
   end
 end

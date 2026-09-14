@@ -88,5 +88,23 @@ module GogglesDb
       value = AppParameter.versioning_row.settings(:app).max_anonymous_req
       value.present? ? value.to_i : DEFAULT_MAX_ANONYMOUS_REQ
     end
+
+    DEFAULT_MAX_BOT_REQ = 30
+
+    # Returns the maximum daily bot-UA request count per IP before throttling.
+    # Falls back to +DEFAULT_MAX_BOT_REQ+ when the setting is missing or nil.
+    def self.max_bot_req
+      value = AppParameter.versioning_row.settings(:app).max_bot_req
+      value.present? ? value.to_i : DEFAULT_MAX_BOT_REQ
+    end
+
+    DEFAULT_MAX_REQ_PER_MINUTE = 60
+
+    # Returns the maximum burst request count per IP per minute before throttling.
+    # Falls back to +DEFAULT_MAX_REQ_PER_MINUTE+ when the setting is missing or nil.
+    def self.max_req_per_minute
+      value = AppParameter.versioning_row.settings(:app).max_req_per_minute
+      value.present? ? value.to_i : DEFAULT_MAX_REQ_PER_MINUTE
+    end
   end
 end

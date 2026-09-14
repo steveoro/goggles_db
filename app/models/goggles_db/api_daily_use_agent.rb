@@ -50,5 +50,15 @@ module GogglesDb
         .select(:user_agent, 'SUM(count) AS total_count')
         .limit(limit)
     end
+
+    # Returns per-(day, user_agent) summed counts for the +limit+ most used agents in the period
+    # (as returned by +top_agents+), ordered by day then user_agent.
+    def self.daily_counts(day_from:, day_to:, limit: 10)
+      top = top_agents(day_from:, day_to:, limit:).map(&:user_agent)
+      where(day: day_from..day_to, user_agent: top)
+        .group(:day, :user_agent)
+        .order(:day, :user_agent)
+        .select(:day, :user_agent, 'SUM(count) AS total_count')
+    end
   end
 end
