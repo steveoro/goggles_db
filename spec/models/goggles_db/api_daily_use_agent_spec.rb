@@ -21,7 +21,7 @@ module GogglesDb
 
       it_behaves_like(
         'responding to a list of class methods',
-        %i[increase_for!]
+        %i[increase_for! daily_counts]
       )
 
       it_behaves_like('ApplicationRecord shared interface')
@@ -111,6 +111,40 @@ module GogglesDb
 
       it 'returns results sorted by descending total_count' do
         expect(result.map(&:total_count)).to eq(result.map(&:total_count).sort.reverse)
+      end
+    end
+
+    describe 'self.daily_counts' do
+      let(:day_from) { Date.new(2030, 1, 1) }
+      let(:day_to) { day_from + 1.day }
+      let(:top_agent) { 'Bot/TopDailyCounts/1.0' }
+      let(:other_agent) { 'Bot/OtherDailyCounts/1.0' }
+
+      before do
+        FactoryBot.create(:api_daily_use_agent, user_agent: top_agent, day: day_from, count: 8)
+        FactoryBot.create(:api_daily_use_agent, user_agent: top_agent, day: day_to, count: 6)
+        FactoryBot.create(:api_daily_use_agent, user_agent: other_agent, day: day_from, count: 3)
+        FactoryBot.create(:api_daily_use_agent, user_agent: other_agent, day: day_to, count: 4)
+      end
+
+      it 'returns summed counts for each day and user agent' do
+        result = described_class.daily_counts(day_from:, day_to:)
+
+        expect(result.map { |row| [row.day, row.user_agent, row.total_count.to_i] }).to eq(
+          [
+            [day_from, other_agent, 3],
+            [day_from, top_agent, 8],
+            [day_to, other_agent, 4],
+            [day_to, top_agent, 6]
+          ]
+        )
+      end
+
+      it 'returns rows only for the most used agents within the limit' do
+        result = described_class.daily_counts(day_from:, day_to:, limit: 1)
+
+        expect(result.map(&:user_agent).uniq).to eq([top_agent])
+        expect(result.map { |row| row.total_count.to_i }).to eq([8, 6])
       end
     end
   end

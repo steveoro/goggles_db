@@ -2,6 +2,7 @@
 
 _Please, add the latest build info on top of the list; use Version::MAJOR only after gold release; keep semantic versioning in line with framework's_
 
+- **0.10.46** [Steve A.] added bot mitigation request settings readers and daily API user-agent count aggregation
 - **0.10.45** [Steve A.] excluded relay results with dangling team references and relay legs with dangling swimmer references from the optimized meeting_relay_result_rows view; added defensive main rendering checks; DB vers. 2.10.08
 - **0.10.43** [Steve A.] fixed meeting/show regression by excluding MIR rows with dangling swimmer references from the optimized meeting_individual_result_rows view, matching the former joins(:swimmer) rendering behavior; DB vers. 2.10.07
 - **0.10.42** [Steve A.] meeting links in goggle cup ranking/base-timings partials now pass swimmer_id to the meeting_path lambda so consumers can build swimmer-specific result links; added tooltip i18n key for meeting links
