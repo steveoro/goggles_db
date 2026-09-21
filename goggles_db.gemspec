@@ -27,6 +27,10 @@ Gem::Specification.new do |spec|
   # Base Rails dependency:
   spec.add_dependency 'rails', '>= 8.1', '< 9'
   spec.add_dependency 'rails-i18n', '~> 8'
+  # FIXME: json >= 3 removed JSON.parse's positional options argument, which breaks
+  # ActiveSupport::JSON.decode in rails <= 8.1.3.1 (fixed on 8-1-stable, unreleased).
+  # Remove this constraint once a fixed rails version is out.
+  spec.add_dependency 'json', '< 3'
 
   spec.add_dependency 'acts-as-taggable-on'
   spec.add_dependency 'acts_as_votable'

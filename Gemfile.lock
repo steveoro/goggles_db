@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    goggles_db (0.10.47)
+    goggles_db (0.10.48)
       acts-as-taggable-on
       acts_as_votable
       caxlsx
@@ -17,6 +17,7 @@ PATH
       fuzzy-string-match
       haml
       haml-rails
+      json (< 3)
       jwt
       ledermann-rails-settings
       loofah
@@ -265,7 +266,7 @@ GEM
       prism (>= 1.3.0)
       rdoc (>= 4.0.0)
       reline (>= 0.4.2)
-    json (3.0.2)
+    json (2.21.2)
     jwt (3.3.0)
       base64
     language_server-protocol (3.17.0.6)
