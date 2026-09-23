@@ -519,6 +519,37 @@ SET character_set_client = utf8mb4;
  NULL AS `old_seconds`,
  NULL AS `old_hundredths` */;
 SET character_set_client = @saved_cs_client;
+DROP TABLE IF EXISTS `best_team_results_for_season`;
+/*!50001 DROP VIEW IF EXISTS `best_team_results_for_season`*/;
+SET @saved_cs_client     = @@character_set_client;
+SET character_set_client = utf8mb4;
+/*!50001 CREATE VIEW `best_team_results_for_season` AS SELECT
+ 1 AS `swimmer_id`,
+  1 AS `swimmer_name`,
+  1 AS `swimmer_year_of_birth`,
+  1 AS `gender_type_id`,
+  1 AS `gender_type_code`,
+  1 AS `event_type_id`,
+  1 AS `event_type_code`,
+  1 AS `category_type_id`,
+  1 AS `category_type_code`,
+  1 AS `category_type_short_name`,
+  1 AS `pool_type_id`,
+  1 AS `pool_type_code`,
+  1 AS `season_id`,
+  1 AS `season_header_year`,
+  1 AS `federation_type_id`,
+  1 AS `meeting_individual_result_id`,
+  1 AS `minutes`,
+  1 AS `seconds`,
+  1 AS `hundredths`,
+  1 AS `total_hundredths`,
+  1 AS `meeting_id`,
+  1 AS `meeting_date`,
+  1 AS `meeting_name`,
+  1 AS `team_id`,
+  1 AS `team_name` */;
+SET character_set_client = @saved_cs_client;
 DROP TABLE IF EXISTS `calendars`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8mb4 */;
@@ -1111,6 +1142,19 @@ CREATE TABLE `goggle_cups` (
 ) ENGINE=InnoDB AUTO_INCREMENT=107 DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_general_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 DROP TABLE IF EXISTS `goggles_cup_3y_base_timings`;
+/*!50001 DROP VIEW IF EXISTS `best_team_results_for_season`*/;
+/*!50001 SET @saved_cs_client          = @@character_set_client */;
+/*!50001 SET @saved_cs_results         = @@character_set_results */;
+/*!50001 SET @saved_col_connection     = @@collation_connection */;
+/*!50001 SET character_set_client      = utf8mb4 */;
+/*!50001 SET character_set_results     = utf8mb4 */;
+/*!50001 SET collation_connection      = utf8mb4_general_ci */;
+/*!50001 CREATE ALGORITHM=UNDEFINED */
+/*!50013 DEFINER=`root`@`%` SQL SECURITY DEFINER */
+/*!50001 VIEW `best_team_results_for_season` AS with RankedResults as (select `mir`.`swimmer_id` AS `swimmer_id`,`s`.`complete_name` AS `swimmer_name`,`s`.`year_of_birth` AS `swimmer_year_of_birth`,`mp`.`gender_type_id` AS `gender_type_id`,`gt`.`code` AS `gender_type_code`,`me`.`event_type_id` AS `event_type_id`,`et`.`code` AS `event_type_code`,`mp`.`category_type_id` AS `category_type_id`,`ct`.`code` AS `category_type_code`,`ct`.`short_name` AS `category_type_short_name`,`mp`.`pool_type_id` AS `pool_type_id`,`pt`.`code` AS `pool_type_code`,`m`.`season_id` AS `season_id`,`se`.`header_year` AS `season_header_year`,`st`.`federation_type_id` AS `federation_type_id`,`mir`.`id` AS `meeting_individual_result_id`,`mir`.`minutes` AS `minutes`,`mir`.`seconds` AS `seconds`,`mir`.`hundredths` AS `hundredths`,`mir`.`minutes` * 6000 + `mir`.`seconds` * 100 + `mir`.`hundredths` AS `total_hundredths`,`m`.`id` AS `meeting_id`,`m`.`header_date` AS `meeting_date`,`m`.`description` AS `meeting_name`,`b`.`team_id` AS `team_id`,`t`.`name` AS `team_name`,row_number() over ( partition by `b`.`team_id`,`m`.`season_id`,`me`.`event_type_id`,`mp`.`category_type_id`,`mp`.`gender_type_id`,`mp`.`pool_type_id` order by `mir`.`minutes` * 6000 + `mir`.`seconds` * 100 + `mir`.`hundredths`,`m`.`header_date` desc,`m`.`id` desc) AS `rn` from (((((((((((((`meeting_individual_results` `mir` join `badges` `b` on(`b`.`id` = `mir`.`badge_id`)) join `meeting_programs` `mp` on(`mp`.`id` = `mir`.`meeting_program_id`)) join `meeting_events` `me` on(`me`.`id` = `mp`.`meeting_event_id`)) join `meeting_sessions` `ms` on(`ms`.`id` = `me`.`meeting_session_id`)) join `meetings` `m` on(`m`.`id` = `ms`.`meeting_id`)) join `seasons` `se` on(`se`.`id` = `m`.`season_id`)) join `season_types` `st` on(`st`.`id` = `se`.`season_type_id`)) join `event_types` `et` on(`et`.`id` = `me`.`event_type_id`)) join `category_types` `ct` on(`ct`.`id` = `mp`.`category_type_id`)) join `gender_types` `gt` on(`gt`.`id` = `mp`.`gender_type_id`)) join `pool_types` `pt` on(`pt`.`id` = `mp`.`pool_type_id`)) join `swimmers` `s` on(`s`.`id` = `mir`.`swimmer_id`)) join `teams` `t` on(`t`.`id` = `b`.`team_id`)) where `mir`.`disqualified` = 0 and `mir`.`minutes` * 6000 + `mir`.`seconds` * 100 + `mir`.`hundredths` > 0 and `me`.`event_type_id` in (2,3,4,5,6,7,11,12,13,15,16,17,19,20,21,22,23,24) and `mp`.`pool_type_id` in (1,2) and `mp`.`gender_type_id` in (1,2) and `b`.`season_id` = `m`.`season_id`)select `RankedResults`.`swimmer_id` AS `swimmer_id`,`RankedResults`.`swimmer_name` AS `swimmer_name`,`RankedResults`.`swimmer_year_of_birth` AS `swimmer_year_of_birth`,`RankedResults`.`gender_type_id` AS `gender_type_id`,`RankedResults`.`gender_type_code` AS `gender_type_code`,`RankedResults`.`event_type_id` AS `event_type_id`,`RankedResults`.`event_type_code` AS `event_type_code`,`RankedResults`.`category_type_id` AS `category_type_id`,`RankedResults`.`category_type_code` AS `category_type_code`,`RankedResults`.`category_type_short_name` AS `category_type_short_name`,`RankedResults`.`pool_type_id` AS `pool_type_id`,`RankedResults`.`pool_type_code` AS `pool_type_code`,`RankedResults`.`season_id` AS `season_id`,`RankedResults`.`season_header_year` AS `season_header_year`,`RankedResults`.`federation_type_id` AS `federation_type_id`,`RankedResults`.`meeting_individual_result_id` AS `meeting_individual_result_id`,`RankedResults`.`minutes` AS `minutes`,`RankedResults`.`seconds` AS `seconds`,`RankedResults`.`hundredths` AS `hundredths`,`RankedResults`.`total_hundredths` AS `total_hundredths`,`RankedResults`.`meeting_id` AS `meeting_id`,`RankedResults`.`meeting_date` AS `meeting_date`,`RankedResults`.`meeting_name` AS `meeting_name`,`RankedResults`.`team_id` AS `team_id`,`RankedResults`.`team_name` AS `team_name` from `RankedResults` where `RankedResults`.`rn` = 1 */;
+/*!50001 SET character_set_client      = @saved_cs_client */;
+/*!50001 SET character_set_results     = @saved_cs_results */;
+/*!50001 SET collation_connection      = @saved_col_connection */;
 /*!50001 DROP VIEW IF EXISTS `goggles_cup_3y_base_timings`*/;
 SET @saved_cs_client     = @@character_set_client;
 SET character_set_client = utf8mb4;
