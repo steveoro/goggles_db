@@ -25,6 +25,9 @@ module GogglesDb
     self.primary_key = :meeting_individual_result_id
     self.table_name = 'best_team_results_for_season'
 
+    # Individual event types supported by the view (mirrors the SQL filter).
+    SUPPORTED_EVENT_TYPE_IDS = [2, 3, 4, 5, 6, 7, 11, 12, 13, 15, 16, 17, 19, 20, 21, 22, 23, 24].freeze
+
     belongs_to :category_type
 
     # Scope to filter results by category type.
