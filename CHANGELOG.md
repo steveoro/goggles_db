@@ -2,6 +2,7 @@
 
 _Please, add the latest build info on top of the list; use Version::MAJOR only after gold release; keep semantic versioning in line with framework's_
 
+- **0.10.50** [Devin] added `all_time_best` scope to BestTeamResultsForSeason: single best (lowest-timing) row per team+program tuple across all seasons, for season-less team records
 - **0.10.49** [Devin] added best_team_results_for_season Scenic view + BestTeamResultsForSeason model: per team & season, the best individual result for each meeting-program tuple (event x category x gender x pool), bound through season badges; test dump updated; DB vers. 2.10.10
 - **0.10.46** [Steve A.] added bot mitigation request settings readers and daily API user-agent count aggregation
 - **0.10.45** [Steve A.] excluded relay results with dangling team references and relay legs with dangling swimmer references from the optimized meeting_relay_result_rows view; added defensive main rendering checks; DB vers. 2.10.08
