@@ -47,5 +47,31 @@ module GogglesDb
         expect(badge_team_ids).to eq([chosen.team_id])
       end
     end
+
+    describe '.all_time_best' do
+      subject(:all_time_rows) { described_class.for_team_id(chosen.team_id).all_time_best }
+
+      let(:chosen) { described_class.order(Arel.sql('RAND()')).first }
+
+      it 'returns at most one row per event x category x gender x pool tuple' do
+        tuples = all_time_rows.pluck(:event_type_id, :category_type_id, :gender_type_id, :pool_type_id)
+        expect(tuples.uniq.length).to eq(tuples.length)
+      end
+
+      it 'keeps the lowest timing per tuple across all seasons' do
+        per_tuple_min = described_class.for_team_id(chosen.team_id)
+                                       .group(:event_type_id, :category_type_id, :gender_type_id, :pool_type_id)
+                                       .minimum(:total_hundredths)
+        mismatches = all_time_rows.reject do |row|
+          tuple = [row.event_type_id, row.category_type_id, row.gender_type_id, row.pool_type_id]
+          row.total_hundredths == per_tuple_min[tuple]
+        end
+        expect(mismatches).to be_empty
+      end
+
+      it 'respects team scoping' do
+        expect(all_time_rows.pluck(:team_id).uniq).to eq([chosen.team_id])
+      end
+    end
   end
 end
