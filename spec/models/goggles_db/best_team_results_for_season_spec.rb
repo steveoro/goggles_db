@@ -73,5 +73,41 @@ module GogglesDb
         expect(all_time_rows.pluck(:team_id).uniq).to eq([chosen.team_id])
       end
     end
+
+    describe '.team_records' do
+      subject(:record_rows) { described_class.team_records(chosen.team_id) }
+
+      let(:chosen) { described_class.order(Arel.sql('RAND()')).first }
+
+      it 'returns at most one row per event x category-code x gender x pool tuple' do
+        tuples = record_rows.pluck(:event_type_id, :category_type_code, :gender_type_id, :pool_type_id)
+        expect(tuples.uniq.length).to eq(tuples.length)
+      end
+
+      it 'keeps the lowest timing per tuple across all seasons' do
+        per_tuple_min = described_class.for_team_id(chosen.team_id)
+                                       .group(:event_type_id, :category_type_code, :gender_type_id, :pool_type_id)
+                                       .minimum(:total_hundredths)
+        mismatches = record_rows.reject do |row|
+          tuple = [row.event_type_id, row.category_type_code, row.gender_type_id, row.pool_type_id]
+          row.total_hundredths == per_tuple_min[tuple]
+        end
+        expect(mismatches).to be_empty
+      end
+
+      it 'respects team scoping' do
+        expect(record_rows.pluck(:team_id).uniq).to eq([chosen.team_id])
+      end
+
+      context 'when restricted to a subset of seasons' do
+        subject(:record_rows) { described_class.team_records(chosen.team_id, season_ids) }
+
+        let(:season_ids) { described_class.for_team_id(chosen.team_id).distinct.limit(2).pluck(:season_id) }
+
+        it 'returns only rows from those seasons' do
+          expect(record_rows.pluck(:season_id).uniq - season_ids).to be_empty
+        end
+      end
+    end
   end
 end
