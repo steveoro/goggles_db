@@ -80,6 +80,7 @@ namespace :db do
     options << "--socket=#{db_config['socket']}" if db_config['host'].blank? && db_config['socket'].present?
     options << "--user=#{db_config['username']}" if db_config['username'].present?
     options << "--password=\"#{db_config['password']}\"" if db_config.key?('password')
+    options << '--skip-ssl'
     options.join(' ')
   end
 

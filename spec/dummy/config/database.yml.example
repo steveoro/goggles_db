@@ -18,6 +18,8 @@ default: &default
   socket: /var/run/mysqld/mysqld.sock
   # host: <%= ENV.fetch("DATABASE_HOST") { 'localhost' } %>
   # port: <%= ENV.fetch("DATABASE_PORT") { 3306 } %>
+  structure_dump_flags: ["--skip-ssl"]
+  structure_load_flags: ["--skip-ssl"]
 
 development:
   <<: *default
