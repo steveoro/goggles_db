@@ -2,6 +2,7 @@
 
 _Please, add the latest build info on top of the list; use Version::MAJOR only after gold release; keep semantic versioning in line with framework's_
 
+- **0.10.53** [Devin] revived legacy `trainings` table for "Creative trainings" photo gallery: added `training_date`, `training_by`, `created_by` columns + `swimmer_id` reference; added GogglesDb::Training model with `has_one_attached :picture` and auto-built unique title ("<iso_date> <created_by>"); test dump updated; DB vers. 2.10.11
 - **0.10.51** [Devin] added `team_records` scope to BestTeamResultsForSeason: single best (lowest-timing) MIR per event x category-code x gender x pool tuple filtered by team before ranking, avoiding the full-view window scan
 - **0.10.50** [Devin] added `all_time_best` scope to BestTeamResultsForSeason: single best (lowest-timing) row per team+program tuple across all seasons, for season-less team records
 - **0.10.49** [Devin] added best_team_results_for_season Scenic view + BestTeamResultsForSeason model: per team & season, the best individual result for each meeting-program tuple (event x category x gender x pool), bound through season badges; test dump updated; DB vers. 2.10.10
