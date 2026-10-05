@@ -1705,7 +1705,8 @@ CREATE TABLE `meeting_relay_swimmers` (
   KEY `fk_meeting_relay_swimmers_badges` (`badge_id`),
   KEY `fk_meeting_relay_swimmers_stroke_types` (`stroke_type_id`),
   KEY `relay_order` (`relay_order`),
-  KEY `fk_meeting_relay_swimmers_meeting_relay_results` (`meeting_relay_result_id`)
+  KEY `fk_meeting_relay_swimmers_meeting_relay_results` (`meeting_relay_result_id`),
+  KEY `index_meeting_relay_swimmers_on_length_in_meters` (`length_in_meters`)
 ) ENGINE=InnoDB AUTO_INCREMENT=33465 DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_general_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 DROP TABLE IF EXISTS `meeting_reservations`;
@@ -1810,7 +1811,7 @@ CREATE TABLE `meetings` (
   `manifest` tinyint(1) DEFAULT 0,
   `startlist` tinyint(1) DEFAULT 0,
   `results_acquired` tinyint(1) DEFAULT 0,
-  `max_individual_events` tinyint(4) DEFAULT 2,
+  `max_individual_events` tinyint(4) DEFAULT 3,
   `configuration_file` varchar(255) DEFAULT NULL,
   `edition` mediumint(9) DEFAULT 0,
   `season_id` int(11) DEFAULT NULL,
@@ -1820,7 +1821,7 @@ CREATE TABLE `meetings` (
   `header_date` date DEFAULT NULL,
   `code` varchar(50) DEFAULT NULL,
   `header_year` varchar(9) DEFAULT NULL,
-  `max_individual_events_per_session` smallint(6) DEFAULT 2,
+  `max_individual_events_per_session` smallint(6) DEFAULT 3,
   `off_season` tinyint(1) DEFAULT 0,
   `edition_type_id` int(11) DEFAULT NULL,
   `timing_type_id` int(11) DEFAULT NULL,
@@ -3076,6 +3077,7 @@ DELIMITER ;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
 INSERT INTO `schema_migrations` (version) VALUES
+('20261004130000'),
 ('20261004120100'),
 ('20261004120000'),
 ('20260923170100'),
