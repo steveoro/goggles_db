@@ -736,6 +736,33 @@ module GogglesDb
             end
           end
         end
+
+        # ** NO RE-MATCH: user already linked to another swimmer (explicit choice wins) **
+        context 'when the user is already associated to a swimmer,' do
+          let(:other_swimmer) { FactoryBot.create(:swimmer) }
+          let(:fixture_user) do
+            FactoryBot.create(
+              :user,
+              first_name: fixture_swimmer.first_name,
+              last_name: fixture_swimmer.last_name,
+              year_of_birth: fixture_swimmer.year_of_birth,
+              description: fixture_swimmer.complete_name,
+              swimmer: other_swimmer
+            )
+          end
+
+          before { fixture_user }
+
+          it 'keeps the explicitly-set association instead of re-matching by name' do
+            expect(fixture_user.swimmer_id).to eq(other_swimmer.id)
+            expect(fixture_user.associate_to_swimmer!).to eq(other_swimmer)
+            expect(fixture_user.reload.swimmer_id).to eq(other_swimmer.id)
+          end
+
+          it 'binds the associated swimmer back to the user' do
+            expect(other_swimmer.reload.associated_user_id).to eq(fixture_user.id)
+          end
+        end
       end
       #-- ---------------------------------------------------------------------
       #++

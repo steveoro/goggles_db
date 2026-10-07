@@ -211,7 +211,9 @@ module GogglesDb
     # == Params:
     # - matching_swimmer: +!nil+ => try to bind the user to the matching_swimmer;
     #                               (matching_swimmer must be "free", not already associated)
-    #                     +nil+  => default matching_swimmer = user.matching_swimmers.first
+    #                     +nil+  => default matching_swimmer = user.matching_swimmers.first;
+    #                               an explicitly-set swimmer association is never overwritten
+    #                               in this case: it is just re-validated instead
     #
     # == Returns:
     # - +nil+, in case the matching swimmer search was skipped (happens when the User's last_name
@@ -220,9 +222,16 @@ module GogglesDb
     # - otherwise, the matching_swimmer chosen for the association (even if the update is skipped
     #   due to the swimmer being already chosen by another user).
     #
-    def associate_to_swimmer!(matching_swimmer = nil)
+    def associate_to_swimmer!(matching_swimmer = nil) # rubocop:disable Metrics/CyclomaticComplexity,Metrics/PerceivedComplexity
       # Force skipping of the association if user last name is unknown and we don't have an override:
       return nil unless valid? && (last_name.present? || matching_swimmer.present?)
+
+      # An explicitly-set swimmer association takes precedence over the fuzzy name match:
+      # without a forcing override, keep it and just enforce bidirectionality:
+      if matching_swimmer.nil? && swimmer.present?
+        validate_swimmer_association
+        return swimmer
+      end
 
       matching_swimmer ||= matching_swimmers.first
       if matching_swimmer && matching_swimmer.associated_user_id.blank?
