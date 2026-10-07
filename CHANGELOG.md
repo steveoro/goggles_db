@@ -2,6 +2,7 @@
 
 _Please, add the latest build info on top of the list; use Version::MAJOR only after gold release; keep semantic versioning in line with framework's_
 
+- **0.10.57** [Devin] AppParameter: cache the maintenance flag and the :app settings group in Rails.cache (1min TTL; maintenance cache busted by .maintenance=) to cut per-request queries on hot paths (filters/throttles run on every request)
 - **0.10.53** [Devin] revived legacy `trainings` table for "Creative trainings" photo gallery: added `training_date`, `training_by`, `created_by` columns + `swimmer_id` reference; added GogglesDb::Training model with `has_one_attached :picture` and auto-built unique title ("<iso_date> <created_by>"); test dump updated; DB vers. 2.10.11
 - **0.10.51** [Devin] added `team_records` scope to BestTeamResultsForSeason: single best (lowest-timing) MIR per event x category-code x gender x pool tuple filtered by team before ranking, avoiding the full-view window scan
 - **0.10.50** [Devin] added `all_time_best` scope to BestTeamResultsForSeason: single best (lowest-timing) row per team+program tuple across all seasons, for season-less team records

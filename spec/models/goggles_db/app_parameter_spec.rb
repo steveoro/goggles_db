@@ -71,6 +71,28 @@ module GogglesDb
       end
     end
 
+    describe 'settings caching' do
+      let(:memory_cache) { ActiveSupport::Cache::MemoryStore.new }
+
+      before { allow(Rails).to receive(:cache).and_return(memory_cache) }
+
+      it 'serves maintenance? from cache until the setter busts it' do
+        expect(described_class.maintenance?).to be false
+        described_class.versioning_row.update!(described_class::TOGGLE_FIELDNAME => true)
+        expect(described_class.maintenance?).to be false # stale: bare updates don't bust the cache
+        described_class.maintenance = true
+        expect(described_class.maintenance?).to be true
+      end
+
+      it 'serves the :app settings readers from the cached hash' do
+        row = described_class.versioning_row
+        row.settings(:app).max_anonymous_req = 750
+        row.save!
+        expect(described_class.cached_app_settings['max_anonymous_req']).to eq(750)
+        expect(described_class.max_anonymous_req).to eq(750)
+      end
+    end
+
     describe 'self.max_anonymous_req' do
       it 'returns the configured value from the :app settings group' do
         row = described_class.versioning_row

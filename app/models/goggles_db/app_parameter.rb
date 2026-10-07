@@ -63,6 +63,19 @@ module GogglesDb
       includes(:setting_objects).versioning_row
     end
 
+    APP_SETTINGS_CACHE_KEY = 'goggles_db/app_parameter/app_settings'
+    MAINTENANCE_CACHE_KEY  = 'goggles_db/app_parameter/maintenance'
+    APP_SETTINGS_CACHE_TTL = 1.minute
+
+    # Returns a snapshot Hash of the +:app+ settings group, served from
+    # +Rails.cache+ with a short TTL, so hot request paths (per-request filters,
+    # throttles) don't hit the DB on every call. Missing keys return +nil+.
+    def self.cached_app_settings
+      Rails.cache.fetch(APP_SETTINGS_CACHE_KEY, expires_in: APP_SETTINGS_CACHE_TTL) do
+        AppParameter.config.settings(:app).value || {}
+      end
+    end
+
     # Checks the value of the maintenance flag inside the versioning parameter row.
     # The maintenance flag is typically turned on during Web/app updates that do not require a DB shutdown or restart.
     def maintenance?
@@ -70,22 +83,27 @@ module GogglesDb
     end
 
     # Works exactly as #maintenance? but at a class level.
+    # Cached for APP_SETTINGS_CACHE_TTL; the cache entry is busted by .maintenance=.
     def self.maintenance?
-      AppParameter.versioning_row.maintenance?
+      Rails.cache.fetch(MAINTENANCE_CACHE_KEY, expires_in: APP_SETTINGS_CACHE_TTL) do
+        AppParameter.versioning_row.maintenance?
+      end
     end
 
-    # Sets the value of the maintenance flag.
+    # Sets the value of the maintenance flag and busts its cache.
     def self.maintenance=(new_boolean_value)
-      AppParameter.versioning_row.update!(TOGGLE_FIELDNAME => new_boolean_value)
+      result = AppParameter.versioning_row.update!(TOGGLE_FIELDNAME => new_boolean_value)
+      Rails.cache.delete(MAINTENANCE_CACHE_KEY)
+      result
     end
 
     DEFAULT_MAX_ANONYMOUS_REQ = 500
 
     # Returns the maximum daily anonymous request count per IP before throttling.
-    # Reads from the +:app+ settings group; falls back to +DEFAULT_MAX_ANONYMOUS_REQ+
-    # when the setting is missing or nil.
+    # Reads from the +:app+ settings group (cached); falls back to
+    # +DEFAULT_MAX_ANONYMOUS_REQ+ when the setting is missing or nil.
     def self.max_anonymous_req
-      value = AppParameter.versioning_row.settings(:app).max_anonymous_req
+      value = cached_app_settings['max_anonymous_req']
       value.present? ? value.to_i : DEFAULT_MAX_ANONYMOUS_REQ
     end
 
@@ -94,7 +112,7 @@ module GogglesDb
     # Returns the maximum daily bot-UA request count per IP before throttling.
     # Falls back to +DEFAULT_MAX_BOT_REQ+ when the setting is missing or nil.
     def self.max_bot_req
-      value = AppParameter.versioning_row.settings(:app).max_bot_req
+      value = cached_app_settings['max_bot_req']
       value.present? ? value.to_i : DEFAULT_MAX_BOT_REQ
     end
 
@@ -103,7 +121,7 @@ module GogglesDb
     # Returns the maximum burst request count per IP per minute before throttling.
     # Falls back to +DEFAULT_MAX_REQ_PER_MINUTE+ when the setting is missing or nil.
     def self.max_req_per_minute
-      value = AppParameter.versioning_row.settings(:app).max_req_per_minute
+      value = cached_app_settings['max_req_per_minute']
       value.present? ? value.to_i : DEFAULT_MAX_REQ_PER_MINUTE
     end
   end
