@@ -24,6 +24,31 @@ module GogglesDb
           end
         end
       end
+
+      context 'when computing the actual code value,' do
+        [
+          # Roman-numeral editions in leading position are stripped (like ordinal digits):
+          ['XII Napoli Meeting', 'Napoli', 'napoli'],
+          ['XII° Napoli Meeting', 'Napoli', 'napoli'],
+          ['I Meeting di Primavera', 'Firenze', 'firenzeprimavera'],
+          ['VI Trofeo Vittorino da Feltre', 'Padova', 'padovavittorinofeltre'],
+          ['2° AnyName Meeting', 'Milano', 'milanoanyname'],
+          # Leading words made of Roman-numeral letters are NOT editions and must be kept:
+          ['Villa Borghese Meeting', 'Roma', 'romavillaborghese'],
+          ['Lido Camaiore Meeting', 'Lido di Camaiore', 'lidocamaiore'],
+          ['Mio Zio Meeting', 'Milano', 'milanomiozio'],
+          ['Midi Club Meeting', 'Milano', 'milanomidic'],
+          # Roman literals NOT in leading position are kept (dates or name parts):
+          ['Trofeo XXV Aprile', 'Bologna', 'bolognaxxvaprile'],
+          ['Meeting Napoli XII', 'Napoli', 'napolixii'],
+          # Archaic 'o'/'a' ordinal suffixes are intentionally not stripped:
+          ['XIIo Napoli Meeting', 'Napoli', 'xiionapoli']
+        ].each do |description, city_name, expected_code|
+          it "returns '#{expected_code}' for '#{description}' (#{city_name})" do
+            expect(described_class.for_meeting(description, city_name)).to eq(expected_code)
+          end
+        end
+      end
     end
     #-- -----------------------------------------------------------------------
     #++

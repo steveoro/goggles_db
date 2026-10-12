@@ -125,8 +125,8 @@ module GogglesDb
       # Spaces are *NOT* affected.
       #
       # The method strips away any typical recurring prefixes for names, like
-      # "Meeting", "Trofeo", "Citta' di ", any ordinal numbering or year references
-      # and so on.
+      # "Meeting", "Trofeo", "Citta' di ", any ordinal numbering (including
+      # leading Roman-numeral editions) or year references and so on.
       #
       # == Params:
       # - <tt>name</tt> => the String name or description to be normalized.
@@ -146,6 +146,7 @@ module GogglesDb
             .gsub(/ò/iu, 'o').gsub(/ù/iu, 'u').gsub(/ç/iu, 'c')
             .gsub(/\*|\^/iu, '°')
             .gsub(/\d+°?\b/iu, '')
+            .gsub(REGEXP_LEADING_ROMAN_EDITION, '')
             .gsub(/\bmeeting\b|\bmtng\b|\bmemorial\b|\braduno\b|\bfesta\b|\bmaster\b/iu, '')
             .gsub(/\bnuoto\b|\bcoppa\b|\bcampionat.\b|\btrofeo\b+|\brepubblica\b|\bfinali\b|\btr.?\b/iu, '')
             .gsub(/\b[dn][ae]l?(lo|la|l)?\b/iu, ' ')
@@ -182,6 +183,12 @@ module GogglesDb
 
       # Matches any seasonal-type of description ("2a PROVA REGIONALE ..." or "II PROVA REGIONALE ...")
       REGEXP_SEASONAL_DESC = /(prova\W(camp.+\W)?(reg.+\W)?|meeting\W(camp.+\W)?(reg.+\W)|final.\W(camp.+\W)?(reg.+\W)?)/ui unless defined?(REGEXP_SEASONAL_DESC)
+
+      # Matches a leading Roman-numeral edition label (e.g. "XII ", "IV°", "MMXXII^"),
+      # only when in canonical form, so that actual words made of Roman-numeral letters
+      # ("Villa", "Lido", "Mio", "Midi", "Civil"...) are preserved.
+      # The optional ordinal mark absorbs also the stray "°" left over by the digit-edition strip.
+      REGEXP_LEADING_ROMAN_EDITION = /^\s*m{0,3}(?:cm|cd|d?c{0,3})(?:xc|xl|l?x{0,3})(?:ix|iv|v?i{0,3})[°^]?(?=\W|\z)/iu unless defined?(REGEXP_LEADING_ROMAN_EDITION)
 
       # Tries to extract (or parse) the value of an edition number from a meeting descripion.
       # Assumes the edition is in the front part of the description.

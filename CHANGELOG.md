@@ -2,6 +2,7 @@
 
 _Please, add the latest build info on top of the list; use Version::MAJOR only after gold release; keep semantic versioning in line with framework's_
 
+- **0.10.60** [Devin] CodedName normalizer: strip leading Roman-numeral edition labels ("XII", "IV°", "MMXXII^") using a canonical-form match, so meetings like "XII Napoli Meeting" yield the same stable code ("napoli") across seasons; Roman-letter words ("Villa", "Lido", "Mio", "Midi", "Civil"...) are preserved
 - **0.10.59** [Devin] User#associate_to_swimmer! now keeps an explicitly-set swimmer association when no override parameter is given (fuzzy name match no longer overwrites it; the association is just re-validated); fixes the flaky User#swimmer spec hit whenever a random factory name collided with a seed swimmer
 - **0.10.57** [Devin] AppParameter: cache the maintenance flag and the :app settings group in Rails.cache (1min TTL; maintenance cache busted by .maintenance=) to cut per-request queries on hot paths (filters/throttles run on every request)
 - **0.10.53** [Devin] revived legacy `trainings` table for "Creative trainings" photo gallery: added `training_date`, `training_by`, `created_by` columns + `swimmer_id` reference; added GogglesDb::Training model with `has_one_attached :picture` and auto-built unique title ("<iso_date> <created_by>"); test dump updated; DB vers. 2.10.11
