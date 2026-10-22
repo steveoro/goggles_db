@@ -2,6 +2,7 @@
 
 _Please, add the latest build info on top of the list; use Version::MAJOR only after gold release; keep semantic versioning in line with framework's_
 
+- **0.10.62** [Devin] Season.current_championship_year now accepts an optional SeasonType, resolving the ongoing (or latest upcoming) season of that type instead of any not-yet-ended season; fixes the GoggleCup default year being picked from a future MAS_FINA championship instead of the current MASFIN season
 - **0.10.61** [Devin] Season: added #championship_year, .for_championship_year scope & .current_championship_year (Ruby/SQL port of the same formula used by the best-result views & the goggles_db_base_year() function); enables season-aware GoggleCup swimmer/badge lookups
 - **0.10.60** [Devin] CodedName normalizer: strip leading Roman-numeral edition labels ("XII", "IV°", "MMXXII^") using a canonical-form match, so meetings like "XII Napoli Meeting" yield the same stable code ("napoli") across seasons; Roman-letter words ("Villa", "Lido", "Mio", "Midi", "Civil"...) are preserved
 - **0.10.59** [Devin] User#associate_to_swimmer! now keeps an explicitly-set swimmer association when no override parameter is given (fuzzy name match no longer overwrites it; the association is just re-validated); fixes the flaky User#swimmer spec hit whenever a random factory name collided with a seed swimmer

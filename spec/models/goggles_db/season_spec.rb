@@ -318,6 +318,36 @@ module GogglesDb
       ensure
         described_class.connection.execute('SET @base_year = NULL')
       end
+
+      context 'with a season_type' do
+        let(:season_type) { GogglesDb::SeasonType.mas_fin }
+
+        it 'returns the championship year of the ongoing season of that type' do
+          ongoing = FactoryBot.create(:season, season_type_id: season_type.id,
+                                               begin_date: Time.zone.today, end_date: Time.zone.today + 8.months)
+          expect(described_class.current_championship_year(season_type)).to eq(ongoing.championship_year)
+        end
+
+        it 'falls back to the latest upcoming season of that type when none is ongoing' do
+          upcoming = FactoryBot.create(:season, season_type_id: season_type.id,
+                                                begin_date: Time.zone.today + 2.years,
+                                                end_date: Time.zone.today + 2.years + 8.months)
+          relation = described_class.for_season_type(season_type)
+          allow(described_class).to receive(:for_season_type).with(season_type).and_return(relation)
+          allow(relation).to receive(:ongoing).and_return(described_class.none)
+
+          expect(described_class.current_championship_year(season_type)).to eq(upcoming.championship_year)
+        end
+
+        it 'ignores the @base_year session override' do
+          ongoing = FactoryBot.create(:season, season_type_id: season_type.id,
+                                               begin_date: Time.zone.today, end_date: Time.zone.today + 8.months)
+          described_class.connection.execute('SET @base_year = 2033')
+          expect(described_class.current_championship_year(season_type)).to eq(ongoing.championship_year)
+        ensure
+          described_class.connection.execute('SET @base_year = NULL')
+        end
+      end
     end
     #-- ------------------------------------------------------------------------
     #++

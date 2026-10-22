@@ -97,8 +97,19 @@ module GogglesDb
     # +goggles_db_base_year()+ (latest ongoing championship year, or the +@base_year+
     # session variable value when set). Falls back to the current calendar year when
     # no ongoing season is found.
-    def self.current_championship_year
-      connection.select_value('SELECT goggles_db_base_year()')&.to_i.presence || Date.current.year
+    #
+    # When a +season_type+ is given, returns the championship year of the ongoing
+    # Season of that type (or of the latest upcoming one when none is ongoing),
+    # without consulting the +@base_year+ session variable.
+    def self.current_championship_year(season_type = nil)
+      return connection.select_value('SELECT goggles_db_base_year()')&.to_i.presence || Date.current.year if season_type.nil?
+
+      scope = for_season_type(season_type)
+      season = scope.ongoing.by_begin_date(:desc).first ||
+               scope.where('seasons.end_date IS NOT NULL AND seasons.end_date >= CURDATE()')
+                    .by_begin_date(:desc)
+                    .first
+      season&.championship_year || Date.current.year
     end
     #-- ------------------------------------------------------------------------
     #++
