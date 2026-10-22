@@ -40,13 +40,13 @@ module GogglesDb
       )
       it_behaves_like(
         'responding to a list of class methods',
-        %i[for_season_type ongoing ended ended_before]
+        %i[for_season_type ongoing ended ended_before for_championship_year current_championship_year]
       )
       it_behaves_like(
         'responding to a list of methods',
         %i[meetings meeting_team_scores computed_season_rankings standard_timings
            category_types badges swimmers team_affiliations teams
-           ended? started? ongoing? individual_rank?]
+           ended? started? ongoing? championship_year individual_rank?]
       )
       # Presence of fields & required-ness:
       it_behaves_like(
@@ -152,6 +152,34 @@ module GogglesDb
           end
         end
       end
+
+      describe '#championship_year' do
+        it 'equals the begin year for a season starting in Sep-Dec' do
+          subject.begin_date = Date.new(2024, 10, 1)
+          subject.end_date = Date.new(2025, 8, 31)
+          expect(subject.championship_year).to eq(2024)
+        end
+
+        it 'equals the end year for a season starting in Jun-Aug' do
+          subject.begin_date = Date.new(2024, 6, 1)
+          subject.end_date = Date.new(2024, 8, 31)
+          expect(subject.championship_year).to eq(2024)
+        end
+
+        it 'equals the begin year minus one for a season starting in Jan-May' do
+          subject.begin_date = Date.new(2025, 3, 1)
+          subject.end_date = Date.new(2025, 5, 31)
+          expect(subject.championship_year).to eq(2024)
+        end
+
+        it 'is nil when a boundary date is missing' do
+          subject.begin_date = nil
+          expect(subject.championship_year).to be_nil
+          subject.begin_date = Date.new(2024, 10, 1)
+          subject.end_date = nil
+          expect(subject.championship_year).to be_nil
+        end
+      end
     end
     #-- ------------------------------------------------------------------------
     #++
@@ -250,6 +278,45 @@ module GogglesDb
             expect(subject).to be_a(described_class).and be_valid
           end
         end
+      end
+    end
+
+    describe 'self.for_championship_year' do
+      let(:fixture_season) { described_class.limit(100).sample }
+      let(:result) { described_class.for_championship_year(fixture_season.championship_year) }
+
+      it 'is a list of existing Seasons' do
+        expect(result).to be_a(ActiveRecord::Relation)
+        expect(result).to all be_a(described_class)
+      end
+
+      it 'includes only Seasons belonging to the given championship year' do
+        expect(result).to include(fixture_season)
+        expect(result.all? { |season| season.championship_year == fixture_season.championship_year }).to be true
+      end
+
+      it 'accepts a list of years' do
+        double_result = described_class.for_championship_year(2020, 2021)
+        expect(double_result).to all be_a(described_class)
+        expect(double_result.all? { |season| [2020, 2021].include?(season.championship_year) }).to be true
+      end
+
+      it 'returns an empty relation when no valid year is given' do
+        expect(described_class.for_championship_year).to be_empty
+        expect(described_class.for_championship_year(nil)).to be_empty
+      end
+    end
+
+    describe 'self.current_championship_year' do
+      it 'returns a plausible Integer year' do
+        expect(described_class.current_championship_year).to be_a(Integer).and be >= 2000
+      end
+
+      it 'honors the @base_year session override when set' do
+        described_class.connection.execute('SET @base_year = 2033')
+        expect(described_class.current_championship_year).to eq(2033)
+      ensure
+        described_class.connection.execute('SET @base_year = NULL')
       end
     end
     #-- ------------------------------------------------------------------------

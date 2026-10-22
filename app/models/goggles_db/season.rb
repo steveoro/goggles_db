@@ -32,6 +32,18 @@ module GogglesDb
     has_many :user_workshops, dependent: :delete_all
     # has_many :goggle_cup_definitions
 
+    # SQL fragment computing the "championship year" of a season, identical to the
+    # formula used by the best-result Scenic views and by the DB function
+    # +goggles_db_base_year()+:
+    # - Sep-Dec start: championship_year = YEAR(begin_date)
+    # - Jun-Aug start: championship_year = YEAR(end_date)
+    # - Jan-May start: championship_year = YEAR(begin_date) - 1
+    CHAMPIONSHIP_YEAR_SQL = Arel.sql(
+      'CASE WHEN MONTH(seasons.begin_date) >= 9 THEN YEAR(seasons.begin_date) ' \
+      'WHEN MONTH(seasons.begin_date) <= 5 THEN YEAR(seasons.begin_date) - 1 ' \
+      'ELSE YEAR(seasons.end_date) END'
+    ).freeze
+
     default_scope { includes(:edition_type, :timing_type, :season_type, :federation_type) }
 
     validates :header_year, presence: { length: { within: 1..9 }, allow_nil: false }
@@ -54,6 +66,13 @@ module GogglesDb
     # TODO
     # scope :has_results,     -> { where('exists(select 1 from meetings where are_results_acquired)') }
 
+    # Returns all seasons belonging to the specified championship year(s)
+    # (same definition used by the best-result views and the +goggles_db_base_year()+ function).
+    scope :for_championship_year, lambda { |*years|
+      year_list = years.flatten.compact.map(&:to_i).reject(&:zero?)
+      year_list.present? ? where("#{CHAMPIONSHIP_YEAR_SQL} IN (?)", year_list) : none
+    }
+
     def self.in_range(from_date, to_date)
       where('begin_date IS NOT NULL AND begin_date <= ?', to_date)
         .where('end_date IS NOT NULL AND end_date >= ?', from_date)
@@ -72,6 +91,14 @@ module GogglesDb
       GogglesDb::Season.joins(:season_type).includes(:season_type)
                        .for_season_type(season_type)
                        .by_begin_date.last
+    end
+
+    # Returns the current reference championship year, as computed by the DB function
+    # +goggles_db_base_year()+ (latest ongoing championship year, or the +@base_year+
+    # session variable value when set). Falls back to the current calendar year when
+    # no ongoing season is found.
+    def self.current_championship_year
+      connection.select_value('SELECT goggles_db_base_year()')&.to_i.presence || Date.current.year
     end
     #-- ------------------------------------------------------------------------
     #++
@@ -101,6 +128,20 @@ module GogglesDb
     #
     def ongoing?(check_date = Time.zone.today)
       started?(check_date) && !ended?(check_date)
+    end
+
+    # Returns the "championship year" this season belongs to, using the same formula
+    # as CHAMPIONSHIP_YEAR_SQL (and the best-result views / +goggles_db_base_year()+):
+    # - Sep-Dec start: championship_year = YEAR(begin_date)
+    # - Jun-Aug start: championship_year = YEAR(end_date)
+    # - Jan-May start: championship_year = YEAR(begin_date) - 1
+    # Returns +nil+ when either boundary date is missing.
+    def championship_year
+      return nil if begin_date.blank? || end_date.blank?
+      return begin_date.year if begin_date.month >= 9
+      return begin_date.year - 1 if begin_date.month <= 5
+
+      end_date.year
     end
     #-- ------------------------------------------------------------------------
     #++
