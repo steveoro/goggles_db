@@ -17,7 +17,7 @@ module GogglesDb
   #
   module Version
     CORE  = 'C7'
-    BUILD = '20261012'
+    BUILD = '20261022'
     # Full label
     FULL = "#{CORE}-#{VERSION}-#{BUILD}".freeze
 
