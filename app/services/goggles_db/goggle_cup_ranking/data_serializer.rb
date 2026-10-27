@@ -22,9 +22,17 @@ module GogglesDb
         old_meeting_name old_total_hundredths old_minutes old_seconds old_hundredths
       ].freeze
 
-      def initialize(cup:, ranking_data:, no_duplicated_events:)
+      # == Params:
+      # - cup:                    the GogglesDb::GoggleCup being serialized (required)
+      # - ranking_data:           computed ranking rows (required)
+      # - swimmer_ids:            effective swimmer list stored in the payload;
+      #                           defaults to the cup's own selection (pass the
+      #                           override list when compute ran on a different one)
+      # - no_duplicated_events:   per-event dedup flag (required)
+      def initialize(cup:, ranking_data:, no_duplicated_events:, swimmer_ids: nil)
         @cup = cup
         @ranking_data = ranking_data
+        @swimmer_ids = swimmer_ids
         @no_duplicated_events = no_duplicated_events
       end
 
@@ -35,7 +43,7 @@ module GogglesDb
           max_points: @cup.max_points,
           team_id: @cup.team_id,
           end_date: @cup.end_date&.iso8601,
-          swimmer_ids: @cup.swimmer_ids_array,
+          swimmer_ids: @swimmer_ids.presence || @cup.swimmer_ids_array,
           no_duplicated_events: @no_duplicated_events,
           data: {
             base_timings: base_timings_hash,
