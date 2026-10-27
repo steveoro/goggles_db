@@ -23,6 +23,16 @@ module GogglesDb
         expect(subject).to be_a(described_class).and be_valid
       end
 
+      context 'with the :without_swimmer_match trait' do
+        subject { FactoryBot.create(:user, :without_swimmer_match) }
+
+        it 'is valid and is never auto-associated to a swimmer' do
+          expect(subject).to be_valid
+          expect(subject.matching_swimmers).to be_empty
+          expect(subject.swimmer).to be_nil
+        end
+      end
+
       it 'has a #name' do
         expect(subject).to respond_to(:name)
         expect(subject.name).to be_present

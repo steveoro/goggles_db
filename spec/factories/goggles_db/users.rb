@@ -18,5 +18,12 @@ FactoryBot.define do
     description           { "#{first_name} #{last_name}" }
     year_of_birth         { 18.years.ago.year - ((rand * 100) % 60).to_i }
     swimmer_level_type    { GogglesDb::SwimmerLevelType.all.sample }
+
+    # Random FFaker names can collide with the (FFaker-anonymized) seed swimmers,
+    # making the after_create auto-association bind the user to a swimmer.
+    # Use this trait when a spec needs a user surely without a swimmer.
+    trait :without_swimmer_match do
+      last_name { "Nomatch#{SecureRandom.alphanumeric(8)}" }
+    end
   end
 end
