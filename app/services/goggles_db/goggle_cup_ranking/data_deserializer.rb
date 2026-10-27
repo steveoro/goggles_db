@@ -24,15 +24,23 @@ module GogglesDb
         end
       end
 
-      def initialize(cup)
+      # == Params:
+      # - cup:             the GogglesDb::GoggleCup to read (required)
+      # - roster_fallback: when true and no ranking_data is stored, returns a
+      #                    synthesized roster instead of []: one zero-score entry
+      #                    per enlisted swimmer (alphabetical, no top rows), each
+      #                    carrying the swimmer's available base timings. Used for
+      #                    published cups that were never computed.
+      def initialize(cup, roster_fallback: false)
         @cup = cup
+        @roster_fallback = roster_fallback
       end
 
       # Returns an array of ranking entries, ordered by overall score descending.
       # Each entry contains the swimmer info, the top-5 score rows and the base timings.
       def call
         data = parsed_data
-        return [] if data.blank? || data['data'].blank?
+        return (@roster_fallback ? roster_entries : []) if data.blank? || data['data'].blank?
 
         scores = data['data']['scores'] || {}
         base_timings = data['data']['base_timings'] || {}
@@ -91,6 +99,36 @@ module GogglesDb
                           .pluck(:id, :complete_name, :year_of_birth)
                           .to_h do |row|
           [row[0], [row[1], row[2]]]
+        end
+      end
+
+      # Synthesized zero-score roster used when no ranking_data is stored:
+      # one entry per enlisted swimmer, alphabetical by complete_name.
+      def roster_entries
+        GogglesDb::Swimmer.where(id: @cup.swimmer_ids_array)
+                          .order(:complete_name)
+                          .pluck(:id, :complete_name, :year_of_birth)
+                          .map do |swimmer_id, complete_name, year_of_birth|
+          {
+            swimmer_id: swimmer_id,
+            swimmer_name: complete_name,
+            swimmer_year_of_birth: year_of_birth,
+            overall_score: 0,
+            top_rows: [],
+            base_rows: roster_base_rows[swimmer_id] || []
+          }
+        end
+      end
+
+      def roster_base_rows
+        @roster_base_rows ||= GogglesDb::GogglesCup3yBaseTimings
+                              .where(swimmer_id: @cup.swimmer_ids_array)
+                              .includes(:event_type, :pool_type, :meeting)
+                              .group_by(&:swimmer_id)
+                              .transform_values do |rows|
+          rows.map do |row|
+            ScoreRow.new(row.attributes.slice(*GogglesDb::GoggleCupRanking::DataSerializer::BASE_TIMING_COLUMNS))
+          end
         end
       end
     end

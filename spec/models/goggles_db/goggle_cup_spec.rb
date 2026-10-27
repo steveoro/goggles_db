@@ -23,7 +23,7 @@ module GogglesDb
 
       it_behaves_like(
         'responding to a list of methods',
-        %i[team_id season_year description swimmers_ids ranking_data]
+        %i[team_id season_year description name published swimmers_ids ranking_data]
       )
 
       it_behaves_like('ApplicationRecord shared interface')
@@ -124,6 +124,85 @@ module GogglesDb
         goggle_cup = FactoryBot.build(:goggle_cup)
         goggle_cup.swimmer_ids_array = []
         expect(goggle_cup.swimmers_ids).to eq('')
+      end
+    end
+
+    describe 'publish semantics' do
+      let(:team) { FactoryBot.create(:team) }
+
+      describe '.published' do
+        it 'returns only published cups' do
+          published_cup = FactoryBot.create(:goggle_cup, team: team, published: true)
+          FactoryBot.create(:goggle_cup, team: team)
+          expect(described_class.published).to eq([published_cup])
+        end
+      end
+
+      describe '.published_for' do
+        it 'returns the published cup for the given team and season_year' do
+          cup = FactoryBot.create(:goggle_cup, team: team, season_year: 2026, published: true)
+          FactoryBot.create(:goggle_cup, team: team, season_year: 2025, published: true)
+          expect(described_class.published_for(team.id, 2026)).to eq([cup])
+        end
+      end
+
+      describe '.involving_swimmer' do
+        it 'matches cups listing the swimmer in swimmers_ids' do
+          cup = FactoryBot.create(:goggle_cup, team: team, swimmers_ids: '12,34,56')
+          FactoryBot.create(:goggle_cup, team: team, swimmers_ids: '78,90')
+          expect(described_class.involving_swimmer(34)).to eq([cup])
+        end
+
+        it 'does not match partial ids inside the CSV list' do
+          cup = FactoryBot.create(:goggle_cup, team: team, swimmers_ids: '3456')
+          expect(described_class.involving_swimmer(34)).not_to include(cup)
+        end
+      end
+
+      describe '.latest_published_involving' do
+        it 'returns the newest published cup involving the swimmer' do
+          FactoryBot.create(:goggle_cup, team: team, season_year: 2025, swimmers_ids: '7', published: true)
+          newest = FactoryBot.create(:goggle_cup, team: team, season_year: 2026, swimmers_ids: '7', published: true)
+          expect(described_class.latest_published_involving(7)).to eq(newest)
+        end
+
+        it 'filters by championship year when given' do
+          FactoryBot.create(:goggle_cup, team: team, season_year: 2026, swimmers_ids: '7', published: true)
+          older = FactoryBot.create(:goggle_cup, team: team, season_year: 2025, swimmers_ids: '7', published: true)
+          expect(described_class.latest_published_involving(7, season_year: 2025)).to eq(older)
+        end
+
+        it 'returns nil when no published cup involves the swimmer' do
+          FactoryBot.create(:goggle_cup, team: team, swimmers_ids: '7', published: false)
+          expect(described_class.latest_published_involving(7)).to be_nil
+        end
+      end
+
+      describe '#publish!' do
+        it 'sets published to true and resets sibling cups of the same affiliation' do
+          sibling = FactoryBot.create(:goggle_cup, team: team, season_year: 2026, published: true)
+          cup = FactoryBot.create(:goggle_cup, team: team, season_year: 2026)
+          cup.publish!
+          expect(cup.reload.published).to be(true)
+          expect(sibling.reload.published).to be(false)
+        end
+
+        it 'does not touch cups of other affiliations' do
+          other_team_cup = FactoryBot.create(:goggle_cup, season_year: 2026, published: true)
+          other_year_cup = FactoryBot.create(:goggle_cup, team: team, season_year: 2025, published: true)
+          cup = FactoryBot.create(:goggle_cup, team: team, season_year: 2026)
+          cup.publish!
+          expect(other_team_cup.reload.published).to be(true)
+          expect(other_year_cup.reload.published).to be(true)
+        end
+      end
+
+      describe '#unpublish!' do
+        it 'clears the published flag' do
+          cup = FactoryBot.create(:goggle_cup, team: team, published: true)
+          cup.unpublish!
+          expect(cup.reload.published).to be(false)
+        end
       end
     end
   end

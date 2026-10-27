@@ -6,8 +6,10 @@ FactoryBot.define do
 
     team
     description { "Goggle Cup #{FFaker.numerify('###')}" }
+    name { description }
     season_year { 2025 }
     swimmers_ids { nil }
     ranking_data { nil }
+    published { false }
   end
 end
