@@ -69,6 +69,30 @@ RSpec.describe GogglesDb::GoggleCupRanking::DataDeserializer do
       it 'returns an empty array' do
         expect(described_class.new(cup).call).to be_empty
       end
+
+      context 'with roster_fallback' do
+        let(:swimmer_a) { FactoryBot.create(:swimmer, last_name: 'ZENO', first_name: 'AAA') }
+        let(:swimmer_b) { FactoryBot.create(:swimmer, last_name: 'ALBA', first_name: 'ZZZ') }
+        let(:cup) do
+          FactoryBot.create(:goggle_cup, team: team, ranking_data: nil,
+                                         swimmers_ids: "#{swimmer_a.id},#{swimmer_b.id}")
+        end
+
+        it 'returns one zero-score entry per enlisted swimmer, alphabetically by name' do
+          result = described_class.new(cup, roster_fallback: true).call
+          expect(result.size).to eq(2)
+          expect(result.pluck(:swimmer_id)).to eq([swimmer_b.id, swimmer_a.id])
+          expect(result.pluck(:overall_score)).to eq([0, 0])
+          expect(result.pluck(:top_rows)).to eq([[], []])
+        end
+
+        it 'keeps returning the stored ranking when ranking_data is present' do
+          cup.update!(ranking_data: ranking_data)
+          result = described_class.new(cup, roster_fallback: true).call
+          expect(result.size).to eq(1)
+          expect(result.first[:overall_score]).to be_within(0.01).of(1090.91)
+        end
+      end
     end
   end
 end

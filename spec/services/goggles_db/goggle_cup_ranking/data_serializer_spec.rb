@@ -52,5 +52,26 @@ RSpec.describe GogglesDb::GoggleCupRanking::DataSerializer do
     it 'stores base timings under data.base_timings' do
       expect(result.dig(:data, :base_timings)).to be_a(Hash)
     end
+
+    context 'with a swimmer_ids override' do
+      subject(:result) do
+        described_class.new(cup: cup, ranking_data: ranking_data, no_duplicated_events: true,
+                            swimmer_ids: [3, 1, 2]).call
+      end
+
+      let(:cup) { FactoryBot.create(:goggle_cup, team: team, swimmers_ids: '7,8') }
+
+      it 'stores the override instead of the cup own selection' do
+        expect(result[:swimmer_ids]).to eq([3, 1, 2])
+      end
+    end
+
+    context 'without a swimmer_ids override' do
+      let(:cup) { FactoryBot.create(:goggle_cup, team: team, swimmers_ids: '7,8') }
+
+      it 'stores the cup own selection' do
+        expect(result[:swimmer_ids]).to eq(cup.swimmer_ids_array)
+      end
+    end
   end
 end
