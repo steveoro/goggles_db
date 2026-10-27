@@ -31,6 +31,16 @@ RSpec.describe GogglesDb::GogglesCup::BadgeProvisioner do
       expect(created.entry_time_type_id).to eq(GogglesDb::EntryTimeType::GOGGLECUP_ID)
     end
 
+    it 'assigns an individual category type of the badge season matching the swimmer age' do
+      created = described_class.new(cup).call[:created].find { |badge| badge.swimmer_id == swimmer.id }
+      skip('no category type for the swimmer age in the target season') if created.nil?
+
+      age = swimmer.age_for_category_range(target_season.begin_date)
+      expect(created.category_type.season_id).to eq(target_season.id)
+      expect(created.category_type.relay).to be false
+      expect(created.category_type.age_begin..created.category_type.age_end).to cover(age)
+    end
+
     it 'auto-creates the team affiliation flagged as autofilled' do
       expect { described_class.new(cup).call }
         .to change(GogglesDb::TeamAffiliation, :count).by(1)

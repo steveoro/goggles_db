@@ -73,7 +73,7 @@ module GogglesDb
         @swimmers_by_id ||= GogglesDb::Swimmer.where(id: @cup.swimmer_ids_array).index_by(&:id)
       end
 
-      # Badges already existing for (swimmer, cup team, latest MASFIN season).
+      # Badges already existing for (swimmer, cup team, target MASFIN season).
       def existing_badges_by_swimmer_id
         @existing_badges_by_swimmer_id ||= GogglesDb::Badge.where(
           swimmer_id: @cup.swimmer_ids_array, team_id: @cup.team_id, season_id: season.id
@@ -86,7 +86,7 @@ module GogglesDb
 
         return report[:existing] << existing_badges_by_swimmer_id[swimmer_id] if existing_badges_by_swimmer_id[swimmer_id]
 
-        category_type = swimmer.latest_category_type(GogglesDb::SeasonType.mas_fin)
+        category_type = category_type_for(swimmer)
         return report[:skipped] << { swimmer_id: swimmer_id, reason: :no_category_type } if category_type.nil?
 
         report[:created] << GogglesDb::Badge.create!(
@@ -98,6 +98,16 @@ module GogglesDb
           entry_time_type_id: GogglesDb::EntryTimeType::GOGGLECUP_ID,
           number: '?'
         )
+      end
+
+      # Individual CategoryType of the target season matching the swimmer's age
+      # in that season (so the badge category always belongs to the badge season).
+      def category_type_for(swimmer)
+        age = swimmer.age_for_category_range(season.begin_date)
+        GogglesDb::CategoryType.for_season(season)
+                               .where('(age_end >= ?) AND (age_begin <= ?)', age, age)
+                               .individuals
+                               .first
       end
     end
   end
