@@ -6,14 +6,9 @@ RSpec.describe GogglesDb::GogglesCup::BadgeProvisioner do
   let(:team) { FactoryBot.create(:team) }
   let(:cup) { FactoryBot.create(:goggle_cup, team: team, swimmers_ids: nil) }
 
-  # The provisioner targets the latest MASFIN season of the current championship
+  # The provisioner targets the MASFIN season of the cup's own championship
   # year; the fixture DB carries real seasons, so resolve it the same way.
-  let(:target_season) do
-    year = GogglesDb::Season.current_championship_year(GogglesDb::SeasonType.mas_fin)
-    GogglesDb::Season.for_season_type(GogglesDb::SeasonType.mas_fin)
-                     .for_championship_year(year)
-                     .first
-  end
+  let(:target_season) { described_class.target_season(cup.season_year) }
 
   it 'returns an empty report when no swimmers are enlisted' do
     report = described_class.new(cup).call
@@ -24,9 +19,9 @@ RSpec.describe GogglesDb::GogglesCup::BadgeProvisioner do
     let(:swimmer) { FactoryBot.create(:swimmer, year_of_birth: 1990) }
     let(:cup) { FactoryBot.create(:goggle_cup, team: team, swimmers_ids: "#{swimmer.id},999999") }
 
-    before { skip('no MASFIN season for the current championship year in fixtures') if target_season.nil? }
+    before { skip('no MASFIN season for the cup championship year in fixtures') if target_season.nil? }
 
-    it 'creates the missing badge on the latest MASFIN season' do
+    it 'creates the missing badge on the MASFIN season of the cup year' do
       report = described_class.new(cup).call
       created = report[:created].find { |badge| badge.swimmer_id == swimmer.id }
       expect(created).to be_a(GogglesDb::Badge).and be_persisted
@@ -61,6 +56,17 @@ RSpec.describe GogglesDb::GogglesCup::BadgeProvisioner do
       FactoryBot.create(:team_affiliation, team: team, season: target_season)
       expect { described_class.new(cup).call }
         .not_to change(GogglesDb::TeamAffiliation, :count)
+    end
+
+    it 'targets the MASFIN season of an explicit season_year override' do
+      other_year = cup.season_year - 1
+      other_season = described_class.target_season(other_year)
+      skip('no MASFIN season for the overridden year in fixtures') if other_season.nil?
+
+      report = described_class.new(cup, season_year: other_year).call
+      created = report[:created].find { |badge| badge.swimmer_id == swimmer.id }
+      expect(created).to be_a(GogglesDb::Badge)
+      expect(created.season_id).to eq(other_season.id)
     end
   end
 end

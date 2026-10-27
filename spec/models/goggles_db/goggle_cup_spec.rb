@@ -68,6 +68,33 @@ module GogglesDb
           expect(other).to be_valid
         end
       end
+
+      describe 'name' do
+        it 'defaults to the description when left blank' do
+          goggle_cup = FactoryBot.build(:goggle_cup, name: nil, description: 'Cup Without Name')
+          expect(goggle_cup).to be_valid
+          expect(goggle_cup.name).to eq('Cup Without Name')
+        end
+
+        it 'truncates the description fallback to 60 characters' do
+          long_description = 'A very long Goggle Cup description exceeding the sixty-char name limit.'
+          goggle_cup = FactoryBot.build(:goggle_cup, name: nil, description: long_description)
+          expect(goggle_cup).to be_valid
+          expect(goggle_cup.name).to eq(long_description.truncate(60, omission: ''))
+        end
+
+        it 'is invalid when explicitly blank and description is missing' do
+          goggle_cup = FactoryBot.build(:goggle_cup, name: nil, description: nil)
+          expect(goggle_cup).not_to be_valid
+          expect(goggle_cup.errors[:name]).to be_present
+        end
+
+        it 'is invalid when longer than 60 characters' do
+          goggle_cup = FactoryBot.build(:goggle_cup, name: 'X' * 61)
+          expect(goggle_cup).not_to be_valid
+          expect(goggle_cup.errors[:name]).to be_present
+        end
+      end
     end
 
     describe 'new columns' do

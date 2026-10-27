@@ -5,8 +5,9 @@ module GogglesDb
     # = GogglesDb::GogglesCup::BadgeProvisioner
     #
     # Creates, for each swimmer enlisted in a GoggleCup and missing one, the
-    # Badge binding the swimmer to the cup's team for the latest MASFIN season
-    # (the common "parent" championship that also includes LEN/FINA results).
+    # Badge binding the swimmer to the cup's team for the MASFIN season of the
+    # cup's championship year (the common "parent" championship that also
+    # includes LEN/FINA results).
     # The TeamAffiliation for (team, season) is auto-created as well when
     # missing, flagged with +autofilled+.
     #
@@ -20,9 +21,21 @@ module GogglesDb
     # (swimmer, team, season) are reported, never modified.
     class BadgeProvisioner
       # == Params:
-      # - cup: the GogglesDb::GoggleCup being saved (required)
-      def initialize(cup)
+      # - cup:         the GogglesDb::GoggleCup being saved (required)
+      # - season_year: championship year whose MASFIN season gets the badges
+      #                (defaults to the cup's own +season_year+)
+      def initialize(cup, season_year: nil)
         @cup = cup
+        @season_year = (season_year.presence || cup.season_year).to_i
+      end
+
+      # Returns the MASFIN season of the given championship year (nil when no
+      # such season exists): the badge/affiliation target shared with the
+      # sync payload of the API, so a cup resync fetches rows of its own year.
+      def self.target_season(season_year)
+        GogglesDb::Season.for_season_type(GogglesDb::SeasonType.mas_fin)
+                         .for_championship_year(season_year.to_i)
+                         .first
       end
 
       # Returns a report hash:
@@ -41,14 +54,9 @@ module GogglesDb
 
       private
 
-      # The latest MASFIN season for the current championship year.
+      # The MASFIN season of the cup's championship year.
       def season
-        @season ||= begin
-          year = GogglesDb::Season.current_championship_year(GogglesDb::SeasonType.mas_fin)
-          GogglesDb::Season.for_season_type(GogglesDb::SeasonType.mas_fin)
-                           .for_championship_year(year)
-                           .first
-        end
+        @season ||= self.class.target_season(@season_year)
       end
 
       def team_affiliation

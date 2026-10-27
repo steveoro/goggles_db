@@ -17,8 +17,12 @@ module GogglesDb
                             numericality: { only_integer: true, greater_than: 2000 }
     validates :description, presence: true,
                             uniqueness: { scope: %i[team_id season_year] }
-    validates :name, length: { maximum: 60 }
+    validates :name, presence: true, length: { maximum: 60 }
     validates :published, inclusion: { in: [true, false] }
+
+    # +name+ defaults to the (possibly truncated) description when blank, so
+    # cups created without an explicit name never hit the NOT NULL column.
+    before_validation { self.name = description.to_s.truncate(60, omission: '') if name.blank? }
 
     # Cups marked as "made visible" for their affiliation:
     scope :published, -> { where(published: true) }
