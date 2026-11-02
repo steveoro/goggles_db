@@ -8,12 +8,12 @@ module GogglesDb
   # - described_class must be a kind_of Calculators::BaseStrategy
   #
   shared_examples_for 'Calculators::BaseStrategy with valid constructor paramaters' do
-    around do |example|
-      @skip_prosopite_finish = true
-      Prosopite.pause { example.run }
-    ensure
-      @skip_prosopite_finish = false
-    end
+    # NOTE: pausing Prosopite here (instead of wrapping the example in an around hook)
+    # is required because Prosopite.scan starts inside config.before: a pause applied
+    # before the scan exists is a no-op, and skipping Prosopite.finish would then leak
+    # the recorded queries into the following examples, failing *them* instead.
+    before { Prosopite.pause }
+    after { Prosopite.resume }
 
     # These may yield a strategy either *with* or *without an existing linked StandardTiming:
     let(:fixture_event) { GogglesDb::EventType.all_eventable.sample }

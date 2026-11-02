@@ -104,6 +104,9 @@ RSpec.configure do |config|
   end
 
   config.after do # (:each)
-    Prosopite.finish unless @skip_prosopite_finish
+    # Always finish the scan: skipping this leaks the recorded queries into the
+    # following examples. To exclude an example's queries, pause & resume the
+    # scan inside the example itself (see shared_calculators_examples.rb).
+    Prosopite.finish
   end
 end
