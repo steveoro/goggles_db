@@ -41,6 +41,7 @@ end
 
 group :development, :test do
   gem 'awesome_print' # color output formatter for Ruby objects
+  gem 'benchmark'     # needed after Ruby 3.5.0 because it won't be part of SDL anymore
   gem 'brakeman'
   gem 'bullet' # Currently, has issues with #reset_counters
   # gem 'byebug' # Uncomment and call 'byebug' anywhere in the code to stop execution and get a debugger console
