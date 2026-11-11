@@ -6,7 +6,7 @@
 #
 module GogglesDb
   # Public gem version (uses Semantic versioning)
-  VERSION = '0.10.71'
+  VERSION = '0.10.72'
 
   # == Versioning codes
   #
