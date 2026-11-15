@@ -24,7 +24,7 @@ default: &default
 development:
   <<: *default
   database: goggles_development
-  password: MY_AWESOME_PASSWORD!
+  password: <%= ENV.fetch("MYSQL_ROOT_PASSWORD") { '' } %>
 
 # Warning: The database defined as "test" will be erased and
 # re-generated from your development database when you run "rake".
@@ -32,7 +32,7 @@ development:
 test:
   <<: *default
   database: goggles_test
-  password: MY_AWESOME_PASSWORD!
+  password: <%= ENV.fetch("MYSQL_ROOT_PASSWORD") { '' } %>
 
 # As with config/credentials.yml, you never want to store sensitive information,
 # like your database password, in your source code. If your source code is
