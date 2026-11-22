@@ -35,7 +35,7 @@ module GogglesDb
     validates :swimmer_key, length: { maximum: 500 }, allow_nil: true
     validates :meeting_relay_result_key, length: { maximum: 500 }, allow_nil: true
     validates :parent_import_key, presence: true, length: { maximum: 500 }
-    validates :relay_order, presence: true, numericality: { only_integer: true, greater_than_or_equal_to: 1, less_than_or_equal_to: 4 }
+    validates :relay_order, presence: true, numericality: { only_integer: true, greater_than_or_equal_to: 1 }
 
     # Override minimal_attributes to add timing string
     def minimal_attributes(locale = I18n.locale)

@@ -48,9 +48,11 @@ module GogglesDb
         expect(subject).not_to be_valid
       end
 
-      it 'requires relay_order <= 4' do
-        subject.relay_order = 5
-        expect(subject).not_to be_valid
+      it 'persists a sixth swimmer in a non-standard relay' do
+        subject.relay_order = 6
+
+        expect { subject.save! }.not_to raise_error
+        expect(subject.reload.relay_order).to eq(6)
       end
     end
 
