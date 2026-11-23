@@ -661,7 +661,9 @@ module GogglesDb
     #++
 
     describe '#associate_to_swimmer!' do
-      let(:fixture_swimmer) { FactoryBot.create(:swimmer) }
+      # Unique last_name: matching_swimmers can only ever return this row
+      # (FFaker-random names substring-collide with the anonymized seed swimmers)
+      let(:fixture_swimmer) { FactoryBot.create(:swimmer, :unique_name) }
 
       context 'without a swimmer override parameter,' do
         # ** NO UPDATE: new user, invalid **
@@ -700,8 +702,10 @@ module GogglesDb
         end
 
         context 'when the user has indeed a matching swimmer' do
+          # Built (not created): an already-saved user would be auto-associated
+          # by the after_create callback, masking the match this context tests
           let(:fixture_user) do
-            FactoryBot.create(
+            FactoryBot.build(
               :user,
               first_name: fixture_swimmer.first_name,
               last_name: fixture_swimmer.last_name,
@@ -723,7 +727,8 @@ module GogglesDb
               # as it must be overwritten anyway
               fixture_swimmer.reload.associated_user_id = nil
               fixture_swimmer.save!
-              fixture_user.associate_to_swimmer!
+              # (Also asserts the first-link return value)
+              expect(fixture_user.associate_to_swimmer!).to eq(fixture_swimmer)
             end
 
             it_behaves_like('#associate_to_swimmer! successfully updates', false)
@@ -745,6 +750,33 @@ module GogglesDb
               expect(fixture_user.associate_to_swimmer!).to eq(fixture_swimmer)
             end
           end
+        end
+
+        # ** UPDATE: persisted user without a link yet **
+        context 'when a persisted user is not associated to any swimmer yet' do
+          let(:fixture_user) do
+            # Created unmatchable first so the after_create auto-association
+            # leaves it unlinked, then updated to match the fixture swimmer:
+            FactoryBot.create(:user, :without_swimmer_match).tap do |user|
+              user.update!(
+                first_name: fixture_swimmer.first_name,
+                last_name: fixture_swimmer.last_name,
+                year_of_birth: fixture_swimmer.year_of_birth,
+                description: fixture_swimmer.complete_name
+              )
+            end
+          end
+
+          before do
+            expect(fixture_user).to be_persisted
+            expect(fixture_user.swimmer_id).to be_nil
+            fixture_swimmer.reload.associated_user_id = nil
+            fixture_swimmer.save!
+            # (Also asserts the first-link return value)
+            expect(fixture_user.associate_to_swimmer!).to eq(fixture_swimmer)
+          end
+
+          it_behaves_like('#associate_to_swimmer! successfully updates', false)
         end
 
         # ** NO RE-MATCH: user already linked to another swimmer (explicit choice wins) **
@@ -815,7 +847,8 @@ module GogglesDb
               # as it will be overwritten anyway
               fixture_swimmer.reload.associated_user_id = nil
               fixture_swimmer.save!
-              fixture_user.associate_to_swimmer!(fixture_swimmer)
+              # (Also asserts the first-link return value)
+              expect(fixture_user.associate_to_swimmer!(fixture_swimmer)).to eq(fixture_swimmer)
             end
 
             it_behaves_like('#associate_to_swimmer! successfully updates', true)
@@ -841,8 +874,10 @@ module GogglesDb
         # ** UPDATE, with OVERRIDE **
         context 'when the user has indeed a matching swimmer' do
           let(:another_swimmer) { Swimmer.first(50).sample }
+          # Built (not created): an already-saved user would be auto-associated
+          # by the after_create callback, masking the override this context tests
           let(:fixture_user) do
-            FactoryBot.create(
+            FactoryBot.build(
               :user,
               first_name: another_swimmer.first_name,
               last_name: another_swimmer.last_name,
@@ -865,7 +900,8 @@ module GogglesDb
               # as it will be overwritten anyway
               fixture_swimmer.reload.associated_user_id = nil
               fixture_swimmer.save!
-              fixture_user.associate_to_swimmer!(fixture_swimmer)
+              # (Also asserts the first-link return value)
+              expect(fixture_user.associate_to_swimmer!(fixture_swimmer)).to eq(fixture_swimmer)
             end
 
             it_behaves_like('#associate_to_swimmer! successfully updates', true)
