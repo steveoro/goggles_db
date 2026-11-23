@@ -751,6 +751,32 @@ module GogglesDb
           end
         end
 
+        # ** UPDATE: persisted user without a link yet **
+        context 'when a persisted user is not associated to any swimmer yet' do
+          let(:fixture_user) do
+            # Created unmatchable first so the after_create auto-association
+            # leaves it unlinked, then updated to match the fixture swimmer:
+            FactoryBot.create(:user, :without_swimmer_match).tap do |user|
+              user.update!(
+                first_name: fixture_swimmer.first_name,
+                last_name: fixture_swimmer.last_name,
+                year_of_birth: fixture_swimmer.year_of_birth,
+                description: fixture_swimmer.complete_name
+              )
+            end
+          end
+
+          before do
+            expect(fixture_user).to be_persisted
+            expect(fixture_user.swimmer_id).to be_nil
+            fixture_swimmer.reload.associated_user_id = nil
+            fixture_swimmer.save!
+            fixture_user.associate_to_swimmer!
+          end
+
+          it_behaves_like('#associate_to_swimmer! successfully updates', false)
+        end
+
         # ** NO RE-MATCH: user already linked to another swimmer (explicit choice wins) **
         context 'when the user is already associated to a swimmer,' do
           let(:other_swimmer) { FactoryBot.create(:swimmer) }
