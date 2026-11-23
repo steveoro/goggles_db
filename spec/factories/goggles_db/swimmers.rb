@@ -16,6 +16,13 @@ FactoryBot.define do
     e_mail                  { "#{first_name}.#{last_name}-#{(rand * 1000).to_i}@#{%w[fake.example.com fake.example.org fake.example.net].sample}" }
     nickname                { "#{first_name[0..5]} the #{FFaker::AnimalUS.common_name[0..15]}" }
     associated_user_id      { nil }
+
+    # Random FFaker names can substring-collide with the (FFaker-anonymized)
+    # seed swimmers, making User#matching_swimmers return an unrelated row.
+    # Use this trait when a spec asserts on the matched swimmer's identity.
+    trait :unique_name do
+      last_name { "Uniqname#{SecureRandom.alphanumeric(8)}" }
+    end
     #-- -----------------------------------------------------------------------
     #++
   end

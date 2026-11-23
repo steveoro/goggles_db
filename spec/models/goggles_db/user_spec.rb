@@ -661,7 +661,9 @@ module GogglesDb
     #++
 
     describe '#associate_to_swimmer!' do
-      let(:fixture_swimmer) { FactoryBot.create(:swimmer) }
+      # Unique last_name: matching_swimmers can only ever return this row
+      # (FFaker-random names substring-collide with the anonymized seed swimmers)
+      let(:fixture_swimmer) { FactoryBot.create(:swimmer, :unique_name) }
 
       context 'without a swimmer override parameter,' do
         # ** NO UPDATE: new user, invalid **
