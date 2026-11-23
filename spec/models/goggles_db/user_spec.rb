@@ -727,7 +727,8 @@ module GogglesDb
               # as it must be overwritten anyway
               fixture_swimmer.reload.associated_user_id = nil
               fixture_swimmer.save!
-              fixture_user.associate_to_swimmer!
+              # (Also asserts the first-link return value)
+              expect(fixture_user.associate_to_swimmer!).to eq(fixture_swimmer)
             end
 
             it_behaves_like('#associate_to_swimmer! successfully updates', false)
@@ -771,7 +772,8 @@ module GogglesDb
             expect(fixture_user.swimmer_id).to be_nil
             fixture_swimmer.reload.associated_user_id = nil
             fixture_swimmer.save!
-            fixture_user.associate_to_swimmer!
+            # (Also asserts the first-link return value)
+            expect(fixture_user.associate_to_swimmer!).to eq(fixture_swimmer)
           end
 
           it_behaves_like('#associate_to_swimmer! successfully updates', false)
@@ -845,7 +847,8 @@ module GogglesDb
               # as it will be overwritten anyway
               fixture_swimmer.reload.associated_user_id = nil
               fixture_swimmer.save!
-              fixture_user.associate_to_swimmer!(fixture_swimmer)
+              # (Also asserts the first-link return value)
+              expect(fixture_user.associate_to_swimmer!(fixture_swimmer)).to eq(fixture_swimmer)
             end
 
             it_behaves_like('#associate_to_swimmer! successfully updates', true)
@@ -897,7 +900,8 @@ module GogglesDb
               # as it will be overwritten anyway
               fixture_swimmer.reload.associated_user_id = nil
               fixture_swimmer.save!
-              fixture_user.associate_to_swimmer!(fixture_swimmer)
+              # (Also asserts the first-link return value)
+              expect(fixture_user.associate_to_swimmer!(fixture_swimmer)).to eq(fixture_swimmer)
             end
 
             it_behaves_like('#associate_to_swimmer! successfully updates', true)
