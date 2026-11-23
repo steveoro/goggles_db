@@ -702,8 +702,10 @@ module GogglesDb
         end
 
         context 'when the user has indeed a matching swimmer' do
+          # Built (not created): an already-saved user would be auto-associated
+          # by the after_create callback, masking the match this context tests
           let(:fixture_user) do
-            FactoryBot.create(
+            FactoryBot.build(
               :user,
               first_name: fixture_swimmer.first_name,
               last_name: fixture_swimmer.last_name,
@@ -843,8 +845,10 @@ module GogglesDb
         # ** UPDATE, with OVERRIDE **
         context 'when the user has indeed a matching swimmer' do
           let(:another_swimmer) { Swimmer.first(50).sample }
+          # Built (not created): an already-saved user would be auto-associated
+          # by the after_create callback, masking the override this context tests
           let(:fixture_user) do
-            FactoryBot.create(
+            FactoryBot.build(
               :user,
               first_name: another_swimmer.first_name,
               last_name: another_swimmer.last_name,
