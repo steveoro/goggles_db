@@ -17,7 +17,7 @@ Includes the [Devise](https://github.com/heartcombo/devise) routes for `User` (t
 
 ## Requires
 
-- Ruby 3.4.7
+- Ruby 3.4.13
 - Rails 8.1.3+
 - MariaDb 11.8.8
 

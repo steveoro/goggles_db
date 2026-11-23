@@ -2,7 +2,7 @@
 
 ## What this is
 
-`goggles_db` is a mountable, isolated Rails Engine (`GogglesDb`, Ruby 3.4.7 / Rails 8.1+ / MariaDB) holding the DB structure and base models shared by the Goggles framework apps (`goggles_main`, API, etc.). It is not a standalone app: specs run against the embedded app in `spec/dummy`. When run from the repo root, engine rake tasks need the `app:` prefix (e.g. `rails app:db:rebuild`).
+`goggles_db` is a mountable, isolated Rails Engine (`GogglesDb`, Ruby 3.4.13 / Rails 8.1+ / MariaDB) holding the DB structure and base models shared by the Goggles framework apps (`goggles_main`, API, etc.). It is not a standalone app: specs run against the embedded app in `spec/dummy`. When run from the repo root, engine rake tasks need the `app:` prefix (e.g. `rails app:db:rebuild`).
 
 `AGENTS.md` holds the mandatory rules for DB structure changes (this repo is the source of truth; migrations/views must be copied to `goggles_main` under `db/migrate` and `db/views`, and the test dump must be regenerated). Follow it.
 

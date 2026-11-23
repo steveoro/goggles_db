@@ -9,7 +9,7 @@ common-config: &common-config
   # [20251012] NOTE: not using CodeClimate anymore because now it's not open/free anymore
   #            (CodeClimate has changed into an Enterprise solution only)
   docker:
-    - image: cimg/ruby:3.4.7-node
+    - image: cimg/ruby:3.4.13-node
       environment:
         RAILS_ENV: test
         DISABLE_SPRING: true
