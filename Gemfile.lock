@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    goggles_db (0.10.74)
+    goggles_db (0.10.80)
       acts-as-taggable-on
       acts_as_votable
       caxlsx
@@ -124,7 +124,7 @@ GEM
       activerecord (>= 7.1, < 8.2)
       zeitwerk (>= 2.4, < 3.0)
     acts_as_votable (0.14.0)
-    addressable (2.9.2)
+    addressable (2.10.0)
       public_suffix (>= 2.0.2, < 8.0)
     ast (2.4.3)
     awesome_print (1.9.2)
